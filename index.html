@@ -1095,7 +1095,7 @@ function exportTrainingCalendar(){
   const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Gain Focus//Training Calendar//EN','CALSCALE:GREGORIAN',...events,'END:VCALENDAR'].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));a.download=`gain-focus-training-${clientNameValue()||'client'}.ics`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);toast('Calendar file ready');
 }
 
-// v4.0.13 · restore nutrition aggregation helpers removed during diet-plan consolidation.
+// v4.0.14 · restore nutrition aggregation helpers removed during diet-plan consolidation.
 function todayNutritionLogs(){
   ensureProgressExtras();
   return (progress?.nutritionLogs||[]).filter(x=>x&&x.date===todayISO());
@@ -2447,6 +2447,147 @@ setTimeout(()=>{introReady=true; const btn=document.querySelector('.enter-card')
 if(plan&&validPlan(plan)){
   if(!progress||progress.clientId!==plan.client.id){progress=newProgress();write()}
 }
+
+
+// ============================================================================
+// v4.0.14 · PROGRESS CHART UPGRADE
+// Separate weight and strength charts with marked axes and projected guide line.
+// ============================================================================
+function shortDateLabel(iso){
+  try{const d=new Date(String(iso)+'T12:00:00');return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;}catch{return String(iso||'')}}
+function longDateLabel(iso){
+  try{const d=new Date(String(iso)+'T12:00:00');return d.toLocaleDateString(undefined,{day:'numeric',month:'short'});}catch{return String(iso||'')}}
+function daysMs(n){return n*86400000}
+function e1RM(weight,reps){weight=Number(weight)||0;reps=Number(reps)||0;return weight>0&&reps>0?weight*(1+reps/30):0}
+function projectedWeightOn(dateStr){
+  const startDate=plan?.goal?.startDate||((progress.weighIns||[])[0]?.date)||todayISO();
+  const startW=Number(plan?.client?.startWeightKg)||Number((progress.weighIns||[])[0]?.weightKg)||0;
+  const goalW=Number(plan?.goal?.targetWeightKg)||startW;
+  const weekly=Number(plan?.goal?.weeklyGainKg)||0.25;
+  const days=Math.max(0,daysBetween(startDate,dateStr));
+  return Math.min(goalW,startW+(days/7)*weekly);
+}
+function buildWeightSeries(){
+  const arr=[...(progress?.weighIns||[])].filter(x=>x&&x.weightKg&&/^\d{4}-\d{2}-\d{2}$/.test(x.date||'')).sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  const actual=arr.map(x=>({date:x.date,value:Number(x.weightKg)}));
+  const projected=arr.map(x=>({date:x.date,value:projectedWeightOn(x.date)}));
+  return {actual,projected};
+}
+function classifyStrengthBucket(name){
+  const s=String(name||'').toLowerCase();
+  if(/press|bench|incline|dip|fly/.test(s))return 'Push';
+  if(/row|pulldown|pull down|pull-up|pullup|chin|lat/.test(s))return 'Pull';
+  if(/squat|deadlift|rdl|romanian|leg press|hack squat|split squat|lunge|leg extension|leg curl|calf/.test(s))return 'Legs';
+  return '';
+}
+function buildStrengthSeries(){
+  const byDate = new Map();
+  (progress?.workoutLogs||[]).forEach(w=>{
+    const date=String(w?.date||'').slice(0,10);
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return;
+    const entries=Array.isArray(w?.setEntries)?w.setEntries:[];
+    entries.forEach(set=>{
+      const bucket=classifyStrengthBucket(set?.exerciseName||set?.name||set?.exerciseKey||'');
+      if(!bucket)return;
+      const score=e1RM(set?.weightKg,set?.reps);
+      if(!score)return;
+      let d=byDate.get(date);
+      if(!d){d={Push:null,Pull:null,Legs:null};byDate.set(date,d)}
+      d[bucket]=Math.max(Number(d[bucket])||0,score);
+    });
+  });
+  const dates=[...byDate.keys()].sort((a,b)=>a.localeCompare(b));
+  const makeSeries=name=>dates.filter(d=>Number(byDate.get(d)?.[name])>0).map(d=>({date:d,value:round(byDate.get(d)[name],1)}));
+  return {Push:makeSeries('Push'),Pull:makeSeries('Pull'),Legs:makeSeries('Legs')};
+}
+function buildLineChartSVG({series,width=640,height=230,yLabel='kg',emptyText='No data yet',legend=[],yTickFormatter=v=>String(v),xTicks=null}){
+  const all=(series||[]).flatMap(s=>(s.points||[]).map(p=>({...p,_label:s.label,_color:s.color,_dash:s.dash||''})));
+  if(!all.length)return `<div class="muted" style="padding:82px 20px;text-align:center">${emptyText}</div>`;
+  const margin={top:18,right:16,bottom:34,left:48}, plotW=width-margin.left-margin.right, plotH=height-margin.top-margin.bottom;
+  const dates=[...new Set(all.map(p=>p.date))].sort((a,b)=>a.localeCompare(b));
+  const t0=new Date(dates[0]+'T12:00:00').getTime(), t1=new Date(dates[dates.length-1]+'T12:00:00').getTime();
+  const tSpan=Math.max(86400000,t1-t0);
+  const vals=all.map(p=>Number(p.value)).filter(v=>Number.isFinite(v));
+  let min=Math.min(...vals), max=Math.max(...vals);
+  if(min===max){min-=1;max+=1}
+  const pad=Math.max((max-min)*0.12,0.6); min-=pad; max+=pad;
+  const span=Math.max(1,max-min);
+  const x=d=>margin.left + ((new Date(d+'T12:00:00').getTime()-t0)/tSpan)*plotW;
+  const y=v=>margin.top + (1-((v-min)/span))*plotH;
+  const yTicksCount=5;
+  let yTickVals=[];
+  for(let i=0;i<yTicksCount;i++)yTickVals.push(min + (span*(i/(yTicksCount-1))));
+  let xTickDates;
+  if(Array.isArray(xTicks)&&xTicks.length)xTickDates=xTicks;
+  else if(dates.length<=4)xTickDates=dates;
+  else{
+    xTickDates=[dates[0], dates[Math.floor((dates.length-1)/3)], dates[Math.floor((dates.length-1)*2/3)], dates[dates.length-1]];
+    xTickDates=[...new Set(xTickDates)];
+  }
+  const gridY=yTickVals.map(v=>`<g><line x1="${margin.left}" y1="${y(v)}" x2="${width-margin.right}" y2="${y(v)}" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="${margin.left-8}" y="${y(v)+4}" fill="rgba(220,232,255,.82)" font-size="10" text-anchor="end">${yTickFormatter(round(v,1))}</text></g>`).join('');
+  const gridX=xTickDates.map(d=>`<g><line x1="${x(d)}" y1="${margin.top}" x2="${x(d)}" y2="${height-margin.bottom}" stroke="rgba(255,255,255,.05)" stroke-width="1"/><text x="${x(d)}" y="${height-11}" fill="rgba(220,232,255,.74)" font-size="10" text-anchor="middle">${shortDateLabel(d)}</text></g>`).join('');
+  const seriesSvg=(series||[]).map(s=>{
+    const pts=(s.points||[]).map(p=>`${x(p.date)},${y(p.value)}`).join(' ');
+    if(!pts)return '';
+    const circles=(s.points||[]).map(p=>`<circle cx="${x(p.date)}" cy="${y(p.value)}" r="2.8" fill="${s.color}" ${s.dash?'opacity="0.9"':'opacity="1"'}/>`).join('');
+    return `<g><polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="${s.strokeWidth||3}" stroke-linecap="round" stroke-linejoin="round" ${s.dash?`stroke-dasharray="${s.dash}" opacity="0.95"`:''}/>${circles}</g>`;
+  }).join('');
+  const legendItems=(legend.length?legend:(series||[]).map(s=>({label:s.label,color:s.color,dash:s.dash||''}))).map((item,i)=>`<g transform="translate(${margin.left + i*120},${height-2})"><line x1="0" y1="-12" x2="18" y2="-12" stroke="${item.color}" stroke-width="3" ${item.dash?`stroke-dasharray="${item.dash}"`:''}/><text x="24" y="-8" fill="rgba(235,243,255,.82)" font-size="10">${item.label}</text></g>`).join('');
+  return `<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="Trend chart"><rect x="0" y="0" width="${width}" height="${height}" fill="transparent"/><text x="${margin.left}" y="11" fill="rgba(220,232,255,.72)" font-size="10">${yLabel}</text>${gridY}${gridX}<line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${height-margin.bottom}" stroke="rgba(255,255,255,.16)" stroke-width="1.2"/><line x1="${margin.left}" y1="${height-margin.bottom}" x2="${width-margin.right}" y2="${height-margin.bottom}" stroke="rgba(255,255,255,.16)" stroke-width="1.2"/>${seriesSvg}${legendItems}</svg>`;
+}
+function drawWeightChart(){
+  const el=document.getElementById('weightChart');if(!el)return;
+  const {actual,projected}=buildWeightSeries();
+  if(actual.length<2){el.innerHTML='<div class="muted" style="padding:82px 20px;text-align:center">Two weigh-ins unlock the trend.</div>';return}
+  el.innerHTML=buildLineChartSVG({
+    series:[
+      {label:'Actual',color:'#9ad6ff',points:actual,strokeWidth:3.5},
+      {label:'Projected',color:'#8d80ff',points:projected,strokeWidth:2.5,dash:'7 7'}
+    ],
+    yLabel:'Bodyweight (kg)',
+    yTickFormatter:v=>`${round(v,1)}`,
+    emptyText:'No weight data yet'
+  });
+}
+function drawStrengthChart(){
+  const el=document.getElementById('strengthChart');if(!el)return;
+  const s=buildStrengthSeries();
+  const lines=[];
+  if((s.Push||[]).length)lines.push({label:'Push',color:'#7fd6ff',points:s.Push,strokeWidth:3});
+  if((s.Pull||[]).length)lines.push({label:'Pull',color:'#9d8cff',points:s.Pull,strokeWidth:3});
+  if((s.Legs||[]).length)lines.push({label:'Legs',color:'#7cffc7',points:s.Legs,strokeWidth:3});
+  if(!lines.length){el.innerHTML='<div class="muted" style="padding:82px 20px;text-align:center">Log weighted sets to unlock strength trend.</div>';return}
+  el.innerHTML=buildLineChartSVG({
+    series:lines,
+    yLabel:'Estimated 1RM (kg)',
+    yTickFormatter:v=>`${Math.round(v)}`,
+    emptyText:'No strength data yet'
+  });
+}
+function drawChart(){drawWeightChart();drawStrengthChart()}
+function renderProgress(){
+  ensureProgressExtras();ensureWeeklyReviewIds();
+  const checks=sortedWeeklyReviews(),current=latestWeight(),goal=Number(plan.goal.targetWeightKg)||current,startW=Number(plan.client.startWeightKg)||current,gained=current-startW,remaining=Math.max(0,goal-current),latestReview=latestPhysiqueAnalysis()?.analysis;
+  const weightSeries=buildWeightSeries(), latestActual=weightSeries.actual.at(-1), latestProjected=weightSeries.projected.at(-1), delta=(latestActual&&latestProjected)?round(latestActual.value-latestProjected.value,1):0;
+  let weightStatus='On track';
+  if(delta<-0.3)weightStatus='Below projection';
+  else if(delta>0.3)weightStatus='Ahead of projection';
+  const strengthSeries=buildStrengthSeries();
+  const pointsCount=(strengthSeries.Push?.length||0)+(strengthSeries.Pull?.length||0)+(strengthSeries.Legs?.length||0);
+  document.getElementById('progress').innerHTML=`
+    <div class="progress-overview"><div class="progress-overview-copy"><span class="eyebrow">Progress</span><h2>${current.toFixed(1)} <small>kg</small></h2><p>${Math.round(pct())}% of your scale journey complete</p></div><div class="progress-ring" style="--p:${Math.round(pct())}"><div><b>${Math.round(pct())}%</b><span>goal</span></div></div></div>
+    <div class="progress-kpis"><div><span>Started</span><b>${startW.toFixed(1)} kg</b></div><div><span>Gained</span><b>${gained>=0?'+':''}${gained.toFixed(1)} kg</b></div><div><span>To goal</span><b>${remaining.toFixed(1)} kg</b></div></div>
+    ${bodyMapCard()}
+    <div class="progress-info-card"><div class="progress-info-title"><span class="eyebrow">How it works</span><h3>Heat comes from logged work</h3></div><div class="progress-info-grid"><div><i>▣</i><b>Log workouts</b><span>Completed working sets are the proof.</span></div><div><i>♨</i><b>Muscles heat up</b><span>Primary and secondary muscles receive load.</span></div><div><i>▥</i><b>Track balance</b><span>Spot muscle groups being missed over time.</span></div></div></div>
+    ${latestReview?physiqueAnalysisCard(latestReview,false):''}
+    <button class="card glass physique-card progress-physique" style="width:100%;text-align:left;border:1px solid var(--line);margin-bottom:12px" onclick="openPhysiqueGallery('current')"><div class="section" style="margin:0 0 4px"><h3>Physique</h3><span class="small">Current ↔ Goal</span></div><p class="muted" style="margin:0">Compare visual progress with the target and saved check-ins.</p></button>
+    <div class="card glass"><div class="section" style="margin:0 0 10px"><h3>Weight trend</h3><span class="small">Actual vs projected · Week ${weekNo()}</span></div><div id="weightChart" class="chart" style="height:230px"></div><div class="progress-info-grid" style="margin-top:10px;grid-template-columns:repeat(2,minmax(0,1fr))"><div><span class="small">Current vs guide</span><b style="font-size:18px">${delta>0?'+':''}${delta.toFixed(1)} kg</b></div><div><span class="small">Status</span><b style="font-size:18px">${esc(weightStatus)}</b></div></div></div>
+    <div class="card glass" style="margin-top:12px"><div class="section" style="margin:0 0 10px"><h3>Strength trend</h3><span class="small">Best estimated 1RM from logged sets</span></div><div id="strengthChart" class="chart" style="height:230px"></div><p class="muted" style="margin:10px 0 0;font-size:11px">Push, Pull and Legs are tracked separately from your logged weighted top sets so the trend stays readable over time.</p></div>
+    <div class="section"><h3>Workout history</h3><span class="small">${(progress.workoutLogs||[]).length} logged · ${pointsCount} strength points</span></div>${workoutHistoryHTML()}
+    <div class="section"><h3>Weekly reviews</h3><span class="small">${checks.length} saved · tap to view or edit</span></div>${weeklyReviewHistoryHTML()}`;
+  setTimeout(drawChart,0);
+}
+
 </script>
 
 <script>
