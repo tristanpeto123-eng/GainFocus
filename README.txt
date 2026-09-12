@@ -39,3 +39,6 @@ V4.0.11
 - Nutrition labels can be uploaded from Photos/Files.
 - OCR foods can be saved as reusable favourites.
 - Diet plan now renders only when a real dietPlan object exists in the client JSON, including meals, food quantities, target macros and guidance.
+
+
+v4.0.12 adds historic check-ins: past date, weight, note, optional saved progress video, optional physique analysis, and historic data on the weight chart.
