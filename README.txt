@@ -1,4 +1,4 @@
-GAIN FOCUS PWA v4.0.8 — GitHub Pages package
+GAIN FOCUS PWA v4.0.13 — GitHub Pages package
 
 Upload the CONTENTS of this folder to the root of your GitHub repository.
 Keep these files/folders together:
@@ -42,3 +42,10 @@ V4.0.11
 
 
 v4.0.12 adds historic check-ins: past date, weight, note, optional saved progress video, optional physique analysis, and historic data on the weight chart.
+
+
+V4.0.13
+- Fixed Nutrition render regression by restoring todayNutritionLogs() and nutritionTotals().
+- Check-in and Progress no longer remain blank if another tab throws during rendering.
+- Progress JSON restoration now normalises required extras before rendering.
+- Service worker cache bumped so GitHub Pages/iPhone receives the repaired build rather than stale v4.0.12.

@@ -936,7 +936,7 @@ body.coach-home-active #nav{opacity:1;pointer-events:auto;transform:translateX(-
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.12';
+const APP_VERSION='4.0.13';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -1094,6 +1094,21 @@ function exportTrainingCalendar(){
   for(let d=new Date(start);d<end;d.setDate(d.getDate()+1)){if(!isTrainingDate(d))continue;const s=sessionForDate(d),begin=new Date(d);begin.setHours(hh||0,mm||0,0,0);const finish=new Date(begin);finish.setMinutes(finish.getMinutes()+90);events.push(['BEGIN:VEVENT',`UID:${localISODate(d)}-${s?.id||'training'}@gainfocus`,`DTSTAMP:${icsStamp(new Date())}`,`DTSTART:${icsStamp(begin)}`,`DTEND:${icsStamp(finish)}`,`SUMMARY:${icsEscape('Gain Focus · '+(s?.name||'Training'))}`,`DESCRIPTION:${icsEscape(s?.subtitle||'Scheduled Gain Focus training session')}`,'BEGIN:VALARM','TRIGGER:-PT60M','ACTION:DISPLAY',`DESCRIPTION:${icsEscape('Training in 1 hour · '+(s?.name||'Gain Focus'))}`,'END:VALARM','END:VEVENT'].join('\r\n'))}
   const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Gain Focus//Training Calendar//EN','CALSCALE:GREGORIAN',...events,'END:VCALENDAR'].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));a.download=`gain-focus-training-${clientNameValue()||'client'}.ics`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);toast('Calendar file ready');
 }
+
+// v4.0.13 · restore nutrition aggregation helpers removed during diet-plan consolidation.
+function todayNutritionLogs(){
+  ensureProgressExtras();
+  return (progress?.nutritionLogs||[]).filter(x=>x&&x.date===todayISO());
+}
+function nutritionTotals(){
+  return todayNutritionLogs().reduce((a,x)=>({
+    calories:a.calories+(Number(x?.calories)||0),
+    protein:a.protein+(Number(x?.protein)||0),
+    carbs:a.carbs+(Number(x?.carbs)||0),
+    fat:a.fat+(Number(x?.fat)||0)
+  }),{calories:0,protein:0,carbs:0,fat:0});
+}
+
 function dietPlanPayload(){
   const n=plan?.nutrition||{};
   const candidates=[n.dietPlan,plan?.dietPlan,n.mealPlan,plan?.mealPlan];
@@ -1376,7 +1391,7 @@ document.getElementById('planFile').addEventListener('change',e=>{
 document.getElementById('progressFile').addEventListener('change',e=>{
   const f=e.target.files[0];if(!f||!plan)return;
   const r=new FileReader();
-  r.onload=()=>{try{const x=JSON.parse(r.result);if(!progressCompatible(x))throw new Error('mismatch');progress=x;progress.appVersion=APP_VERSION;write();toast('Progress restored');onboardMode==='login'?renderLoginGate():renderTour(1)}catch{alert('That progress JSON does not belong to this client plan.')}};
+  r.onload=()=>{try{const x=JSON.parse(r.result);if(!progressCompatible(x))throw new Error('mismatch');progress=x;progress.appVersion=APP_VERSION;ensureProgressExtras();if(typeof ensureWeeklyReviewIds==='function')ensureWeeklyReviewIds();write();toast('Progress restored');onboardMode==='login'?renderLoginGate():renderTour(1)}catch(e){console.error(e);alert('That progress JSON does not belong to this client plan.')}};
   r.readAsText(f);e.target.value='';
 });
 
@@ -1879,7 +1894,23 @@ const GFCoach={
 // =========================== END FULL-PAGE HERCULES AI COACH ===========================
 
 
-function renderAll(){ensureProgressExtras();renderToday();renderTrain();renderNutrition();renderCheckin();renderProgress();refreshProfileMenuButton();}
+function renderModuleSafe(tabId,label,fn){
+  try{fn()}
+  catch(e){
+    console.error(`Gain Focus ${label} render failed`,e);
+    const el=document.getElementById(tabId);
+    if(el)el.innerHTML=`<div class="card glass hero"><div class="eyebrow">${esc(label)}</div><h2>Couldn’t load this section.</h2><p class="muted">Gain Focus isolated a rendering error so the rest of the app can keep working. Reload once; if it persists, replace the app build rather than your client data.</p></div>`;
+  }
+}
+function renderAll(){
+  ensureProgressExtras();
+  renderModuleSafe('today','Hercules',renderToday);
+  renderModuleSafe('train','Training',renderTrain);
+  renderModuleSafe('nutrition','Nutrition',renderNutrition);
+  renderModuleSafe('checkin','Check-in',renderCheckin);
+  renderModuleSafe('progress','Progress',renderProgress);
+  refreshProfileMenuButton();
+}
 
 function renderToday(){
   document.getElementById('today').innerHTML=GFCoach.home();
@@ -2326,7 +2357,7 @@ function saveCanonicalSettings(){ensureWorkoutSettings();const r=Number(document
 function openSettings(){ensureWorkoutSettings();document.getElementById('settingsSheet').innerHTML=`<div class="grabber"></div><div class="eyebrow">Account</div><div class="account-summary-card">${profileAvatarHTML()}<div class="account-summary-copy"><b>${esc(plan.client.name)}</b><span>${plan.client.heightCm?esc(plan.client.heightCm)+' cm · ':''}${round(latestWeight(),1)} kg · ${plan.goal.targetWeightKg} kg goal</span></div><button class="profile-edit-link" type="button" onclick="openProfileEditor()">Edit</button></div><button class="btn primary" style="width:100%;margin-top:4px" onclick="openProfileEditor()">Edit account details</button><button class="btn primary" style="width:100%;margin-top:8px" onclick="closeSettings();openPhysiqueGallery('current')">Open physique library</button><div class="settings-group"><div class="eyebrow">Workout</div><div class="settings-row"><span class="small">Rest timer seconds</span><input id="restSecondsSetting" class="input" type="number" min="30" max="600" value="${progress.settings.restSeconds||120}"></div><div class="settings-row"><span class="small">Timer sound</span><input id="restSoundSetting" type="checkbox" ${progress.settings.sound!==false?'checked':''}></div><button class="btn secondary" style="width:100%;margin-top:8px" onclick="saveCanonicalSettings()">Save workout settings</button></div><div class="settings-group"><div class="eyebrow">Client data</div><button class="btn secondary" style="width:100%;margin-top:8px" onclick="replayOnboarding()">Replay / rebuild onboarding</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="document.getElementById('settingsPlanFile').click()">Replace client plan JSON</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="document.getElementById('settingsProgressFile').click()">Restore progress JSON</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="downloadJSON(progress,'gain-focus-progress-${plan.client.id}-${todayISO()}.json')">Export progress JSON</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="downloadJSON(plan,'gain-focus-client-${plan.client.id}.json')">Export client plan</button></div><div class="settings-group"><div class="eyebrow">Hercules AI</div><p class="muted" style="font-size:12px;line-height:1.45;margin:7px 0 9px">Local coaching uses training, macros, weight trend, check-ins and physique feedback. Add a secure model endpoint for fully open-ended questions.</p><input id="herculesEndpointSetting" class="input" placeholder="https://your-domain.com/api/hercules" value="${esc(herculesEndpoint())}"><button class="btn secondary" style="width:100%;margin-top:8px" onclick="setHerculesEndpoint(document.getElementById('herculesEndpointSetting').value)">Save AI endpoint</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="localStorage.removeItem(HERCULES_HISTORY_KEY);toast('Hercules conversation cleared')">Clear Hercules history</button></div><div class="settings-group"><button class="btn secondary settings-danger" style="width:100%" onclick="resetGainFocusLocal()">Reset local client & app</button></div><button class="btn secondary" style="width:100%;margin-top:8px" onclick="closeSettings()">Close</button>`;document.getElementById('settingsModal').classList.add('open')}
 async function resetGainFocusLocal(){if(!confirm('Reset the local Gain Focus client, progress, saved media and Hercules history?'))return;localStorage.removeItem(PLAN_KEY);localStorage.removeItem(PROGRESS_KEY);localStorage.removeItem(CLIENT_NAME_KEY);localStorage.removeItem(HERCULES_HISTORY_KEY);await clearMediaDB();location.reload()}
 function importSettingsPlan(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!validPlan(x))throw new Error();plan=x;localStorage.setItem(CLIENT_NAME_KEY,x.client.name||'');if(!progress||progress.clientId!==x.client.id)progress=newProgress();write();closeSettings();renderAll();toast('Client plan replaced')}catch{alert('That JSON is not a valid Gain Focus client plan.')}};r.readAsText(file)}
-function importSettingsProgress(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!progressCompatible(x))throw new Error();progress=x;ensureProgressExtras();write();closeSettings();renderAll();toast('Progress restored')}catch{alert('That progress JSON does not belong to this client.')}};r.readAsText(file)}
+function importSettingsProgress(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!progressCompatible(x))throw new Error();progress=x;progress.appVersion=APP_VERSION;ensureProgressExtras();if(typeof ensureWeeklyReviewIds==='function')ensureWeeklyReviewIds();write();closeSettings();renderAll();toast('Progress restored')}catch(e){console.error(e);alert('That progress JSON does not belong to this client.')}};r.readAsText(file)}
 document.getElementById('settingsPlanFile')?.addEventListener('change',e=>{importSettingsPlan(e.target.files?.[0]);e.target.value=''})
 document.getElementById('settingsProgressFile')?.addEventListener('change',e=>{importSettingsProgress(e.target.files?.[0]);e.target.value=''})
 
