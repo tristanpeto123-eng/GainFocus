@@ -937,6 +937,61 @@ body.coach-home-active > .gf-setup-alert{
 /* ===== v4.0.21 Hercules post-workout debrief ===== */
 .post-workout-hero{display:flex;gap:13px;align-items:center;margin:4px 0 14px}.post-workout-avatar{width:58px;height:58px;border-radius:20px;overflow:hidden;background:rgba(107,165,255,.10);border:1px solid rgba(137,191,255,.18);flex:0 0 auto}.post-workout-avatar img{width:100%;height:100%;object-fit:cover}.post-workout-hero h2{font-size:28px;margin:3px 0 2px}.post-workout-hero p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}.post-workout-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.post-workout-kpi{padding:12px;border-radius:18px;background:rgba(255,255,255,.035);border:1px solid rgba(130,185,255,.10)}.post-workout-kpi span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.10em;margin-bottom:4px}.post-workout-kpi b{font-size:20px;line-height:1.1}.post-workout-score{padding:13px 14px;border-radius:20px;background:linear-gradient(135deg,rgba(38,91,164,.18),rgba(19,42,86,.14));border:1px solid rgba(91,160,255,.16);margin:10px 0}.post-workout-score-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.post-workout-score-top b{font-size:15px}.post-workout-score-top span{font-size:12px;color:#9fd2ff}.post-workout-bar{height:7px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:9px}.post-workout-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#6ea9ff,#64d6ff)}.post-workout-notes{display:grid;gap:8px;margin:12px 0}.post-workout-note{padding:12px 13px;border-radius:18px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);font-size:13px;line-height:1.45}.post-workout-note b{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8ec5ff;margin-bottom:3px}.post-workout-advice{padding:14px;border-radius:20px;background:rgba(85,131,255,.08);border:1px solid rgba(110,164,255,.15);margin:12px 0}.post-workout-advice .eyebrow{margin-bottom:6px}.post-workout-advice p{margin:0;font-size:14px;line-height:1.5}.post-workout-feel{margin:13px 0}.post-workout-feel>span{display:block;color:var(--muted);font-size:11px;margin-bottom:7px}.post-workout-feel-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.post-workout-feel-row button{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);color:var(--text);border-radius:14px;padding:9px 4px;font:inherit;font-size:11px}.post-workout-feel-row button.on{border-color:rgba(113,184,255,.45);background:rgba(72,139,239,.17);color:#cdeaff}.post-workout-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.post-workout-actions .wide{grid-column:1/-1}
 
+
+
+/* ==========================================================================\n   v4.0.22 · COMPACT TRAINING CALENDAR + CHECK-IN BRIEF\n   ========================================================================== */
+.gf-calendar-widget{padding:14px 14px 13px;margin-bottom:12px;border:1px solid rgba(122,175,255,.17);background:linear-gradient(180deg,rgba(14,28,54,.92),rgba(7,14,31,.94));overflow:hidden}
+.gf-calendar-widget-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
+.gf-calendar-widget-title{min-width:0}.gf-calendar-widget-title .eyebrow{margin-bottom:2px}.gf-calendar-widget-title h3{margin:0;font-size:18px;letter-spacing:-.02em}.gf-calendar-widget-title p{margin:3px 0 0;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gf-calendar-widget-actions{display:flex;align-items:center;gap:6px;flex:0 0 auto}.gf-calendar-widget-actions button{width:34px;height:34px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.045);color:var(--text);font-size:18px;display:grid;place-items:center;padding:0}.gf-calendar-widget-actions .month-open{width:auto;min-width:68px;padding:0 10px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.gf-calendar-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.gf-calendar-day{appearance:none;-webkit-appearance:none;min-width:0;min-height:67px;border-radius:14px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.035);color:var(--text);padding:6px 2px 5px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;overflow:hidden}
+.gf-calendar-day .dow{font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:rgba(215,226,247,.58);font-weight:800}.gf-calendar-day .date{font-size:15px;line-height:1.05;font-weight:800}.gf-calendar-day .slot{font-size:7px;line-height:1.1;text-transform:uppercase;letter-spacing:.05em;color:rgba(205,219,244,.62);max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gf-calendar-day .cal-mini-dot{width:5px;height:5px;border-radius:50%;margin-top:auto;background:rgba(138,160,196,.34)}
+.gf-calendar-day.training{background:rgba(60,130,220,.10);border-color:rgba(84,161,255,.18)}.gf-calendar-day.training .cal-mini-dot{background:#68b9ff;box-shadow:0 0 9px rgba(104,185,255,.7)}
+.gf-calendar-day.today{border-color:rgba(104,210,255,.62);box-shadow:inset 0 0 0 1px rgba(104,210,255,.24);background:rgba(57,167,220,.14)}.gf-calendar-day.today .date{color:#bfeaff}.gf-calendar-day.override:after{content:'';position:absolute;width:5px;height:5px;border-radius:50%;right:5px;top:5px;background:#ffc56b}
+.gf-calendar-day{position:relative}
+.gf-calendar-widget-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px;font-size:10px;color:var(--muted)}.gf-calendar-widget-foot b{color:#b9d8ff;font-weight:750}
+.gf-full-calendar-shell .training-calendar{margin:0;border:0;background:transparent;padding:0}.gf-full-calendar-shell .cal-tools{margin-top:12px}
+
+.gf-checkin-brief{padding:16px;margin-bottom:12px;border:1px solid rgba(118,172,255,.18);background:linear-gradient(145deg,rgba(14,29,56,.95),rgba(7,14,31,.96))}
+.gf-checkin-brief-head{display:flex;gap:11px;align-items:center;margin-bottom:12px}.gf-checkin-brief-avatar{width:42px;height:42px;border-radius:50%;overflow:hidden;flex:0 0 42px;border:1px solid rgba(147,194,255,.3);background:#081020}.gf-checkin-brief-avatar img{width:100%;height:100%;object-fit:cover}.gf-checkin-brief-head h3{margin:2px 0 1px;font-size:20px}.gf-checkin-brief-head p{margin:0;font-size:11px;color:var(--muted)}
+.gf-checkin-summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:11px}.gf-checkin-summary-grid>div{min-width:0;padding:9px 8px;border-radius:13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}.gf-checkin-summary-grid span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:4px}.gf-checkin-summary-grid b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gf-checkin-summary-copy{font-size:12px;line-height:1.48;color:#dbe7fb;margin:0 0 12px}.gf-checkin-tips{display:grid;gap:7px}.gf-checkin-tip{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;align-items:start;padding:8px 9px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055)}.gf-checkin-tip i{font-style:normal;width:22px;height:22px;border-radius:8px;display:grid;place-items:center;background:rgba(104,185,255,.12);color:#9ed4ff;font-size:11px;font-weight:900}.gf-checkin-tip b{display:block;font-size:11px;margin-bottom:1px}.gf-checkin-tip span{display:block;font-size:10px;line-height:1.35;color:var(--muted)}
+.gf-checkin-brief-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.07);font-size:10px;color:var(--muted)}.gf-checkin-brief-footer button{border:0;background:none;color:#94ccff;font:inherit;font-weight:800;padding:5px 0}
+@media(max-width:390px){.gf-calendar-widget{padding:12px 10px}.gf-calendar-week{gap:3px}.gf-calendar-day{min-height:62px;border-radius:12px}.gf-calendar-day .date{font-size:14px}.gf-calendar-day .slot{font-size:6.5px}.gf-checkin-summary-grid{gap:5px}.gf-checkin-summary-grid>div{padding:8px 6px}.gf-checkin-summary-grid b{font-size:13px}}
+
+
+/* ============================================================================
+   v4.0.23 · TRAIN PAGE ANALYSIS + STOWED CALENDAR
+   ========================================================================== */
+.gf-train-calendar-btn{
+  width:38px;height:38px;min-width:38px;min-height:38px;flex:0 0 38px;
+  border-radius:50%;border:1px solid rgba(151,194,255,.16);
+  background:rgba(255,255,255,.045);color:#dceaff;display:none;place-items:center;
+  padding:0;margin:0;font:inherit;cursor:pointer;position:relative;
+}
+.gf-train-calendar-btn.on{display:grid}
+.gf-train-calendar-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.gf-train-calendar-btn:after{content:"";position:absolute;right:4px;top:4px;width:5px;height:5px;border-radius:50%;background:#72c6ff;box-shadow:0 0 9px rgba(114,198,255,.55)}
+.gf-workout-analysis{padding:17px;margin-bottom:12px;border:1px solid rgba(118,174,255,.18);background:linear-gradient(145deg,rgba(14,31,58,.96),rgba(7,14,31,.97));overflow:hidden}
+.gf-workout-analysis-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.gf-workout-analysis-head h2{font-size:25px;letter-spacing:-.035em;margin:3px 0 2px}.gf-workout-analysis-head p{margin:0;font-size:11px;line-height:1.4;color:var(--muted)}
+.gf-workout-analysis-head .analysis-pill{flex:0 0 auto}
+.gf-workout-analysis-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:11px 0}
+.gf-workout-analysis-kpis>div{padding:10px 9px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);min-width:0}
+.gf-workout-analysis-kpis span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:rgba(215,228,255,.46);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gf-workout-analysis-kpis b{display:block;margin-top:4px;font-size:16px;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gf-workout-analysis-bars{display:grid;gap:8px;margin-top:11px}
+.gf-workout-analysis-row{padding:10px 11px;border-radius:16px;background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.055)}
+.gf-workout-analysis-row-top{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:10px}.gf-workout-analysis-row-top span{color:var(--muted)}.gf-workout-analysis-row-top b{font-size:11px;color:#c9e4ff}
+.gf-workout-analysis-track{height:6px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.07);margin-top:7px}.gf-workout-analysis-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#6caaff,#5ed8ff)}
+.gf-workout-analysis-note{margin-top:11px;padding:12px 13px;border-radius:18px;background:rgba(92,143,255,.07);border:1px solid rgba(108,164,255,.13)}
+.gf-workout-analysis-note .eyebrow{margin-bottom:5px}.gf-workout-analysis-note p{margin:0;font-size:12px;line-height:1.48;color:rgba(232,240,255,.79)}
+.gf-workout-analysis-signal{display:flex;align-items:flex-start;gap:9px;margin-top:9px;padding-top:9px;border-top:1px solid rgba(255,255,255,.06)}
+.gf-workout-analysis-signal i{font-style:normal;width:26px;height:26px;border-radius:9px;background:rgba(81,157,255,.12);border:1px solid rgba(106,174,255,.15);display:grid;place-items:center;color:#90ccff;flex:0 0 auto;font-weight:800}
+.gf-workout-analysis-signal b{display:block;font-size:11px}.gf-workout-analysis-signal span{display:block;font-size:10px;color:var(--muted);line-height:1.4;margin-top:2px}
+@media(max-width:430px){.gf-workout-analysis-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style>
 </head>
 <body>
@@ -1027,7 +1082,7 @@ body.coach-home-active > .gf-setup-alert{
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.19';
+const APP_VERSION='4.0.23';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -3231,13 +3286,136 @@ finishCanonicalWorkout=function(){
   const w=currentWorkoutRecord();if(!w)return;const s=plan.training.sessions.find(x=>x.id===w.sessionId);if(!w.setEntries.length){toast('Log at least one working set');return}w.exercises=(s.exercises||[]).map(e=>({id:workoutExerciseKey(e),name:e.name,focus:e.focus||'',sets:w.setEntries.filter(x=>x.exerciseKey===workoutExerciseKey(e)).length})).filter(x=>x.sets>0);w.completed=true;w.completedAt=new Date().toISOString();w.postWorkout=w.postWorkout||{};w.postWorkout.generatedAt=new Date().toISOString();write();clearInterval(canonicalRestHandle);canonicalRestHandle=null;canonicalRestRemaining=0;canonicalRestPaused=false;const id=w.id;canonicalWorkout=null;renderAll();toast('Workout complete — Hercules has your debrief');setTimeout(()=>gfOpenPostWorkoutDebrief(id),140)
 };
 
+
+// ============================================================================
+// v4.0.22 · COMPACT CALENDAR WIDGET + HERCULES PRE-CHECK-IN BRIEF
+// ============================================================================
+let gfCalendarWeekOffset=0;
+function gfStartOfWeek(date=new Date()){
+  const d=new Date(date);d.setHours(12,0,0,0);const offset=(d.getDay()+6)%7;d.setDate(d.getDate()-offset);return d;
+}
+function gfCalendarWeekDates(){
+  const start=gfStartOfWeek(new Date());start.setDate(start.getDate()+gfCalendarWeekOffset*7);return Array.from({length:7},(_,i)=>{const d=new Date(start);d.setDate(start.getDate()+i);return d});
+}
+function gfCompactCalendarHTML(){
+  ensureProgressExtras();const dates=gfCalendarWeekDates(),today=todayISO(),first=dates[0],last=dates[6],sameMonth=first.getMonth()===last.getMonth(),range=sameMonth?`${first.toLocaleDateString(undefined,{day:'numeric',month:'short'})} – ${last.toLocaleDateString(undefined,{day:'numeric'})}`:`${first.toLocaleDateString(undefined,{day:'numeric',month:'short'})} – ${last.toLocaleDateString(undefined,{day:'numeric',month:'short'})}`;
+  const trainingDates=dates.filter(d=>isTrainingDate(d));const next=dates.find(d=>localISODate(d)>=today&&isTrainingDate(d)),nextS=next?sessionForDate(next):null;
+  const days=dates.map(d=>{const iso=localISODate(d),train=isTrainingDate(d),s=sessionForDate(d),ov=Object.prototype.hasOwnProperty.call(progress.settings.trainingDayOverrides||{},iso),day=d.toLocaleDateString(undefined,{weekday:'short'}).slice(0,2);return `<button type="button" class="gf-calendar-day ${train?'training':'rest'} ${iso===today?'today':''} ${ov?'override':''}" onclick="toggleTrainingDate('${iso}')" aria-label="${train?'Training':'Rest'} ${iso}"><span class="dow">${esc(day)}</span><span class="date">${d.getDate()}</span><span class="slot">${train?esc(calendarSessionShortLabel(s)):'Rest'}</span><i class="cal-mini-dot"></i></button>`}).join('');
+  return `<div class="card glass gf-calendar-widget"><div class="gf-calendar-widget-head"><div class="gf-calendar-widget-title"><div class="eyebrow">Schedule</div><h3>${gfCalendarWeekOffset===0?'This week':range}</h3><p>${nextS?`Next: ${esc(nextS.name)} · ${esc(next.toLocaleDateString(undefined,{weekday:'short',day:'numeric'}))}`:`${trainingDates.length} training day${trainingDates.length===1?'':'s'} this week`}</p></div><div class="gf-calendar-widget-actions"><button type="button" onclick="gfChangeCalendarWeek(-1)" aria-label="Previous week">‹</button><button type="button" class="month-open" onclick="gfOpenFullCalendar()">Month</button><button type="button" onclick="gfChangeCalendarWeek(1)" aria-label="Next week">›</button></div></div><div class="gf-calendar-week">${days}</div><div class="gf-calendar-widget-foot"><span>Tap a day to switch training/rest</span><b>${trainingDates.length} planned</b></div></div>`;
+}
+function gfChangeCalendarWeek(delta){gfCalendarWeekOffset+=Number(delta)||0;renderTrain()}
+function gfRenderFullCalendarSheet(){
+  const sheet=document.getElementById('sessionSheet');if(!sheet)return;sheet.classList.remove('workout-sheet');sheet.innerHTML=`<div id="gfFullCalendarSheet" class="gf-full-calendar-shell"><div class="grabber"></div>${trainingCalendarHTML()}<button class="btn secondary" style="width:100%;margin-top:12px" onclick="closeSession()">Done</button></div>`;
+}
+function gfOpenFullCalendar(){gfRenderFullCalendarSheet();document.getElementById('sessionModal').classList.add('open')}
+const gfToggleTrainingDateV4022Base=toggleTrainingDate;
+toggleTrainingDate=function(iso){gfToggleTrainingDateV4022Base(iso);if(document.getElementById('gfFullCalendarSheet'))setTimeout(gfRenderFullCalendarSheet,0)};
+changeCalendarMonth=function(delta){calendarMonthOffset+=Number(delta)||0;renderTrain();if(document.getElementById('gfFullCalendarSheet'))setTimeout(gfRenderFullCalendarSheet,0)};
+
+// Keep the calendar compact and place it before the workout launcher.
+const gfRenderTrainV4022Base=renderTrain;
+renderTrain=function(){
+  gfRenderTrainV4022Base();const root=document.getElementById('train');if(!root)return;root.querySelector('.training-calendar')?.remove();root.querySelector('.gf-calendar-widget')?.remove();root.insertAdjacentHTML('afterbegin',gfCompactCalendarHTML());
+};
+
+function gfCheckinRecentWorkouts(days=7){
+  const cutoff=new Date();cutoff.setHours(0,0,0,0);cutoff.setDate(cutoff.getDate()-(days-1));return (progress?.workoutLogs||[]).filter(w=>w&&w.completed!==false&&new Date(String(w.date||'')+'T12:00:00')>=cutoff);
+}
+function gfCheckinScheduledCount(days=7){
+  let count=0;const d=new Date();d.setHours(12,0,0,0);for(let i=0;i<days;i++){const x=new Date(d);x.setDate(d.getDate()-i);if(isTrainingDate(x))count++}return count;
+}
+function gfCheckinMacroStatus(){
+  const avg=typeof recentMacroAverages==='function'?recentMacroAverages(7):null,n=plan?.nutrition||{};if(!avg)return {protein:null,carbs:null,fat:null,calories:null,days:0};const pct=(v,t)=>Number(t)>0?Math.round((Number(v)||0)/Number(t)*100):null;return {protein:pct(avg.protein,n.proteinG),carbs:pct(avg.carbs,n.carbsG),fat:pct(avg.fat,n.fatG),calories:pct(avg.calories,n.calories),days:avg.days||avg.count||0}}
+function gfLatestStrengthSignal(){
+  const logs=[...(progress?.workoutLogs||[])].filter(w=>w?.completed!==false&&Array.isArray(w?.setEntries)&&w.setEntries.length).sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));if(logs.length<2)return null;const latest=logs.at(-1),same=[...logs.slice(0,-1)].reverse().find(w=>w.sessionId===latest.sessionId);if(!same)return null;const a=gfWorkoutBestByExercise?gfWorkoutBestByExercise(latest):{},b=gfWorkoutBestByExercise?gfWorkoutBestByExercise(same):{};let best=null;for(const [k,v] of Object.entries(a)){if(b[k]?.score>0){const change=(v.score/b[k].score-1)*100;if(!best||change>best.change)best={name:v.exerciseName||k,change}}}return best
+}
+function gfCheckinBriefData(){
+  ensureProgressExtras();if(typeof ensureWeeklyReviewIds==='function')ensureWeeklyReviewIds();const reviews=typeof sortedWeeklyReviews==='function'?sortedWeeklyReviews():[...(progress?.weeklyCheckins||[])].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))),last=reviews[0]||null,current=Number(latestWeight())||Number(plan?.client?.startWeightKg)||0,guide=typeof projectedWeightOn==='function'?projectedWeightOn(todayISO()):typeof targetToday==='function'?targetToday():current,delta=current-guide,workouts=gfCheckinRecentWorkouts(7),scheduled=gfCheckinScheduledCount(7),mac=gfCheckinMacroStatus(),strength=gfLatestStrengthSignal(),analysis=last?.analysis||latestPhysiqueAnalysis?.()?.analysis||null;
+  const lastDate=last?.date||plan?.goal?.startDate||todayISO(),daysSince=Math.max(0,daysBetween(lastDate,todayISO()));let summary='';
+  if(!last)summary=`This is your first full review. Use today to create a clean visual baseline, then future check-ins can separate real physique change from day-to-day noise.`;
+  else{const direction=delta>0.4?'ahead of':delta<-.4?'below':'close to';summary=`You are ${Math.abs(delta).toFixed(1)} kg ${direction} the projected weight line. You completed ${workouts.length}${scheduled?` of about ${scheduled}`:''} scheduled sessions in the last 7 days${daysSince?`, and your last saved check-in was ${daysSince} day${daysSince===1?'':'s'} ago`:''}.`;}
+  const tips=[];
+  if(delta<-.4)tips.push({icon:'↗',title:'Fuel the trend',text:'Bodyweight is below the guide. Prioritise hitting calories consistently before changing the training plan.'});
+  else if(delta>.55)tips.push({icon:'≈',title:'Hold the surplus',text:'Weight is running ahead of the guide. Keep calories steady for now and use today’s visual review to judge whether the extra gain is productive.'});
+  else tips.push({icon:'✓',title:'Keep the pace',text:'Weight is tracking the planned line closely. Consistency is more useful than making a new adjustment this week.'});
+  if(mac.protein!==null&&mac.protein<90)tips.push({icon:'P',title:'Protein first',text:`Your recent protein intake is averaging about ${mac.protein}% of target. Close that gap before adding more complexity.`});
+  else if(mac.calories!==null&&mac.calories<90)tips.push({icon:'C',title:'Calories need attention',text:`Recent intake is around ${mac.calories}% of target. A missed surplus can hide good training progress on the scale.`});
+  if(scheduled>=2&&workouts.length<Math.max(1,scheduled-1))tips.push({icon:'↑',title:'Training consistency',text:`Only ${workouts.length} completed session${workouts.length===1?'':'s'} are logged over the last week. Resume the normal schedule rather than trying to cram missed work in.`});
+  if(strength&&strength.change>2)tips.push({icon:'+',title:'Strength signal',text:`${strength.name} is up roughly ${Math.round(strength.change)}% versus the previous comparable session — a useful sign that training is moving.`});
+  const priority=(analysis?.feedback?.priority||[]).map(regionLabel).filter(Boolean);if(priority.length)tips.push({icon:'◎',title:'Visual focus',text:`Re-check ${priority.slice(0,2).join(' and ')} under similar lighting and distance. ${analysis?.feedback?.training||'Use the next visual review to decide whether training emphasis should change.'}`});
+  return {last,current,guide,delta,workouts,scheduled,mac,strength,analysis,summary,tips:tips.slice(0,3)};
+}
+function gfCheckinBriefHTML(){
+  const d=gfCheckinBriefData(),status=Math.abs(d.delta)<=.4?'On track':d.delta<0?'Below guide':'Ahead of guide',macroVals=[d.mac.protein,d.mac.carbs,d.mac.fat].filter(Number.isFinite),macroAvg=macroVals.length?Math.round(gfArrayMean(macroVals)):null,workText=d.scheduled?`${d.workouts.length}/${d.scheduled}`:`${d.workouts.length}`;
+  return `<div class="card glass gf-checkin-brief"><div class="gf-checkin-brief-head"><div class="gf-checkin-brief-avatar"><img src="${GFCoach.portraitSrc}" alt="Hercules"></div><div><div class="eyebrow">Hercules · Pre-check-in</div><h3>Your progress brief</h3><p>Generated from your latest logged data</p></div></div><div class="gf-checkin-summary-grid"><div><span>Weight</span><b>${d.current.toFixed(1)} kg</b></div><div><span>Trajectory</span><b>${esc(status)}</b></div><div><span>Training 7d</span><b>${esc(workText)}</b></div></div><p class="gf-checkin-summary-copy">${esc(d.summary)}</p><div class="gf-checkin-tips">${d.tips.map(t=>`<div class="gf-checkin-tip"><i>${esc(t.icon)}</i><div><b>${esc(t.title)}</b><span>${esc(t.text)}</span></div></div>`).join('')}</div><div class="gf-checkin-brief-footer"><span>${macroAvg!==null?`Macro adherence ≈ ${macroAvg}%`:'Log meals to unlock nutrition context'}</span><button type="button" onclick="showTab('progress')">Open analysis →</button></div></div>`;
+}
+const gfRenderCheckinV4022Base=renderCheckin;
+renderCheckin=function(){gfRenderCheckinV4022Base();const root=document.getElementById('checkin');if(!root)return;root.querySelector('.gf-checkin-brief')?.remove();root.insertAdjacentHTML('afterbegin',gfCheckinBriefHTML())};
+
+
+// ============================================================================
+// v4.0.23 · TRAIN PAGE ANALYSIS + STOWED CALENDAR
+// ============================================================================
+function gfEnsureTrainCalendarButton(){
+  const actions=document.getElementById('gfTopbarActions');if(!actions)return null;
+  let btn=document.getElementById('gfTrainCalendarButton');
+  if(!btn){
+    btn=document.createElement('button');btn.id='gfTrainCalendarButton';btn.className='gf-train-calendar-btn';btn.type='button';btn.setAttribute('aria-label','Open training calendar');btn.title='Training calendar';
+    btn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5v3M17.5 3.5v3M4.5 8.5h15M5.5 5.5h13a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1v-12a1 1 0 0 1 1-1Z"/><path d="M8 12h2M14 12h2M8 16h2M14 16h2"/></svg>';
+    btn.addEventListener('click',gfOpenFullCalendar);
+    const alert=document.getElementById('gfProfileSetupAlert');actions.insertBefore(btn,alert||actions.firstChild);
+  }
+  return btn;
+}
+function gfSyncTrainCalendarButton(){const btn=gfEnsureTrainCalendarButton();if(!btn)return;btn.classList.toggle('on',currentTab==='train'&&!document.body.classList.contains('coach-home-active'))}
+function gfWorkoutLogsBetween(days,offset=0){
+  const end=new Date();end.setHours(23,59,59,999);end.setDate(end.getDate()-(Number(offset)||0));const start=new Date(end);start.setHours(0,0,0,0);start.setDate(start.getDate()-(Math.max(1,Number(days)||7)-1));
+  return (progress?.workoutLogs||[]).filter(w=>w&&w.completed!==false&&/^\d{4}-\d{2}-\d{2}$/.test(String(w.date||''))&&(()=>{const d=new Date(String(w.date)+'T12:00:00');return d>=start&&d<=end})());
+}
+function gfScheduledBetween(days,offset=0){
+  let count=0;const end=new Date();end.setHours(12,0,0,0);end.setDate(end.getDate()-(Number(offset)||0));for(let i=0;i<Math.max(1,Number(days)||7);i++){const d=new Date(end);d.setDate(end.getDate()-i);if(isTrainingDate(d))count++}return count;
+}
+function gfWorkoutAggregate(logs){
+  const list=Array.isArray(logs)?logs:[],sets=list.reduce((n,w)=>n+(w.setEntries||[]).length,0),volume=list.reduce((n,w)=>n+(Number(workoutVolume(w))||0),0),durations=list.map(gfWorkoutDurationMinutes).filter(v=>v>0),rirs=list.flatMap(w=>(w.setEntries||[]).map(s=>Number(s.rir)).filter(Number.isFinite));
+  return {sessions:list.length,sets,volume,duration:durations.length?Math.round(gfArrayMean(durations)):0,avgRir:rirs.length?gfArrayMean(rirs):null};
+}
+function gfWorkoutAnalysisData(){
+  const recent=gfWorkoutLogsBetween(7,0),previous=gfWorkoutLogsBetween(7,7),a=gfWorkoutAggregate(recent),b=gfWorkoutAggregate(previous),scheduled=gfScheduledBetween(7,0),completion=scheduled?clamp((a.sessions/scheduled)*100,0,120):(a.sessions?100:0),volumeDelta=b.volume>0?((a.volume/b.volume)-1)*100:null,strength=typeof gfLatestStrengthSignal==='function'?gfLatestStrengthSignal():null;
+  const latest=[...(progress?.workoutLogs||[])].filter(w=>w?.completed!==false).sort((x,y)=>String(y.completedAt||y.date||'').localeCompare(String(x.completedAt||x.date||'')))[0]||null;
+  let status='Building baseline',advice='Complete a few logged workouts and Hercules will start comparing session quality, progression and recovery signals.';
+  if(a.sessions){
+    status=completion>=90?'On schedule':completion>=65?'Partially complete':'Consistency low';
+    if(Number.isFinite(a.avgRir)&&a.avgRir<0.8)advice='Recent work is clustering very close to failure. Keep the next session technically clean and avoid increasing load across every exercise at once.';
+    else if(Number.isFinite(a.avgRir)&&a.avgRir>2.5&&completion>=85)advice='You are completing the work with plenty in reserve. Progress one or two key lifts when the top of the rep range is repeatable with clean form.';
+    else if(completion<70)advice='The main opportunity is consistency. Resume the normal schedule instead of compensating with extra sets in the next workout.';
+    else if(Number.isFinite(volumeDelta)&&volumeDelta>12)advice='Training load has risen meaningfully versus the previous week. Hold execution quality and recovery steady before pushing another large jump.';
+    else if(strength&&strength.change>2)advice=`${strength.name} is showing a positive strength signal. Keep the movement standardised and look for another small rep or load improvement next time.`;
+    else advice='Training is reasonably stable. Keep the same movement quality and aim for one small progression signal next time: an extra rep, cleaner execution or a modest load increase.';
+  }
+  return {recent,previous,a,b,scheduled,completion,volumeDelta,strength,latest,status,advice};
+}
+function gfWorkoutAnalysisHTML(){
+  const d=gfWorkoutAnalysisData(),volume=d.a.volume?`${Math.round(d.a.volume/100)/10}k kg`:'—',rir=Number.isFinite(d.a.avgRir)?d.a.avgRir.toFixed(1):'—',completionText=d.scheduled?`${d.a.sessions}/${d.scheduled}`:`${d.a.sessions}`,compBar=Math.min(100,Math.round(d.completion)),volText=Number.isFinite(d.volumeDelta)?`${d.volumeDelta>=0?'+':''}${Math.round(d.volumeDelta)}% vs prior 7d`:'Need prior week',volBar=Number.isFinite(d.volumeDelta)?clamp(50+d.volumeDelta*1.5,8,100):15;
+  const signal=d.strength&&Number.isFinite(d.strength.change)?`<div class="gf-workout-analysis-signal"><i>+</i><div><b>${esc(d.strength.name)} strength signal</b><span>Estimated performance is up about ${Math.round(d.strength.change)}% versus the previous comparable session.</span></div></div>`:d.latest?`<div class="gf-workout-analysis-signal"><i>↗</i><div><b>Latest: ${esc(d.latest.sessionName||'Workout')}</b><span>${(d.latest.setEntries||[]).length} working sets logged${gfWorkoutDurationMinutes(d.latest)?` · ${gfWorkoutDurationMinutes(d.latest)} min`:''}.</span></div></div>`:'';
+  return `<div class="card glass gf-workout-analysis"><div class="gf-workout-analysis-head"><div><div class="eyebrow">Hercules · Training intelligence</div><h2>Workout analysis</h2><p>Live read of your recent training quality and progression.</p></div><span class="analysis-pill">${esc(d.status)}</span></div><div class="gf-workout-analysis-kpis"><div><span>Sessions 7d</span><b>${esc(completionText)}</b></div><div><span>Working sets</span><b>${d.a.sets||0}</b></div><div><span>Volume 7d</span><b>${volume}</b></div><div><span>Avg RIR</span><b>${rir}</b></div></div><div class="gf-workout-analysis-bars"><div class="gf-workout-analysis-row"><div class="gf-workout-analysis-row-top"><span>Schedule completion</span><b>${Math.round(d.completion)}%</b></div><div class="gf-workout-analysis-track"><i style="width:${compBar}%"></i></div></div><div class="gf-workout-analysis-row"><div class="gf-workout-analysis-row-top"><span>Training volume trend</span><b>${esc(volText)}</b></div><div class="gf-workout-analysis-track"><i style="width:${volBar}%"></i></div></div></div><div class="gf-workout-analysis-note"><div class="eyebrow">Hercules says</div><p>${esc(d.advice)}</p>${signal}</div></div>`;
+}
+const gfRenderTrainV4023Base=renderTrain;
+renderTrain=function(){
+  gfRenderTrainV4023Base();const root=document.getElementById('train');if(!root)return;
+  root.querySelector('.gf-calendar-widget')?.remove();root.querySelector('.training-calendar')?.remove();root.querySelector('.gf-workout-analysis')?.remove();
+  root.insertAdjacentHTML('afterbegin',gfWorkoutAnalysisHTML());gfSyncTrainCalendarButton();
+};
+const gfShowTabV4023Base=showTab;
+showTab=function(tab){const result=gfShowTabV4023Base.apply(this,arguments);setTimeout(gfSyncTrainCalendarButton,0);return result};
+setTimeout(gfSyncTrainCalendarButton,0);
+
 </script>
 
 <script>
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.21', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.23', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });

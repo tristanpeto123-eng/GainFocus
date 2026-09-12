@@ -61,3 +61,6 @@ v4.0.18: aligned incomplete-profile alert horizontally with the profile/avatar c
 
 
 v4.0.19: profile setup alert and account/avatar buttons now share one structural flex row for exact horizontal alignment on iOS Safari.
+
+
+v4.0.22: Compact weekly calendar widget at top of Train with full month view; generated Hercules pre-check-in progress summary and contextual tips.
