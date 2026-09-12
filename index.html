@@ -849,6 +849,18 @@ body.coach-home-active #nav{opacity:1;pointer-events:auto;transform:translateX(-
 .historic-form{display:grid;gap:12px;margin-top:14px}.historic-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}.historic-field{min-width:0}.historic-field label{margin:0 0 6px}.historic-field .input{height:52px!important;border-radius:17px!important;box-sizing:border-box}.historic-wide{grid-column:1/-1}.historic-note{min-height:88px}.historic-video{padding:13px;border-radius:18px;background:rgba(255,255,255,.032);border:1px solid rgba(255,255,255,.07)}.historic-video-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.historic-video-copy{min-width:0}.historic-video-copy b,.historic-video-copy span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.historic-video-copy span{font-size:10px;color:var(--muted);margin-top:3px}.historic-upload{display:flex;align-items:center;justify-content:center;min-height:42px;padding:0 12px;border-radius:14px;border:1px solid rgba(117,190,255,.15);background:rgba(91,163,255,.07);color:#e9f6ff;font-size:11px;font-weight:760;white-space:nowrap}.historic-analysis-status{font-size:10px;line-height:1.45;color:var(--muted);margin-top:9px}.historic-analysis-status.working{color:#a6dcff}.historic-analysis-status.done{color:#b9ffd2}.historic-analysis-status.error{color:#ffb0b0}.historic-actions{display:grid;grid-template-columns:1fr 1.25fr;gap:9px;margin-top:2px}.badge.historic{color:#cfb8ff;background:rgba(155,120,255,.09);border-color:rgba(155,120,255,.14)}
 @media(max-width:420px){.historic-grid{grid-template-columns:1fr 1fr;gap:9px}.historic-field .input{height:50px!important;padding-left:12px!important;padding-right:12px!important}.historic-wide{grid-column:1/-1}.historic-actions{grid-template-columns:1fr}}
 
+
+
+/* ===== v4.0.17 optional baseline setup + Hercules entry briefing ===== */
+.gf-setup-alert{position:fixed;z-index:74;top:calc(14px + env(safe-area-inset-top));right:62px;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,183,92,.28);background:radial-gradient(circle at 35% 28%,rgba(255,212,125,.22),rgba(255,151,74,.10) 55%,rgba(255,255,255,.045));color:#ffd6a2;display:none;place-items:center;font-size:16px;font-weight:900;box-shadow:0 0 0 1px rgba(255,165,78,.04),0 8px 24px rgba(0,0,0,.26),0 0 22px rgba(255,150,69,.08)}
+.gf-setup-alert.show{display:grid}.gf-setup-alert:after{content:"";position:absolute;width:8px;height:8px;right:0;top:1px;border-radius:50%;background:#ff915e;box-shadow:0 0 12px rgba(255,126,78,.75);animation:gfSetupPulse 1.7s ease-in-out infinite}@keyframes gfSetupPulse{0%,100%{transform:scale(.88);opacity:.65}50%{transform:scale(1.22);opacity:1}}
+body.coach-home-active .gf-setup-alert{right:16px;top:calc(16px + env(safe-area-inset-top))}
+.gf-setup-banner{margin:10px 0 0;padding:11px 12px;border-radius:15px;border:1px solid rgba(255,184,104,.12);background:rgba(255,155,83,.045);font-size:10px;line-height:1.45;color:rgba(242,229,214,.68)}
+.gf-profile-media-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}.gf-profile-media-card{position:relative;min-height:116px;border-radius:18px;padding:12px 9px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;border:1px dashed rgba(126,190,255,.19);background:rgba(255,255,255,.028);cursor:pointer}.gf-profile-media-card.ready{border-style:solid;border-color:rgba(86,221,148,.18);background:rgba(86,221,148,.045)}.gf-profile-media-card b{font-size:12px}.gf-profile-media-card span{font-size:9px;color:var(--muted);line-height:1.35;margin-top:4px;max-width:100%;overflow:hidden;text-overflow:ellipsis}.gf-profile-media-card small{font-size:8px;color:rgba(215,228,255,.34);margin-top:6px}.gf-profile-setup-status{margin-top:12px;padding:11px 12px;border-radius:15px;background:rgba(112,171,255,.045);border:1px solid rgba(112,171,255,.09);font-size:10px;line-height:1.45;color:var(--muted)}
+.gf-entry-modal{position:fixed;inset:0;z-index:110;display:none;align-items:flex-end;justify-content:center;padding:18px 14px calc(18px + env(safe-area-inset-bottom));background:rgba(2,5,14,.67);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}.gf-entry-modal.open{display:flex}.gf-entry-sheet{width:min(620px,100%);max-height:min(82vh,760px);overflow:auto;border-radius:30px;padding:18px;background:radial-gradient(circle at 12% 0,rgba(76,139,255,.13),transparent 34%),linear-gradient(180deg,rgba(15,24,46,.98),rgba(7,12,27,.985));border:1px solid rgba(128,190,255,.14);box-shadow:0 30px 90px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.04)}
+.gf-entry-head{display:flex;gap:13px;align-items:center}.gf-entry-avatar{width:62px;height:62px;flex:0 0 62px;border-radius:20px;overflow:hidden;border:1px solid rgba(139,197,255,.17);background:rgba(255,255,255,.035)}.gf-entry-avatar img{width:100%;height:100%;object-fit:cover}.gf-entry-head h2{font-size:25px;margin:3px 0 0;letter-spacing:-.035em}.gf-entry-head p{font-size:10px;color:var(--muted);margin:3px 0 0}.gf-entry-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}.gf-entry-stat{padding:11px;border-radius:17px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06)}.gf-entry-stat span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:rgba(216,228,255,.42)}.gf-entry-stat b{display:block;margin-top:3px;font-size:16px}.gf-entry-advice{margin-top:12px;padding:13px;border-radius:18px;background:rgba(86,151,255,.055);border:1px solid rgba(104,172,255,.10)}.gf-entry-advice .eyebrow{margin-bottom:6px}.gf-entry-advice p{margin:0;font-size:12px;line-height:1.5;color:rgba(226,235,255,.72)}.gf-entry-advice ul{margin:9px 0 0;padding-left:18px;color:rgba(226,235,255,.67);font-size:11px;line-height:1.5}.gf-entry-actions{display:grid;grid-template-columns:1fr 1.2fr;gap:8px;margin-top:13px}
+@media(max-width:390px){.gf-profile-media-grid{grid-template-columns:1fr}.gf-entry-summary{grid-template-columns:1fr 1fr}.gf-entry-actions{grid-template-columns:1fr}.gf-entry-sheet{border-radius:26px}}
+
 </style>
 </head>
 <body>
@@ -936,7 +948,7 @@ body.coach-home-active #nav{opacity:1;pointer-events:auto;transform:translateX(-
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.13';
+const APP_VERSION='4.0.17';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -2797,6 +2809,110 @@ showTab=function(tab){
   _showTabV4016Base(tab);
   if(tab==='progress')setTimeout(enforceProgressHistoryCap,0);
 };
+
+
+
+// ============================================================================
+// v4.0.17 · OPTIONAL BASELINE SETUP + HERCULES ENTRY BRIEFING
+// ============================================================================
+const GF_PROFILE_POSES=['front','side','back'];
+let gfProfileSetupPending={};
+let gfEntryBriefShown=false;
+
+function gfPendingBaselineAnalysis(){
+  return {engine:'baseline-pending',pending:true,framesAnalysed:0,scores:{arms:50,chest:50,lats:50,shoulders:50,legs:50},developing:[],maintain:[],priority:[],summary:'Baseline media is still pending. Hercules will start with a balanced programme and refine the plan once the front, side and back views are added.'};
+}
+function gfBaselineEntries(){
+  const rows=[...(progress?.baselineVideos||[]),...(progress?.baselineMedia||[])];
+  const seen=new Set();return rows.filter(x=>x&&GF_PROFILE_POSES.includes(x.pose)&&!seen.has(x.pose)&&(seen.add(x.pose),true));
+}
+function gfProfileSetupMissing(){
+  const poses=new Set(gfBaselineEntries().map(x=>x.pose));return GF_PROFILE_POSES.filter(x=>!poses.has(x));
+}
+function gfProfileSetupComplete(){return gfProfileSetupMissing().length===0}
+function gfSyncProfileSetupState(){
+  if(!progress)return;progress.profileSetup||(progress.profileSetup={});
+  const missing=gfProfileSetupMissing();progress.profileSetup.baselineMediaComplete=!missing.length;progress.profileSetup.missingBaselineViews=missing;progress.profileSetup.updatedAt=new Date().toISOString();
+  if(plan?.onboarding){plan.onboarding.profileComplete=!missing.length;plan.onboarding.missingBaselineViews=missing}
+}
+function ensureProfileSetupAlert(){
+  let b=document.getElementById('gfProfileSetupAlert');if(!b){b=document.createElement('button');b.id='gfProfileSetupAlert';b.className='gf-setup-alert';b.type='button';b.innerHTML='!';b.setAttribute('aria-label','Finish setting up your profile');b.onclick=openProfileSetupCompletion;document.body.appendChild(b)}return b;
+}
+function updateProfileSetupAlert(){
+  if(!plan||!progress)return;gfSyncProfileSetupState();const b=ensureProfileSetupAlert();const missing=gfProfileSetupMissing();b.classList.toggle('show',missing.length>0);b.title=missing.length?`Finish setting up your profile · ${missing.length} view${missing.length===1?'':'s'} missing`:'Profile setup complete';
+}
+function gfMediaLabel(entry){if(!entry)return'Not added';const type=String(entry.type||'');return `${type.startsWith('image/')?'Photo':type.startsWith('video/')?'Video':'Media'} · ${entry.name||'saved'}`}
+function gfProfileSetupCard(pose,label){
+  const pending=gfProfileSetupPending[pose],existing=gfBaselineEntries().find(x=>x.pose===pose),ready=!!(pending||existing),desc=pending?`${pending.type?.startsWith('image/')?'Photo':'Video'} · ${pending.name}`:gfMediaLabel(existing);
+  return `<label class="gf-profile-media-card ${ready?'ready':''}"><input class="hidden" type="file" accept="image/*,video/*,.mp4,.mov,.m4v" onchange="gfProfileSetupSelect('${pose}',this)"><b>${ready?'✓ ':''}${label}</b><span>${esc(desc)}</span><small>${ready?'Tap to replace':'Choose photo or video'}</small></label>`;
+}
+function openProfileSetupCompletion(){
+  gfProfileSetupPending={};const missing=gfProfileSetupMissing(),sheet=document.getElementById('sessionSheet');sheet.classList.remove('workout-sheet');
+  sheet.innerHTML=`<div class="grabber"></div><div class="eyebrow">Profile setup</div><h2 style="font-size:29px;margin:5px 0 2px">Finish setting up your profile</h2><p class="muted" style="margin-top:0">Add front, side and back baseline views. Photos or videos are accepted and stay on this device.</p><div class="gf-profile-media-grid">${gfProfileSetupCard('front','Front')}${gfProfileSetupCard('side','Side')}${gfProfileSetupCard('back','Back')}</div><div class="gf-profile-setup-status">${missing.length?`Still needed: <b>${missing.map(x=>x[0].toUpperCase()+x.slice(1)).join(', ')}</b>. You can keep using Gain Focus before these are added.`:'All three baseline views are already present. You can replace any of them here.'}</div><div class="profile-editor-actions"><button class="btn secondary" onclick="closeSession()">Later</button><button class="btn primary" onclick="saveProfileSetupCompletion()">Save profile setup</button></div>`;
+  document.getElementById('sessionModal').classList.add('open');
+}
+function gfProfileSetupSelect(pose,input){const f=input?.files?.[0];if(!f)return;gfProfileSetupPending[pose]=f;openProfileSetupCompletionWithPending()}
+function openProfileSetupCompletionWithPending(){
+  const saved={...gfProfileSetupPending},sheet=document.getElementById('sessionSheet');
+  const missingNow=GF_PROFILE_POSES.filter(p=>!saved[p]&&!gfBaselineEntries().some(x=>x.pose===p));
+  sheet.innerHTML=`<div class="grabber"></div><div class="eyebrow">Profile setup</div><h2 style="font-size:29px;margin:5px 0 2px">Finish setting up your profile</h2><p class="muted" style="margin-top:0">Add front, side and back baseline views. Photos or videos are accepted and stay on this device.</p><div class="gf-profile-media-grid">${gfProfileSetupCard('front','Front')}${gfProfileSetupCard('side','Side')}${gfProfileSetupCard('back','Back')}</div><div class="gf-profile-setup-status">${missingNow.length?`Still needed after saving: <b>${missingNow.map(x=>x[0].toUpperCase()+x.slice(1)).join(', ')}</b>.`:'All three views will be complete after saving.'}</div><div class="profile-editor-actions"><button class="btn secondary" onclick="closeSession()">Later</button><button class="btn primary" onclick="saveProfileSetupCompletion()">Save profile setup</button></div>`;
+}
+async function saveProfileSetupCompletion(){
+  ensureProgressExtras();progress.baselineVideos=Array.isArray(progress.baselineVideos)?progress.baselineVideos:[];
+  for(const pose of GF_PROFILE_POSES){const file=gfProfileSetupPending[pose];if(!file)continue;const old=progress.baselineVideos.find(x=>x.pose===pose);if(old?.key)await deleteMediaBlob(old.key);progress.baselineVideos=progress.baselineVideos.filter(x=>x.pose!==pose);try{const key=`baseline-${pose}-${canonicalUid()}`;await saveMediaBlob(key,file);progress.baselineVideos.push({pose,key,name:file.name,type:file.type,size:file.size,createdAt:new Date().toISOString()})}catch(e){console.error(e)}}
+  gfProfileSetupPending={};gfSyncProfileSetupState();write();updateProfileSetupAlert();closeSession();toast(gfProfileSetupComplete()?'Profile setup complete':'Profile setup saved');
+}
+
+// Baseline media is optional during onboarding. Photos and videos are accepted.
+canonicalVideoCard=function(kind,label){const f=canonicalOnboarding.videos[kind];return `<label class="canon-video ${f?'ready':''}"><input class="hidden" type="file" accept="image/*,video/*,.mp4,.mov,.m4v" onchange="setCanonicalVideo('${kind}',this)"><b>${f?'✓ ':''}${label}</b><span>${f?esc(f.name):'Optional · choose from Photos or Files'}</span><small>${f?(f.type?.startsWith('image/')?'Photo selected · tap to replace':'Video selected · tap to replace'):'Photo or video · can be completed later'}</small></label>`};
+function gfSkipCanonicalBaseline(){if(!canonicalOnboarding.analysis)canonicalOnboarding.analysis=gfPendingBaselineAnalysis();canonicalNext()}
+const gfBaseRenderCanonicalOnboarding=renderCanonicalOnboarding;
+renderCanonicalOnboarding=function(){
+  const o=canonicalOnboarding||freshCanonicalOnboarding();canonicalOnboarding=o;
+  if(canonicalOnboardingStep>=3&&!o.analysis)o.analysis=gfPendingBaselineAnalysis();
+  if(canonicalOnboardingStep===1){
+    const count=Object.values(o.videos||{}).filter(Boolean).length;
+    const body=canonicalOnboardingShell('Add baseline views.','Front, side and back media improves Hercules’ visual feedback, but it is optional during onboarding. You can finish this from the alert in the main app.',`<div class="canon-video-grid">${canonicalVideoCard('front','Front view')}${canonicalVideoCard('side','Side view')}${canonicalVideoCard('back','Back view')}</div><div class="gf-setup-banner">${count?`${count} of 3 views added.`:'No baseline media added yet.'} Skipping does not block account creation.</div>`,`<div class="tour-actions"><button class="btn secondary" onclick="gfSkipCanonicalBaseline()">Skip for now</button><button class="btn primary" onclick="canonicalNext()">Continue${count?` · ${count}/3`:''}</button></div>`);setOnboardCard(body);return;
+  }
+  if(canonicalOnboardingStep===2){
+    const files=Object.values(o.videos||{}).filter(Boolean),allVideos=files.length===3&&files.every(f=>String(f.type||'').startsWith('video/'));
+    const body=canonicalOnboardingShell('Baseline analysis.','If you supplied three video views, Hercules can analyse them now. Photos are saved as references; incomplete media can be finished later.',o.analysis&&!o.analysis.pending?`<div class="canon-analysis"><h3>Baseline ready</h3><p>${esc(o.analysis.summary)}</p></div>`:`<div class="canon-analysis"><h3>${allVideos?'Ready to analyse':'Analysis optional'}</h3><p>${allVideos?'Three video views are ready for local silhouette analysis.':'Continue now and Hercules will use a balanced starter baseline until profile setup is finished.'}</p></div>`,`<div class="tour-actions"><button class="btn secondary" onclick="gfSkipCanonicalBaseline()">Continue without analysis</button>${allVideos?`<button id="canonAnalyseBtn" class="btn primary" onclick="analyseCanonicalBaseline()">Analyse videos</button>`:''}</div>`);setOnboardCard(body);return;
+  }
+  return gfBaseRenderCanonicalOnboarding();
+};
+const gfBaseCompleteCanonicalOnboarding=completeCanonicalOnboarding;
+completeCanonicalOnboarding=async function(){if(canonicalOnboarding&&!canonicalOnboarding.analysis)canonicalOnboarding.analysis=gfPendingBaselineAnalysis();await gfBaseCompleteCanonicalOnboarding();gfSyncProfileSetupState();write();updateProfileSetupAlert()};
+
+function gfAggregateMacroAdherence(days=7){
+  const target=plan?.nutrition||{},logs=progress?.nutritionLogs||[],by={};logs.forEach(x=>{if(!x?.date)return;const d=by[x.date]||(by[x.date]={protein:0,carbs:0,fat:0});d.protein+=Number(x.protein)||0;d.carbs+=Number(x.carbs)||0;d.fat+=Number(x.fat)||0});
+  const dates=Object.keys(by).sort().slice(-days);if(!dates.length)return null;const pct=(k,t)=>t?dates.reduce((a,d)=>a+Math.min(140,(by[d][k]/t)*100),0)/dates.length:null;return {days:dates.length,protein:pct('protein',Number(target.proteinG)||0),carbs:pct('carbs',Number(target.carbsG)||0),fat:pct('fat',Number(target.fatG)||0)};
+}
+function gfRecentWorkoutCount(days=7){const cut=Date.now()-daysMs(days);return (progress?.workoutLogs||[]).filter(w=>w?.completed!==false&&new Date(String(w.completedAt||w.date||'')+(String(w.completedAt||'').includes('T')?'':'T12:00:00')).getTime()>=cut).length}
+function gfStrengthSummary(){
+  if(typeof buildStrengthSeries!=='function')return null;const s=buildStrengthSeries(),rows=[];for(const k of ['Push','Pull','Legs']){const a=s[k]||[];if(a.length>=2){const first=a[0].value,last=a.at(-1).value;if(first>0)rows.push({name:k,change:(last-first)/first*100,last})}}if(!rows.length)return null;rows.sort((a,b)=>b.change-a.change);return rows[0]
+}
+function gfEntryBriefData(){
+  const current=Number(latestWeight())||Number(plan?.client?.startWeightKg)||0,start=Number(plan?.client?.startWeightKg)||current,goal=Number(plan?.goal?.targetWeightKg)||current,target=Number(targetToday())||current,diff=round(current-target,1),workouts=gfRecentWorkoutCount(7),planned=Number(plan?.training?.sessionsPerWeek||plan?.training?.sessions?.length||0),mac=gfAggregateMacroAdherence(7),strength=gfStrengthSummary(),review=latestPhysiqueAnalysis()?.analysis?.feedback||null,missing=gfProfileSetupMissing();
+  const advice=[];
+  if(diff<-.35)advice.push(`Bodyweight is ${Math.abs(diff).toFixed(1)} kg below the projected line. If the 14-day trend stays low and training is progressing, add a small calorie increase.`);else if(diff>.35)advice.push(`Bodyweight is ${diff.toFixed(1)} kg ahead of the projected line. Hold calories and confirm the trend before increasing food.`);else advice.push('Bodyweight is tracking close to the projected gain line. Keep the current calorie target steady.');
+  if(planned&&workouts<planned)advice.push(`${workouts}/${planned} planned sessions were logged in the last 7 days. Get the remaining work in before adding more volume.`);else if(planned)advice.push(`Training consistency is on target at ${workouts} logged session${workouts===1?'':'s'} in the last 7 days.`);
+  if(mac){const lowest=[['protein',mac.protein],['carbs',mac.carbs],['fat',mac.fat]].filter(x=>Number.isFinite(x[1])).sort((a,b)=>a[1]-b[1])[0];if(lowest&&lowest[1]<90)advice.push(`${lowest[0][0].toUpperCase()+lowest[0].slice(1)} is the least consistent macro at about ${Math.round(lowest[1])}% of target across logged days.`)}
+  if(!hasThisWeekCheckin())advice.push('This week’s review is still due; use it to confirm whether the programme needs changing.');
+  if(missing.length)advice.push(`Profile setup is incomplete: add the ${missing.join(', ')} baseline view${missing.length===1?'':'s'} when convenient.`);
+  return {current,start,goal,target,diff,workouts,planned,mac,strength,review,advice};
+}
+function ensureEntryBriefModal(){let m=document.getElementById('gfEntrySummaryModal');if(!m){m=document.createElement('div');m.id='gfEntrySummaryModal';m.className='gf-entry-modal';m.onclick=e=>{if(e.target===m)closeHerculesEntrySummary()};document.body.appendChild(m)}return m}
+function showHerculesEntrySummary(){
+  if(gfEntryBriefShown||!plan||!progress)return;gfEntryBriefShown=true;const d=gfEntryBriefData(),m=ensureEntryBriefModal(),name=String(clientNameValue()||'there').split(/\s+/)[0],progressPct=Math.round(pct()),macroText=d.mac?`${Math.round(d.mac.protein||0)} / ${Math.round(d.mac.carbs||0)} / ${Math.round(d.mac.fat||0)}%`:'No logs yet',strengthText=d.strength?`${d.strength.name} ${d.strength.change>=0?'+':''}${Math.round(d.strength.change)}%`:'Building baseline';
+  m.innerHTML=`<div class="gf-entry-sheet"><div class="gf-entry-head"><div class="gf-entry-avatar"><img src="${GFCoach.portraitSrc}" alt="Hercules"></div><div><div class="eyebrow">Hercules · Progress briefing</div><h2>Welcome back, ${esc(name)}.</h2><p>Here’s what the data says before you start.</p></div></div><div class="gf-entry-summary"><div class="gf-entry-stat"><span>Weight</span><b>${d.current.toFixed(1)} kg</b></div><div class="gf-entry-stat"><span>Goal progress</span><b>${progressPct}%</b></div><div class="gf-entry-stat"><span>Vs projection</span><b>${d.diff>0?'+':''}${d.diff.toFixed(1)} kg</b></div><div class="gf-entry-stat"><span>7-day training</span><b>${d.workouts}${d.planned?` / ${d.planned}`:''}</b></div><div class="gf-entry-stat"><span>Macros P/C/F</span><b>${macroText}</b></div><div class="gf-entry-stat"><span>Strength</span><b>${esc(strengthText)}</b></div></div>${d.review?`<div class="gf-entry-advice"><div class="eyebrow">Latest physique feedback</div><p><b>${esc(d.review.headline||'Latest review')}</b><br>${esc(d.review.summary||'')}</p></div>`:''}<div class="gf-entry-advice"><div class="eyebrow">Advice now</div><ul>${d.advice.slice(0,5).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div><div class="gf-entry-actions"><button class="btn secondary" onclick="closeHerculesEntrySummary()">Got it</button><button class="btn primary" onclick="closeHerculesEntrySummary();showTab('progress')">Open progress</button></div></div>`;m.classList.add('open');setTimeout(()=>GFCoach.pulseSpeak(2100),220)
+}
+function closeHerculesEntrySummary(){document.getElementById('gfEntrySummaryModal')?.classList.remove('open')}
+
+const gfBaseRenderAllV4017=renderAll;
+renderAll=function(){gfBaseRenderAllV4017();updateProfileSetupAlert()};
+const gfBaseEnterAppV4017=enterApp;
+enterApp=function(){gfBaseEnterAppV4017();updateProfileSetupAlert();setTimeout(showHerculesEntrySummary,520)};
+
 
 </script>
 

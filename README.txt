@@ -49,3 +49,6 @@ V4.0.13
 - Check-in and Progress no longer remain blank if another tab throws during rendering.
 - Progress JSON restoration now normalises required extras before rendering.
 - Service worker cache bumped so GitHub Pages/iPhone receives the repaired build rather than stale v4.0.16.
+
+
+v4.0.17: baseline front/side/back media optional in onboarding; incomplete-profile alert; Hercules entry progress briefing.
