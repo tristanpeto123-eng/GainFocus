@@ -51,4 +51,7 @@ V4.0.13
 - Service worker cache bumped so GitHub Pages/iPhone receives the repaired build rather than stale v4.0.16.
 
 
-v4.0.17: baseline front/side/back media optional in onboarding; incomplete-profile alert; Hercules entry progress briefing.
+v4.0.18: baseline front/side/back media optional in onboarding; incomplete-profile alert; Hercules entry progress briefing.
+
+
+v4.0.18: aligned incomplete-profile alert horizontally with the profile/avatar control across responsive layouts.
