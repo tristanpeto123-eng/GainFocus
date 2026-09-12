@@ -33,3 +33,9 @@ v4.0.9: Onboarding baseline videos now use the normal iOS/browser file picker. N
 
 
 v4.0.10: Hercules input now reads “Ask Hercules anything…”
+
+
+V4.0.11
+- Nutrition labels can be uploaded from Photos/Files.
+- OCR foods can be saved as reusable favourites.
+- Diet plan now renders only when a real dietPlan object exists in the client JSON, including meals, food quantities, target macros and guidance.
