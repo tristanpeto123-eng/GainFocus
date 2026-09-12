@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Gain Focus",
   "short_name": "Gain Focus",
-  "description": "Adaptive fitness coaching, training, nutrition, weekly reviews and progress tracking.",
+  "description": "Adaptive fitness coaching with Hercules, guided workouts, nutrition, check-ins and analysis.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -10,8 +10,8 @@
     "standalone",
     "minimal-ui"
   ],
-  "background_color": "#050814",
-  "theme_color": "#050814",
+  "background_color": "#eaf4ff",
+  "theme_color": "#071326",
   "orientation": "portrait-primary",
   "lang": "en-GB",
   "categories": [

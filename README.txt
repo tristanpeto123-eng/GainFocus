@@ -1,3 +1,6 @@
+Gain Focus PWA v4.0.20
+Analysis hub, smarter visual coaching, guided workout launch, local Hercules form/motivation intelligence, profile-shot focused training, and wordmark home icon.
+
 GAIN FOCUS PWA v4.0.16 — GitHub Pages package
 
 Upload the CONTENTS of this folder to the root of your GitHub repository.
@@ -55,3 +58,6 @@ v4.0.18: baseline front/side/back media optional in onboarding; incomplete-profi
 
 
 v4.0.18: aligned incomplete-profile alert horizontally with the profile/avatar control across responsive layouts.
+
+
+v4.0.19: profile setup alert and account/avatar buttons now share one structural flex row for exact horizontal alignment on iOS Safari.

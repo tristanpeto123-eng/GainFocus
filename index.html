@@ -861,6 +861,77 @@ body.coach-home-active .gf-setup-alert{right:16px;top:calc(16px + env(safe-area-
 .gf-entry-head{display:flex;gap:13px;align-items:center}.gf-entry-avatar{width:62px;height:62px;flex:0 0 62px;border-radius:20px;overflow:hidden;border:1px solid rgba(139,197,255,.17);background:rgba(255,255,255,.035)}.gf-entry-avatar img{width:100%;height:100%;object-fit:cover}.gf-entry-head h2{font-size:25px;margin:3px 0 0;letter-spacing:-.035em}.gf-entry-head p{font-size:10px;color:var(--muted);margin:3px 0 0}.gf-entry-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}.gf-entry-stat{padding:11px;border-radius:17px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06)}.gf-entry-stat span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:rgba(216,228,255,.42)}.gf-entry-stat b{display:block;margin-top:3px;font-size:16px}.gf-entry-advice{margin-top:12px;padding:13px;border-radius:18px;background:rgba(86,151,255,.055);border:1px solid rgba(104,172,255,.10)}.gf-entry-advice .eyebrow{margin-bottom:6px}.gf-entry-advice p{margin:0;font-size:12px;line-height:1.5;color:rgba(226,235,255,.72)}.gf-entry-advice ul{margin:9px 0 0;padding-left:18px;color:rgba(226,235,255,.67);font-size:11px;line-height:1.5}.gf-entry-actions{display:grid;grid-template-columns:1fr 1.2fr;gap:8px;margin-top:13px}
 @media(max-width:390px){.gf-profile-media-grid{grid-template-columns:1fr}.gf-entry-summary{grid-template-columns:1fr 1fr}.gf-entry-actions{grid-template-columns:1fr}.gf-entry-sheet{border-radius:26px}}
 
+
+/* ============================================================================
+   v4.0.19 · STRUCTURAL TOP-RIGHT ALIGNMENT
+   Alert + profile button share one flex row; no independent positioning on app tabs.
+   ========================================================================== */
+.gf-topbar-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  flex:0 0 auto;
+  min-height:38px;
+}
+.topbar .gf-topbar-actions .gf-setup-alert{
+  position:relative !important;
+  inset:auto !important;
+  top:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  left:auto !important;
+  width:38px !important;
+  height:38px !important;
+  min-width:38px;
+  min-height:38px;
+  flex:0 0 38px;
+  margin:0 !important;
+  transform:none !important;
+  vertical-align:middle;
+}
+.topbar .gf-topbar-actions .profile-menu-btn{
+  width:38px !important;
+  height:38px !important;
+  min-width:38px;
+  min-height:38px;
+  flex:0 0 38px;
+  margin:0 !important;
+  align-self:center;
+}
+body:not(.coach-home-active) .topbar .gf-topbar-actions{
+  align-self:center;
+}
+/* When Hercules hides the normal topbar, the same alert is temporarily moved to body. */
+body.coach-home-active > .gf-setup-alert{
+  position:fixed !important;
+  z-index:74;
+  top:calc(16px + env(safe-area-inset-top)) !important;
+  right:16px !important;
+  left:auto !important;
+  bottom:auto !important;
+  width:38px !important;
+  height:38px !important;
+  margin:0 !important;
+}
+
+
+/* ==========================================================================\n   v4.0.20 · ANALYSIS HUB + GUIDED WORKOUT\n   ========================================================================== */
+.analysis-hero{padding:20px;border-radius:26px;margin-bottom:12px;background:linear-gradient(160deg,rgba(17,31,57,.92),rgba(7,13,27,.94));border:1px solid rgba(128,190,255,.18);box-shadow:var(--shadow)}
+.analysis-hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.analysis-hero h2{font-size:31px;letter-spacing:-.045em;margin:4px 0 3px}.analysis-hero p{margin:0;color:var(--muted);font-size:12px;line-height:1.45}.analysis-pill{padding:7px 10px;border-radius:999px;border:1px solid rgba(127,214,255,.20);background:rgba(73,143,206,.10);color:#9bdcff;font-size:10px;font-weight:850;white-space:nowrap}
+.analysis-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}.analysis-stat{min-width:0;padding:11px 10px;border-radius:17px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.065)}.analysis-stat span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.analysis-stat b{display:block;font-size:16px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.analysis-card{margin-top:12px}.analysis-card .section{margin-bottom:10px}.analysis-card-note{font-size:11px;line-height:1.45;color:var(--muted);margin:9px 0 0}.analysis-observations{display:grid;gap:8px;margin-top:10px}.analysis-observation{padding:10px 12px;border-radius:15px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);font-size:11px;line-height:1.45}.analysis-observation b{color:#eaf4ff}.analysis-observation.warn{border-color:rgba(255,184,104,.18);background:rgba(255,168,90,.055);color:#ffd7aa}
+.analysis-visual-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px}.analysis-visual-tile{position:relative;min-height:210px;border-radius:20px;overflow:hidden;background:linear-gradient(145deg,rgba(30,47,77,.88),rgba(11,18,33,.95));border:1px solid rgba(255,255,255,.075)}.analysis-visual-tile img{width:100%;height:210px;object-fit:cover;display:block}.analysis-visual-placeholder{min-height:210px;display:grid;place-items:center;text-align:center;padding:18px;color:var(--muted)}.analysis-visual-placeholder b{display:block;color:#eef6ff;margin-bottom:5px}.analysis-visual-cap{position:absolute;left:0;right:0;bottom:0;padding:28px 12px 11px;background:linear-gradient(180deg,transparent,rgba(4,9,20,.94));display:flex;align-items:flex-end;justify-content:space-between;gap:8px}.analysis-visual-cap b{font-size:13px}.analysis-visual-cap span{font-size:10px;color:rgba(230,240,255,.65);text-align:right}
+.analysis-timeline{display:flex;gap:10px;overflow-x:auto;padding:2px 1px 7px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}.analysis-timeline::-webkit-scrollbar{display:none}.timeline-shot{flex:0 0 118px;scroll-snap-align:start;border-radius:18px;overflow:hidden;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}.timeline-shot-media{height:145px;background:linear-gradient(145deg,rgba(30,47,77,.86),rgba(11,18,33,.94));display:grid;place-items:center;color:rgba(220,235,255,.46);font-size:25px}.timeline-shot-media img{width:100%;height:100%;object-fit:cover}.timeline-shot-copy{padding:9px 9px 10px}.timeline-shot-copy b{display:block;font-size:11px}.timeline-shot-copy span{display:block;font-size:9px;color:var(--muted);margin-top:3px}
+.history-divider{margin:18px 0 2px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07)}
+.analysis-focus-box{margin-top:10px;padding:12px;border-radius:17px;background:linear-gradient(145deg,rgba(75,126,191,.11),rgba(113,88,202,.08));border:1px solid rgba(134,174,255,.14)}.analysis-focus-box h4{margin:0 0 5px;font-size:15px}.analysis-focus-box p{margin:0;font-size:11px;line-height:1.45;color:var(--muted)}.analysis-focus-actions{display:flex;gap:8px;margin-top:10px}.analysis-focus-actions .btn{flex:1}
+.analysis-visibility-row{margin:10px 0 0;padding:10px 12px;border-radius:15px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06)}.analysis-visibility-row label{display:block;margin:0 0 6px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}.analysis-visibility-row select{width:100%}
+.training-launch{margin-bottom:12px;padding:18px;border-radius:27px;background:linear-gradient(145deg,rgba(19,40,70,.94),rgba(8,15,29,.95));border:1px solid rgba(112,190,255,.20);box-shadow:var(--shadow)}.training-launch.rest{border-color:rgba(255,255,255,.08)}.training-launch-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.training-launch h2{font-size:29px;letter-spacing:-.04em;margin:4px 0 3px}.training-launch p{margin:0;font-size:12px;color:var(--muted);line-height:1.45}.training-launch-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:13px 0}.training-launch-meta div{padding:9px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06)}.training-launch-meta span{display:block;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.training-launch-meta b{font-size:14px}.training-launch-actions{display:grid;grid-template-columns:1fr auto;gap:8px}.training-launch-actions .btn{margin:0}.training-exercise-mini{display:flex;gap:7px;overflow-x:auto;margin-top:11px;padding-bottom:2px}.training-exercise-mini span{flex:0 0 auto;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.065);font-size:10px;color:rgba(236,244,255,.80)}
+.session-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}.session-overview div{padding:10px;border-radius:15px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06)}.session-overview span{display:block;font-size:9px;color:var(--muted);text-transform:uppercase}.session-overview b{display:block;margin-top:3px;font-size:14px}.session-start-dock{position:sticky;bottom:-14px;padding:12px 0 4px;background:linear-gradient(180deg,transparent,rgba(7,11,22,.97) 28%);z-index:3}.session-start-dock .btn{width:100%}
+.guided-workout-progress{margin:2px 0 12px}.guided-workout-progress-top{display:flex;justify-content:space-between;gap:10px;font-size:10px;color:var(--muted);margin-bottom:6px}.guided-workout-bar{height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.guided-workout-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#62d9ff,#8e8cff)}.previous-performance{margin:8px 0 11px;padding:10px 12px;border-radius:15px;background:rgba(99,158,225,.07);border:1px solid rgba(118,183,255,.12);font-size:11px;line-height:1.45}.previous-performance b{color:#dff2ff}.guided-next-btn{width:100%;margin-top:8px}.workout-help-btn{width:100%;margin-top:8px}
+.gf-goal-wordmark{font-size:19px;letter-spacing:.02em}.gf-goal-wordmark strong{font-weight:900;letter-spacing:.15em}.gf-goal-wordmark span{font-weight:300;letter-spacing:.21em;margin-left:.18em}
+@media(max-width:430px){.analysis-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.analysis-visual-tile,.analysis-visual-tile img,.analysis-visual-placeholder{min-height:185px;height:185px}.training-launch-meta{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
 </style>
 </head>
 <body>
@@ -921,7 +992,10 @@ body.coach-home-active .gf-setup-alert{right:16px;top:calc(16px + env(safe-area-
 <main id="app">
   <div class="topbar">
     <div class="brand-lockup"><span class="brand-logo" aria-hidden="true"><svg viewBox="0 0 32 32" role="presentation"><path class="seg" d="M10 10 L13.5 14.2 L19 13.7 L22 10.6 L25 6.8"></path><path class="seg" d="M13.5 14.2 L12 19.2 L17 21.6 L19.4 18.6 L21.4 21.3 L25 26"></path><path class="seg" d="M7 23.2 L12 19.2 L17 21.6 L15.9 25.1"></path><path class="seg" d="M19 13.7 L19.4 18.6 L21.4 21.3"></path><circle class="node major" cx="10" cy="10" r="1.45"></circle><circle class="node" cx="13.5" cy="14.2" r="1.15"></circle><circle class="node major" cx="19" cy="13.7" r="1.35"></circle><circle class="node" cx="22" cy="10.6" r="1.1"></circle><circle class="node major" cx="25" cy="6.8" r="1.55"></circle><circle class="node" cx="12" cy="19.2" r="1.2"></circle><circle class="node" cx="17" cy="21.6" r="1.1"></circle><circle class="node" cx="15.9" cy="25.1" r=".95"></circle><circle class="node" cx="19.4" cy="18.6" r="1.15"></circle><circle class="node" cx="21.4" cy="21.3" r="1.05"></circle><circle class="node major" cx="25" cy="26" r="1.35"></circle><circle class="node major" cx="7" cy="23.2" r="1.45"></circle></svg></span><div><div class="wordmark brand-wordmark"><span class="gain-word">GAIN</span><span class="focus-word">FOCUS</span></div><h1 id="pageTitle">Today</h1></div></div>
-    <button id="profileMenuButton" class="more profile-menu-btn" onclick="openSettings()" aria-label="Account settings">•••</button>
+    <div id="gfTopbarActions" class="gf-topbar-actions">
+      <button id="gfProfileSetupAlert" class="gf-setup-alert" type="button" aria-label="Finish setting up your profile" onclick="openProfileSetupCompletion()">!</button>
+      <button id="profileMenuButton" class="more profile-menu-btn" onclick="openSettings()" aria-label="Account settings">•••</button>
+    </div>
   </div>
   <section id="today" class="screen active"></section>
   <section id="train" class="screen"></section>
@@ -937,7 +1011,7 @@ body.coach-home-active .gf-setup-alert{right:16px;top:calc(16px + env(safe-area-
   <button data-tab="train"><b>↑</b>Train</button>
   <button data-tab="nutrition"><b>◒</b>Nutrition</button>
   <button data-tab="checkin"><b>＋</b>Check-in</button>
-  <button data-tab="progress"><b>▥</b>Progress</button>
+  <button data-tab="progress"><b>▥</b>Analysis</button>
 </nav>
 
 <div id="sessionModal" class="modal"><div id="sessionSheet" class="sheet"></div></div>
@@ -948,7 +1022,7 @@ body.coach-home-active .gf-setup-alert{right:16px;top:calc(16px + env(safe-area-
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.17';
+const APP_VERSION='4.0.19';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -1886,7 +1960,7 @@ const GFCoach={
   homeActivated(){const arr=this.prompts();if(this.promptIndex>=arr.length)this.promptIndex=0;requestAnimationFrame(()=>{this.setPrompt(arr[this.promptIndex],false);setTimeout(()=>this.pulseSpeak(1800),260)})},
   reply(message){this.setPrompt(String(message).replace(/<[^>]+>/g,''));this.pulseSpeak(2400)},
   navigateAfter(message,fn,delay=520){this.reply(message);setTimeout(fn,delay)},
-  action(kind){const s=this.session();if(kind==='progress'){this.navigateAfter('Opening your current progress data…',()=>showTab('progress'));return}if(kind==='workout'){if(s)this.navigateAfter(`Opening ${s.name}…`,()=>openSession(s.id));return}if(kind==='nutrition'){this.navigateAfter(`Today’s target is ${plan.nutrition.calories} kcal and ${plan.nutrition.proteinG} g protein. Opening nutrition…`,()=>showTab('nutrition'));return}if(kind==='checkin'){this.navigateAfter(hasThisWeekCheckin()?'Your check-in is complete. Opening it…':'Your weekly check-in is due. Opening it…',()=>showTab('checkin'));return}if(kind==='physique'){this.navigateAfter('Opening your physique progress…',()=>openPhysiqueGallery('current'));return}if(kind==='today'){showTab('today');return}if(kind==='train'){this.navigateAfter('Opening your training plan…',()=>showTab('train'));return}},
+  action(kind){const s=this.session();if(kind==='progress'){this.navigateAfter('Opening your analysis dashboard…',()=>showTab('progress'));return}if(kind==='workout'){if(s)this.navigateAfter(`Opening ${s.name}…`,()=>openSession(s.id));return}if(kind==='nutrition'){this.navigateAfter(`Today’s target is ${plan.nutrition.calories} kcal and ${plan.nutrition.proteinG} g protein. Opening nutrition…`,()=>showTab('nutrition'));return}if(kind==='checkin'){this.navigateAfter(hasThisWeekCheckin()?'Your check-in is complete. Opening it…':'Your weekly check-in is due. Opening it…',()=>showTab('checkin'));return}if(kind==='physique'){this.navigateAfter('Opening your physique progress…',()=>openPhysiqueGallery('current'));return}if(kind==='today'){showTab('today');return}if(kind==='train'){this.navigateAfter('Opening your training plan…',()=>showTab('train'));return}},
   async submit(event){event.preventDefault();const input=document.getElementById('gfCoachInput');if(!input)return;const raw=input.value.trim();if(!raw)return;input.value='';saveHerculesTurn('user',raw);await this.route(raw)},
   async route(raw){
     const q=String(raw).toLowerCase().replace(/[?.!,]/g,' ').replace(/\s+/g,' ').trim();
@@ -2904,7 +2978,7 @@ function gfEntryBriefData(){
 function ensureEntryBriefModal(){let m=document.getElementById('gfEntrySummaryModal');if(!m){m=document.createElement('div');m.id='gfEntrySummaryModal';m.className='gf-entry-modal';m.onclick=e=>{if(e.target===m)closeHerculesEntrySummary()};document.body.appendChild(m)}return m}
 function showHerculesEntrySummary(){
   if(gfEntryBriefShown||!plan||!progress)return;gfEntryBriefShown=true;const d=gfEntryBriefData(),m=ensureEntryBriefModal(),name=String(clientNameValue()||'there').split(/\s+/)[0],progressPct=Math.round(pct()),macroText=d.mac?`${Math.round(d.mac.protein||0)} / ${Math.round(d.mac.carbs||0)} / ${Math.round(d.mac.fat||0)}%`:'No logs yet',strengthText=d.strength?`${d.strength.name} ${d.strength.change>=0?'+':''}${Math.round(d.strength.change)}%`:'Building baseline';
-  m.innerHTML=`<div class="gf-entry-sheet"><div class="gf-entry-head"><div class="gf-entry-avatar"><img src="${GFCoach.portraitSrc}" alt="Hercules"></div><div><div class="eyebrow">Hercules · Progress briefing</div><h2>Welcome back, ${esc(name)}.</h2><p>Here’s what the data says before you start.</p></div></div><div class="gf-entry-summary"><div class="gf-entry-stat"><span>Weight</span><b>${d.current.toFixed(1)} kg</b></div><div class="gf-entry-stat"><span>Goal progress</span><b>${progressPct}%</b></div><div class="gf-entry-stat"><span>Vs projection</span><b>${d.diff>0?'+':''}${d.diff.toFixed(1)} kg</b></div><div class="gf-entry-stat"><span>7-day training</span><b>${d.workouts}${d.planned?` / ${d.planned}`:''}</b></div><div class="gf-entry-stat"><span>Macros P/C/F</span><b>${macroText}</b></div><div class="gf-entry-stat"><span>Strength</span><b>${esc(strengthText)}</b></div></div>${d.review?`<div class="gf-entry-advice"><div class="eyebrow">Latest physique feedback</div><p><b>${esc(d.review.headline||'Latest review')}</b><br>${esc(d.review.summary||'')}</p></div>`:''}<div class="gf-entry-advice"><div class="eyebrow">Advice now</div><ul>${d.advice.slice(0,5).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div><div class="gf-entry-actions"><button class="btn secondary" onclick="closeHerculesEntrySummary()">Got it</button><button class="btn primary" onclick="closeHerculesEntrySummary();showTab('progress')">Open progress</button></div></div>`;m.classList.add('open');setTimeout(()=>GFCoach.pulseSpeak(2100),220)
+  m.innerHTML=`<div class="gf-entry-sheet"><div class="gf-entry-head"><div class="gf-entry-avatar"><img src="${GFCoach.portraitSrc}" alt="Hercules"></div><div><div class="eyebrow">Hercules · Analysis briefing</div><h2>Welcome back, ${esc(name)}.</h2><p>Here’s what the data says before you start.</p></div></div><div class="gf-entry-summary"><div class="gf-entry-stat"><span>Weight</span><b>${d.current.toFixed(1)} kg</b></div><div class="gf-entry-stat"><span>Goal progress</span><b>${progressPct}%</b></div><div class="gf-entry-stat"><span>Vs projection</span><b>${d.diff>0?'+':''}${d.diff.toFixed(1)} kg</b></div><div class="gf-entry-stat"><span>7-day training</span><b>${d.workouts}${d.planned?` / ${d.planned}`:''}</b></div><div class="gf-entry-stat"><span>Macros P/C/F</span><b>${macroText}</b></div><div class="gf-entry-stat"><span>Strength</span><b>${esc(strengthText)}</b></div></div>${d.review?`<div class="gf-entry-advice"><div class="eyebrow">Latest physique feedback</div><p><b>${esc(d.review.headline||'Latest review')}</b><br>${esc(d.review.summary||'')}</p></div>`:''}<div class="gf-entry-advice"><div class="eyebrow">Advice now</div><ul>${d.advice.slice(0,5).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div><div class="gf-entry-actions"><button class="btn secondary" onclick="closeHerculesEntrySummary()">Got it</button><button class="btn primary" onclick="closeHerculesEntrySummary();showTab('progress')">Open analysis</button></div></div>`;m.classList.add('open');setTimeout(()=>GFCoach.pulseSpeak(2100),220)
 }
 function closeHerculesEntrySummary(){document.getElementById('gfEntrySummaryModal')?.classList.remove('open')}
 
@@ -2917,46 +2991,189 @@ enterApp=function(){gfBaseEnterAppV4017();updateProfileSetupAlert();setTimeout(s
 
 
 // ============================================================================
-// v4.0.18 · TOP-RIGHT CONTROL ALIGNMENT
-// Keep incomplete-profile alert perfectly level with the profile/avatar circle.
+// v4.0.19 · STRUCTURAL TOP-RIGHT CONTROL ALIGNMENT
+// Non-Hercules tabs: alert + avatar live in the same flex container.
+// Hercules tab: alert is moved to body because the normal topbar is hidden.
 // ============================================================================
-function gfAlignTopRightControls(){
+function gfMountSetupAlertForCurrentTab(){
   const alertBtn=document.getElementById('gfProfileSetupAlert');
+  const actions=document.getElementById('gfTopbarActions');
   const profileBtn=document.getElementById('profileMenuButton');
   if(!alertBtn)return;
-  // Hercules home intentionally hides the normal topbar; use the standalone position there.
-  if(document.body.classList.contains('coach-home-active')||!profileBtn||profileBtn.offsetParent===null){
-    alertBtn.style.top='';
-    alertBtn.style.right='';
-    alertBtn.style.width='';
-    alertBtn.style.height='';
-    return;
+  const coachHome=document.body.classList.contains('coach-home-active');
+  if(coachHome){
+    if(alertBtn.parentElement!==document.body)document.body.appendChild(alertBtn);
+  }else if(actions){
+    if(alertBtn.parentElement!==actions)actions.insertBefore(alertBtn,profileBtn||actions.firstChild);
+    // Clear any stale inline positioning left by older builds.
+    alertBtn.style.removeProperty('top');
+    alertBtn.style.removeProperty('right');
+    alertBtn.style.removeProperty('left');
+    alertBtn.style.removeProperty('bottom');
+    alertBtn.style.removeProperty('width');
+    alertBtn.style.removeProperty('height');
   }
-  const r=profileBtn.getBoundingClientRect();
-  if(!r.width||!r.height)return;
-  const gap=8;
-  alertBtn.style.top=`${Math.round(r.top)}px`;
-  alertBtn.style.right=`${Math.round(window.innerWidth-r.left+gap)}px`;
-  alertBtn.style.width=`${Math.round(r.width)}px`;
-  alertBtn.style.height=`${Math.round(r.height)}px`;
 }
-const _gfUpdateProfileSetupAlertV417=updateProfileSetupAlert;
+const _gfUpdateProfileSetupAlertV418=updateProfileSetupAlert;
 updateProfileSetupAlert=function(){
-  const result=_gfUpdateProfileSetupAlertV417.apply(this,arguments);
-  requestAnimationFrame(gfAlignTopRightControls);
+  const result=_gfUpdateProfileSetupAlertV418.apply(this,arguments);
+  requestAnimationFrame(gfMountSetupAlertForCurrentTab);
   return result;
 };
-const _gfShowTabV417=showTab;
+const _gfShowTabV418=showTab;
 showTab=function(tab){
-  const result=_gfShowTabV417.apply(this,arguments);
-  requestAnimationFrame(gfAlignTopRightControls);
-  setTimeout(gfAlignTopRightControls,80);
+  const result=_gfShowTabV418.apply(this,arguments);
+  requestAnimationFrame(gfMountSetupAlertForCurrentTab);
+  setTimeout(gfMountSetupAlertForCurrentTab,60);
   return result;
 };
-window.addEventListener('resize',gfAlignTopRightControls,{passive:true});
-window.addEventListener('scroll',gfAlignTopRightControls,{passive:true});
-window.addEventListener('orientationchange',()=>setTimeout(gfAlignTopRightControls,120),{passive:true});
-setTimeout(gfAlignTopRightControls,120);
+window.addEventListener('orientationchange',()=>setTimeout(gfMountSetupAlertForCurrentTab,120),{passive:true});
+setTimeout(gfMountSetupAlertForCurrentTab,120);
+
+
+// ============================================================================
+// v4.0.20 · ANALYSIS HUB + SMART VISUAL COACHING + GUIDED WORKOUT
+// ============================================================================
+
+function gfArrayMean(arr){const a=(arr||[]).filter(Number.isFinite);return a.length?a.reduce((x,y)=>x+y,0)/a.length:0}
+function gfFmtDelta(n,suffix=''){n=Number(n)||0;return `${n>0?'+':''}${round(n,1)}${suffix}`}
+function gfLatestTwoAnalyses(){const rows=[...(progress?.weeklyCheckins||[])].filter(x=>x?.analysis?.scores).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));return {current:rows[0]||null,previous:rows[1]||null}}
+function gfAnalysisVisibility(a){return a?.visibility||a?.analysisVisibility||{legs:true}}
+function gfAnalysisDefinition(a){return Number(a?.definitionIndex??a?.visualSignals?.definitionIndex)}
+function gfAnalysisMassScore(a){if(!a?.scores)return null;const vals=['arms','chest','lats','shoulders'].map(k=>Number(a.scores[k])).filter(Number.isFinite);return vals.length?gfArrayMean(vals):null}
+function gfEnhancedObservationHTML(checkin){
+  const a=checkin?.analysis;if(!a)return '<div class="analysis-observation">No visual analysis is saved with the latest check-in yet.</div>';
+  const rows=[...(progress?.weeklyCheckins||[])].filter(x=>x?.analysis?.scores&&x.id!==checkin.id&&String(x.date||'')<String(checkin.date||'')).sort((x,y)=>String(y.date||'').localeCompare(String(x.date||''))),prev=rows[0]?.analysis||null;
+  const out=[];const mass=gfAnalysisMassScore(a),pm=gfAnalysisMassScore(prev);if(Number.isFinite(mass)&&Number.isFinite(pm)){const d=mass-pm;out.push(`<div class="analysis-observation"><b>Mass / fullness signal</b><br>${Math.abs(d)<1.2?'Upper-body silhouette is broadly stable':d>0?`Upper-body fullness is up ${gfFmtDelta(d,' pts')} versus the previous check-in`:`Upper-body fullness is down ${Math.abs(d).toFixed(1)} pts versus the previous check-in`}. This is a visual proportion signal, not a direct muscle-mass measurement.</div>`)}
+  const def=gfAnalysisDefinition(a),pdef=gfAnalysisDefinition(prev);if(Number.isFinite(def)){let text=`Definition signal ${Math.round(def)}/100`;if(Number.isFinite(pdef)){const d=def-pdef;text+=Math.abs(d)<3?' · broadly unchanged':d>0?` · clearer by ${Math.round(d)} points`:` · softer by ${Math.round(Math.abs(d))} points`}out.push(`<div class="analysis-observation"><b>Definition</b><br>${text}. Lighting, distance and pump can affect this, so Hercules only treats repeated changes as meaningful.</div>`)}
+  const vis=gfAnalysisVisibility(a);if(vis.legs===false)out.push(`<div class="analysis-observation warn"><b>Leg analysis unavailable</b><br>${esc(vis.legsReason||'The lower body is covered or visually obscured, so Hercules will not score leg definition or use it to change training priorities.')}</div>`);
+  if(a.feedback?.observations?.length)a.feedback.observations.forEach(x=>out.push(`<div class="analysis-observation">${esc(x)}</div>`));
+  return out.length?out.join(''):'<div class="analysis-observation">This check-in is saved as a baseline. More detailed change detection unlocks after another comparable review.</div>';
+}
+
+function gfGoalImageSrc(){
+  const candidates=[plan?.goal?.generatedImage,plan?.goal?.generatedImageSrc,plan?.goal?.image,plan?.visualProfile?.goalImage,plan?.visualProfile?.goalImageSrc,progress?.goalImage,progress?.generatedGoalImage];
+  return candidates.find(x=>typeof x==='string'&&x.trim())||'';
+}
+function gfStartMediaEntry(){return gfBaselineEntries().find(x=>x.pose==='front')||gfBaselineEntries()[0]||null}
+function gfMediaThumbId(prefix,key){return `${prefix}-${String(key||canonicalUid()).replace(/[^a-z0-9_-]/gi,'').slice(-28)}`}
+const gfMediaThumbCache=new Map();
+async function gfBlobToThumb(blob){
+  if(!blob)return'';const cacheKey=`${blob.size}:${blob.type}:${blob.lastModified||''}`;if(gfMediaThumbCache.has(cacheKey))return gfMediaThumbCache.get(cacheKey);let url='';try{url=URL.createObjectURL(blob);if(String(blob.type||'').startsWith('image/')){const img=new Image();await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=url});const c=document.createElement('canvas'),scale=Math.min(1,420/Math.max(1,img.naturalWidth));c.width=Math.max(120,Math.round(img.naturalWidth*scale));c.height=Math.max(160,Math.round(img.naturalHeight*scale));c.getContext('2d').drawImage(img,0,0,c.width,c.height);const data=c.toDataURL('image/jpeg',.72);gfMediaThumbCache.set(cacheKey,data);return data}
+    const v=document.createElement('video');v.muted=true;v.playsInline=true;v.preload='metadata';v.src=url;await waitVideoEvent(v,'loadedmetadata');const t=Math.max(.05,Math.min((v.duration||1)*.22,Math.max(.05,(v.duration||1)-.08)));await seekVideo(v,t);const scale=Math.min(1,420/Math.max(1,v.videoWidth)),c=document.createElement('canvas');c.width=Math.max(120,Math.round(v.videoWidth*scale));c.height=Math.max(160,Math.round(v.videoHeight*scale));c.getContext('2d').drawImage(v,0,0,c.width,c.height);const data=c.toDataURL('image/jpeg',.70);gfMediaThumbCache.set(cacheKey,data);return data
+  }catch{return''}finally{if(url)URL.revokeObjectURL(url)}
+}
+async function gfHydrateMediaThumb(elId,key){const el=document.getElementById(elId);if(!el||!key)return;try{const blob=await getMediaBlob(key),src=await gfBlobToThumb(blob);if(src&&document.getElementById(elId))document.getElementById(elId).innerHTML=`<img src="${src}" alt="Progress image">`}catch{}}
+function gfHydrateAnalysisMedia(){
+  document.querySelectorAll('[data-media-key]').forEach(el=>{const key=el.dataset.mediaKey;if(key)gfHydrateMediaThumb(el.id,key)});
+}
+function gfStartGoalVisualHTML(){
+  const start=gfStartMediaEntry(),goal=gfGoalImageSrc(),startId=gfMediaThumbId('analysis-start',start?.key||'none');
+  return `<div class="card glass analysis-card"><div class="section"><h3>Start ↔ Goal</h3><span class="small">Visual reference</span></div><div class="analysis-visual-compare"><div class="analysis-visual-tile"><div id="${startId}" class="analysis-visual-placeholder" ${start?.key?`data-media-key="${esc(start.key)}"`:''}>${start?.key?'Loading start view…':`<div><b>Start picture missing</b><span>Finish profile setup to add the baseline view.</span></div>`}</div><div class="analysis-visual-cap"><b>Start</b><span>${Number(plan?.client?.startWeightKg||0).toFixed(1)} kg</span></div></div><div class="analysis-visual-tile">${goal?`<img src="${esc(goal)}" alt="Generated goal physique">`:`<div class="analysis-visual-placeholder"><div><div class="gf-goal-wordmark"><strong>GAIN</strong><span>FOCUS</span></div><b style="margin-top:12px">Generated goal picture</b><span>When the client goal render is stored in the plan it appears here automatically.</span></div></div>`}<div class="analysis-visual-cap"><b>Goal</b><span>${Number(plan?.goal?.targetWeightKg||0).toFixed(1)} kg</span></div></div></div></div>`;
+}
+function gfTimelineHTML(){
+  const rows=[...(progress?.weeklyCheckins||[])].filter(x=>x?.video).sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));const start=gfStartMediaEntry();let items=[];
+  if(start)items.push({label:'Start',date:plan?.goal?.startDate||'',media:start});rows.forEach(x=>items.push({label:x.historic?'Historic':`Week ${x.week}`,date:x.date,media:x.video}));
+  if(!items.length)return `<div class="card glass muted">No saved check-in media yet. Your baseline and weekly video stills will build the visual timeline here.</div>`;
+  return `<div class="analysis-timeline">${items.map((x,i)=>{const id=gfMediaThumbId('tl',x.media?.key||`${i}-${x.date}`);return `<div class="timeline-shot"><div id="${id}" class="timeline-shot-media" ${x.media?.key?`data-media-key="${esc(x.media.key)}"`:''}>${x.media?.key?'◌':'▣'}</div><div class="timeline-shot-copy"><b>${esc(x.label)}</b><span>${esc(x.date||x.media?.name||'Saved view')}</span></div></div>`}).join('')}</div>`;
+}
+function gfFocusedTrainingHTML(){
+  const a=progress?.focusedTrainingAnalysis||progress?.baselineAnalysis;if(!a?.scores)return'';const p=(a.feedback?.priority||a.priority||[]).map(regionLabel),d=(a.feedback?.developing||a.developing||[]).map(regionLabel);return `<div class="card glass analysis-card"><div class="section"><h3>Focused training analysis</h3><span class="small">From baseline views</span></div><div class="analysis-focus-box"><h4>${p.length?`Prioritise ${esc(p.join(' + '))}`:'Training focus ready'}</h4><p>${esc(a.feedback?.summary||a.summary||'Hercules has analysed the baseline views and can use the result to steer exercise emphasis.')}</p>${d.length?`<p style="margin-top:6px">Developing well: ${esc(d.join(', '))}</p>`:''}<div class="analysis-focus-actions"><button class="btn secondary" onclick="openProfileSetupCompletion()">Update views</button><button class="btn primary" onclick="gfApplyFocusedTraining()">Apply focus</button></div></div></div>`}
+function gfApplyFocusedTraining(){const a=progress?.focusedTrainingAnalysis||progress?.baselineAnalysis;if(!a)return;const p=(a.feedback?.priority||a.priority||[]).filter(Boolean);if(!p.length){toast('No focus priorities available yet');return}plan.goal.focus=[...new Set([...p.map(regionLabel),...(plan.goal.focus||[])])];plan.training.focusPriorities=p;progress.adaptiveFocus={regions:p,source:'baseline-analysis',appliedAt:new Date().toISOString()};write();renderAll();toast(`Training focus applied: ${p.map(regionLabel).join(', ')}`)}
+
+function renderProgress(){
+  ensureProgressExtras();ensureWeeklyReviewIds();const checks=sortedWeeklyReviews(),workouts=sortedWorkoutLogs(),latest=checks[0]||null,current=latestWeight(),goal=Number(plan.goal.targetWeightKg)||current,startW=Number(plan.client.startWeightKg)||current,gained=current-startW,remaining=Math.max(0,goal-current);
+  const weightSeries=buildWeightSeries(),latestActual=weightSeries.actual.at(-1),latestProjected=weightSeries.projected.at(-1),delta=(latestActual&&latestProjected)?round(latestActual.value-latestProjected.value,1):0;let weightStatus='On track';if(delta<-.3)weightStatus='Below projection';else if(delta>.3)weightStatus='Ahead of projection';
+  const strength=gfStrengthSummary(),macro=gfAggregateMacroAdherence(7),macroAvg=macro?gfArrayMean([macro.protein,macro.carbs,macro.fat].filter(Number.isFinite)):null;
+  document.getElementById('progress').innerHTML=`<div class="analysis-hero"><div class="analysis-hero-top"><div><span class="eyebrow">Analysis</span><h2>${current.toFixed(1)} <small style="font-size:.45em;color:var(--muted)">kg</small></h2><p>Current data first. Historical progress sits underneath.</p></div><span class="analysis-pill">${esc(weightStatus)}</span></div><div class="analysis-stat-grid"><div class="analysis-stat"><span>Goal</span><b>${Math.round(pct())}%</b></div><div class="analysis-stat"><span>Gained</span><b>${gained>=0?'+':''}${gained.toFixed(1)} kg</b></div><div class="analysis-stat"><span>Vs guide</span><b>${delta>0?'+':''}${delta.toFixed(1)} kg</b></div><div class="analysis-stat"><span>Macros 7d</span><b>${Number.isFinite(macroAvg)?Math.round(macroAvg)+'%':'—'}</b></div></div></div>
+    <div class="card glass analysis-card"><div class="section"><h3>Current check-in analysis</h3><span class="small">${latest?esc(reviewDateLabel(latest)):'No check-in yet'}</span></div>${latest?.analysis?physiqueAnalysisCard(latest.analysis,false):`<p class="muted">Complete a check-in with visual analysis to unlock physique change detection, definition and focused training advice.</p>`}${latest?`<div class="analysis-observations">${gfEnhancedObservationHTML(latest)}</div>`:''}</div>
+    ${gfStartGoalVisualHTML()}
+    <div class="card glass analysis-card"><div class="section"><h3>Weight trend</h3><span class="small">Actual vs projected</span></div><div id="weightChart" class="chart" style="height:240px"></div></div>
+    <div class="card glass analysis-card"><div class="section"><h3>Strength trend</h3><span class="small">Estimated 1RM · Push / Pull / Legs</span></div><div id="strengthChart" class="chart" style="height:240px"></div><p class="analysis-card-note">${strength?`Best recent strength direction: ${esc(strength.name)} ${strength.change>=0?'+':''}${Math.round(strength.change)}%.`:'Log weighted working sets to build the strength trend.'}</p></div>
+    <div class="card glass analysis-card"><div class="section"><h3>Nutrition adherence</h3><span class="small">Macros · 4-week projection</span></div><div id="macroTrendChart" class="chart" style="height:250px"></div><p class="analysis-card-note">Solid lines show logged weekly adherence; dashed lines project the recent trend toward or away from 100% of target.</p></div>
+    ${bodyMapCard()}${gfFocusedTrainingHTML()}
+    <div class="history-divider"><div class="section"><h3>Historical progress</h3><span class="small">Visual timeline + logs</span></div></div>
+    <div class="card glass analysis-card"><div class="section"><h3>Check-in timeline</h3><span class="small">Start → latest</span></div>${gfTimelineHTML()}</div>
+    <div class="section"><h3>Workout history</h3><span class="small">Showing ${Math.min(5,workouts.length)} of ${workouts.length}</span></div>${workoutHistoryHTML(5)}${historySeeAllButton('workout',workouts.length)}
+    <div class="section"><h3>Weekly reviews</h3><span class="small">Showing ${Math.min(5,checks.length)} of ${checks.length}</span></div>${weeklyReviewHistoryHTML(5)}${historySeeAllButton('review',checks.length)}`;
+  setTimeout(()=>{drawChart();drawMacroTrendChart();gfHydrateAnalysisMedia();enforceProgressHistoryCap()},0)
+}
+
+// Keep Analysis wording while preserving the established progress tab id for compatibility.
+const gfShowTabV4020Base=showTab;
+showTab=function(tab){const result=gfShowTabV4020Base.apply(this,arguments);if(tab==='progress'){const t=document.getElementById('pageTitle');if(t)t.textContent='Analysis';setTimeout(()=>{drawChart();drawMacroTrendChart();gfHydrateAnalysisMedia()},0)}return result};
+
+// A real physique library now uses the same local media store as check-ins.
+function openPhysiqueGallery(){
+  ensureWeeklyReviewIds();const checks=sortedWeeklyReviews(),sheet=document.getElementById('physiqueSheet');sheet.innerHTML=`<div class="grabber"></div><div class="eyebrow">Analysis library</div><h2 style="font-size:29px;margin:5px 0 2px">Physique timeline</h2><p class="muted" style="margin-top:0">Start, generated goal and saved check-ins in one place.</p>${gfStartGoalVisualHTML()}<div class="section"><h3>Check-in pictures</h3><span class="small">${checks.filter(x=>x.video).length} with media</span></div>${gfTimelineHTML()}<button class="btn secondary" style="width:100%;margin-top:12px" onclick="closePhysiqueGallery()">Close</button>`;document.getElementById('physiqueModal').classList.add('open');setTimeout(gfHydrateAnalysisMedia,0)}
+function closePhysiqueGallery(){document.getElementById('physiqueModal')?.classList.remove('open')}
+
+// --- Smarter visual analysis: silhouette mass/fullness + image-detail signal + visibility guard. ---
+async function gfImageFromSrc(src){const img=new Image();await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=src});return img}
+function gfCanvasDetailSignals(canvas){
+  const ctx=canvas.getContext('2d',{willReadFrequently:true}),w=canvas.width,h=canvas.height,d=ctx.getImageData(0,0,w,h).data;
+  function band(y0,y1,x0=.25,x1=.75){let sum=0,n=0,mean=0,m2=0;const ys=Math.max(1,Math.floor(h*y0)),ye=Math.min(h-2,Math.floor(h*y1)),xs=Math.max(1,Math.floor(w*x0)),xe=Math.min(w-2,Math.floor(w*x1)),step=Math.max(1,Math.floor(Math.min(w,h)/130));for(let y=ys;y<=ye;y+=step)for(let x=xs;x<=xe;x+=step){const i=(y*w+x)*4,gray=.299*d[i]+.587*d[i+1]+.114*d[i+2],ir=(y*w+x+step)*4,id=((Math.min(h-1,y+step))*w+x)*4,gr=.299*d[ir]+.587*d[ir+1]+.114*d[ir+2],gd=.299*d[id]+.587*d[id+1]+.114*d[id+2],edge=Math.abs(gray-gr)+Math.abs(gray-gd);sum+=edge;n++;const delta=gray-mean;mean+=delta/n;m2+=delta*(gray-mean)}return {edge:n?sum/n:0,sd:n>1?Math.sqrt(m2/(n-1)):0}}
+  const upper=band(.20,.58),lower=band(.60,.92,.28,.72);const definition=clamp((upper.edge*.55+upper.sd*.45)*1.35,0,100),lowerDetail=clamp((lower.edge*.55+lower.sd*.45)*1.35,0,100);return {definitionIndex:round(definition,1),upperDetail:round(definition,1),lowerDetail:round(lowerDetail,1)}
+}
+async function gfVisualDetailFromThumbs(thumbs){const vals=[];for(const src of (thumbs||[]).slice(0,8)){try{const img=await gfImageFromSrc(src),c=document.createElement('canvas');c.width=160;c.height=Math.max(220,Math.round(160*(img.naturalHeight/img.naturalWidth)));c.getContext('2d').drawImage(img,0,0,c.width,c.height);vals.push(gfCanvasDetailSignals(c))}catch{}}if(!vals.length)return {definitionIndex:null,upperDetail:null,lowerDetail:null};return {definitionIndex:round(median(vals.map(x=>x.definitionIndex)),1),upperDetail:round(median(vals.map(x=>x.upperDetail)),1),lowerDetail:round(median(vals.map(x=>x.lowerDetail)),1)}}
+function gfResolveLegVisibility(detail,manual='auto'){if(manual==='covered')return {legs:false,legsReason:'Legs can’t be analysed from this video because they are covered by trousers or other long clothing.'};if(manual==='visible')return {legs:true,legsReason:''};if(Number.isFinite(detail?.lowerDetail)&&Number.isFinite(detail?.upperDetail)&&detail.lowerDetail<Math.max(16,detail.upperDetail*.48))return {legs:false,legsReason:'The lower body appears covered or visually obscured, so leg definition cannot be analysed reliably from this video.'};return {legs:true,legsReason:''}}
+function gfSmartFeedback(scores,previous,visibility,detail){
+  const keys=['arms','chest','lats','shoulders',...(visibility?.legs===false?[]:['legs'])],prevScores=previous?.analysis?.scores||previous?.scores||null;let developing=[],priority=[],maintain=[];
+  if(prevScores){const deltas=keys.map(k=>({k,d:(Number(scores[k])||0)-(Number(prevScores[k])||0),s:Number(scores[k])||0}));developing=[...deltas].sort((a,b)=>b.d-a.d).filter(x=>x.d>=1.1).slice(0,2).map(x=>x.k);if(!developing.length&&deltas.length)developing=[deltas.sort((a,b)=>b.d-a.d)[0].k];priority=[...deltas].sort((a,b)=>(a.s+physiqueDeltaWeight(a.d))-(b.s+physiqueDeltaWeight(b.d))).map(x=>x.k).filter(k=>!developing.includes(k)).slice(0,2)}else{const ranked=keys.map(k=>({k,s:Number(scores[k])||0})).sort((a,b)=>b.s-a.s);developing=ranked.slice(0,2).map(x=>x.k);priority=ranked.slice(-2).reverse().filter(x=>!developing.includes(x.k)).map(x=>x.k)}
+  maintain=keys.filter(k=>!developing.includes(k)&&!priority.includes(k)).slice(0,2);const dKey=developing[0]||'shoulders',pKey=priority[0]||'chest',d=regionLabel(dKey),p=regionLabel(pKey),trainingMap={chest:'Bias progressive incline/flat pressing and controlled chest isolation while keeping shoulder fatigue in check.',lats:'Bias pulldowns or pull-ups plus stable rows, with progression tracked separately for width and thickness.',shoulders:'Emphasise lateral and rear-delt progression while keeping pressing volume recoverable.',arms:'Add a modest amount of direct biceps and triceps work and progress it like the compound lifts.',legs:'Use consistent squat/hinge plus isolation progression once leg visibility is reliable.'};
+  const observations=[];if(prevScores){const massNow=gfArrayMean(['arms','chest','lats','shoulders'].map(k=>Number(scores[k])).filter(Number.isFinite)),massPrev=gfArrayMean(['arms','chest','lats','shoulders'].map(k=>Number(prevScores[k])).filter(Number.isFinite)),md=massNow-massPrev;observations.push(Math.abs(md)<1.2?'Upper-body fullness looks broadly stable versus the previous review.':md>0?`Upper-body fullness is trending upward, led by ${d.toLowerCase()}.`:`Upper-body fullness is not clearly ahead of the previous review; confirm with the next comparable check-in.`);const pd=gfAnalysisDefinition(previous?.analysis||previous),dd=Number(detail?.definitionIndex);if(Number.isFinite(dd)&&Number.isFinite(pd)){const delta=dd-pd;observations.push(Math.abs(delta)<3?'Definition appears broadly stable.':delta>0?'Muscle separation / definition reads clearer than the previous review.':'Definition reads softer than the previous review; lighting, pump and body-fat change can all contribute.')}}
+  if(visibility?.legs===false)observations.push(visibility.legsReason);
+  return {headline:prevScores?`${d} shows the clearest positive change`:`${d} currently stands out`,summary:prevScores?`${d} is the clearest positive visual change. ${p} remains the strongest candidate for focused training next.`:`This is the current visual baseline. ${d} reads strongest, while ${p.toLowerCase()} is the clearest area to prioritise.`,developing,priority,maintain,training:trainingMap[pKey]||'Keep the programme progressive and compare the next check-in under similar conditions.',observations}
+}
+
+const gfRenderCheckinV4020Base=renderCheckin;
+renderCheckin=function(){gfRenderCheckinV4020Base();const area=document.getElementById('ciAnalysisArea');if(area&&!document.getElementById('ciLegVisibility'))area.insertAdjacentHTML('beforebegin',`<div class="analysis-visibility-row"><label for="ciLegVisibility">Leg visibility for analysis</label><select id="ciLegVisibility" class="input"><option value="auto">Auto detect</option><option value="visible">Legs clearly visible</option><option value="covered">Covered by trousers / long clothing</option></select></div>`)};
+
+analyseProgressVideo=async function(){
+  const input=document.getElementById('ciVideo'),file=input?.files?.[0];if(!file){alert('Choose a progress video first.');return}resetPhysiqueAnalysis();physiqueAnalysisState={status:'working',progress:3,message:'Preparing multi-pass visual analysis…',error:'',frames:[]};updatePhysiqueAnalysisArea();
+  try{const result=await analyseVideoSilhouetteRobust(file,info=>{physiqueAnalysisState.progress=info.progress||physiqueAnalysisState.progress;physiqueAnalysisState.message=info.message||'Analysing…';updatePhysiqueAnalysisArea()},{thumbnails:true,maxW:220});physiqueAnalysisState.frames=result.thumbs||[];const detail=await gfVisualDetailFromThumbs(result.thumbs||[]),manual=document.getElementById('ciLegVisibility')?.value||'auto',visibility=gfResolveLegVisibility(detail,manual),m=result.metrics,scores=scorePhysiqueMetrics(m);if(visibility.legs===false)scores.legs=null;const prev=latestPhysiqueAnalysis(weekNo()),feedback=gfSmartFeedback(scores,prev,visibility,detail);feedback.nutrition=macroContextForFeedback();pendingPhysiqueAnalysis={engine:'adaptive-visual-v4',createdAt:new Date().toISOString(),framesAnalysed:result.used,framesSampled:result.total,rejectedFrames:result.rejected,quality:result.quality,recoveryMode:result.mode,segmentationMethods:result.methods,metrics:Object.fromEntries(Object.entries(m).map(([k,v])=>[k,round(v,4)])),scores:Object.fromEntries(Object.entries(scores).map(([k,v])=>[k,Number.isFinite(Number(v))?round(v,1):null])),definitionIndex:detail.definitionIndex,visualSignals:detail,visibility,previousWeek:prev?.week||null,feedback};physiqueAnalysisState={status:'done',progress:100,message:`Review ready · ${result.used}/${result.total} stable frames used`,error:'',frames:result.thumbs||[]};updatePhysiqueAnalysisArea()}catch(e){console.error(e);pendingPhysiqueAnalysis=null;physiqueAnalysisState={status:'error',progress:0,message:'',error:e?.message||'Could not analyse this video.',frames:physiqueAnalysisState.frames||[]};updatePhysiqueAnalysisArea()}
+};
+
+// Override analysis card so unavailable legs are shown as N/A and the richer observations are visible.
+physiqueAnalysisCard=function(a,compact=false){if(!a||!a.scores)return'';const vis=gfAnalysisVisibility(a),dev=(a.feedback?.developing||[]).map(regionLabel).join(', ')||'—',priority=(a.feedback?.priority||[]).map(regionLabel).join(', ')||'—',maint=(a.feedback?.maintain||[]).map(regionLabel).join(', ')||'—';const scores=['arms','chest','lats','shoulders','legs'].map(k=>{const v=a.scores[k],na=k==='legs'&&vis.legs===false;return `<div class="physique-score"><span>${regionLabel(k)}</span><b>${na?'N/A':Math.round(Number(v)||0)}</b></div>`}).join('');return `<div class="physique-review ${compact?'compact':''}"><div class="physique-review-kicker">Hercules · Visual progress review</div><h4>${esc(a.feedback?.headline||'Physique review complete')}</h4><p class="physique-review-summary">${esc(a.feedback?.summary||'')}</p><div class="physique-review-grid"><div class="physique-review-col"><span>Developing well</span><b>${esc(dev)}</b></div><div class="physique-review-col"><span>Maintain</span><b>${esc(maint)}</b></div><div class="physique-review-col"><span>Priority next</span><b>${esc(priority)}</b></div></div><div class="physique-scores">${scores}</div>${vis.legs===false?`<div class="physique-nutrition-context"><b>Visibility limit</b><br>${esc(vis.legsReason)}</div>`:''}${Number.isFinite(Number(a.definitionIndex))?`<div class="physique-nutrition-context"><b>Definition signal</b><br>${Math.round(a.definitionIndex)}/100 · use repeated comparable check-ins rather than one reading.</div>`:''}${a.feedback?.nutrition?`<div class="physique-nutrition-context"><b>Fuel context</b><br>${esc(a.feedback.nutrition)}</div>`:''}<div class="physique-review-foot">${esc(a.feedback?.training||'')} · Camera-based visual estimate from ${a.framesAnalysed||0} stable frames.</div></div>`};
+
+// Analyse baseline photos/videos added later and turn them into focused training guidance.
+async function gfAnalyseImageBlob(blob){let url='';try{url=URL.createObjectURL(blob);const img=await gfImageFromSrc(url),scale=Math.min(1,260/Math.max(1,img.naturalWidth)),c=document.createElement('canvas');c.width=Math.max(140,Math.round(img.naturalWidth*scale));c.height=Math.max(210,Math.round(img.naturalHeight*scale));c.getContext('2d',{willReadFrequently:true}).drawImage(img,0,0,c.width,c.height);const metrics=localSilhouetteMetrics(c);if(!metrics)throw new Error('Could not isolate body outline');return {metrics,detail:gfCanvasDetailSignals(c),quality:metrics.quality||55}}finally{if(url)URL.revokeObjectURL(url)}}
+async function gfAnalyseSavedBaseline(){
+  const entries=gfBaselineEntries();if(entries.length<3)return null;const results=[];for(const entry of entries){try{const blob=entry.key?await getMediaBlob(entry.key):null;if(!blob)continue;if(String(blob.type||entry.type||'').startsWith('image/'))results.push(await gfAnalyseImageBlob(blob));else{const r=await analyseVideoSilhouetteRobust(blob,null,{thumbnails:true,maxW:220,fractions:[.08,.20,.34,.50,.66,.80,.92]});results.push({metrics:r.metrics,detail:await gfVisualDetailFromThumbs(r.thumbs||[]),quality:r.quality})}}catch(e){console.warn('Baseline view analysis skipped',entry.pose,e)}}if(!results.length)return null;const keys=['armRatio','chestH','waistH','legH','taper','shoulderH'],metrics={};keys.forEach(k=>metrics[k]=gfArrayMean(results.map(r=>Number(r.metrics?.[k])).filter(Number.isFinite)));const scores=scorePhysiqueMetrics(metrics),detail={definitionIndex:round(gfArrayMean(results.map(r=>Number(r.detail?.definitionIndex)).filter(Number.isFinite)),1)},visibility={legs:true,legsReason:''},feedback=gfSmartFeedback(scores,null,visibility,detail);const a={engine:'baseline-multiview-v2',createdAt:new Date().toISOString(),framesAnalysed:results.length,quality:Math.round(gfArrayMean(results.map(r=>Number(r.quality)||50))),metrics:Object.fromEntries(Object.entries(metrics).map(([k,v])=>[k,round(v,4)])),scores:Object.fromEntries(Object.entries(scores).map(([k,v])=>[k,round(v,1)])),definitionIndex:detail.definitionIndex,visibility,feedback};progress.baselineAnalysis=a;progress.focusedTrainingAnalysis=a;if(plan?.onboarding)plan.onboarding.baselineAnalysis=a;write();return a
+}
+function gfShowFocusedTrainingResult(a){if(!a)return;const p=(a.feedback?.priority||[]).map(regionLabel),sheet=document.getElementById('sessionSheet');sheet.classList.remove('workout-sheet');sheet.innerHTML=`<div class="grabber"></div><div class="eyebrow">Hercules · Focused training</div><h2 style="font-size:29px;margin:5px 0 2px">Baseline analysis complete</h2><p class="muted" style="margin-top:0">The added views now influence training advice.</p>${physiqueAnalysisCard(a,false)}<div class="analysis-focus-box"><h4>${p.length?`Recommended focus: ${esc(p.join(' + '))}`:'Training focus ready'}</h4><p>Apply this to save the priorities into the client plan. It does not delete the rest of the programme.</p></div><div class="profile-editor-actions"><button class="btn secondary" onclick="closeSession()">Not now</button><button class="btn primary" onclick="gfApplyFocusedTraining();closeSession()">Apply focus</button></div>`;document.getElementById('sessionModal').classList.add('open')}
+const gfSaveProfileSetupV4020Base=saveProfileSetupCompletion;
+saveProfileSetupCompletion=async function(){await gfSaveProfileSetupV4020Base.apply(this,arguments);if(gfProfileSetupComplete()){toast('Profile complete · analysing training focus…');const a=await gfAnalyseSavedBaseline();if(a){renderAll();gfShowFocusedTrainingResult(a)}}};
+
+// --- Hercules local coaching brain: motivation, form, progression and recovery. ---
+function gfFindExerciseFromQuestion(q){const all=(plan?.training?.sessions||[]).flatMap(s=>(s.exercises||[]).map(e=>({s,e}))),norm=x=>String(x||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ');const nq=norm(q);let best=null,score=0;for(const x of all){const name=norm(x.e.name),tokens=name.split(/\s+/).filter(t=>t.length>2),sc=tokens.reduce((n,t)=>n+(nq.includes(t)?1:0),0)+(nq.includes(name)?3:0);if(sc>score){score=sc;best=x}}return score?best:null}
+function gfExerciseFormAnswer(e){const cues=exerciseCues(e),type=exerciseGuideType(e),feel={press:'Keep the target chest/shoulder under tension; joint discomfort is not the goal.',row:'You should feel the back shorten as the elbow travels behind you, not just the biceps.',pull:'Think elbows down toward the ribs and avoid turning it into a swinging curl.',squat:'Stay balanced through the whole foot and keep the rep path repeatable.',hinge:'You should feel hamstrings/glutes load as the hips travel back while the spine stays braced.',curl:'The biceps should do the work while the upper arm stays quiet.',triceps:'Keep the shoulder quiet and let the elbow move through a controlled range.',raise:'Use a load you can move without shrugging or throwing the torso.'}[type]||'The target muscle should be working without sharp joint pain or a breakdown in control.';return `${e.name}: ${cues.slice(0,3).join(' ')} ${feel}`}
+const gfHerculesKnowledgeV4020Base=herculesKnowledge;
+herculesKnowledge=function(question){const q=String(question||'').toLowerCase();if(/sharp pain|numb|numbness|tingling|dizz|chest pain|faint/.test(q))return 'Stop the set rather than pushing through sharp pain, numbness, dizziness or unusual symptoms. If symptoms are severe, persistent or concerning, get appropriate medical advice before continuing.';if(/motivat|can't be bothered|cant be bothered|don.?t feel like|skip.*workout|no energy to train|talk me into/.test(q)){const d=new Date(),s=isTrainingDate(d)?sessionForDate(d):null;if(!s)return 'Today is a recovery day, so you do not need to manufacture a hard session. Hit the food, sleep and steps, then turn up properly for the next scheduled workout.';const first=s.exercises?.[0]?.name||'first exercise';return `Make the target smaller: get changed, start ${first}, and only judge the session after the first two working sets. You do not need to feel motivated before you begin — you only need to start the next action.`}const match=gfFindExerciseFromQuestion(q);if(match&&/(form|technique|how.*do|how.*perform|setup|position|elbow|knee|back|range of motion|rom|feel.*muscle|doing.*right)/.test(q))return gfExerciseFormAnswer(match.e);if(match&&/(increase|add weight|heavier|progress.*load|what weight|load next)/.test(q)){const g=suggestedLoadFor(match.s.id,match.e);return `${match.e.name}: ${g.message}${g.load!==''?` Suggested working load: about ${g.load} kg.`:''}`};if(/warm.?up/.test(q)&&match)return `For ${match.e.name}, ramp into the working load with a few progressively heavier low-fatigue sets. The goal is to practise the movement and feel ready, not tire the target muscle before the working sets.`;if(/form|technique|exercise advice|how do i do/.test(q)&&!match)return 'Tell me the exercise name and what feels wrong — for example “my elbows flare on incline press” or “where should I feel a lat pulldown?” I’ll give setup cues and the most likely correction.';return gfHerculesKnowledgeV4020Base(question)};
+
+function gfAskHerculesForm(sessionId,index){const s=plan.training.sessions.find(x=>x.id===sessionId),e=s?.exercises?.[index];if(!e)return;const answer=gfExerciseFormAnswer(e);closeSession();showTab('today');setTimeout(()=>{GFCoach.reply(answer);saveHerculesTurn('assistant',answer)},180)}
+
+// --- More intuitive workout launch + guided in-session progression. ---
+function gfWorkoutEstimate(s){const total=(s?.exercises||[]).reduce((n,e)=>n+(Number(e.sets)||0),0),mins=Math.max(25,Math.round(total*2.5+(s?.exercises?.length||0)*1.8));return {sets:total,mins}}
+function gfTodayWorkout(){const d=new Date();return isTrainingDate(d)?sessionForDate(d):null}
+function gfNextScheduledWorkout(){const d=new Date();for(let i=0;i<8;i++){const x=new Date(d);x.setDate(d.getDate()+i);if(isTrainingDate(x))return {date:x,session:sessionForDate(x)}}return null}
+function gfActiveWorkout(){return (progress?.workoutLogs||[]).find(x=>x?.completed===false)||null}
+function renderTrain(){
+  ensureProgressExtras();const active=gfActiveWorkout(),today=gfTodayWorkout(),next=gfNextScheduledWorkout(),focus=active?plan.training.sessions.find(x=>x.id===active.sessionId):today,est=focus?gfWorkoutEstimate(focus):null;let launch='';if(active&&focus){const done=(active.setEntries||[]).length;launch=`<div class="training-launch"><div class="training-launch-head"><div><span class="eyebrow">In progress</span><h2>${esc(focus.name)}</h2><p>${done} working sets logged. Pick up exactly where you left off.</p></div><span class="analysis-pill">Resume</span></div><div class="training-launch-meta"><div><span>Exercises</span><b>${focus.exercises.length}</b></div><div><span>Target sets</span><b>${est.sets}</b></div><div><span>Est. time</span><b>${est.mins} min</b></div></div><div class="training-launch-actions"><button class="btn primary" onclick="startWorkout('${focus.id}')">Resume workout</button><button class="btn secondary" onclick="openSession('${focus.id}')">Overview</button></div></div>`}else if(today){launch=`<div class="training-launch"><div class="training-launch-head"><div><span class="eyebrow">Today’s workout</span><h2>${esc(today.name)}</h2><p>${esc(today.subtitle||'Scheduled training session')}</p></div><span class="analysis-pill">Today</span></div><div class="training-launch-meta"><div><span>Exercises</span><b>${today.exercises.length}</b></div><div><span>Working sets</span><b>${est.sets}</b></div><div><span>Est. time</span><b>${est.mins} min</b></div></div><div class="training-exercise-mini">${today.exercises.slice(0,7).map(e=>`<span>${esc(e.name)}</span>`).join('')}</div><div class="training-launch-actions" style="margin-top:12px"><button class="btn primary" onclick="startWorkout('${today.id}')">Start workout</button><button class="btn secondary" onclick="openSession('${today.id}')">Preview</button></div></div>`}else{launch=`<div class="training-launch rest"><div class="training-launch-head"><div><span class="eyebrow">Recovery day</span><h2>No workout scheduled today</h2><p>${next?.session?`Next up: ${esc(next.session.name)} on ${esc(next.date.toLocaleDateString(undefined,{weekday:'long'}))}.`:'Use today for recovery and your next planned session.'}</p></div><span class="analysis-pill">Rest</span></div><div class="training-launch-actions" style="margin-top:12px"><button class="btn primary" onclick="document.getElementById('gfProgrammeList')?.scrollIntoView({behavior:'smooth'})">Choose another workout</button><button class="btn secondary" onclick="GFCoach.action('today')">Ask Hercules</button></div></div>`}
+  document.getElementById('train').innerHTML=`${launch}${trainingCalendarHTML()}<div id="gfProgrammeList" class="section"><h3>Your programme</h3><span class="small">${plan.training.sessions.length} sessions</span></div>${plan.training.sessions.map(s=>{const e=gfWorkoutEstimate(s);return `<button class="card glass session-card with-cover" style="width:100%;text-align:left;border:1px solid var(--line)" onclick="openSession('${s.id}')">${sessionCoverHTML(s)}<div class="grow"><h4>${esc(s.name)}</h4><p>${esc(s.subtitle||'')} · ${s.exercises.length} exercises · ~${e.mins} min</p></div><span class="chev">›</span></button>`}).join('')}${workoutHistoryMiniHTML()}`
+}
+openSession=function(id){const s=plan.training.sessions.find(x=>x.id===id);if(!s)return;const est=gfWorkoutEstimate(s),sheet=document.getElementById('sessionSheet');sheet.classList.remove('workout-sheet');sheet.innerHTML=`<div class="grabber"></div><div class="eyebrow">Workout overview</div><h2 style="font-size:30px;margin:6px 0 3px">${esc(s.name)}</h2><p class="muted" style="margin-top:0">${esc(s.subtitle||'')}</p><div class="session-overview"><div><span>Exercises</span><b>${s.exercises.length}</b></div><div><span>Working sets</span><b>${est.sets}</b></div><div><span>Est. time</span><b>${est.mins} min</b></div></div><div>${s.exercises.map((e,i)=>`<div class="exercise-guide-row" onclick="openExerciseGuide('${s.id}',${i})"><div class="exercise-guide-thumb">${exerciseVisual(e,false)}</div><div class="exercise-guide-copy"><b>${esc(e.name)}</b><span>${e.sets} × ${e.repMin}–${e.repMax} · ${esc(e.focus||'')}</span><span style="margin-top:3px;color:#80bfff">Tap for form cues</span></div><button class="exercise-guide-open" type="button">›</button></div>`).join('')}</div><div class="session-start-dock"><button class="btn primary" onclick="startWorkout('${s.id}')">Start ${esc(s.name)}</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="closeSession()">Not now</button></div>`;document.getElementById('sessionModal').classList.add('open')};
+
+const gfRenderCanonicalWorkoutV4020Base=renderCanonicalWorkout;
+renderCanonicalWorkout=function(){gfRenderCanonicalWorkoutV4020Base();const w=currentWorkoutRecord();if(!w||!canonicalWorkout)return;const s=plan.training.sessions.find(x=>x.id===w.sessionId),i=canonicalWorkout.exerciseIndex,e=s.exercises[i],key=workoutExerciseKey(e),today=w.setEntries.filter(x=>x.exerciseKey===key),target=Math.max(1,Number(e.sets)||1),totalExercises=s.exercises.length,progressPct=clamp(((i+(today.length/target))/totalExercises)*100,0,100),shell=document.querySelector('#sessionSheet .workout-shell');if(!shell)return;const previous=previousExercisePerformance(s.id,e),prevText=previous.length?previous.map((x,j)=>`${x.weightKg?x.weightKg+' kg':'BW'}×${x.reps}`).join(' · '):'No previous performance yet';shell.insertAdjacentHTML('afterbegin',`<div class="guided-workout-progress"><div class="guided-workout-progress-top"><span>Workout progress</span><span>${i+1}/${totalExercises} exercises</span></div><div class="guided-workout-bar"><i style="width:${progressPct}%"></i></div></div>`);const head=shell.querySelector('.workout-engine-head');if(head)head.insertAdjacentHTML('afterend',`<div class="previous-performance"><b>Last time:</b> ${esc(prevText)}</div>`);const primary=shell.querySelector('.workout-primary-row .btn.primary');if(primary)primary.textContent=`Log set ${Math.min(today.length+1,target)} of ${target}`;const links=shell.querySelector('.workout-secondary-links');if(links)links.insertAdjacentHTML('beforebegin',`${today.length>=target&&i<totalExercises-1?`<button class="btn primary guided-next-btn" onclick="canonicalWorkout.exerciseIndex++;skipCanonicalRest();renderCanonicalWorkout()">Next exercise →</button>`:''}<button class="btn secondary workout-help-btn" onclick="gfAskHerculesForm('${s.id}',${i})">Ask Hercules about form</button>`)};
+
+// Keep header alert and avatar structurally aligned, even after earlier builds move the alert around.
+function gfMountSetupAlertForCurrentTab(){const alertBtn=document.getElementById('gfProfileSetupAlert'),actions=document.getElementById('gfTopbarActions'),profileBtn=document.getElementById('profileMenuButton');if(!alertBtn)return;const coachHome=document.body.classList.contains('coach-home-active');if(coachHome){if(alertBtn.parentElement!==document.body)document.body.appendChild(alertBtn)}else if(actions){if(alertBtn.parentElement!==actions)actions.insertBefore(alertBtn,profileBtn||actions.firstChild);['top','right','left','bottom','width','height'].forEach(p=>alertBtn.style.removeProperty(p))}}
+
+// Update Hercules wording now that Progress is the Analysis hub.
+if(GFCoach?.action){const baseAction=GFCoach.action.bind(GFCoach);GFCoach.action=function(kind){if(kind==='progress'){this.navigateAfter('Opening your analysis dashboard…',()=>showTab('progress'));return}return baseAction(kind)}}
+
 
 </script>
 
@@ -2964,7 +3181,7 @@ setTimeout(gfAlignTopRightControls,120);
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.16', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.19', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
