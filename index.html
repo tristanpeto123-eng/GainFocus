@@ -1095,7 +1095,7 @@ function exportTrainingCalendar(){
   const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Gain Focus//Training Calendar//EN','CALSCALE:GREGORIAN',...events,'END:VCALENDAR'].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));a.download=`gain-focus-training-${clientNameValue()||'client'}.ics`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);toast('Calendar file ready');
 }
 
-// v4.0.14 · restore nutrition aggregation helpers removed during diet-plan consolidation.
+// v4.0.15 · restore nutrition aggregation helpers removed during diet-plan consolidation.
 function todayNutritionLogs(){
   ensureProgressExtras();
   return (progress?.nutritionLogs||[]).filter(x=>x&&x.date===todayISO());
@@ -2450,7 +2450,7 @@ if(plan&&validPlan(plan)){
 
 
 // ============================================================================
-// v4.0.14 · PROGRESS CHART UPGRADE
+// v4.0.15 · PROGRESS CHART UPGRADE
 // Separate weight and strength charts with marked axes and projected guide line.
 // ============================================================================
 function shortDateLabel(iso){
@@ -2587,6 +2587,153 @@ function renderProgress(){
     <div class="section"><h3>Weekly reviews</h3><span class="small">${checks.length} saved · tap to view or edit</span></div>${weeklyReviewHistoryHTML()}`;
   setTimeout(drawChart,0);
 }
+
+
+// ============================================================================
+// v4.0.15 · NUTRITION TREND + COMPACT HISTORY
+// Macro adherence/projection chart and 5-item history caps with See all.
+// ============================================================================
+function macroWeekStart(dateStr){
+  const d=new Date(String(dateStr)+'T12:00:00');
+  if(Number.isNaN(d.getTime()))return String(dateStr||'');
+  const day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);
+  return localISODate(d);
+}
+function addDaysISO(dateStr,days){
+  const d=new Date(String(dateStr)+'T12:00:00');d.setDate(d.getDate()+Number(days||0));return localISODate(d);
+}
+function macroDailyAdherence(){
+  ensureProgressExtras();
+  const n=plan?.nutrition||{},targets={protein:Number(n.proteinG)||0,carbs:Number(n.carbsG??n.carbohydrateG??n.carbs)||0,fat:Number(n.fatG??n.fatsG??n.fat)||0};
+  const byDate=new Map();
+  (progress?.nutritionLogs||[]).forEach(x=>{
+    const date=String(x?.date||'').slice(0,10);if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return;
+    if(!byDate.has(date))byDate.set(date,{protein:0,carbs:0,fat:0});const d=byDate.get(date);
+    d.protein+=Number(x.protein)||0;d.carbs+=Number(x.carbs)||0;d.fat+=Number(x.fat)||0;
+  });
+  return [...byDate.entries()].sort((a,b)=>a[0].localeCompare(b[0])).map(([date,v])=>({
+    date,
+    protein:targets.protein?clamp(v.protein/targets.protein*100,0,180):null,
+    carbs:targets.carbs?clamp(v.carbs/targets.carbs*100,0,180):null,
+    fat:targets.fat?clamp(v.fat/targets.fat*100,0,180):null
+  }));
+}
+function macroWeeklyAdherence(){
+  const weeks=new Map();
+  macroDailyAdherence().forEach(d=>{
+    const wk=macroWeekStart(d.date);if(!weeks.has(wk))weeks.set(wk,{protein:[],carbs:[],fat:[]});const w=weeks.get(wk);
+    ['protein','carbs','fat'].forEach(k=>{if(Number.isFinite(d[k]))w[k].push(d[k])});
+  });
+  return [...weeks.entries()].sort((a,b)=>a[0].localeCompare(b[0])).map(([date,w])=>({date,...Object.fromEntries(['protein','carbs','fat'].map(k=>[k,w[k].length?round(w[k].reduce((a,b)=>a+b,0)/w[k].length,1):null]))}));
+}
+function linearProjection(points,weeks=4){
+  const clean=(points||[]).filter(p=>Number.isFinite(Number(p.value))).slice(-6);if(!clean.length)return[];
+  if(clean.length===1){const last=clean[0];return [last,...Array.from({length:weeks},(_,i)=>({date:addDaysISO(last.date,(i+1)*7),value:round(last.value,1)}))]}
+  const n=clean.length,xbar=(n-1)/2,ybar=clean.reduce((a,p)=>a+Number(p.value),0)/n;
+  let num=0,den=0;clean.forEach((p,i)=>{num+=(i-xbar)*(Number(p.value)-ybar);den+=(i-xbar)*(i-xbar)});const slope=den?num/den:0;
+  const last=clean.at(-1);const out=[{date:last.date,value:round(last.value,1)}];
+  for(let i=1;i<=weeks;i++)out.push({date:addDaysISO(last.date,i*7),value:round(clamp(Number(last.value)+slope*i,0,160),1)});
+  return out;
+}
+function macroTrendSeries(){
+  const weekly=macroWeeklyAdherence(),make=k=>weekly.filter(x=>Number.isFinite(Number(x[k]))).map(x=>({date:x.date,value:Number(x[k])}));
+  const p=make('protein'),c=make('carbs'),f=make('fat');
+  const dates=[...new Set([...p,...c,...f].map(x=>x.date))].sort();const last=dates.at(-1)||todayISO(),future=addDaysISO(last,28);
+  return {protein:p,carbs:c,fat:f,proteinProjected:linearProjection(p),carbsProjected:linearProjection(c),fatProjected:linearProjection(f),target:[{date:dates[0]||last,value:100},{date:future,value:100}]};
+}
+function macroTrendSummary(series){
+  const latest=k=>series[k]?.at(-1)?.value;
+  const vals=[latest('protein'),latest('carbs'),latest('fat')].filter(Number.isFinite);const avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;
+  return {avg:round(avg,0),label:avg>=90&&avg<=110?'Very close to targets':avg>=80&&avg<=120?'Generally on target':'Needs more consistency'};
+}
+function drawMacroTrendChart(){
+  const el=document.getElementById('macroTrendChart');if(!el)return;const s=macroTrendSeries();
+  if(!(s.protein.length||s.carbs.length||s.fat.length)){el.innerHTML='<div class="muted" style="padding:82px 20px;text-align:center">Log food on at least one day to unlock macro trend.</div>';return}
+  el.innerHTML=buildLineChartSVG({
+    series:[
+      {label:'Protein',color:'#7fd6ff',points:s.protein,strokeWidth:3},
+      {label:'Protein projected',color:'#7fd6ff',points:s.proteinProjected,strokeWidth:2,dash:'6 6'},
+      {label:'Carbs',color:'#9d8cff',points:s.carbs,strokeWidth:3},
+      {label:'Carbs projected',color:'#9d8cff',points:s.carbsProjected,strokeWidth:2,dash:'6 6'},
+      {label:'Fat',color:'#7cffc7',points:s.fat,strokeWidth:3},
+      {label:'Fat projected',color:'#7cffc7',points:s.fatProjected,strokeWidth:2,dash:'6 6'},
+      {label:'Target',color:'rgba(255,255,255,.42)',points:s.target,strokeWidth:1.5,dash:'4 6'}
+    ],
+    legend:[
+      {label:'Protein',color:'#7fd6ff'},
+      {label:'Carbs',color:'#9d8cff'},
+      {label:'Fat',color:'#7cffc7'},
+      {label:'Projection',color:'rgba(230,238,255,.72)',dash:'6 6'},
+      {label:'100% target',color:'rgba(255,255,255,.42)',dash:'4 6'}
+    ],
+    yLabel:'Target met (%)',
+    yTickFormatter:v=>`${Math.round(v)}%`,
+    emptyText:'No macro history yet'
+  });
+}
+const _renderNutritionV4014=renderNutrition;
+renderNutrition=function(){
+  _renderNutritionV4014();
+  const root=document.getElementById('nutrition'),hero=root?.querySelector('.hero');if(!root||!hero)return;
+  const s=macroTrendSeries(),summary=macroTrendSummary(s),latest=(arr)=>arr?.at(-1)?.value;
+  const p=latest(s.protein),c=latest(s.carbs),f=latest(s.fat);
+  hero.insertAdjacentHTML('afterend',`<div class="card glass" id="macroTrendCard" style="margin-top:12px"><div class="section" style="margin:0 0 10px"><h3>Macro trend</h3><span class="small">Weekly adherence · 4-week projection</span></div><div id="macroTrendChart" class="chart" style="height:240px"></div><div class="progress-kpis" style="margin-top:10px"><div><span>Protein</span><b>${Number.isFinite(p)?Math.round(p)+'%':'—'}</b></div><div><span>Carbs</span><b>${Number.isFinite(c)?Math.round(c)+'%':'—'}</b></div><div><span>Fat</span><b>${Number.isFinite(f)?Math.round(f)+'%':'—'}</b></div></div><p class="muted" style="margin:10px 0 0;font-size:11px">${esc(summary.label)} · solid lines are weekly averages on logged days; dashed lines project the recent trend. 100% means the daily macro target was met.</p></div>`);
+  setTimeout(drawMacroTrendChart,0);
+};
+function historySeeAllButton(kind,total){
+  if(Number(total)<=5)return'';const label=kind==='workout'?`See all ${total} workouts`:`See all ${total} reviews`,fn=kind==='workout'?'openAllWorkoutHistory()':'openAllWeeklyReviews()';
+  return `<button class="btn secondary" style="width:100%;margin:9px 0 4px" onclick="${fn}">${label} ›</button>`;
+}
+function openAllWorkoutHistory(){
+  ensureProgressExtras();const rows=sortedWorkoutLogs(),sheet=document.getElementById('sessionSheet');sheet.classList.remove('workout-sheet');sheet.innerHTML=`<div class="grabber"></div><div class="eyebrow">Progress history</div><h2 style="font-size:29px;margin:5px 0 2px">All workouts</h2><p class="muted" style="margin-top:0">${rows.length} logged sessions · newest first. Tap any workout to view or edit its sets.</p>${workoutHistoryHTML()}<button class="btn secondary" style="width:100%;margin-top:12px" onclick="closeSession()">Close</button>`;document.getElementById('sessionModal').classList.add('open');
+}
+function openAllWeeklyReviews(){
+  ensureWeeklyReviewIds();const rows=sortedWeeklyReviews(),sheet=document.getElementById('sessionSheet');sheet.classList.remove('workout-sheet');sheet.innerHTML=`<div class="grabber"></div><div class="eyebrow">Progress history</div><h2 style="font-size:29px;margin:5px 0 2px">All reviews</h2><p class="muted" style="margin-top:0">${rows.length} saved reviews · newest first. Tap any review to view or edit it.</p>${weeklyReviewHistoryHTML()}<button class="btn secondary" style="width:100%;margin-top:12px" onclick="closeSession()">Close</button>`;document.getElementById('sessionModal').classList.add('open');
+}
+const _renderCheckinV4014=renderCheckin;
+renderCheckin=function(){
+  _renderCheckinV4014();ensureWeeklyReviewIds();const root=document.getElementById('checkin'),rows=sortedWeeklyReviews(),history=root?.querySelector('.weekly-review-history');if(!history)return;
+  history.outerHTML=weeklyReviewHistoryHTML(5);const fresh=root.querySelector('.weekly-review-history');if(fresh&&rows.length>5)fresh.insertAdjacentHTML('afterend',historySeeAllButton('review',rows.length));
+};
+function renderProgress(){
+  ensureProgressExtras();ensureWeeklyReviewIds();
+  const checks=sortedWeeklyReviews(),workouts=sortedWorkoutLogs(),current=latestWeight(),goal=Number(plan.goal.targetWeightKg)||current,startW=Number(plan.client.startWeightKg)||current,gained=current-startW,remaining=Math.max(0,goal-current),latestReview=latestPhysiqueAnalysis()?.analysis;
+  const weightSeries=buildWeightSeries(),latestActual=weightSeries.actual.at(-1),latestProjected=weightSeries.projected.at(-1),delta=(latestActual&&latestProjected)?round(latestActual.value-latestProjected.value,1):0;
+  let weightStatus='On track';if(delta<-0.3)weightStatus='Below projection';else if(delta>0.3)weightStatus='Ahead of projection';
+  const strengthSeries=buildStrengthSeries(),pointsCount=(strengthSeries.Push?.length||0)+(strengthSeries.Pull?.length||0)+(strengthSeries.Legs?.length||0);
+  document.getElementById('progress').innerHTML=`
+    <div class="progress-overview"><div class="progress-overview-copy"><span class="eyebrow">Progress</span><h2>${current.toFixed(1)} <small>kg</small></h2><p>${Math.round(pct())}% of your scale journey complete</p></div><div class="progress-ring" style="--p:${Math.round(pct())}"><div><b>${Math.round(pct())}%</b><span>goal</span></div></div></div>
+    <div class="progress-kpis"><div><span>Started</span><b>${startW.toFixed(1)} kg</b></div><div><span>Gained</span><b>${gained>=0?'+':''}${gained.toFixed(1)} kg</b></div><div><span>To goal</span><b>${remaining.toFixed(1)} kg</b></div></div>
+    ${bodyMapCard()}
+    <div class="progress-info-card"><div class="progress-info-title"><span class="eyebrow">How it works</span><h3>Heat comes from logged work</h3></div><div class="progress-info-grid"><div><i>▣</i><b>Log workouts</b><span>Completed working sets are the proof.</span></div><div><i>♨</i><b>Muscles heat up</b><span>Primary and secondary muscles receive load.</span></div><div><i>▥</i><b>Track balance</b><span>Spot muscle groups being missed over time.</span></div></div></div>
+    ${latestReview?physiqueAnalysisCard(latestReview,false):''}
+    <button class="card glass physique-card progress-physique" style="width:100%;text-align:left;border:1px solid var(--line);margin-bottom:12px" onclick="openPhysiqueGallery('current')"><div class="section" style="margin:0 0 4px"><h3>Physique</h3><span class="small">Current ↔ Goal</span></div><p class="muted" style="margin:0">Compare visual progress with the target and saved check-ins.</p></button>
+    <div class="card glass"><div class="section" style="margin:0 0 10px"><h3>Weight trend</h3><span class="small">Actual vs projected · Week ${weekNo()}</span></div><div id="weightChart" class="chart" style="height:230px"></div><div class="progress-info-grid" style="margin-top:10px;grid-template-columns:repeat(2,minmax(0,1fr))"><div><span class="small">Current vs guide</span><b style="font-size:18px">${delta>0?'+':''}${delta.toFixed(1)} kg</b></div><div><span class="small">Status</span><b style="font-size:18px">${esc(weightStatus)}</b></div></div></div>
+    <div class="card glass" style="margin-top:12px"><div class="section" style="margin:0 0 10px"><h3>Strength trend</h3><span class="small">Best estimated 1RM from logged sets</span></div><div id="strengthChart" class="chart" style="height:230px"></div><p class="muted" style="margin:10px 0 0;font-size:11px">Push, Pull and Legs are tracked separately from your logged weighted top sets so the trend stays readable over time.</p></div>
+    <div class="section"><h3>Workout history</h3><span class="small">Showing ${Math.min(5,workouts.length)} of ${workouts.length} · ${pointsCount} strength points</span></div>${workoutHistoryHTML(5)}${historySeeAllButton('workout',workouts.length)}
+    <div class="section"><h3>Weekly reviews</h3><span class="small">Showing ${Math.min(5,checks.length)} of ${checks.length}</span></div>${weeklyReviewHistoryHTML(5)}${historySeeAllButton('review',checks.length)}`;
+  setTimeout(drawChart,0);
+}
+
+
+// v4.0.15 chart layout refinement: keep marked axes and legends clear on mobile.
+buildLineChartSVG=function({series,width=640,height=230,yLabel='kg',emptyText='No data yet',legend=[],yTickFormatter=v=>String(v),xTicks=null}){
+  const all=(series||[]).flatMap(s=>(s.points||[]).map(p=>({...p,_label:s.label,_color:s.color,_dash:s.dash||''})));
+  if(!all.length)return `<div class="muted" style="padding:82px 20px;text-align:center">${emptyText}</div>`;
+  const margin={top:20,right:14,bottom:56,left:50},plotW=width-margin.left-margin.right,plotH=height-margin.top-margin.bottom;
+  const dates=[...new Set(all.map(p=>p.date))].sort((a,b)=>a.localeCompare(b));
+  const t0=new Date(dates[0]+'T12:00:00').getTime(),t1=new Date(dates.at(-1)+'T12:00:00').getTime(),tSpan=Math.max(86400000,t1-t0);
+  const vals=all.map(p=>Number(p.value)).filter(Number.isFinite);let min=Math.min(...vals),max=Math.max(...vals);if(min===max){min-=1;max+=1}const pad=Math.max((max-min)*.12,.6);min-=pad;max+=pad;const span=Math.max(1,max-min);
+  const x=d=>margin.left+((new Date(d+'T12:00:00').getTime()-t0)/tSpan)*plotW,y=v=>margin.top+(1-((v-min)/span))*plotH;
+  const yVals=Array.from({length:5},(_,i)=>min+span*(i/4));let xDates;
+  if(Array.isArray(xTicks)&&xTicks.length)xDates=xTicks;else if(dates.length<=4)xDates=dates;else xDates=[...new Set([dates[0],dates[Math.floor((dates.length-1)/3)],dates[Math.floor((dates.length-1)*2/3)],dates.at(-1)])];
+  const gridY=yVals.map(v=>`<g><line x1="${margin.left}" y1="${y(v)}" x2="${width-margin.right}" y2="${y(v)}" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="${margin.left-8}" y="${y(v)+4}" fill="rgba(220,232,255,.82)" font-size="10" text-anchor="end">${yTickFormatter(round(v,1))}</text></g>`).join('');
+  const gridX=xDates.map(d=>`<g><line x1="${x(d)}" y1="${margin.top}" x2="${x(d)}" y2="${height-margin.bottom}" stroke="rgba(255,255,255,.05)" stroke-width="1"/><text x="${x(d)}" y="${height-35}" fill="rgba(220,232,255,.74)" font-size="10" text-anchor="middle">${shortDateLabel(d)}</text></g>`).join('');
+  const seriesSvg=(series||[]).map(s=>{const pts=(s.points||[]).map(p=>`${x(p.date)},${y(p.value)}`).join(' ');if(!pts)return'';const circles=(s.points||[]).map(p=>`<circle cx="${x(p.date)}" cy="${y(p.value)}" r="2.7" fill="${s.color}" opacity="${s.dash?.82:1}"/>`).join('');return `<g><polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="${s.strokeWidth||3}" stroke-linecap="round" stroke-linejoin="round" ${s.dash?`stroke-dasharray="${s.dash}" opacity=".9"`:''}/>${circles}</g>`}).join('');
+  const items=legend.length?legend:(series||[]).map(s=>({label:s.label,color:s.color,dash:s.dash||''})),slot=plotW/Math.max(1,items.length);
+  const legendSvg=items.map((item,i)=>{const lx=margin.left+i*slot,ly=height-10;return `<g transform="translate(${lx},${ly})"><line x1="0" y1="0" x2="15" y2="0" stroke="${item.color}" stroke-width="2.5" ${item.dash?`stroke-dasharray="${item.dash}"`:''}/><text x="20" y="4" fill="rgba(235,243,255,.78)" font-size="9.2">${item.label}</text></g>`}).join('');
+  return `<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="Trend chart"><text x="${margin.left}" y="12" fill="rgba(220,232,255,.72)" font-size="10">${yLabel}</text>${gridY}${gridX}<line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${height-margin.bottom}" stroke="rgba(255,255,255,.16)" stroke-width="1.2"/><line x1="${margin.left}" y1="${height-margin.bottom}" x2="${width-margin.right}" y2="${height-margin.bottom}" stroke="rgba(255,255,255,.16)" stroke-width="1.2"/>${seriesSvg}${legendSvg}</svg>`;
+};
 
 </script>
 
