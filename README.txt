@@ -30,3 +30,6 @@ Account/profile editing added: profile picture, name, age, sex, height, current 
 
 
 v4.0.9: Onboarding baseline videos now use the normal iOS/browser file picker. No capture attribute is used, so existing videos can be selected from Photos or Files instead of forcing camera capture.
+
+
+v4.0.10: Hercules input now reads “Ask Hercules anything…”
