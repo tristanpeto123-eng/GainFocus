@@ -1095,7 +1095,7 @@ function exportTrainingCalendar(){
   const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Gain Focus//Training Calendar//EN','CALSCALE:GREGORIAN',...events,'END:VCALENDAR'].join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'}));a.download=`gain-focus-training-${clientNameValue()||'client'}.ics`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);toast('Calendar file ready');
 }
 
-// v4.0.15 · restore nutrition aggregation helpers removed during diet-plan consolidation.
+// v4.0.16 · restore nutrition aggregation helpers removed during diet-plan consolidation.
 function todayNutritionLogs(){
   ensureProgressExtras();
   return (progress?.nutritionLogs||[]).filter(x=>x&&x.date===todayISO());
@@ -1691,6 +1691,11 @@ function bodyMapSVG(view='front'){
   .calendar-control-row .calendar-time{flex-basis:96px!important;width:96px!important;min-width:96px!important;max-width:96px!important;font-size:14px!important}
   .calendar-control-row .calendar-add{max-width:calc(100% - 106px)!important;font-size:12px!important;padding:0 8px!important}
 }
+
+/* v4.0.16 · hard compact-history guard */
+#progress .workout-history > .workout-history-card:nth-child(n+6),
+#progress .weekly-review-history > .weekly-review-card:nth-child(n+6){display:none!important}
+#progress .history-see-all{width:100%;margin:9px 0 4px}
 </style>
 <g class="zone" data-zone="traps" id="rear-traps" data-muscle="traps" style="--zone-fill:${heatColor(heat.traps||0)}" onclick="showMuscleDetail('traps')">
 <path d="M 497,164 L 494,182 L 479,201 L 466,210 L 419,233 L 414,238 L 444,260 L 474,294 L 513,351 L 538,397 L 538,226 L 534,164 Z" fill="var(--zone-fill)"/>
@@ -2450,7 +2455,7 @@ if(plan&&validPlan(plan)){
 
 
 // ============================================================================
-// v4.0.15 · PROGRESS CHART UPGRADE
+// v4.0.16 · PROGRESS CHART UPGRADE
 // Separate weight and strength charts with marked axes and projected guide line.
 // ============================================================================
 function shortDateLabel(iso){
@@ -2590,7 +2595,7 @@ function renderProgress(){
 
 
 // ============================================================================
-// v4.0.15 · NUTRITION TREND + COMPACT HISTORY
+// v4.0.16 · NUTRITION TREND + COMPACT HISTORY
 // Macro adherence/projection chart and 5-item history caps with See all.
 // ============================================================================
 function macroWeekStart(dateStr){
@@ -2716,7 +2721,7 @@ function renderProgress(){
 }
 
 
-// v4.0.15 chart layout refinement: keep marked axes and legends clear on mobile.
+// v4.0.16 chart layout refinement: keep marked axes and legends clear on mobile.
 buildLineChartSVG=function({series,width=640,height=230,yLabel='kg',emptyText='No data yet',legend=[],yTickFormatter=v=>String(v),xTicks=null}){
   const all=(series||[]).flatMap(s=>(s.points||[]).map(p=>({...p,_label:s.label,_color:s.color,_dash:s.dash||''})));
   if(!all.length)return `<div class="muted" style="padding:82px 20px;text-align:center">${emptyText}</div>`;
@@ -2735,13 +2740,71 @@ buildLineChartSVG=function({series,width=640,height=230,yLabel='kg',emptyText='N
   return `<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="Trend chart"><text x="${margin.left}" y="12" fill="rgba(220,232,255,.72)" font-size="10">${yLabel}</text>${gridY}${gridX}<line x1="${margin.left}" y1="${margin.top}" x2="${margin.left}" y2="${height-margin.bottom}" stroke="rgba(255,255,255,.16)" stroke-width="1.2"/><line x1="${margin.left}" y1="${height-margin.bottom}" x2="${width-margin.right}" y2="${height-margin.bottom}" stroke="rgba(255,255,255,.16)" stroke-width="1.2"/>${seriesSvg}${legendSvg}</svg>`;
 };
 
+
+
+// ============================================================================
+// v4.0.16 · HARD HISTORY CAP
+// Final render-time enforcement so Progress can never show more than five
+// workout cards or five weekly review cards. "See all" opens the full history.
+// ============================================================================
+function ensureHistorySeeAllAfter(container,kind,total){
+  if(!container||Number(total)<=5)return;
+  const next=container.nextElementSibling;
+  if(next?.classList?.contains('history-see-all'))return;
+  const button=document.createElement('button');
+  button.type='button';
+  button.className='btn secondary history-see-all';
+  button.textContent=kind==='workout'?`See all ${total} workouts ›`:`See all ${total} reviews ›`;
+  button.onclick=kind==='workout'?openAllWorkoutHistory:openAllWeeklyReviews;
+  container.insertAdjacentElement('afterend',button);
+}
+function enforceProgressHistoryCap(){
+  const root=document.getElementById('progress');if(!root)return;
+  const workoutContainer=root.querySelector('.workout-history');
+  if(workoutContainer){
+    const cards=[...workoutContainer.querySelectorAll(':scope > .workout-history-card')];
+    cards.forEach((card,i)=>{card.style.display=i<5?'':'none'});
+    root.querySelectorAll('.history-see-all[data-kind="workout"]').forEach(x=>x.remove());
+    if(cards.length>5){
+      const b=document.createElement('button');b.type='button';b.className='btn secondary history-see-all';b.dataset.kind='workout';b.textContent=`See all ${cards.length} workouts ›`;b.onclick=openAllWorkoutHistory;workoutContainer.insertAdjacentElement('afterend',b);
+    }
+  }
+  const reviewContainer=root.querySelector('.weekly-review-history');
+  if(reviewContainer){
+    const cards=[...reviewContainer.querySelectorAll(':scope > .weekly-review-card')];
+    cards.forEach((card,i)=>{card.style.display=i<5?'':'none'});
+    root.querySelectorAll('.history-see-all[data-kind="review"]').forEach(x=>x.remove());
+    if(cards.length>5){
+      const b=document.createElement('button');b.type='button';b.className='btn secondary history-see-all';b.dataset.kind='review';b.textContent=`See all ${cards.length} reviews ›`;b.onclick=openAllWeeklyReviews;reviewContainer.insertAdjacentElement('afterend',b);
+    }
+  }
+  // Keep section summaries truthful even if an older render function built the markup.
+  const sections=[...root.querySelectorAll('.section')];
+  const workoutSection=sections.find(s=>/Workout history/i.test(s.textContent||''));
+  if(workoutSection){const sm=workoutSection.querySelector('.small');const total=(progress?.workoutLogs||[]).length;if(sm)sm.textContent=`Showing ${Math.min(5,total)} of ${total}`;}
+  const reviewSection=sections.find(s=>/Weekly reviews/i.test(s.textContent||''));
+  if(reviewSection){const sm=reviewSection.querySelector('.small');const total=(progress?.weeklyCheckins||[]).length;if(sm)sm.textContent=`Showing ${Math.min(5,total)} of ${total}`;}
+}
+const _renderProgressV4016Base=renderProgress;
+renderProgress=function(){
+  _renderProgressV4016Base();
+  enforceProgressHistoryCap();
+  requestAnimationFrame(enforceProgressHistoryCap);
+  setTimeout(enforceProgressHistoryCap,60);
+};
+const _showTabV4016Base=showTab;
+showTab=function(tab){
+  _showTabV4016Base(tab);
+  if(tab==='progress')setTimeout(enforceProgressHistoryCap,0);
+};
+
 </script>
 
 <script>
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.16', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
