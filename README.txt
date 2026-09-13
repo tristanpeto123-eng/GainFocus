@@ -1,2 +1,2 @@
-Gain Focus PWA v4.0.44
-Adds non-destructive profile logout from Account settings. Logging out returns to saved-user login and keeps client data/history on-device.
+Gain Focus PWA v4.0.46
+Native Hercules intelligence expanded across analysis, correlations, body composition, workouts, profile and app operations.

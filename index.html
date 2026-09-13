@@ -1321,7 +1321,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.45';
+const APP_VERSION='4.0.46';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -4247,11 +4247,162 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 
 </script>
 
+
+<script id="gf46-native-hercules-intelligence">
+// Gain Focus v4.0.46 · expanded native Hercules intelligence.
+// Common coaching, analysis and app-operation questions work locally without a model endpoint.
+(function(){
+  const GF46_MUSCLE_ALIASES={
+    chest:'chest',pec:'chest',pecs:'chest',shoulder:'shoulders',shoulders:'shoulders',delt:'shoulders',delts:'shoulders',
+    'rear delt':'rearDelts','rear delts':'rearDelts',lat:'lats',lats:'lats',trap:'traps',traps:'traps',
+    bicep:'biceps',biceps:'biceps',tricep:'triceps',triceps:'triceps',forearm:'forearms',forearms:'forearms',
+    quad:'quads',quads:'quads',hamstring:'hamstrings',hamstrings:'hamstrings',glute:'glutes',glutes:'glutes',
+    calf:'calves',calves:'calves','mid back':'midBack','middle back':'midBack','lower back':'lowerBack',
+    erector:'erectors',erectors:'erectors',adductor:'adductors',adductors:'adductors'
+  };
+  const gf46Safe=(fn,fallback=null)=>{try{const v=fn();return v==null?fallback:v}catch(e){console.warn('Hercules native intelligence fallback',e);return fallback}};
+  const gf46Signed=(v,d=1,u='')=>Number.isFinite(Number(v))?`${Number(v)>=0?'+':''}${Number(v).toFixed(d)}${u}`:'—';
+  function gf46MuscleKey(q){q=String(q||'').toLowerCase();const terms=Object.keys(GF46_MUSCLE_ALIASES).sort((a,b)=>b.length-a.length);for(const term of terms)if(q.includes(term))return GF46_MUSCLE_ALIASES[term];return null}
+  function gf46MuscleRows(mode,stats){const keys=typeof GF_DEV_KEYS!=='undefined'?GF_DEV_KEYS:[];return keys.map(k=>({key:k,label:gfDevLabel?.(k)||k,delta:Number(stats?.[mode]?.[k]?.delta),data:stats?.[mode]?.[k]})).filter(x=>Number.isFinite(x.delta))}
+  function gf46PeriodSummary(mode){
+    const stats=gf46Safe(()=>gf42DevelopmentStats(),null),period=gf46Safe(()=>gf42WindowLabel(),bodyMapWindow||'selected period');
+    if(!stats)return {text:`I do not have a usable ${mode} history for the selected period yet.`,rows:[]};
+    const rows=gf46MuscleRows(mode,stats);if(!rows.length)return {text:`There is not enough comparable ${mode} history inside ${period} yet.`,rows:[]};
+    const gain=[...rows].sort((a,b)=>b.delta-a.delta)[0],drop=[...rows].sort((a,b)=>a.delta-b.delta)[0];
+    const positives=rows.filter(x=>x.delta>0),negatives=rows.filter(x=>x.delta<0);
+    let text=`${period}: `;
+    if(positives.length)text+=`${gain.label} has the strongest gain at ${gf46Signed(gain.delta,0,'%')}. `;
+    if(negatives.length)text+=`${drop.label} has the largest decline at ${gf46Signed(drop.delta,0,'%')}. `;
+    if(!positives.length&&!negatives.length)text+='The comparable muscles are essentially flat. ';
+    return {text:text.trim(),rows,stats,period,gain,drop}
+  }
+  function gf46BodyCompAnswer(q){
+    const logs=gf46Safe(()=>gf30BodyCompLogs(),[])||[],latest=logs.at(-1)||null,regions=gf46Safe(()=>gf38BodyRegionSeries(),{})||{};
+    if(/how.*(log|add|track).*(body fat|measurement|tape)|where.*(body fat|tape|measure)/.test(q))return 'Open Check-in, then open Body composition & measurements. You can add body fat from an electronic device, calipers or a low-confidence photo estimate, plus optional tape measurements in centimetres.';
+    if(/photo.*body fat|body fat.*photo|estimate.*body fat/.test(q))return 'In Check-in → Body composition & measurements, choose App photo estimate. Hercules uses the latest analysed physique image only as a rough visual estimate, so it is deliberately marked low confidence and should not be treated like a device or caliper reading.';
+    if(/tape.*(how|measure)|how.*measure.*(chest|waist|arm|thigh|shoulder)/.test(q))return 'For tape trends, repeat the same landmark, tape tension and conditions each time. Measure relaxed unless your protocol says otherwise, keep the tape level, and use the same side for unilateral measurements. Consistency matters more than chasing a single exact reading.';
+    if(/body fat|body composition|tape|circumference|measurement/.test(q)){
+      if(!latest)return 'No body-composition readings are logged yet. They are optional and live under Check-in → Body composition & measurements.';
+      const parts=[];if(Number.isFinite(Number(latest.bodyFatPct)))parts.push(`latest body fat ${round(Number(latest.bodyFatPct),1)}% by ${gf30BodyFatLabel?.(latest.bodyFatMethod)||'recorded method'}`);
+      const deltas=Object.values(regions).filter(x=>Number.isFinite(x.deltaCm)).sort((a,b)=>Math.abs(b.deltaCm)-Math.abs(a.deltaCm)).slice(0,3);if(deltas.length)parts.push(`largest tape changes: ${deltas.map(x=>`${x.label} ${gf46Signed(x.deltaCm,1,' cm')}`).join(', ')}`);
+      return `${parts.join('. ')}. These are extra evidence alongside weight, training and visual analysis; repeated readings taken the same way are much more useful than one-off measurements.`
+    }
+    return null
+  }
+  function gf46AppHelpAnswer(q){
+    if(/what can (you|hercules) do|what.*can i ask|help me use|what.*features/.test(q))return 'Natively, I can explain and use your weight trajectory, calories/macros, workout history, remembered loads/reps, RIR, conditioning, muscle strength indices, visual-mass history, body-fat/tape data, correlations, check-ins and plan goals. I can also guide you around Train, Nutrition, Check-in, Analysis and Profile. Fully open-ended questions can still use the optional remote endpoint.';
+    if(/how.*(use|read).*(analysis|analytics)|what.*analysis.*(show|mean)/.test(q))return 'Analysis starts with the muscle-development map. Switch Training load, Conditioning, Strength or Visual mass and choose 7 Days, 14 Days, 1 Month or 3 Months. Trending statistics contains Weight, Strength, Nutrition and Body Comp on the shared historic date axis. Emerging trends & deviations contains cross-signal findings and correlations; Historical data holds older check-ins, workouts and reviews.';
+    if(/difference.*training load.*conditioning|training load.*conditioning.*strength.*visual|four signals|what.*conditioning.*map|what.*visual mass.*map/.test(q))return 'Training load shows how much each muscle was worked inside the selected period. Conditioning compares productive sets/reps with the point before that period. Strength compares each muscle’s normalised strength index, so different exercises can be compared fairly. Visual mass compares analyser-perceived regional mass between comparable physique check-ins. Visual mass is an estimate, not literal muscle weight.';
+    if(/what.*(blue|red|colour|color).*map|heat.?map.*(blue|red|colour|color)|why.*blue|why.*red/.test(q))return 'On Training load, cold blue means little/no work and red means the highest load in that period. On historic Conditioning, Strength and Visual mass, deeper blue means decline, cyan is around no change, and yellow/orange/red means progressively stronger positive change. The scale is relative to the selected client and period.';
+    if(/what.*(7 days|14 days|1 month|3 months)|rolling.*month|time period.*map|selected period/.test(q))return 'The muscle-map periods are rolling windows ending at the latest historic date: 7 days, 14 days, 30 days and 90 days. Every signal uses the same selected window so Training load, Conditioning, Strength and Visual mass stay comparable.';
+    if(/how.*(log|start|record).*workout|start.*workout|finish.*workout|end later/.test(q))return 'Open Train and start the scheduled workout. Each exercise remembers the previous weight and reps so you normally only edit what changes. Log each working set and RIR. Finish workout saves the session and opens the Hercules debrief; End later leaves the session unfinished so you can return without falsely completing it.';
+    if(/remember.*(weight|reps)|why.*prefill|previous.*weight|previous.*reps/.test(q))return 'The workout logger intentionally pre-fills weight and reps from the previous set, or from the last comparable workout on the first set. They remain editable. It reduces repetitive typing without silently changing progression.';
+    if(/how.*(log|scan|add).*food|nutrition label|save.*favourite|favorite.*food/.test(q))return 'Open Nutrition. Use Nutrition label photo for packaged food or Manual entry for anything else. Calories, protein, carbs and fat are all logged. Save repeat foods as favourites, then open Nutrition analysis below the main logging area for historic adherence.';
+    if(/how.*check.?in|what.*check.?in|where.*check.?in analysis/.test(q))return 'Check-in owns all current physique-review analysis. Add the current weight and progress media, state whether legs are visible, run the analysis and save the review. Hercules then compares it with earlier comparable check-ins. The main Analysis page deliberately does not duplicate the current check-in review.';
+    if(/baseline|front.*side.*back|profile.*alert|why.*alert|finish.*profile/.test(q))return 'The profile alert means one or more baseline front, side or back views are missing. On onboarding you can supply one guided front → side → back video and Gain Focus extracts the poses. You can skip it and add them later by tapping the ! alert. If legs are covered, mark them not visible so Hercules does not guess lower-body changes.';
+    if(/start.*goal|before.*after|goal picture|start picture/.test(q))return 'Start ↔ Goal lives directly in Profile. It shows the stored baseline reference beside the generated goal picture. Check-in history stays in Check-in and Historical data rather than being nested into Profile.';
+    if(/how.*(logout|log out)|switch.*profile|change.*client/.test(q))return 'Tap the profile circle, then Log out of profile. That returns to the saved-user login screen without deleting the client plan, progress, photos or workout history. Reset local client & app is the separate destructive option.';
+    if(/export|backup|json|move.*device|restore.*progress|import.*plan/.test(q))return 'Profile contains the client-data controls. Export both the client plan JSON and progress JSON for a complete backup. When restoring, load the matching client plan first, then its progress JSON. Progress is rejected if its client ID does not match the loaded plan.';
+    if(/revert.*plan|original.*plan|change.*program|change.*programme|tailored.*plan/.test(q))return 'The Tailored training plan is protected. Hercules may suggest changes, but programme changes require a confirmation warning before they are applied. Profile/Train also offers Revert to original plan, which restores the protected programme without deleting workout history.';
+    if(/what.*correlation|correlation.*mean|relationship.*data/.test(q))return 'The Correlation Engine aligns repeated nutrition, training, weight and measurement periods, including short lags such as this week’s calorie intake versus following-week scale gain. It ranks repeated associations and reports the paired-period count and confidence. Correlation is evidence of a relationship, not proof that one variable caused another.';
+    if(/what.*strength index|strength.*baseline.*100|estimated.*1rm|e1rm/.test(q))return 'Strength starts from exercise e1RM, estimated from logged weight and reps, but each exercise is normalised to its own baseline before being weighted into muscle groups. A muscle strength index of 110 means roughly 10% above its own baseline signal — not a 110 kg lift.';
+    if(/what.*rir|reps in reserve/.test(q))return 'RIR means reps in reserve: how many clean reps you estimate were still possible when the set ended. Gain Focus uses it to judge whether load progression is meaningful rather than treating every completed rep as equal.';
+    if(/where.*history|historic data|old workouts|old check.?ins|weekly reviews/.test(q))return 'Open Analysis → Historical data for older check-ins, workout history and weekly reviews. The first five stay compact; See all opens the complete history.';
+    if(/profile picture|avatar/.test(q))return 'Profile pictures are stored per client ID, so one client’s avatar cannot bleed into another profile. Open Profile → Edit account details to add, change or remove the current client’s photo.';
+    return null
+  }
+  function gf46DataAnswer(q){
+    const intel=gf46Safe(()=>gf25AnalysisIntelligence(),null),corr=gf46Safe(()=>gf41CorrelationIntel(),null),mkey=gf46MuscleKey(q);
+    if(/what changed|changed.*(week|month|days)|this (week|month)|last (week|month)|selected period|period.*change/.test(q)){
+      const parts=[];for(const mode of ['conditioning','strength','mass']){const s=gf46PeriodSummary(mode);if(s.rows.length)parts.push(`${mode==='mass'?'Visual mass':mode[0].toUpperCase()+mode.slice(1)}: ${s.text}`)}return parts.length?parts.join(' '):'There is not enough comparable history in the selected period yet.'
+    }
+    if(mkey&&/(grow|growth|progress|improv|lag|weak|strong|doing|develop|changed|change|mass|strength|conditioning)/.test(q)){
+      const base=gf46Safe(()=>gf25MuscleAnswer(mkey),null),periodStats=gf46Safe(()=>gf42DevelopmentStats(),null),period=gf46Safe(()=>gf42WindowLabel(),'selected period'),bits=[];
+      for(const mode of ['conditioning','strength','mass']){const d=periodStats?.[mode]?.[mkey];if(Number.isFinite(Number(d?.delta)))bits.push(`${mode==='mass'?'visual mass':mode} ${gf46Signed(d.delta,0,'%')}`)}
+      if(bits.length)return `${gfDevLabel(mkey)} over ${period}: ${bits.join(' · ')}. ${base||''}`.trim();if(base)return base
+    }
+    if(/best.*muscle|improving.*fastest|strongest.*development|what.*improved.*most/.test(q)&&intel){const top=intel.muscles?.developing?.[0];return top?`${top.label} currently has the strongest combined development signal${Number.isFinite(top.composite)?` at about ${gf46Signed(top.composite,0,'%')}`:''}, using ${top.evidence} comparable signal${top.evidence===1?'':'s'}. Evidence confidence is ${top.confidence}%.`:'I need more overlapping training and visual history before ranking muscle development.'}
+    if(/worst.*muscle|weakest.*development|lagging.*most|what.*declined.*most/.test(q)&&intel){const lag=intel.muscles?.lagging?.find(x=>x.evidence>=2)||intel.muscles?.lagging?.[0];return lag?`${lag.label} is currently the clearest lagging/focus candidate${Number.isFinite(lag.composite)?` at about ${gf46Signed(lag.composite,0,'%')} combined change`:''}. I would review execution, recoverability and effective sets before automatically adding volume.`:'I do not have enough comparable muscle data to rank a lagging area yet.'}
+    if(/what.*(driv|linked|correl)|why.*(weight|chest|waist).*chang|is.*protein.*help|is.*calorie.*help/.test(q)&&corr){if(!corr.top?.length)return 'I do not have enough repeated paired periods yet to identify a reliable cross-domain relationship.';const lead=corr.top.slice(0,2).map(x=>`${x.title}: ${gf41CandidateText(x)}`).join(' ');return `${lead} These are observed associations, not proof of cause.`}
+    if(/overall|big picture|summary|how am i doing|what should i focus on/.test(q)&&intel){const c=gf46Safe(()=>gf41CorrelationIntel(),null),lead=c?.top?.[0],top=intel.muscles?.developing?.[0],lag=intel.muscles?.lagging?.find(x=>x.goal&&x.evidence>=2)||intel.muscles?.lagging?.find(x=>x.evidence>=2);return `${intel.status}. Weight is ${intel.weight.status.toLowerCase()} at ${intel.weight.latest.toFixed(1)} kg versus ${intel.weight.guide.toFixed(1)} kg projected. Training completion is ${Math.round(intel.training.completion||0)}% over 7 days${Number.isFinite(intel.nutrition.avg)?`, with logged nutrition averaging about ${Math.round(intel.nutrition.avg)}% of target`:''}. ${top?`${top.label} is the strongest combined development signal. `:''}${lag?`${lag.label} is the main focus candidate. `:''}${lead?`Strongest cross-data relationship: ${lead.title.toLowerCase()}. `:''}${intel.recommendations?.[0]||''}`}
+    if(/body fat|body composition|tape|circumference|measurement/.test(q)){const a=gf46BodyCompAnswer(q);if(a)return a}
+    if(/last workout|recent workout|how was my last session/.test(q)){const w=gf46Safe(()=>sortedWorkoutLogs(),[])?.[0];if(!w)return 'No completed workout history is available yet.';const sets=workoutTotalSets?.(w)||0,vol=workoutVolume?.(w)||0,feel=w.feel?` It was marked ${w.feel}.`:'';return `Your latest logged session was ${w.sessionName||'Workout'} on ${workoutDisplayDate?.(w)||w.date}: ${sets} working sets${vol?`, about ${Math.round(vol).toLocaleString()} kg logged volume`:''}.${feel}`}
+    if(/what did i (lift|do)|last time.*(lift|reps|weight)|previous.*performance/.test(q)){const match=gf46Safe(()=>gfFindExerciseFromQuestion(q),null);if(match){const sets=previousExercisePerformance?.(match.s.id,match.e)||[];if(!sets.length)return `I do not have a previous logged performance for ${match.e.name} yet.`;return `${match.e.name} last comparable performance: ${sets.map(x=>`${x.weightKg?round(Number(x.weightKg),1)+' kg':'BW'} × ${x.reps}${Number.isFinite(Number(x.rir))?` @ ${x.rir} RIR`:''}`).join(' · ')}.`}}
+    return null
+  }
+  function gf46CurrentViewAnswer(q){
+    if(!/(what.*(looking at|screen|page)|where am i|what is this|explain this screen)/.test(q))return null;
+    const tab=typeof currentTab==='string'?currentTab:'today';
+    if(tab==='progress')return `You’re in Analysis. The muscle map is currently ${gf26MuscleMode==='mass'?'Visual mass':gf26MuscleMode==='load'?'Training load':gf26MuscleMode==='strength'?'Strength':'Conditioning'} over ${gf42WindowLabel?.()||'the selected period'}. Trending statistics is set to ${gf26TrendMode||'weight'}.`;
+    if(tab==='train')return 'You’re in Train. The scheduled workout/recovery subject comes first; workout analysis is nested underneath. Starting a session opens the guided logger with remembered weights/reps, RIR and rest timer.';
+    if(tab==='nutrition')return 'You’re in Nutrition. Today’s food and macro logging are the main subject; historic nutrition analysis is nested after the logging controls.';
+    if(tab==='checkin')return 'You’re in Check-in. Current weight/media and optional body-composition measurements live here; Hercules summary, latest visual analysis and check-in history are nested below.';
+    return 'You’re on Hercules home. Ask me about today’s plan, your progress, a specific muscle, nutrition, correlations, body measurements, an exercise, or how to use any part of Gain Focus.'
+  }
+
+  const gf46BaseContext=window.herculesContext;
+  window.herculesContext=function(){
+    const c=gf46Safe(()=>gf46BaseContext(),{})||{},intel=gf46Safe(()=>gf25AnalysisIntelligence(),null),dev=gf46Safe(()=>gf42DevelopmentStats(),null),range=gf46Safe(()=>gf42WindowRange(),null),body=gf46Safe(()=>gf30BodyCompLogs(),[])||[];
+    c.app={version:typeof APP_VERSION!=='undefined'?APP_VERSION:'4.0.46',currentTab:typeof currentTab==='string'?currentTab:'today',selectedMuscleSignal:typeof gf26MuscleMode!=='undefined'?gf26MuscleMode:null,selectedMusclePeriod:gf46Safe(()=>gf42WindowLabel(),null),selectedTrend:typeof gf26TrendMode!=='undefined'?gf26TrendMode:null,profileSetupMissing:gf46Safe(()=>gfProfileSetupMissing(),[]),features:['guided workouts','remembered weight and reps','nutrition logging','check-ins','body fat and tape measurements','four-signal muscle maps','shared historic trend axis','correlation engine','protected original training plan','profile logout','guided FAQ']};
+    c.nativeAnalysis=intel?{status:intel.status,confidencePct:intel.confidence,weight:intel.weight,nutrition:{averageAdherencePct:intel.nutrition.avg,status:intel.nutrition.status},training:{completionPct:intel.training.completion},topMuscles:(intel.muscles.developing||[]).slice(0,3),focusMuscles:(intel.muscles.lagging||[]).slice(0,3),recommendations:intel.recommendations}:null;
+    c.selectedHistoricWindow=range?{...range,label:gf46Safe(()=>gf42WindowLabel(),null),conditioning:dev?.conditioning,strength:dev?.strength,visualMass:dev?.mass}:null;
+    c.bodyCompositionHistory={count:body.length,latest:body.at(-1)||null};
+    c.historyCounts={weighIns:progress?.weighIns?.length||0,workouts:progress?.workoutLogs?.length||0,nutritionLogs:progress?.nutritionLogs?.length||0,checkins:progress?.weeklyCheckins?.length||0,bodyComposition:body.length};
+    return c
+  };
+
+  const gf46BaseKnowledge=window.herculesKnowledge;
+  window.herculesKnowledge=function(question){
+    const q=String(question||'').toLowerCase().replace(/[?.!,]/g,' ').replace(/\s+/g,' ').trim();
+    if(/sharp pain|numb|numbness|tingling|dizz|chest pain|faint/.test(q))return gf46BaseKnowledge(question);
+    const current=gf46CurrentViewAnswer(q);if(current)return current;
+    const help=gf46AppHelpAnswer(q);if(help)return help;
+    const data=gf46DataAnswer(q);if(data)return data;
+    if(/calorie surplus|why.*calories.*weight|how.*calories.*gain/.test(q))return 'For a gaining goal, calories mainly influence the energy available for bodyweight gain; protein supports repair and muscle protein synthesis, while training provides the stimulus. Gain Focus therefore looks for repeated agreement between calorie adherence, scale rate, training progression and regional measurements rather than crediting one variable alone.';
+    if(/how much protein.*need|protein target.*why/.test(q)){const t=Number(plan?.nutrition?.proteinG)||0;return t?`Your current client plan sets protein at ${Math.round(t)} g/day. Hercules judges consistency against that saved target rather than inventing a new one inside the app.`:'This client plan does not currently contain a protein target. Add one to the nutrition plan before Hercules judges adherence.'}
+    if(/what.*projected|projected.*weight|planned.*weight/.test(q))return 'Projected weight is the plan’s guide curve from starting weight and weekly-gain target. Actual weight is what was logged. Hercules compares the two but uses repeated trend data rather than reacting to a single weigh-in.';
+    if(/what.*confidence|why.*confidence|analysis confidence/.test(q)){const d=gf46Safe(()=>gf25AnalysisIntelligence(),null);return d?`Overall evidence confidence is ${d.confidence}%. Visual confidence is ${d.visual?.a?d.visual.confidence.score+'%':'not established'}. Repeated scale/training data carry more weight; visual conclusions are down-weighted when pose, clothing, framing or comparability are weak.`:'Confidence builds as repeated comparable data accumulates.'}
+    return gf46BaseKnowledge(question)
+  };
+
+  // Expand native navigation and operational commands.
+  const gf46BaseAction=GFCoach.action;
+  GFCoach.action=function(kind){
+    if(kind==='profile'){this.navigateAfter('Opening your profile…',()=>openSettings());return}
+    if(kind==='help'){this.navigateAfter('Opening Gain Focus help…',()=>gf26OpenHelp());return}
+    if(kind==='correlations'){this.navigateAfter('Opening correlations…',()=>{showTab('progress');setTimeout(()=>{const d=document.getElementById('gf26EmergingDetails');if(d){d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})}},140)});return}
+    if(['weight','strength','nutrition','bodycomp'].includes(kind)){this.navigateAfter(`Opening ${kind==='bodycomp'?'body composition':kind} trends…`,()=>{showTab('progress');setTimeout(()=>{const d=document.getElementById('gf26TrendDetails');if(d)d.open=true;gf26SetTrendMode?.(kind);document.getElementById('gf26TrendDetails')?.scrollIntoView({behavior:'smooth',block:'start'})},140)});return}
+    return gf46BaseAction.call(this,kind)
+  };
+  const gf46BaseRoute=GFCoach.route;
+  GFCoach.route=async function(raw){
+    const q=String(raw||'').toLowerCase().replace(/[?.!,]/g,' ').replace(/\s+/g,' ').trim();
+    if(/^(help|open help|show help|how do i use this app)$/.test(q))return this.action('help');
+    if(/^(open|show|go to|take me to)\s+(my\s+)?(profile|account|settings)$/.test(q))return this.action('profile');
+    if(/^(open|show|go to|take me to)\s+(my\s+)?(correlations?|relationships?)$/.test(q))return this.action('correlations');
+    const trend=q.match(/^(open|show|go to|take me to)\s+(my\s+)?(weight|strength|nutrition|body comp|body composition)\s*(graph|trend|analysis)?$/);if(trend){const k=trend[3].startsWith('body')?'bodycomp':trend[3];return this.action(k)}
+    return gf46BaseRoute.call(this,raw)
+  };
+
+  // Make the rotating home prompts demonstrate the broader native capability.
+  const gf46BasePrompts=GFCoach.prompts;
+  GFCoach.prompts=function(){const a=gf46BasePrompts.call(this),extra=['Ask me what changed this month.','Ask what seems to be driving your weight or chest growth.','Ask me how to use any feature in Gain Focus.'];return [...a.slice(0,5),...extra,...a.slice(5)]};
+
+  // Extend the guided FAQ without changing the existing visual design.
+  try{
+    if(typeof GF26_HELP!=='undefined'){
+      GF26_HELP.analysis.steps=['The muscle map is always visible. Switch Training load, Conditioning, Strength or Visual mass, then choose 7 Days, 14 Days, 1 Month or 3 Months.','Open Trending statistics for Weight, muscle-group Strength, Nutrition and Body Comp on the same historic date axis.','Open Emerging trends & deviations for cross-domain changes and the Hercules Correlation Engine.','Ask Hercules questions such as “what changed this month?”, “what is driving my chest growth?” or “how reliable is this analysis?”.','Open Historical data only when you need older check-ins, workouts or reviews.'];
+      GF26_HELP.start.steps.push('You can also type normal app questions into Ask Hercules anything — for example “how do I log body fat?”, “what does the blue heat map mean?” or “how do I log out?”');
+    }
+  }catch(e){}
+})();
+</script>
+
 <script>
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.45', {scope:'./', updateViaCache:'none'})
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.46', {scope:'./', updateViaCache:'none'})
       .then(function(reg){ try{ reg.update(); }catch(_){} })
       .catch(function(err){ console.warn('Gain Focus service worker registration failed:', err); });
   });
