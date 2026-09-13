@@ -4497,7 +4497,7 @@ window.gf26DrawSelectedTrend=function(){
 @media(max-width:430px){.gf38-history-summary{grid-template-columns:1fr 1fr}}
 </style>
 <script id="gf38-data-fixes">
-// v4.0.38 · data wiring + historic heat-map correction
+// v4.0.39 · data wiring + historic heat-map correction
 function gf38ValidDate(v){return /^\d{4}-\d{2}-\d{2}$/.test(String(v||'').slice(0,10))}
 function gf38WeekStart(dateStr){
   const raw=String(dateStr||'').slice(0,10);if(!gf38ValidDate(raw))return '';
@@ -4627,6 +4627,45 @@ window.gf26TrendMountHTML=function(){
 window.gf26DrawSelectedTrend=function(){requestAnimationFrame(()=>requestAnimationFrame(()=>{if(gf26TrendMode==='weight')drawWeightChart?.();else if(gf26TrendMode==='strength')gf38DrawStrengthChart();else if(gf26TrendMode==='nutrition')gf38DrawMacroTrendChart();else if(gf26TrendMode==='bodycomp')gf30DrawBodyCompTrend?.()}))};
 window.drawStrengthChart=gf38DrawStrengthChart;window.drawMacroTrendChart=gf38DrawMacroTrendChart;
 </script>
+
+
+<script id="gf39-nutrition-inline-render">
+// v4.0.39 · render the macro chart synchronously with the trend widget.
+// This avoids Safari/iOS timing races where the draw callback can fire before
+// #macroTrendChart has been mounted after switching trend tabs.
+function gf39MacroTrendSVG(){
+  const weekly=gf38MacroWeekly();
+  const make=k=>weekly.filter(x=>Number.isFinite(x[k])).map(x=>({date:x.date,value:x[k]}));
+  const p=make('protein'),c=make('carbs'),f=make('fat');
+  if(!(p.length||c.length||f.length))return '<div class="gf38-chart-empty">No usable Protein, Carbs or Fat history was found for this client.</div>';
+  const dates=[...new Set([...p,...c,...f].map(x=>x.date))].sort();
+  const target=[{date:dates[0],value:100},{date:dates.at(-1),value:100}],series=[];
+  if(p.length)series.push({label:'Protein',color:'#7fd6ff',points:p,strokeWidth:3});
+  if(c.length)series.push({label:'Carbs',color:'#9d8cff',points:c,strokeWidth:3});
+  if(f.length)series.push({label:'Fat',color:'#7cffc7',points:f,strokeWidth:3});
+  series.push({label:'Target',color:'rgba(255,255,255,.38)',points:target,strokeWidth:1.4,dash:'4 6'});
+  return buildLineChartSVG({series,yLabel:'Macro target met (%)',yTickFormatter:v=>`${Math.round(v)}%`,legend:[{label:'Protein',color:'#7fd6ff'},{label:'Carbs',color:'#9d8cff'},{label:'Fat',color:'#7cffc7'},{label:'100% target',color:'rgba(255,255,255,.38)',dash:'4 6'}],emptyText:'No macro history yet'});
+}
+function gf39MacroSummaryHTML(){
+  const w=gf38MacroWeekly();if(!w.length)return '';const avg=k=>{const v=w.map(x=>Number(x[k])).filter(Number.isFinite);return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):null};
+  const vals=[['Protein',avg('protein')],['Carbs',avg('carbs')],['Fat',avg('fat')]];
+  return `<div class="gf39-macro-summary">${vals.map(([k,v])=>`<div><span>${k} avg</span><b>${v===null?'—':v+'%'}</b></div>`).join('')}</div>`;
+}
+window.gf26TrendMountHTML=function(){
+  if(gf26TrendMode==='strength')return `<div id="strengthChart" class="chart" style="height:315px"></div><p class="gf26-trend-note">One line per trained muscle group. Every exercise is normalised to its own first logged e1RM (100), then combined by muscle, so different exercise loads cannot create false spikes.</p>`;
+  if(gf26TrendMode==='nutrition')return `<div id="macroTrendChart" class="chart gf39-inline-chart" style="height:260px">${gf39MacroTrendSVG()}</div>${gf39MacroSummaryHTML()}<p class="gf26-trend-note">Weekly Protein, Carbs and Fat adherence from actual food logs. 100% means the client hit the planned daily macro target on average.</p>`;
+  if(gf26TrendMode==='bodycomp')return gf30BodyCompTrendHTML();
+  return `<div id="weightChart" class="chart" style="height:245px"></div><div class="gf26-trend-goal"><span>Goal</span><b>${round(Number(plan?.goal?.targetWeightKg)||latestWeight(),1)} kg · ${shortDateLabel(gfGoalDateISO())}</b></div><p class="gf26-trend-note">Actual bodyweight is solid. The dashed guide follows the planned weekly gain and stops at the target.</p>`;
+};
+window.gf26DrawSelectedTrend=function(){requestAnimationFrame(()=>requestAnimationFrame(()=>{if(gf26TrendMode==='weight')drawWeightChart?.();else if(gf26TrendMode==='strength')gf38DrawStrengthChart();else if(gf26TrendMode==='bodycomp')gf30DrawBodyCompTrend?.();/* nutrition is already rendered inline */}))};
+</script>
+<style id="gf39-nutrition-inline-style">
+.gf39-inline-chart svg{width:100%;height:100%;display:block}
+.gf39-macro-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:9px 0 0}
+.gf39-macro-summary>div{padding:9px 10px;border-radius:13px;background:rgba(255,255,255,.026);border:1px solid rgba(255,255,255,.055)}
+.gf39-macro-summary span{display:block;font-size:8px;color:var(--muted)}
+.gf39-macro-summary b{display:block;margin-top:2px;font-size:13px;color:#e6f2ff}
+</style>
 
 </body>
 </html>
