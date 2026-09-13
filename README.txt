@@ -64,3 +64,6 @@ v4.0.19: profile setup alert and account/avatar buttons now share one structural
 
 
 v4.0.22: Compact weekly calendar widget at top of Train with full month view; generated Hercules pre-check-in progress summary and contextual tips.
+
+
+v4.0.26: Consolidated Analysis (single selectable muscle widget + selectable trend widget + emerging/deviation intelligence + nested history), moved check-in analysis to Check-in, Start/Goal to Profile, shared Hercules header and guided Help FAQ. Start/onboarding unchanged.
