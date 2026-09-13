@@ -992,6 +992,50 @@ body.coach-home-active > .gf-setup-alert{
 .gf-workout-analysis-signal b{display:block;font-size:11px}.gf-workout-analysis-signal span{display:block;font-size:10px;color:var(--muted);line-height:1.4;margin-top:2px}
 @media(max-width:430px){.gf-workout-analysis-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+
+/* v4.0.49 · intro-only professional dark gradient */
+#splash{
+  background:
+    radial-gradient(ellipse 78% 54% at 50% 37%, rgba(58,84,138,.14) 0%, rgba(31,47,82,.07) 36%, transparent 68%),
+    linear-gradient(180deg,#080b12 0%,#0b101a 46%,#0d1420 100%) !important;
+}
+#splash:before{
+  content:"";
+  position:absolute;
+  inset:-8%;
+  z-index:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(105,157,235,.11) 0%, rgba(105,157,235,.045) 23%, transparent 52%),
+    radial-gradient(circle at 28% 75%, rgba(63,92,147,.055) 0%, transparent 34%),
+    radial-gradient(circle at 73% 72%, rgba(87,73,139,.045) 0%, transparent 32%);
+  filter:blur(24px);
+  opacity:.9;
+  animation:gf49IntroDrift 14s ease-in-out infinite alternate;
+}
+.splash-art{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.012),transparent 24%),
+    radial-gradient(ellipse 54% 30% at 50% 43%,rgba(125,180,255,.055),transparent 72%) !important;
+  opacity:1 !important;
+  filter:none !important;
+  transform:none;
+  z-index:0;
+}
+#splash:after{
+  background:
+    linear-gradient(180deg,rgba(2,5,12,.02) 0%,rgba(2,5,12,.06) 53%,rgba(2,5,12,.34) 100%) !important;
+}
+#splash.opening .splash-art{
+  transform:scale(1.015) !important;
+  filter:brightness(.82) !important;
+  transition:transform .75s var(--spring),filter .75s ease;
+}
+@keyframes gf49IntroDrift{
+  0%{transform:translate3d(-1%,.6%,0) scale(1)}
+  100%{transform:translate3d(1%,-.6%,0) scale(1.025)}
+}
+
 </style>
 
 <style>
@@ -1321,7 +1365,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.47';
+const APP_VERSION='4.0.49';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -4249,7 +4293,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 
 
 <script id="gf46-native-hercules-intelligence">
-// Gain Focus v4.0.47 · expanded native Hercules intelligence.
+// Gain Focus v4.0.49 · expanded native Hercules intelligence.
 // Common coaching, analysis and app-operation questions work locally without a model endpoint.
 (function(){
   const GF46_MUSCLE_ALIASES={
@@ -4343,7 +4387,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
   const gf46BaseContext=window.herculesContext;
   window.herculesContext=function(){
     const c=gf46Safe(()=>gf46BaseContext(),{})||{},intel=gf46Safe(()=>gf25AnalysisIntelligence(),null),dev=gf46Safe(()=>gf42DevelopmentStats(),null),range=gf46Safe(()=>gf42WindowRange(),null),body=gf46Safe(()=>gf30BodyCompLogs(),[])||[];
-    c.app={version:typeof APP_VERSION!=='undefined'?APP_VERSION:'4.0.47',currentTab:typeof currentTab==='string'?currentTab:'today',selectedMuscleSignal:typeof gf26MuscleMode!=='undefined'?gf26MuscleMode:null,selectedMusclePeriod:gf46Safe(()=>gf42WindowLabel(),null),selectedTrend:typeof gf26TrendMode!=='undefined'?gf26TrendMode:null,profileSetupMissing:gf46Safe(()=>gfProfileSetupMissing(),[]),features:['guided workouts','remembered weight and reps','nutrition logging','check-ins','body fat and tape measurements','four-signal muscle maps','shared historic trend axis','correlation engine','protected original training plan','profile logout','guided FAQ']};
+    c.app={version:typeof APP_VERSION!=='undefined'?APP_VERSION:'4.0.49',currentTab:typeof currentTab==='string'?currentTab:'today',selectedMuscleSignal:typeof gf26MuscleMode!=='undefined'?gf26MuscleMode:null,selectedMusclePeriod:gf46Safe(()=>gf42WindowLabel(),null),selectedTrend:typeof gf26TrendMode!=='undefined'?gf26TrendMode:null,profileSetupMissing:gf46Safe(()=>gfProfileSetupMissing(),[]),features:['guided workouts','remembered weight and reps','nutrition logging','check-ins','body fat and tape measurements','four-signal muscle maps','shared historic trend axis','correlation engine','protected original training plan','profile logout','guided FAQ']};
     c.nativeAnalysis=intel?{status:intel.status,confidencePct:intel.confidence,weight:intel.weight,nutrition:{averageAdherencePct:intel.nutrition.avg,status:intel.nutrition.status},training:{completionPct:intel.training.completion},topMuscles:(intel.muscles.developing||[]).slice(0,3),focusMuscles:(intel.muscles.lagging||[]).slice(0,3),recommendations:intel.recommendations}:null;
     c.selectedHistoricWindow=range?{...range,label:gf46Safe(()=>gf42WindowLabel(),null),conditioning:dev?.conditioning,strength:dev?.strength,visualMass:dev?.mass}:null;
     c.bodyCompositionHistory={count:body.length,latest:body.at(-1)||null};
@@ -4402,7 +4446,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.47', {scope:'./', updateViaCache:'none'})
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.49', {scope:'./', updateViaCache:'none'})
       .then(function(reg){ try{ reg.update(); }catch(_){} })
       .catch(function(err){ console.warn('Gain Focus service worker registration failed:', err); });
   });
@@ -5009,7 +5053,7 @@ window.gfDevelopmentMapMountHTML=function(){const stats=gf42DevelopmentStats(),s
 
 
 <script id="gf47-native-hercules-intent-fix">
-// Gain Focus v4.0.47 · native Hercules intent + evidence reasoning fix.
+// Gain Focus v4.0.49 · native Hercules intent + evidence reasoning fix.
 // Explicitly supports natural questions such as “Should I add sets?” and
 // “How confident is the analysis?” while grounding replies in client data.
 (function(){
@@ -5020,7 +5064,7 @@ window.gfDevelopmentMapMountHTML=function(){const stats=gf42DevelopmentStats(),s
     quad:'quads',quads:'quads',hamstring:'hamstrings',hamstrings:'hamstrings',glute:'glutes',glutes:'glutes',
     calf:'calves',calves:'calves','mid back':'midBack','middle back':'midBack','lower back':'lowerBack',erector:'erectors',erectors:'erectors'
   };
-  const safe=(fn,fallback=null)=>{try{const v=fn();return v==null?fallback:v}catch(e){console.warn('Hercules v4.0.47 fallback',e);return fallback}};
+  const safe=(fn,fallback=null)=>{try{const v=fn();return v==null?fallback:v}catch(e){console.warn('Hercules v4.0.49 fallback',e);return fallback}};
   function muscleKey(q){q=String(q||'').toLowerCase();for(const term of Object.keys(GF47_ALIASES).sort((a,b)=>b.length-a.length))if(q.includes(term))return GF47_ALIASES[term];return null}
   function muscleName(k){return safe(()=>gfDevLabel(k),k||'target muscle')}
   function confidenceLabel(v){v=Number(v)||0;return v>=80?'high':v>=60?'moderate':v>=40?'developing':'low'}
