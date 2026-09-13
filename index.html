@@ -1027,7 +1027,7 @@ body.coach-home-active > .gf-setup-alert{
 
 
 <style id="gf-v4026-layout">
-/* Gain Focus v4.0.28 · Hercules placement + direct profile visuals */
+/* Gain Focus v4.0.29 · Hercules placement + direct profile visuals */
 .gf26-accordion{margin:12px 0;border:1px solid rgba(126,174,235,.13);border-radius:22px;background:linear-gradient(145deg,rgba(12,25,47,.82),rgba(6,13,29,.84));overflow:hidden}
 .gf26-accordion>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 16px;min-height:58px;-webkit-tap-highlight-color:transparent}
 .gf26-accordion>summary::-webkit-details-marker{display:none}.gf26-accordion>summary:after{content:'+';width:28px;height:28px;flex:0 0 28px;border-radius:10px;display:grid;place-items:center;background:rgba(120,178,255,.08);border:1px solid rgba(120,178,255,.10);color:#b8dcff;font-size:18px;font-weight:500;transition:transform .22s ease}
@@ -1049,12 +1049,12 @@ body.coach-home-active > .gf-setup-alert{
 body.coach-home-active{overflow:hidden}body.coach-home-active #app{max-width:720px;width:100%;height:100dvh;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 16px calc(82px + env(safe-area-inset-bottom));overflow:hidden;display:flex!important;flex-direction:column}body.coach-home-active .topbar{display:flex;position:sticky;flex:0 0 auto;margin:0 -16px 4px}body.coach-home-active #today.screen.active{display:block;flex:1;height:auto;min-height:0;margin:0;padding:0;overflow:hidden}body.coach-home-active .coach-home{height:100%;min-height:0}body.coach-home-active .coach-mini-brand{display:none}body.coach-home-active > .gf-setup-alert{display:none!important}
 @media(max-width:430px){.gf26-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.gf26-help-grid{grid-template-columns:1fr 1fr}}
 
-/* v4.0.28 · Hercules console placement + direct Profile Start ↔ Goal */
+/* v4.0.29 · Hercules console placement + direct Profile Start ↔ Goal */
 body.coach-home-active .coach-home-bottom{
-  transform:translateY(clamp(26px,3.5vh,40px));
+  transform:translateY(clamp(54px,8vh,88px));
 }
 @media(max-height:760px){
-  body.coach-home-active .coach-home-bottom{transform:translateY(18px)}
+  body.coach-home-active .coach-home-bottom{transform:translateY(42px)}
 }
 .gf28-profile-visuals{margin:14px 0 16px;padding:0}
 .gf28-profile-visuals>.analysis-card{margin:0}
@@ -3741,7 +3741,7 @@ setTimeout(()=>{try{if(plan&&progress)renderAll()}catch(e){console.warn('v4.0.25
 
 <script id="gf-v4027-ia">
 // ============================================================================
-// Gain Focus v4.0.28 · Hercules placement + direct profile visuals + nested information architecture
+// Gain Focus v4.0.29 · Hercules placement + direct profile visuals + nested information architecture
 // Start/onboarding intentionally unchanged.
 // ============================================================================
 let gf26MuscleMode='load';
@@ -3868,7 +3868,7 @@ const gf26BaseShowTab=showTab;
 showTab=function(tab){const r=gf26BaseShowTab.apply(this,arguments);gfMountSetupAlertForCurrentTab();gf26EnsureHelpButton();if(tab==='today'){const t=document.getElementById('pageTitle');if(t)t.textContent='Hercules'}if(tab==='progress'){const t=document.getElementById('pageTitle');if(t)t.textContent='Analysis'}return r};
 
 // Make sure all final wrappers render immediately after this upgrade.
-setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTab();gf26EnsureHelpButton();showTab(currentTab||'today')}}catch(e){console.warn('v4.0.28 layout refresh skipped',e)}},120);
+setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTab();gf26EnsureHelpButton();showTab(currentTab||'today')}}catch(e){console.warn('v4.0.29 layout refresh skipped',e)}},120);
 </script>
 
 <script>
