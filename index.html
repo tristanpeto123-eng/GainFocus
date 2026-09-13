@@ -1321,7 +1321,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.44';
+const APP_VERSION='4.0.45';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -4251,7 +4251,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.44', {scope:'./', updateViaCache:'none'})
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.45', {scope:'./', updateViaCache:'none'})
       .then(function(reg){ try{ reg.update(); }catch(_){} })
       .catch(function(err){ console.warn('Gain Focus service worker registration failed:', err); });
   });
@@ -4521,7 +4521,7 @@ window.gf26DrawSelectedTrend=function(){
 @media(max-width:430px){.gf38-history-summary{grid-template-columns:1fr 1fr}}
 </style>
 <script id="gf38-data-fixes">
-// v4.0.44 · data wiring + historic heat-map correction
+// v4.0.45 · data wiring + historic heat-map correction
 function gf38ValidDate(v){return /^\d{4}-\d{2}-\d{2}$/.test(String(v||'').slice(0,10))}
 function gf38WeekStart(dateStr){
   const raw=String(dateStr||'').slice(0,10);if(!gf38ValidDate(raw))return '';
@@ -4654,7 +4654,7 @@ window.drawStrengthChart=gf38DrawStrengthChart;window.drawMacroTrendChart=gf38Dr
 
 
 <script id="gf39-nutrition-inline-render">
-// v4.0.44 · render the macro chart synchronously with the trend widget.
+// v4.0.45 · render the macro chart synchronously with the trend widget.
 // This avoids Safari/iOS timing races where the draw callback can fire before
 // #macroTrendChart has been mounted after switching trend tabs.
 function gf39MacroTrendSVG(){
@@ -4694,7 +4694,7 @@ window.gf26DrawSelectedTrend=function(){requestAnimationFrame(()=>requestAnimati
 
 
 <script id="gf41-correlation-engine">
-// v4.0.44 · Cross-domain correlation engine.
+// v4.0.45 · Cross-domain correlation engine.
 // Finds repeated associations across nutrition, scale weight, training exposure,
 // tape measurements and visual-mass history. Correlation is descriptive, not causal.
 function gf41Mean(a){const v=(a||[]).map(Number).filter(Number.isFinite);return v.length?v.reduce((s,x)=>s+x,0)/v.length:null}
@@ -4754,7 +4754,7 @@ window.gf26TrendMountHTML=function(){if(gf26TrendMode==='strength')return `<div 
 
 <script id="gf42-unified-history">
 // ============================================================================
-// Gain Focus v4.0.44 · unified historic timeline + period-controlled muscle maps
+// Gain Focus v4.0.45 · unified historic timeline + period-controlled muscle maps
 // ============================================================================
 function gf42DateOnly(v){const s=String(v||'').slice(0,10);return /^\d{4}-\d{2}-\d{2}$/.test(s)?s:null}
 function gf42DateMs(v){const s=gf42DateOnly(v);if(!s)return NaN;return new Date(s+'T12:00:00').getTime()}
@@ -4822,5 +4822,39 @@ window.gf26DrawSelectedTrend=function(){requestAnimationFrame(()=>requestAnimati
 window.gf26TrendMountHTML=function(){if(gf26TrendMode==='strength')return `<div id="strengthChart" class="chart" style="height:315px"></div><p class="gf26-trend-note">Muscle strength indices share the same historic date axis as Weight, Nutrition and Body Comp.</p>`;if(gf26TrendMode==='nutrition')return `<div id="macroTrendChart" class="chart gf39-inline-chart" style="height:260px">${gf41MacroTrendSVG()}</div>${gf39MacroSummaryHTML()}<p class="gf26-trend-note">Calories, Protein, Carbs and Fat use the same historic date axis as the other Analysis graphs.</p>`;if(gf26TrendMode==='bodycomp')return gf30BodyCompTrendHTML();return `<div id="weightChart" class="chart" style="height:245px"></div><div class="gf26-trend-goal"><span>Goal</span><b>${round(Number(plan?.goal?.targetWeightKg)||latestWeight(),1)} kg · ${shortDateLabel(gfGoalDateISO())}</b></div><p class="gf26-trend-note">Actual and planned weight are shown only across the shared historic analysis window; the goal date remains summarised below.</p>`};
 
 </script>
+
+<style id="gf45-historic-map-style">
+.gf45-zero-note{margin:5px 4px 0;text-align:center;font-size:8.5px;color:rgba(216,228,248,.42)}
+</style>
+<script id="gf45-historic-diverging-map">
+// Gain Focus v4.0.45 · signed historic development colour scale.
+// Negative change remains blue, zero is cyan, positive change runs yellow -> red.
+function gf45Mix(a,b,t){return a.map((v,i)=>Math.round(v+(b[i]-v)*t))}
+function gf45HistoricColor(delta,stats,mode){
+  if(!Number.isFinite(Number(delta)))return 'rgb(43 94 143)';
+  const vals=GF_DEV_KEYS.map(k=>Number(stats?.[mode]?.[k]?.delta)).filter(Number.isFinite);
+  const neg=Math.max(1,...vals.filter(v=>v<0).map(v=>Math.abs(v)));
+  const pos=Math.max(1,...vals.filter(v=>v>0));
+  const d=Number(delta),blue=[43,94,143],cyan=[37,169,216],yellow=[255,205,77],red=[255,63,63];
+  let rgb;
+  if(d<0){const u=clamp(Math.abs(d)/neg,0,1);rgb=gf45Mix(cyan,blue,u)}
+  else if(d>0){const u=clamp(d/pos,0,1);rgb=u<.5?gf45Mix(cyan,yellow,u*2):gf45Mix(yellow,red,(u-.5)*2)}
+  else rgb=cyan;
+  return `rgb(${rgb[0]} ${rgb[1]} ${rgb[2]})`
+}
+window.gfDevelopmentSVG=function(view,mode,stats){let svg=bodyMapSVG(view);svg=svg.replace(/id="muscleMap"/g,'').replace(/id="zone-[^"]+"/g,'').replace(/showMuscleDetail\(/g,'gfShowDevelopmentMuscleDetail(');svg=svg.replace(/(<g class="zone"[^>]*data-muscle="([^"]+)"[^>]*style="--zone-fill:)[^"]+("[^>]*>)/g,(m,a,k,c)=>`${a}${gf45HistoricColor(stats?.[mode]?.[k]?.delta,stats,mode)}${c}`);return svg.replace('muscle-map ',`muscle-map development-muscle-map `)};
+window.gf42HistorySummaryHTML=function(mode,stats){
+  const rows=GF_DEV_KEYS.map(k=>({k,d:Number(stats?.[mode]?.[k]?.delta),n:Number(stats?.[mode]?.[k]?.historyCount)||0})).filter(x=>Number.isFinite(x.d));
+  if(!rows.length)return `<div class="gf-development-cold-note"><b>No comparable change in ${gf42WindowLabel()}</b><span>Keep logging this signal; the map stays cold until there is a usable point before the selected period and a newer point inside it.</span></div>`;
+  const positives=rows.filter(x=>x.d>0),negatives=rows.filter(x=>x.d<0);let chosen,label;
+  if(positives.length&&!negatives.length){chosen=positives.sort((a,b)=>b.d-a.d)[0];label='Greatest gain'}
+  else if(negatives.length&&!positives.length){chosen=negatives.sort((a,b)=>a.d-b.d)[0];label='Largest decline'}
+  else {chosen=rows.sort((a,b)=>Math.abs(b.d)-Math.abs(a.d))[0];label='Largest change'}
+  if(!chosen){chosen=rows[0];label='Change'}
+  return `<div class="gf38-history-summary"><div><span>Selected period</span><b>${gf42WindowLabel()}</b></div><div><span>${label}</span><b>${esc(gfDevLabel(chosen.k))} · ${chosen.d>=0?'+':''}${Math.round(chosen.d)}%</b></div></div>`
+};
+window.gfDevelopmentMapMountHTML=function(){const stats=gf42DevelopmentStats(),signed=gfDevelopmentMode!=='load';return `<div class="gf-development-grid"><div class="gf-development-stage"><div class="bodyviz-label">Front</div>${gfDevelopmentSVG('front',gfDevelopmentMode,stats)}</div><div class="gf-development-stage"><div class="bodyviz-label">Back</div>${gfDevelopmentSVG('back',gfDevelopmentMode,stats)}</div></div><div class="gf-development-legend"><span>${signed?'Largest decline':'Cold'}</span><div class="gf-development-gradient"></div><span>${signed?'Greatest gain':'Hot'}</span></div>${signed?'<div class="gf45-zero-note">Cyan = no change · blue = decline · yellow/red = gain</div>':''}${gf42HistorySummaryHTML(gfDevelopmentMode,stats)}${gfDevelopmentDetailHTML(gfDevelopmentSelected,gfDevelopmentMode,stats)}`};
+</script>
+
 </body>
 </html>
