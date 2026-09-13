@@ -1027,7 +1027,7 @@ body.coach-home-active > .gf-setup-alert{
 
 
 <style id="gf-v4026-layout">
-/* Gain Focus v4.0.33 · Hercules placement + direct profile visuals */
+/* Gain Focus v4.0.34 · Hercules placement + direct profile visuals */
 .gf26-accordion{margin:12px 0;border:1px solid rgba(126,174,235,.13);border-radius:22px;background:linear-gradient(145deg,rgba(12,25,47,.82),rgba(6,13,29,.84));overflow:hidden}
 .gf26-accordion>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 16px;min-height:58px;-webkit-tap-highlight-color:transparent}
 .gf26-accordion>summary::-webkit-details-marker{display:none}.gf26-accordion>summary:after{content:'+';width:28px;height:28px;flex:0 0 28px;border-radius:10px;display:grid;place-items:center;background:rgba(120,178,255,.08);border:1px solid rgba(120,178,255,.10);color:#b8dcff;font-size:18px;font-weight:500;transition:transform .22s ease}
@@ -1049,7 +1049,7 @@ body.coach-home-active > .gf-setup-alert{
 body.coach-home-active{overflow:hidden}body.coach-home-active #app{max-width:720px;width:100%;height:100dvh;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 16px calc(82px + env(safe-area-inset-bottom));overflow:hidden;display:flex!important;flex-direction:column}body.coach-home-active .topbar{display:flex;position:sticky;flex:0 0 auto;margin:0 -16px 4px}body.coach-home-active #today.screen.active{display:block;flex:1;height:auto;min-height:0;margin:0;padding:0;overflow:hidden}body.coach-home-active .coach-home{height:100%;min-height:0}body.coach-home-active .coach-mini-brand{display:none}body.coach-home-active > .gf-setup-alert{display:none!important}
 @media(max-width:430px){.gf26-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.gf26-help-grid{grid-template-columns:1fr 1fr}}
 
-/* v4.0.33 · Hercules console placement + direct Profile Start ↔ Goal */
+/* v4.0.34 · Hercules console placement + direct Profile Start ↔ Goal */
 body.coach-home-active .coach-home-bottom{
   transform:translateY(clamp(54px,8vh,88px));
 }
@@ -1062,7 +1062,7 @@ body.coach-home-active .coach-home-bottom{
 </style>
 
 <style id="gf30-style">
-/* Gain Focus v4.0.33 */
+/* Gain Focus v4.0.34 */
 .gf30-plan-protection{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;padding:12px 13px;border-radius:18px;background:rgba(76,135,219,.07);border:1px solid rgba(120,180,255,.12)}
 .gf30-plan-protection>div{min-width:0}.gf30-plan-protection span,.gf30-plan-protection small{display:block;color:var(--muted);font-size:9px}.gf30-plan-protection b{display:block;margin:2px 0 3px;font-size:12px;color:#e8f4ff}.gf30-plan-protection button{flex:0 0 auto;border:1px solid rgba(135,190,255,.14);background:rgba(9,25,48,.82);color:#cfe8ff;border-radius:12px;padding:9px 10px;font-size:9px;font-weight:750}
 .gf30-bodycomp-empty{display:grid;gap:8px;padding:4px 0}.gf30-bodycomp-empty b{font-size:12px}.gf30-bodycomp-empty span{font-size:10px;line-height:1.45;color:var(--muted)}
@@ -1076,7 +1076,7 @@ body.coach-home-active .coach-home-bottom{
 
 </style>
 <style id="gf32-hercules-responsive-layout">
-/* Gain Focus v4.0.33 · Hercules home responsive structural layout
+/* Gain Focus v4.0.34 · Hercules home responsive structural layout
    Header -> greeting -> Hercules -> input -> footer. No independent positional nudges. */
 body.coach-home-active{
   overflow:hidden;
@@ -1321,7 +1321,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.33';
+const APP_VERSION='4.0.34';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -2081,6 +2081,30 @@ function bodyMapSVG(view='front'){
 #progress .workout-history > .workout-history-card:nth-child(n+6),
 #progress .weekly-review-history > .weekly-review-card:nth-child(n+6){display:none!important}
 #progress .history-see-all{width:100%;margin:9px 0 4px}
+
+/* v4.0.34 · Workout logger ergonomics
+   Finish/End controls live at the true bottom of the workout content instead of
+   floating over fields while the sheet scrolls. */
+#sessionSheet.workout-sheet .workout-dock{
+  position:static!important;
+  inset:auto!important;
+  z-index:auto!important;
+  margin-top:clamp(14px,2.2vh,24px)!important;
+  padding:0 0 max(6px,env(safe-area-inset-bottom))!important;
+  background:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  box-shadow:none!important;
+}
+#sessionSheet.workout-sheet .workout-spacer{display:none!important}
+.gf34-remembered-value{
+  display:block;
+  margin:6px 2px 0;
+  font-size:9px;
+  line-height:1.35;
+  color:rgba(169,215,255,.62);
+  letter-spacing:.01em;
+}
 </style>
 <g class="zone" data-zone="traps" id="rear-traps" data-muscle="traps" style="--zone-fill:${heatColor(heat.traps||0)}" onclick="showMuscleDetail('traps')">
 <path d="M 497,164 L 494,182 L 479,201 L 466,210 L 419,233 L 414,238 L 444,260 L 474,294 L 513,351 L 538,397 L 538,226 L 534,164 Z" fill="var(--zone-fill)"/>
@@ -3912,7 +3936,7 @@ setTimeout(()=>{try{if(plan&&progress)renderAll()}catch(e){console.warn('v4.0.25
 
 <script id="gf-v4027-ia">
 // ============================================================================
-// Gain Focus v4.0.33 · Hercules placement + direct profile visuals + nested information architecture
+// Gain Focus v4.0.34 · Hercules placement + direct profile visuals + nested information architecture
 // Start/onboarding intentionally unchanged.
 // ============================================================================
 let gf26MuscleMode='load';
@@ -4039,11 +4063,11 @@ const gf26BaseShowTab=showTab;
 showTab=function(tab){const r=gf26BaseShowTab.apply(this,arguments);gfMountSetupAlertForCurrentTab();gf26EnsureHelpButton();if(tab==='today'){const t=document.getElementById('pageTitle');if(t)t.textContent='Hercules'}if(tab==='progress'){const t=document.getElementById('pageTitle');if(t)t.textContent='Analysis'}return r};
 
 // Make sure all final wrappers render immediately after this upgrade.
-setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTab();gf26EnsureHelpButton();showTab(currentTab||'today')}}catch(e){console.warn('v4.0.33 layout refresh skipped',e)}},120);
+setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTab();gf26EnsureHelpButton();showTab(currentTab||'today')}}catch(e){console.warn('v4.0.34 layout refresh skipped',e)}},120);
 </script>
 
 <script id="gf30-extension">
-// Gain Focus v4.0.33 · single-video pose extraction, body composition tracking, protected tailored plan
+// Gain Focus v4.0.34 · single-video pose extraction, body composition tracking, protected tailored plan
 (function(){
   const deepCopy=x=>JSON.parse(JSON.stringify(x));
 
@@ -4192,7 +4216,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
   window.openSettings=function(){gf30EnsurePlanProtection();baseSettings();const sheet=document.getElementById('settingsSheet');if(!sheet)return;sheet.querySelector('.gf30-settings-plan')?.remove();const box=document.createElement('div');box.className='settings-group gf30-settings-plan';box.innerHTML=`<div class="eyebrow">Training plan</div><h3 style="margin:5px 0 4px">${esc(plan.training.planLabel||plan.training.name)}</h3><p class="muted" style="font-size:11px;line-height:1.45">Programme changes require confirmation. The protected original can be restored without deleting workout history.</p><button class="btn secondary" style="width:100%;margin-top:8px" onclick="gf30RestoreOriginalTrainingPlan()">Revert to original plan</button>`;sheet.insertBefore(box,sheet.querySelector('.settings-group')||sheet.lastElementChild)};
 
   // Make imported clients immediately compatible with the new structures.
-  try{if(plan&&progress){gf30EnsurePlanProtection();gf30EnsureBodyComposition();write();renderAll()}}catch(e){console.warn('v4.0.33 upgrade init skipped',e)}
+  try{if(plan&&progress){gf30EnsurePlanProtection();gf30EnsureBodyComposition();write();renderAll()}}catch(e){console.warn('v4.0.34 upgrade init skipped',e)}
 })();
 
 </script>
@@ -4201,7 +4225,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.33', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.34', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
@@ -4209,7 +4233,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 
 
 // ============================================================================
-// v4.0.33 · EMBEDDED BASELINE MEDIA COMPATIBILITY
+// v4.0.34 · EMBEDDED BASELINE MEDIA COMPATIBILITY
 // Client-plan JSON may carry front / side / back reference images directly.
 // These count as completed baseline views exactly like locally stored media.
 // ============================================================================
@@ -4282,8 +4306,52 @@ function gf31SyncEmbeddedBaselineOnImport(){
 const gf31RenderAllBase=renderAll;
 renderAll=function(){gf31SyncEmbeddedBaselineOnImport();gf31RenderAllBase();updateProfileSetupAlert()};
 setTimeout(()=>{try{gf31SyncEmbeddedBaselineOnImport();updateProfileSetupAlert()}catch(e){}},0);
+
+
+// ============================================================================
+// v4.0.34 · WORKOUT LOGGER MEMORY + NON-FLOATING FINISH CONTROLS
+// Reuse the last entered load/reps so repeated working sets need minimal typing.
+// Inputs stay fully editable. First set falls back to the matching exercise from
+// the previous completed workout when available.
+// ============================================================================
+function gf34RememberedSetValues(sessionId,e,currentSets){
+  const today=Array.isArray(currentSets)?currentSets:[];
+  if(today.length){
+    const x=today[today.length-1];
+    return {weight:Number(x.weightKg)||0,reps:Number(x.reps)||0,source:'Remembered from previous set'};
+  }
+  const previous=previousExercisePerformance(sessionId,e);
+  if(previous.length){
+    const x=previous[0];
+    return {weight:Number(x.weightKg)||0,reps:Number(x.reps)||0,source:'Remembered from last workout'};
+  }
+  return {weight:null,reps:null,source:''};
+}
+const gf34RenderCanonicalWorkoutBase=renderCanonicalWorkout;
+renderCanonicalWorkout=function(){
+  gf34RenderCanonicalWorkoutBase();
+  const w=currentWorkoutRecord();
+  if(!w||!canonicalWorkout)return;
+  const s=plan?.training?.sessions?.find(x=>x.id===w.sessionId);
+  const e=s?.exercises?.[canonicalWorkout.exerciseIndex];
+  if(!s||!e)return;
+  const key=workoutExerciseKey(e);
+  const today=(w.setEntries||[]).filter(x=>x.exerciseKey===key);
+  const remembered=gf34RememberedSetValues(s.id,e,today);
+  const weightInput=document.getElementById('canonicalSetWeight');
+  const repsInput=document.getElementById('canonicalSetReps');
+  if(weightInput&&remembered.weight!==null)weightInput.value=remembered.weight>0?String(remembered.weight):'';
+  if(repsInput&&remembered.reps!==null&&remembered.reps>0)repsInput.value=String(remembered.reps);
+  if(remembered.source){
+    const cards=document.querySelectorAll('#sessionSheet .workout-input-card');
+    cards.forEach(card=>{
+      if(card.querySelector('.gf34-remembered-value'))return;
+      card.insertAdjacentHTML('beforeend',`<span class="gf34-remembered-value">${esc(remembered.source)} · tap to edit</span>`);
+    });
+  }
+};
 </script>
 
-<!-- Gain Focus build 4.0.30 -->
+<!-- Gain Focus build 4.0.34 -->
 </body>
 </html>

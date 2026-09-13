@@ -1,3 +1,7 @@
+Gain Focus v4.0.34
+
+Workout UX update: finish/end controls are non-floating at content bottom; load and reps prefill from the previous set or previous workout and remain editable.
+
 Gain Focus PWA v4.0.32
 - Hercules Ask bar moved lower on the home screen.
 - Start ↔ Goal is visible directly in Profile instead of inside a nested accordion.

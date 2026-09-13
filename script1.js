@@ -2422,3 +2422,47 @@ drawWeightChart=function(){
 const gfRenderProgressV4024Base=renderProgress;
 renderProgress=function(){gfRenderProgressV4024Base.apply(this,arguments);const root=document.getElementById('progress');if(!root)return;const goal=Number(plan?.goal?.targetWeightKg)||Number(latestWeight())||0,heroStats=root.querySelectorAll('.analysis-stat');if(heroStats[0])heroStats[0].innerHTML=`<span>Goal weight</span><b>${round(goal,1)} kg</b>`;const weightCard=[...root.querySelectorAll('.analysis-card')].find(x=>x.querySelector('#weightChart'));if(weightCard){const small=weightCard.querySelector('.section .small');if(small)small.textContent=`Actual vs projected · goal ${round(goal,1)} kg`;if(!weightCard.querySelector('.gf-weight-goal-note'))weightCard.insertAdjacentHTML('beforeend',`<div class="gf-weight-goal-note"><span>Projected goal date</span><b>${esc(longDateLabel(gfGoalDateISO()))}</b></div>`)}root.querySelector('#gfDevelopmentCard')?.remove();const loadMap=root.querySelector('.progress-muscle-card');if(loadMap)loadMap.insertAdjacentHTML('afterend',gfDevelopmentCardHTML());else{const hist=root.querySelector('.history-divider');if(hist)hist.insertAdjacentHTML('beforebegin',gfDevelopmentCardHTML())}setTimeout(()=>{drawWeightChart();const m=document.getElementById('gfDevelopmentMapMount');if(m)m.innerHTML=gfDevelopmentMapMountHTML()},0)};
 
+
+
+// ============================================================================
+// v4.0.34 · WORKOUT LOGGER MEMORY + NON-FLOATING FINISH CONTROLS
+// Reuse the last entered load/reps so repeated working sets need minimal typing.
+// Inputs stay fully editable. First set falls back to the matching exercise from
+// the previous completed workout when available.
+// ============================================================================
+function gf34RememberedSetValues(sessionId,e,currentSets){
+  const today=Array.isArray(currentSets)?currentSets:[];
+  if(today.length){
+    const x=today[today.length-1];
+    return {weight:Number(x.weightKg)||0,reps:Number(x.reps)||0,source:'Remembered from previous set'};
+  }
+  const previous=previousExercisePerformance(sessionId,e);
+  if(previous.length){
+    const x=previous[0];
+    return {weight:Number(x.weightKg)||0,reps:Number(x.reps)||0,source:'Remembered from last workout'};
+  }
+  return {weight:null,reps:null,source:''};
+}
+const gf34RenderCanonicalWorkoutBase=renderCanonicalWorkout;
+renderCanonicalWorkout=function(){
+  gf34RenderCanonicalWorkoutBase();
+  const w=currentWorkoutRecord();
+  if(!w||!canonicalWorkout)return;
+  const s=plan?.training?.sessions?.find(x=>x.id===w.sessionId);
+  const e=s?.exercises?.[canonicalWorkout.exerciseIndex];
+  if(!s||!e)return;
+  const key=workoutExerciseKey(e);
+  const today=(w.setEntries||[]).filter(x=>x.exerciseKey===key);
+  const remembered=gf34RememberedSetValues(s.id,e,today);
+  const weightInput=document.getElementById('canonicalSetWeight');
+  const repsInput=document.getElementById('canonicalSetReps');
+  if(weightInput&&remembered.weight!==null)weightInput.value=remembered.weight>0?String(remembered.weight):'';
+  if(repsInput&&remembered.reps!==null&&remembered.reps>0)repsInput.value=String(remembered.reps);
+  if(remembered.source){
+    const cards=document.querySelectorAll('#sessionSheet .workout-input-card');
+    cards.forEach(card=>{
+      if(card.querySelector('.gf34-remembered-value'))return;
+      card.insertAdjacentHTML('beforeend',`<span class="gf34-remembered-value">${esc(remembered.source)} · tap to edit</span>`);
+    });
+  }
+};
