@@ -1,3 +1,8 @@
+Gain Focus PWA v4.0.28
+- Hercules Ask bar moved lower on the home screen.
+- Start ↔ Goal is visible directly in Profile instead of inside a nested accordion.
+- Hercules cosmic app icon retained.
+
 Gain Focus PWA v4.0.20
 Analysis hub, smarter visual coaching, guided workout launch, local Hercules form/motivation intelligence, profile-shot focused training, and wordmark home icon.
 
