@@ -1321,7 +1321,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.46';
+const APP_VERSION='4.0.47';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -4249,7 +4249,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 
 
 <script id="gf46-native-hercules-intelligence">
-// Gain Focus v4.0.46 · expanded native Hercules intelligence.
+// Gain Focus v4.0.47 · expanded native Hercules intelligence.
 // Common coaching, analysis and app-operation questions work locally without a model endpoint.
 (function(){
   const GF46_MUSCLE_ALIASES={
@@ -4343,7 +4343,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
   const gf46BaseContext=window.herculesContext;
   window.herculesContext=function(){
     const c=gf46Safe(()=>gf46BaseContext(),{})||{},intel=gf46Safe(()=>gf25AnalysisIntelligence(),null),dev=gf46Safe(()=>gf42DevelopmentStats(),null),range=gf46Safe(()=>gf42WindowRange(),null),body=gf46Safe(()=>gf30BodyCompLogs(),[])||[];
-    c.app={version:typeof APP_VERSION!=='undefined'?APP_VERSION:'4.0.46',currentTab:typeof currentTab==='string'?currentTab:'today',selectedMuscleSignal:typeof gf26MuscleMode!=='undefined'?gf26MuscleMode:null,selectedMusclePeriod:gf46Safe(()=>gf42WindowLabel(),null),selectedTrend:typeof gf26TrendMode!=='undefined'?gf26TrendMode:null,profileSetupMissing:gf46Safe(()=>gfProfileSetupMissing(),[]),features:['guided workouts','remembered weight and reps','nutrition logging','check-ins','body fat and tape measurements','four-signal muscle maps','shared historic trend axis','correlation engine','protected original training plan','profile logout','guided FAQ']};
+    c.app={version:typeof APP_VERSION!=='undefined'?APP_VERSION:'4.0.47',currentTab:typeof currentTab==='string'?currentTab:'today',selectedMuscleSignal:typeof gf26MuscleMode!=='undefined'?gf26MuscleMode:null,selectedMusclePeriod:gf46Safe(()=>gf42WindowLabel(),null),selectedTrend:typeof gf26TrendMode!=='undefined'?gf26TrendMode:null,profileSetupMissing:gf46Safe(()=>gfProfileSetupMissing(),[]),features:['guided workouts','remembered weight and reps','nutrition logging','check-ins','body fat and tape measurements','four-signal muscle maps','shared historic trend axis','correlation engine','protected original training plan','profile logout','guided FAQ']};
     c.nativeAnalysis=intel?{status:intel.status,confidencePct:intel.confidence,weight:intel.weight,nutrition:{averageAdherencePct:intel.nutrition.avg,status:intel.nutrition.status},training:{completionPct:intel.training.completion},topMuscles:(intel.muscles.developing||[]).slice(0,3),focusMuscles:(intel.muscles.lagging||[]).slice(0,3),recommendations:intel.recommendations}:null;
     c.selectedHistoricWindow=range?{...range,label:gf46Safe(()=>gf42WindowLabel(),null),conditioning:dev?.conditioning,strength:dev?.strength,visualMass:dev?.mass}:null;
     c.bodyCompositionHistory={count:body.length,latest:body.at(-1)||null};
@@ -4402,7 +4402,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.46', {scope:'./', updateViaCache:'none'})
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.47', {scope:'./', updateViaCache:'none'})
       .then(function(reg){ try{ reg.update(); }catch(_){} })
       .catch(function(err){ console.warn('Gain Focus service worker registration failed:', err); });
   });
@@ -5005,6 +5005,76 @@ window.gf42HistorySummaryHTML=function(mode,stats){
   return `<div class="gf38-history-summary"><div><span>Selected period</span><b>${gf42WindowLabel()}</b></div><div><span>${label}</span><b>${esc(gfDevLabel(chosen.k))} · ${chosen.d>=0?'+':''}${Math.round(chosen.d)}%</b></div></div>`
 };
 window.gfDevelopmentMapMountHTML=function(){const stats=gf42DevelopmentStats(),signed=gfDevelopmentMode!=='load';return `<div class="gf-development-grid"><div class="gf-development-stage"><div class="bodyviz-label">Front</div>${gfDevelopmentSVG('front',gfDevelopmentMode,stats)}</div><div class="gf-development-stage"><div class="bodyviz-label">Back</div>${gfDevelopmentSVG('back',gfDevelopmentMode,stats)}</div></div><div class="gf-development-legend"><span>${signed?'Largest decline':'Cold'}</span><div class="gf-development-gradient"></div><span>${signed?'Greatest gain':'Hot'}</span></div>${signed?'<div class="gf45-zero-note">Cyan = no change · blue = decline · yellow/red = gain</div>':''}${gf42HistorySummaryHTML(gfDevelopmentMode,stats)}${gfDevelopmentDetailHTML(gfDevelopmentSelected,gfDevelopmentMode,stats)}`};
+</script>
+
+
+<script id="gf47-native-hercules-intent-fix">
+// Gain Focus v4.0.47 · native Hercules intent + evidence reasoning fix.
+// Explicitly supports natural questions such as “Should I add sets?” and
+// “How confident is the analysis?” while grounding replies in client data.
+(function(){
+  const GF47_ALIASES={
+    chest:'chest',pec:'chest',pecs:'chest',shoulder:'shoulders',shoulders:'shoulders',delt:'shoulders',delts:'shoulders',
+    'rear delt':'rearDelts','rear delts':'rearDelts',lat:'lats',lats:'lats',trap:'traps',traps:'traps',
+    bicep:'biceps',biceps:'biceps',tricep:'triceps',triceps:'triceps',forearm:'forearms',forearms:'forearms',
+    quad:'quads',quads:'quads',hamstring:'hamstrings',hamstrings:'hamstrings',glute:'glutes',glutes:'glutes',
+    calf:'calves',calves:'calves','mid back':'midBack','middle back':'midBack','lower back':'lowerBack',erector:'erectors',erectors:'erectors'
+  };
+  const safe=(fn,fallback=null)=>{try{const v=fn();return v==null?fallback:v}catch(e){console.warn('Hercules v4.0.47 fallback',e);return fallback}};
+  function muscleKey(q){q=String(q||'').toLowerCase();for(const term of Object.keys(GF47_ALIASES).sort((a,b)=>b.length-a.length))if(q.includes(term))return GF47_ALIASES[term];return null}
+  function muscleName(k){return safe(()=>gfDevLabel(k),k||'target muscle')}
+  function confidenceLabel(v){v=Number(v)||0;return v>=80?'high':v>=60?'moderate':v>=40?'developing':'low'}
+  function selectedOrFocusMuscle(d,q){
+    const explicit=muscleKey(q);if(explicit)return explicit;
+    if(typeof currentTab==='string'&&currentTab==='progress'&&typeof gfDevelopmentSelected==='string')return gfDevelopmentSelected;
+    return d?.muscles?.lagging?.find(x=>x.goal&&x.evidence>=2)?.key||d?.muscles?.lagging?.find(x=>x.evidence>=2)?.key||d?.muscles?.developing?.[0]?.key||null
+  }
+  function volumeDecision(q){
+    const d=safe(()=>gf25AnalysisIntelligence(),null);if(!d)return 'I need a loaded client plan and progress history before I can judge whether extra sets are useful.';
+    const key=selectedOrFocusMuscle(d,q),row=key?d.muscles?.rows?.find(x=>x.key===key):null,name=muscleName(key),reasons=[];
+    const nutritionDays=d.nutrition?.dates?.length||0,macroAvg=Number(d.nutrition?.avg),completion=Number(d.training?.completion),weightGap=Number(d.weight?.delta);
+    if(d.training?.scheduled&&Number.isFinite(completion)&&completion<75)reasons.push(`training completion is only ${Math.round(completion)}%`);
+    if(nutritionDays>=5&&Number.isFinite(macroAvg)&&macroAvg<90)reasons.push(`logged nutrition is averaging about ${Math.round(macroAvg)}% of target`);
+    if(Number.isFinite(weightGap)&&weightGap<-.4)reasons.push(`bodyweight is ${Math.abs(weightGap).toFixed(1)} kg below the current guide`);
+    if(row&&row.evidence<2)reasons.push(`${name} only has ${row.evidence} comparable development signal${row.evidence===1?'':'s'}`);
+    if(row&&row.evidence>=2&&row.confidence<55)reasons.push(`${name} evidence confidence is only ${Math.round(row.confidence)}%`);
+    if(reasons.length)return `Not yet. For ${name}, I would hold the current sets because ${reasons.join(' and ')}. Fix those variables first, then reassess. I will never alter the Tailored training plan without the confirmation warning.`;
+    if(!row)return 'I would not add sets blindly. Keep the current plan until there is enough repeated training and progress data to identify a specific lagging muscle, then make the smallest testable change.';
+    const cond=Number(row.conditioning),str=Number(row.strength),mass=Number(row.mass),comp=Number(row.composite);
+    if(Number.isFinite(str)&&str>5&&(!Number.isFinite(mass)||mass<=1))return `No — not yet for ${name}. Strength is already up about ${Math.round(str)}%, while visual mass has not clearly followed yet${Number.isFinite(mass)?` (${mass>=0?'+':''}${Math.round(mass)}%)`:''}. Keep the current stimulus long enough to see whether the visual signal catches up rather than adding volume prematurely.`;
+    if(Number.isFinite(cond)&&cond>8&&Number.isFinite(str)&&str<=2)return `No — not yet for ${name}. Conditioning is up about ${Math.round(cond)}% but strength is only ${str>=0?'+':''}${Math.round(str)}%, which suggests work capacity is improving faster than productive tension. Progress load/reps and execution before adding sets.`;
+    if(Number.isFinite(comp)&&comp>=5)return `No — the current ${name} volume is already producing a positive combined signal of about +${Math.round(comp)}%. Keep it stable and continue progressive overload rather than changing a working input.`;
+    if(Number.isFinite(comp)&&comp<=0&&row.evidence>=2&&row.confidence>=60&&(!Number.isFinite(completion)||completion>=85)&&(!Number.isFinite(macroAvg)||macroAvg>=90))return `A small volume trial for ${name} is reasonable. The combined signal is ${comp>=0?'+':''}${Math.round(comp)}% with ${Math.round(row.confidence)}% evidence confidence, while schedule and nutrition are consistent enough to make the test interpretable. I would add only 1 working set to one key ${name} exercise for 2–3 weeks, then compare strength, conditioning and visual/tape response. Applying that change must still show the programme-change confirmation first.`;
+    return `I would hold ${name} sets for now. The evidence is mixed rather than clearly stalled${Number.isFinite(comp)?` (${comp>=0?'+':''}${Math.round(comp)}% combined signal)`:''}. Keep execution, load/reps, food and recovery stable until the next comparable block; if ${name} then remains flat with good adherence, trial +1 set rather than making a large volume jump.`
+  }
+  function confidenceAnswer(q){
+    const d=safe(()=>gf25AnalysisIntelligence(),null);if(!d)return 'Analysis confidence is not established yet because there is not enough comparable client history.';
+    const overall=Math.round(Number(d.confidence)||0),parts=[];
+    if(Number.isFinite(Number(d.weight?.confidence)))parts.push(`weight ${Math.round(d.weight.confidence)}%`);
+    if(Number.isFinite(Number(d.nutrition?.confidence))&&d.nutrition.confidence>0)parts.push(`nutrition ${Math.round(d.nutrition.confidence)}%`);
+    if(d.visual?.a&&Number.isFinite(Number(d.visual?.confidence?.score)))parts.push(`visual ${Math.round(d.visual.confidence.score)}%`);
+    const key=selectedOrFocusMuscle(d,q),row=key?d.muscles?.rows?.find(x=>x.key===key):null;
+    if(row&&row.evidence)parts.push(`${muscleName(key)} ${Math.round(row.confidence)}% across ${row.evidence} signal${row.evidence===1?'':'s'}`);
+    const corr=safe(()=>gf41CorrelationIntel(),null),lead=corr?.top?.[0];
+    const counts=`${progress?.weighIns?.length||0} weigh-ins, ${progress?.workoutLogs?.length||0} workouts, ${progress?.nutritionLogs?.length||0} nutrition entries and ${progress?.weeklyCheckins?.filter(x=>x?.analysis)?.length||0} analysed check-ins`;
+    let text=`Overall analysis confidence is ${overall}% (${confidenceLabel(overall)}). ${parts.length?`Current components: ${parts.join(' · ')}. `:''}That is based on ${counts}. `;
+    if(lead)text+=`The strongest detected correlation is ${lead.title.toLowerCase()} at ${lead.confidence}% confidence across ${lead.n} paired periods; that is still an association, not proof of cause. `;
+    text+='Repeated scale/training/tape data are weighted more heavily than one-off visual estimates, and visual confidence is reduced for inconsistent pose, framing, clothing or visibility.';
+    return text
+  }
+  const previous=window.herculesKnowledge;
+  window.herculesKnowledge=function(question){
+    const q=String(question||'').toLowerCase().replace(/[?.!,]/g,' ').replace(/\s+/g,' ').trim();
+    if(/(?:should|do) i (?:add|increase|do) (?:more )?sets|do i need (?:more|extra) sets|add (?:more|extra) sets|increase (?:my )?(?:sets|volume)|more training volume|should i add volume|need more volume/.test(q))return volumeDecision(q);
+    if(/how confident(?: is| are| am)?|how reliable|how accurate|can i trust (?:the |this )?analysis|trust.*analysis|confidence (?:of|in|for) (?:the )?analysis|analysis.*confidence/.test(q))return confidenceAnswer(q);
+    return previous(question)
+  };
+  // Use exact phrases that are guaranteed native intents in the rotating examples.
+  if(window.GFCoach&&typeof GFCoach.prompts==='function'){
+    const oldPrompts=GFCoach.prompts;
+    GFCoach.prompts=function(){const a=oldPrompts.call(this).filter(x=>!/should i add sets|how confident is the analysis/i.test(x));return ['Ask: Should I add sets?','Ask: How confident is the analysis?',...a]}
+  }
+})();
 </script>
 
 </body>
