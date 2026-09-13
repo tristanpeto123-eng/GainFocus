@@ -1027,7 +1027,7 @@ body.coach-home-active > .gf-setup-alert{
 
 
 <style id="gf-v4026-layout">
-/* Gain Focus v4.0.32 · Hercules placement + direct profile visuals */
+/* Gain Focus v4.0.33 · Hercules placement + direct profile visuals */
 .gf26-accordion{margin:12px 0;border:1px solid rgba(126,174,235,.13);border-radius:22px;background:linear-gradient(145deg,rgba(12,25,47,.82),rgba(6,13,29,.84));overflow:hidden}
 .gf26-accordion>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 16px;min-height:58px;-webkit-tap-highlight-color:transparent}
 .gf26-accordion>summary::-webkit-details-marker{display:none}.gf26-accordion>summary:after{content:'+';width:28px;height:28px;flex:0 0 28px;border-radius:10px;display:grid;place-items:center;background:rgba(120,178,255,.08);border:1px solid rgba(120,178,255,.10);color:#b8dcff;font-size:18px;font-weight:500;transition:transform .22s ease}
@@ -1049,7 +1049,7 @@ body.coach-home-active > .gf-setup-alert{
 body.coach-home-active{overflow:hidden}body.coach-home-active #app{max-width:720px;width:100%;height:100dvh;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 16px calc(82px + env(safe-area-inset-bottom));overflow:hidden;display:flex!important;flex-direction:column}body.coach-home-active .topbar{display:flex;position:sticky;flex:0 0 auto;margin:0 -16px 4px}body.coach-home-active #today.screen.active{display:block;flex:1;height:auto;min-height:0;margin:0;padding:0;overflow:hidden}body.coach-home-active .coach-home{height:100%;min-height:0}body.coach-home-active .coach-mini-brand{display:none}body.coach-home-active > .gf-setup-alert{display:none!important}
 @media(max-width:430px){.gf26-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.gf26-help-grid{grid-template-columns:1fr 1fr}}
 
-/* v4.0.32 · Hercules console placement + direct Profile Start ↔ Goal */
+/* v4.0.33 · Hercules console placement + direct Profile Start ↔ Goal */
 body.coach-home-active .coach-home-bottom{
   transform:translateY(clamp(54px,8vh,88px));
 }
@@ -1062,7 +1062,7 @@ body.coach-home-active .coach-home-bottom{
 </style>
 
 <style id="gf30-style">
-/* Gain Focus v4.0.32 */
+/* Gain Focus v4.0.33 */
 .gf30-plan-protection{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;padding:12px 13px;border-radius:18px;background:rgba(76,135,219,.07);border:1px solid rgba(120,180,255,.12)}
 .gf30-plan-protection>div{min-width:0}.gf30-plan-protection span,.gf30-plan-protection small{display:block;color:var(--muted);font-size:9px}.gf30-plan-protection b{display:block;margin:2px 0 3px;font-size:12px;color:#e8f4ff}.gf30-plan-protection button{flex:0 0 auto;border:1px solid rgba(135,190,255,.14);background:rgba(9,25,48,.82);color:#cfe8ff;border-radius:12px;padding:9px 10px;font-size:9px;font-weight:750}
 .gf30-bodycomp-empty{display:grid;gap:8px;padding:4px 0}.gf30-bodycomp-empty b{font-size:12px}.gf30-bodycomp-empty span{font-size:10px;line-height:1.45;color:var(--muted)}
@@ -1075,7 +1075,164 @@ body.coach-home-active .coach-home-bottom{
 @media(max-width:380px){.gf30-trend-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.gf30-measure-grid,.gf30-tape-grid{grid-template-columns:1fr}.gf30-leg-choice>div{grid-template-columns:1fr}}
 
 </style>
-\n<style id="gf32-hercules-responsive-layout">\n/* Gain Focus v4.0.32 · Hercules home responsive structural layout\n   Header -> greeting -> Hercules -> input -> footer. No independent positional nudges. */\nbody.coach-home-active{\n  overflow:hidden;\n}\nbody.coach-home-active #app{\n  width:100%;\n  max-width:720px;\n  height:100dvh;\n  min-height:100svh;\n  margin:0 auto;\n  padding:calc(12px + env(safe-area-inset-top)) 16px calc(82px + env(safe-area-inset-bottom));\n  display:flex!important;\n  flex-direction:column;\n  overflow:hidden;\n}\nbody.coach-home-active .topbar{\n  display:flex;\n  position:sticky;\n  top:0;\n  flex:0 0 auto;\n  margin:0 -16px;\n  padding-left:16px;\n  padding-right:16px;\n}\nbody.coach-home-active #today.screen.active{\n  display:block;\n  flex:1 1 auto;\n  min-height:0;\n  height:auto;\n  margin:0;\n  padding:0;\n  overflow:hidden;\n}\nbody.coach-home-active .coach-home{\n  width:100%;\n  height:100%;\n  min-height:0;\n  padding:clamp(28px,4.2svh,36px) 6px clamp(0px,.6svh,5px);\n  margin:0;\n  display:grid;\n  grid-template-rows:auto minmax(0,1fr) auto;\n  grid-template-columns:minmax(0,1fr);\n  align-items:stretch;\n  justify-items:center;\n  row-gap:clamp(3px,.8svh,9px);\n  overflow:hidden;\n}\nbody.coach-home-active .coach-mini-brand{display:none}\nbody.coach-home-active .coach-home-top{\n  grid-row:1;\n  width:min(100%,680px);\n  margin:0 auto;\n  padding:0;\n  align-self:start;\n  justify-self:center;\n  text-align:center;\n}\nbody.coach-home-active .coach-home-greeting{\n  margin:0;\n  font-size:clamp(29px,7.5vw,48px);\n}\nbody.coach-home-active .coach-home-prompt{\n  min-height:clamp(34px,4.8svh,42px);\n  margin:clamp(7px,1.1svh,12px) auto 0;\n  padding:0 clamp(6px,2vw,12px);\n  font-size:clamp(12px,3.5vw,16px);\n}\nbody.coach-home-active .coach-portrait-button{\n  grid-row:2;\n  width:100%;\n  min-width:0;\n  min-height:0;\n  height:100%;\n  margin:0;\n  padding:0;\n  display:grid;\n  place-items:center;\n  align-self:stretch;\n  justify-self:stretch;\n}\nbody.coach-home-active .coach-portrait-shell{\n  width:min(88vw,54svh,560px);\n  max-width:100%;\n  max-height:100%;\n  aspect-ratio:830/920;\n  margin-inline:auto;\n  transform:none;\n  transform-origin:50% 62%;\n}\nbody.coach-home-active .coach-home-bottom{\n  grid-row:3;\n  width:min(100%,670px);\n  min-width:0;\n  margin:0 auto;\n  padding:0;\n  align-self:end;\n  justify-self:center;\n  transform:none!important;\n}\nbody.coach-home-active .coach-console{\n  width:100%;\n  height:clamp(54px,6.7svh,58px);\n  min-height:54px;\n  margin:0;\n}\nbody.coach-home-active .coach-input-star{\n  flex:0 0 auto;\n  font-size:clamp(17px,4.8vw,20px);\n}\nbody.coach-home-active .coach-input{\n  min-width:0;\n  width:100%;\n  font-size:clamp(12.5px,3.6vw,15px);\n}\nbody.coach-home-active .coach-send{\n  width:clamp(40px,11.5vw,46px);\n  height:clamp(40px,11.5vw,46px);\n  flex:0 0 clamp(40px,11.5vw,46px);\n}\nbody.coach-home-active .coach-tap-hint{\n  margin-top:clamp(5px,.9svh,9px);\n  line-height:1.2;\n}\nbody.coach-home-active > .gf-setup-alert{display:none!important}\n\n/* Height compression: the whole composition scales together rather than moving independent layers. */\n@media (max-height:760px){\n  body.coach-home-active .coach-home{\n    padding-top:clamp(20px,3.2svh,28px);\n    row-gap:2px;\n  }\n  body.coach-home-active .coach-home-greeting{font-size:clamp(27px,7vw,40px)}\n  body.coach-home-active .coach-home-prompt{margin-top:6px;min-height:32px}\n  body.coach-home-active .coach-portrait-shell{width:min(82vw,49svh,475px)}\n  body.coach-home-active .coach-tap-hint{margin-top:5px}\n}\n@media (max-height:650px){\n  body.coach-home-active #app{padding-bottom:calc(78px + env(safe-area-inset-bottom))}\n  body.coach-home-active .coach-home{padding-top:18px}\n  body.coach-home-active .coach-home-prompt{min-height:28px;font-size:12px}\n  body.coach-home-active .coach-portrait-shell{width:min(76vw,43svh,405px)}\n  body.coach-home-active .coach-console{height:52px;min-height:52px}\n  body.coach-home-active .coach-tap-hint{font-size:8px}\n}\n@media (max-width:350px){\n  body.coach-home-active #app{padding-left:12px;padding-right:12px}\n  body.coach-home-active .topbar{margin-left:-12px;margin-right:-12px;padding-left:12px;padding-right:12px}\n  body.coach-home-active .coach-home{padding-left:2px;padding-right:2px}\n  body.coach-home-active .coach-console{padding-left:12px}\n  body.coach-home-active .coach-input{font-size:12.5px}\n}\n@media (min-width:700px){\n  body.coach-home-active .coach-portrait-shell{width:min(54svh,560px)}\n}\n</style>\n</head>
+<style id="gf32-hercules-responsive-layout">
+/* Gain Focus v4.0.33 · Hercules home responsive structural layout
+   Header -> greeting -> Hercules -> input -> footer. No independent positional nudges. */
+body.coach-home-active{
+  overflow:hidden;
+}
+body.coach-home-active #app{
+  width:100%;
+  max-width:720px;
+  height:100dvh;
+  min-height:100svh;
+  margin:0 auto;
+  padding:calc(12px + env(safe-area-inset-top)) 16px calc(82px + env(safe-area-inset-bottom));
+  display:flex!important;
+  flex-direction:column;
+  overflow:hidden;
+}
+body.coach-home-active .topbar{
+  display:flex;
+  position:sticky;
+  top:0;
+  flex:0 0 auto;
+  margin:0 -16px;
+  padding-left:16px;
+  padding-right:16px;
+}
+body.coach-home-active #today.screen.active{
+  display:block;
+  flex:1 1 auto;
+  min-height:0;
+  height:auto;
+  margin:0;
+  padding:0;
+  overflow:hidden;
+}
+body.coach-home-active .coach-home{
+  width:100%;
+  height:100%;
+  min-height:0;
+  padding:clamp(28px,4.2svh,36px) 6px clamp(0px,.6svh,5px);
+  margin:0;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  grid-template-columns:minmax(0,1fr);
+  align-items:stretch;
+  justify-items:center;
+  row-gap:clamp(3px,.8svh,9px);
+  overflow:hidden;
+}
+body.coach-home-active .coach-mini-brand{display:none}
+body.coach-home-active .coach-home-top{
+  grid-row:1;
+  width:min(100%,680px);
+  margin:0 auto;
+  padding:0;
+  align-self:start;
+  justify-self:center;
+  text-align:center;
+}
+body.coach-home-active .coach-home-greeting{
+  margin:0;
+  font-size:clamp(29px,7.5vw,48px);
+}
+body.coach-home-active .coach-home-prompt{
+  min-height:clamp(34px,4.8svh,42px);
+  margin:clamp(7px,1.1svh,12px) auto 0;
+  padding:0 clamp(6px,2vw,12px);
+  font-size:clamp(12px,3.5vw,16px);
+}
+body.coach-home-active .coach-portrait-button{
+  grid-row:2;
+  width:100%;
+  min-width:0;
+  min-height:0;
+  height:100%;
+  margin:0;
+  padding:0;
+  display:grid;
+  place-items:center;
+  align-self:stretch;
+  justify-self:stretch;
+}
+body.coach-home-active .coach-portrait-shell{
+  width:min(88vw,54svh,560px);
+  max-width:100%;
+  max-height:100%;
+  aspect-ratio:830/920;
+  margin-inline:auto;
+  transform:none;
+  transform-origin:50% 62%;
+}
+body.coach-home-active .coach-home-bottom{
+  grid-row:3;
+  width:min(100%,670px);
+  min-width:0;
+  margin:0 auto;
+  padding:0;
+  align-self:end;
+  justify-self:center;
+  transform:none!important;
+}
+body.coach-home-active .coach-console{
+  width:100%;
+  height:clamp(54px,6.7svh,58px);
+  min-height:54px;
+  margin:0;
+}
+body.coach-home-active .coach-input-star{
+  flex:0 0 auto;
+  font-size:clamp(17px,4.8vw,20px);
+}
+body.coach-home-active .coach-input{
+  min-width:0;
+  width:100%;
+  font-size:clamp(12.5px,3.6vw,15px);
+}
+body.coach-home-active .coach-send{
+  width:clamp(40px,11.5vw,46px);
+  height:clamp(40px,11.5vw,46px);
+  flex:0 0 clamp(40px,11.5vw,46px);
+}
+body.coach-home-active .coach-tap-hint{
+  margin-top:clamp(5px,.9svh,9px);
+  line-height:1.2;
+}
+body.coach-home-active > .gf-setup-alert{display:none!important}
+
+/* Height compression: the whole composition scales together rather than moving independent layers. */
+@media (max-height:760px){
+  body.coach-home-active .coach-home{
+    padding-top:clamp(20px,3.2svh,28px);
+    row-gap:2px;
+  }
+  body.coach-home-active .coach-home-greeting{font-size:clamp(27px,7vw,40px)}
+  body.coach-home-active .coach-home-prompt{margin-top:6px;min-height:32px}
+  body.coach-home-active .coach-portrait-shell{width:min(82vw,49svh,475px)}
+  body.coach-home-active .coach-tap-hint{margin-top:5px}
+}
+@media (max-height:650px){
+  body.coach-home-active #app{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+  body.coach-home-active .coach-home{padding-top:18px}
+  body.coach-home-active .coach-home-prompt{min-height:28px;font-size:12px}
+  body.coach-home-active .coach-portrait-shell{width:min(76vw,43svh,405px)}
+  body.coach-home-active .coach-console{height:52px;min-height:52px}
+  body.coach-home-active .coach-tap-hint{font-size:8px}
+}
+@media (max-width:350px){
+  body.coach-home-active #app{padding-left:12px;padding-right:12px}
+  body.coach-home-active .topbar{margin-left:-12px;margin-right:-12px;padding-left:12px;padding-right:12px}
+  body.coach-home-active .coach-home{padding-left:2px;padding-right:2px}
+  body.coach-home-active .coach-console{padding-left:12px}
+  body.coach-home-active .coach-input{font-size:12.5px}
+}
+@media (min-width:700px){
+  body.coach-home-active .coach-portrait-shell{width:min(54svh,560px)}
+}
+</style>
+</head>
 <body>
 <div class="ambient"></div><div class="ambient-blur"></div>
 
@@ -1164,7 +1321,7 @@ body.coach-home-active .coach-home-bottom{
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.32';
+const APP_VERSION='4.0.33';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -3755,7 +3912,7 @@ setTimeout(()=>{try{if(plan&&progress)renderAll()}catch(e){console.warn('v4.0.25
 
 <script id="gf-v4027-ia">
 // ============================================================================
-// Gain Focus v4.0.32 · Hercules placement + direct profile visuals + nested information architecture
+// Gain Focus v4.0.33 · Hercules placement + direct profile visuals + nested information architecture
 // Start/onboarding intentionally unchanged.
 // ============================================================================
 let gf26MuscleMode='load';
@@ -3882,11 +4039,11 @@ const gf26BaseShowTab=showTab;
 showTab=function(tab){const r=gf26BaseShowTab.apply(this,arguments);gfMountSetupAlertForCurrentTab();gf26EnsureHelpButton();if(tab==='today'){const t=document.getElementById('pageTitle');if(t)t.textContent='Hercules'}if(tab==='progress'){const t=document.getElementById('pageTitle');if(t)t.textContent='Analysis'}return r};
 
 // Make sure all final wrappers render immediately after this upgrade.
-setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTab();gf26EnsureHelpButton();showTab(currentTab||'today')}}catch(e){console.warn('v4.0.32 layout refresh skipped',e)}},120);
+setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTab();gf26EnsureHelpButton();showTab(currentTab||'today')}}catch(e){console.warn('v4.0.33 layout refresh skipped',e)}},120);
 </script>
 
 <script id="gf30-extension">
-// Gain Focus v4.0.32 · single-video pose extraction, body composition tracking, protected tailored plan
+// Gain Focus v4.0.33 · single-video pose extraction, body composition tracking, protected tailored plan
 (function(){
   const deepCopy=x=>JSON.parse(JSON.stringify(x));
 
@@ -4035,7 +4192,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
   window.openSettings=function(){gf30EnsurePlanProtection();baseSettings();const sheet=document.getElementById('settingsSheet');if(!sheet)return;sheet.querySelector('.gf30-settings-plan')?.remove();const box=document.createElement('div');box.className='settings-group gf30-settings-plan';box.innerHTML=`<div class="eyebrow">Training plan</div><h3 style="margin:5px 0 4px">${esc(plan.training.planLabel||plan.training.name)}</h3><p class="muted" style="font-size:11px;line-height:1.45">Programme changes require confirmation. The protected original can be restored without deleting workout history.</p><button class="btn secondary" style="width:100%;margin-top:8px" onclick="gf30RestoreOriginalTrainingPlan()">Revert to original plan</button>`;sheet.insertBefore(box,sheet.querySelector('.settings-group')||sheet.lastElementChild)};
 
   // Make imported clients immediately compatible with the new structures.
-  try{if(plan&&progress){gf30EnsurePlanProtection();gf30EnsureBodyComposition();write();renderAll()}}catch(e){console.warn('v4.0.32 upgrade init skipped',e)}
+  try{if(plan&&progress){gf30EnsurePlanProtection();gf30EnsureBodyComposition();write();renderAll()}}catch(e){console.warn('v4.0.33 upgrade init skipped',e)}
 })();
 
 </script>
@@ -4044,7 +4201,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.32', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.33', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
@@ -4052,7 +4209,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 
 
 // ============================================================================
-// v4.0.32 · EMBEDDED BASELINE MEDIA COMPATIBILITY
+// v4.0.33 · EMBEDDED BASELINE MEDIA COMPATIBILITY
 // Client-plan JSON may carry front / side / back reference images directly.
 // These count as completed baseline views exactly like locally stored media.
 // ============================================================================
