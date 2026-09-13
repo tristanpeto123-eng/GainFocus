@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gain-focus-v4-0-26-pwa-1';
+const CACHE_NAME = 'gain-focus-v4-0-27-pwa-1';
 const CORE_ASSETS = [
   './',
   './index.html',

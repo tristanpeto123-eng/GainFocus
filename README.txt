@@ -67,3 +67,5 @@ v4.0.22: Compact weekly calendar widget at top of Train with full month view; ge
 
 
 v4.0.26: Consolidated Analysis (single selectable muscle widget + selectable trend widget + emerging/deviation intelligence + nested history), moved check-in analysis to Check-in, Start/Goal to Profile, shared Hercules header and guided Help FAQ. Start/onboarding unchanged.
+
+v4.0.27: Fixed the consolidated Muscle Development selector so Conditioning, Strength and Visual Mass render the full front/back muscle map. All comparison modes now use a cool blue heat scale and show a cold baseline map when no historic comparison data exists.
