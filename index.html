@@ -1027,7 +1027,7 @@ body.coach-home-active > .gf-setup-alert{
 
 
 <style id="gf-v4026-layout">
-/* Gain Focus v4.0.29 · Hercules placement + direct profile visuals */
+/* Gain Focus v4.0.30 · Hercules placement + direct profile visuals */
 .gf26-accordion{margin:12px 0;border:1px solid rgba(126,174,235,.13);border-radius:22px;background:linear-gradient(145deg,rgba(12,25,47,.82),rgba(6,13,29,.84));overflow:hidden}
 .gf26-accordion>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 16px;min-height:58px;-webkit-tap-highlight-color:transparent}
 .gf26-accordion>summary::-webkit-details-marker{display:none}.gf26-accordion>summary:after{content:'+';width:28px;height:28px;flex:0 0 28px;border-radius:10px;display:grid;place-items:center;background:rgba(120,178,255,.08);border:1px solid rgba(120,178,255,.10);color:#b8dcff;font-size:18px;font-weight:500;transition:transform .22s ease}
@@ -1049,7 +1049,7 @@ body.coach-home-active > .gf-setup-alert{
 body.coach-home-active{overflow:hidden}body.coach-home-active #app{max-width:720px;width:100%;height:100dvh;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 16px calc(82px + env(safe-area-inset-bottom));overflow:hidden;display:flex!important;flex-direction:column}body.coach-home-active .topbar{display:flex;position:sticky;flex:0 0 auto;margin:0 -16px 4px}body.coach-home-active #today.screen.active{display:block;flex:1;height:auto;min-height:0;margin:0;padding:0;overflow:hidden}body.coach-home-active .coach-home{height:100%;min-height:0}body.coach-home-active .coach-mini-brand{display:none}body.coach-home-active > .gf-setup-alert{display:none!important}
 @media(max-width:430px){.gf26-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.gf26-help-grid{grid-template-columns:1fr 1fr}}
 
-/* v4.0.29 · Hercules console placement + direct Profile Start ↔ Goal */
+/* v4.0.30 · Hercules console placement + direct Profile Start ↔ Goal */
 body.coach-home-active .coach-home-bottom{
   transform:translateY(clamp(54px,8vh,88px));
 }
@@ -1061,6 +1061,20 @@ body.coach-home-active .coach-home-bottom{
 .gf28-profile-visuals .analysis-visual-compare{margin-top:10px}
 </style>
 
+<style id="gf30-style">
+/* Gain Focus v4.0.30 */
+.gf30-plan-protection{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;padding:12px 13px;border-radius:18px;background:rgba(76,135,219,.07);border:1px solid rgba(120,180,255,.12)}
+.gf30-plan-protection>div{min-width:0}.gf30-plan-protection span,.gf30-plan-protection small{display:block;color:var(--muted);font-size:9px}.gf30-plan-protection b{display:block;margin:2px 0 3px;font-size:12px;color:#e8f4ff}.gf30-plan-protection button{flex:0 0 auto;border:1px solid rgba(135,190,255,.14);background:rgba(9,25,48,.82);color:#cfe8ff;border-radius:12px;padding:9px 10px;font-size:9px;font-weight:750}
+.gf30-bodycomp-empty{display:grid;gap:8px;padding:4px 0}.gf30-bodycomp-empty b{font-size:12px}.gf30-bodycomp-empty span{font-size:10px;line-height:1.45;color:var(--muted)}
+.gf30-bodycomp-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.gf30-bodycomp-head b,.gf30-bodycomp-head span{display:block}.gf30-bodycomp-head b{font-size:12px}.gf30-bodycomp-head span{font-size:9px;color:var(--muted)}.gf30-bodycomp-head .btn{width:auto;padding:9px 11px;margin:0}
+.gf30-bodycomp-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}.gf30-bodycomp-kpis>div,.gf30-tape-grid>div{padding:10px;border-radius:14px;background:rgba(255,255,255,.026);border:1px solid rgba(255,255,255,.055)}.gf30-bodycomp-kpis span,.gf30-tape-grid span{display:block;color:var(--muted);font-size:9px}.gf30-bodycomp-kpis b,.gf30-tape-grid b{display:block;margin-top:3px;font-size:13px}.gf30-bodycomp-kpis small,.gf30-tape-grid small{display:block;margin-top:2px;color:rgba(218,229,247,.52);font-size:8px;line-height:1.35}
+.gf30-tape-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}.gf30-bodycomp-note{margin:10px 1px 0;color:var(--muted);font-size:9px;line-height:1.45}
+.gf30-measure-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.gf30-measure-field{min-width:0}.gf30-measure-field.wide{grid-column:1/-1}.gf30-measure-field label{display:block;margin:0 0 5px;color:var(--muted);font-size:9px}.gf30-bf-row{display:flex;gap:8px;align-items:center}.gf30-bf-row .input{min-width:0;flex:1}.gf30-bf-row .btn{width:auto;flex:0 0 auto;margin:0;padding:10px 11px;font-size:9px}
+.gf30-trend-tabs{grid-template-columns:repeat(4,minmax(0,1fr))}.gf30-trend-tabs button{padding-left:4px;padding-right:4px}.gf30-tape-trends{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:8px 0}.gf30-tape-trends>div{display:flex;justify-content:space-between;gap:8px;padding:9px 10px;border-radius:12px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05)}.gf30-tape-trends span{font-size:9px;color:var(--muted)}.gf30-tape-trends b{font-size:10px}.gf30-extra-signals{display:grid;gap:8px;margin-top:8px}
+.gf30-leg-choice{margin-top:12px;padding:11px;border-radius:16px;background:rgba(255,255,255,.026);border:1px solid rgba(255,255,255,.06)}.gf30-leg-choice>span{display:block;margin-bottom:8px;color:#dfeeff;font-size:10px;font-weight:700}.gf30-leg-choice>div{display:grid;grid-template-columns:1fr 1fr;gap:7px}.gf30-leg-choice button{border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);color:var(--muted);border-radius:12px;padding:10px 7px;font-size:9px;font-weight:720}.gf30-leg-choice button.on{color:#eaf7ff;background:rgba(74,154,237,.14);border-color:rgba(110,188,255,.28)}.gf30-pose-status{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;padding:10px 11px;border-radius:14px;background:rgba(68,190,150,.07);border:1px solid rgba(95,223,179,.12)}.gf30-pose-status b{font-size:10px;color:#a8f0d3}.gf30-pose-status span{font-size:9px;color:var(--muted)}
+@media(max-width:380px){.gf30-trend-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.gf30-measure-grid,.gf30-tape-grid{grid-template-columns:1fr}.gf30-leg-choice>div{grid-template-columns:1fr}}
+
+</style>
 </head>
 <body>
 <div class="ambient"></div><div class="ambient-blur"></div>
@@ -1150,7 +1164,7 @@ body.coach-home-active .coach-home-bottom{
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.28';
+const APP_VERSION='4.0.30';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -3741,7 +3755,7 @@ setTimeout(()=>{try{if(plan&&progress)renderAll()}catch(e){console.warn('v4.0.25
 
 <script id="gf-v4027-ia">
 // ============================================================================
-// Gain Focus v4.0.29 · Hercules placement + direct profile visuals + nested information architecture
+// Gain Focus v4.0.30 · Hercules placement + direct profile visuals + nested information architecture
 // Start/onboarding intentionally unchanged.
 // ============================================================================
 let gf26MuscleMode='load';
@@ -3868,20 +3882,175 @@ const gf26BaseShowTab=showTab;
 showTab=function(tab){const r=gf26BaseShowTab.apply(this,arguments);gfMountSetupAlertForCurrentTab();gf26EnsureHelpButton();if(tab==='today'){const t=document.getElementById('pageTitle');if(t)t.textContent='Hercules'}if(tab==='progress'){const t=document.getElementById('pageTitle');if(t)t.textContent='Analysis'}return r};
 
 // Make sure all final wrappers render immediately after this upgrade.
-setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTab();gf26EnsureHelpButton();showTab(currentTab||'today')}}catch(e){console.warn('v4.0.29 layout refresh skipped',e)}},120);
+setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTab();gf26EnsureHelpButton();showTab(currentTab||'today')}}catch(e){console.warn('v4.0.30 layout refresh skipped',e)}},120);
+</script>
+
+<script id="gf30-extension">
+// Gain Focus v4.0.30 · single-video pose extraction, body composition tracking, protected tailored plan
+(function(){
+  const deepCopy=x=>JSON.parse(JSON.stringify(x));
+
+  function gf30TrainingSnapshot(t){
+    if(!t)return null;
+    return {
+      name:t.name,summary:t.summary||'',sessionsPerWeek:t.sessionsPerWeek,
+      progressionRule:t.progressionRule||'',sessions:deepCopy(t.sessions||[]),
+      focusPriorities:deepCopy(t.focusPriorities||[])
+    };
+  }
+  window.gf30EnsurePlanProtection=function(){
+    if(!window.plan?.training)return;
+    const t=plan.training;
+    if(!t.originalPlan)t.originalPlan=gf30TrainingSnapshot(t);
+    if(!Array.isArray(t.originalGoalFocus))t.originalGoalFocus=deepCopy(plan.goal?.focus||[]);
+    t.planLabel=t.planLabel||t.name||'Training plan';
+    t.changeProtection=t.changeProtection||{};
+    t.changeProtection.warnBeforeApply=true;
+    t.changeProtection.allowRevertToOriginal=true;
+    t.changeProtection.originalPlanProtected=true;
+    t.revisionHistory=Array.isArray(t.revisionHistory)?t.revisionHistory:[];
+  };
+  window.gf30PlanProtectionCardHTML=function(){
+    gf30EnsurePlanProtection();
+    const t=plan?.training;if(!t)return'';
+    const label=t.planLabel||t.name||'Training plan', revisions=t.revisionHistory?.length||0;
+    return `<div class="gf30-plan-protection"><div><span>Programme</span><b>${esc(label)}</b><small>Original protected · ${revisions?revisions+' approved tweak'+(revisions===1?'':'s'):'no approved tweaks'}</small></div><button type="button" onclick="gf30RestoreOriginalTrainingPlan()">Restore original</button></div>`;
+  };
+  window.gf30RestoreOriginalTrainingPlan=function(){
+    gf30EnsurePlanProtection();const t=plan?.training,orig=t?.originalPlan;if(!orig){toast('No protected original plan is available');return}
+    if(!confirm('Restore the original tailored training plan? Any approved programme tweaks will be removed. Workout history and progress data will not be deleted.'))return;
+    const originalCopy=deepCopy(orig), history=Array.isArray(t.revisionHistory)?deepCopy(t.revisionHistory):[], originalGoal=deepCopy(t.originalGoalFocus||plan.goal?.focus||[]);
+    plan.training={...originalCopy,name:'Tailored training plan',planLabel:'Tailored training plan',originalPlan:deepCopy(orig),originalGoalFocus:originalGoal,changeProtection:{warnBeforeApply:true,allowRevertToOriginal:true,originalPlanProtected:true},revisionHistory:[...history,{at:new Date().toISOString(),type:'restore-original',note:'Restored protected original programme'}]};
+    if(plan.goal)plan.goal.focus=originalGoal;
+    write();renderAll();toast('Original tailored training plan restored');
+  };
+  window.gf30ConfirmProgramChange=function(summary,apply){
+    gf30EnsurePlanProtection();
+    const ok=confirm(`Hercules is suggesting a change to the tailored training plan.\n\n${summary}\n\nReview before applying. The original plan is protected and can be restored at any time.\n\nApply this change?`);
+    if(!ok)return false;
+    const before=gf30TrainingSnapshot(plan.training);apply?.();
+    plan.training.revisionHistory.push({at:new Date().toISOString(),type:'approved-change',summary,before});
+    write();renderAll();return true;
+  };
+  if(typeof window.gfApplyFocusedTraining==='function'){
+    const baseApply=window.gfApplyFocusedTraining;
+    window.gfApplyFocusedTraining=function(){
+      const a=progress?.focusedTrainingAnalysis||progress?.baselineAnalysis,p=(a?.feedback?.priority||a?.priority||[]).filter(Boolean);
+      const text=p.length?`Prioritise ${p.map(regionLabel).join(', ')} in coaching and programme emphasis.`:'Apply Hercules’ focused-training recommendation.';
+      gf30EnsurePlanProtection();
+      if(!confirm(`Hercules is suggesting a training-plan tweak.\n\n${text}\n\nThis will not happen automatically. The original tailored plan is protected and can be restored at any time.\n\nApply the tweak?`))return;
+      const before=gf30TrainingSnapshot(plan.training);baseApply();
+      plan.training.revisionHistory=Array.isArray(plan.training.revisionHistory)?plan.training.revisionHistory:[];
+      plan.training.revisionHistory.push({at:new Date().toISOString(),type:'focused-training',summary:text,before});write();
+    };
+  }
+
+  // ----- Optional body composition + tape measurements -----
+  window.gf30EnsureBodyComposition=function(){
+    ensureProgressExtras();progress.bodyCompositionLogs=Array.isArray(progress.bodyCompositionLogs)?progress.bodyCompositionLogs:[];
+  };
+  window.gf30BodyCompLogs=function(){gf30EnsureBodyComposition();return [...progress.bodyCompositionLogs].sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')))};
+  window.gf30LatestBodyComp=function(){return gf30BodyCompLogs().at(-1)||null};
+  window.gf30BodyFatLabel=function(method){return ({electronic_device:'Electronic device',calipers:'Calipers',photo_estimate:'Photo estimate'})[method]||'Not recorded'};
+  const GF30_TAPE=[['neck','Neck'],['shoulders','Shoulders'],['chest','Chest'],['waist','Waist'],['hips','Hips'],['left_upper_arm','Left upper arm'],['right_upper_arm','Right upper arm'],['left_forearm','Left forearm'],['right_forearm','Right forearm'],['left_thigh','Left thigh'],['right_thigh','Right thigh'],['left_calf','Left calf'],['right_calf','Right calf']];
+  window.gf30PhotoBodyFatEstimate=function(){
+    const a=latestPhysiqueAnalysis?.()?.analysis||latestPhysiqueAnalysis?.();const def=Number(a?.definitionIndex);if(!Number.isFinite(def))return null;
+    const sex=String(plan?.client?.sex||'male').toLowerCase();
+    const base=sex==='female'?39:29, estimate=clamp(base-def*.18,sex==='female'?13:6,sex==='female'?40:32);
+    return round(estimate,1);
+  };
+  window.gf30BodyCompDelta=function(key){const rows=gf30BodyCompLogs().filter(x=>Number.isFinite(Number(x.measurementsCm?.[key])));if(rows.length<2)return null;return round(Number(rows.at(-1).measurementsCm[key])-Number(rows[0].measurementsCm[key]),1)};
+  window.gf30BodyFatDelta=function(){const rows=gf30BodyCompLogs().filter(x=>Number.isFinite(Number(x.bodyFatPct)));if(rows.length<2)return null;return round(Number(rows.at(-1).bodyFatPct)-Number(rows[0].bodyFatPct),1)};
+  window.gf30BodyCompSummaryHTML=function(){
+    const latest=gf30LatestBodyComp(),count=gf30BodyCompLogs().length,bfd=gf30BodyFatDelta();
+    if(!latest)return `<div class="gf30-bodycomp-empty"><b>Optional extra evidence</b><span>Track body-fat readings and tape measurements if the client wants more objective physique data. Nothing here is required to use Gain Focus.</span><button class="btn secondary" type="button" onclick="gf30OpenBodyCompForm()">Add first measurement</button></div>`;
+    const tape=GF30_TAPE.filter(([k])=>Number.isFinite(Number(latest.measurementsCm?.[k]))).slice(0,6).map(([k,label])=>{const d=gf30BodyCompDelta(k);return `<div><span>${esc(label)}</span><b>${round(Number(latest.measurementsCm[k]),1)} cm</b><small>${Number.isFinite(d)?`${d>=0?'+':''}${d} cm from first`:'baseline'}</small></div>`}).join('');
+    return `<div class="gf30-bodycomp-summary"><div class="gf30-bodycomp-head"><div><b>${count} measurement${count===1?'':'s'}</b><span>${esc(latest.date||'')}</span></div><button class="btn secondary" type="button" onclick="gf30OpenBodyCompForm()">Add measurement</button></div><div class="gf30-bodycomp-kpis"><div><span>Body fat</span><b>${Number.isFinite(Number(latest.bodyFatPct))?round(Number(latest.bodyFatPct),1)+'%':'—'}</b><small>${Number.isFinite(bfd)?`${bfd>=0?'+':''}${bfd} pts from first`:gf30BodyFatLabel(latest.bodyFatMethod)}</small></div><div><span>Method</span><b>${esc(gf30BodyFatLabel(latest.bodyFatMethod))}</b><small>${latest.bodyFatMethod==='photo_estimate'?'low-confidence visual estimate':'repeat the same method when possible'}</small></div></div>${tape?`<div class="gf30-tape-grid">${tape}</div>`:''}<p class="gf30-bodycomp-note">Tape and body-fat data are optional. Device and caliper methods are best compared with the same device/operator and conditions. Photo estimates are rough visual estimates, not clinical measurements.</p></div>`;
+  };
+  window.gf30OpenBodyCompForm=function(){
+    gf30EnsureBodyComposition();const latest=gf30LatestBodyComp(),sheet=document.getElementById('sessionSheet');sheet.classList.remove('workout-sheet');
+    const fields=GF30_TAPE.map(([k,label])=>`<div class="gf30-measure-field"><label>${esc(label)} · cm</label><input id="gf30m_${k}" class="input" inputmode="decimal" placeholder="optional" value=""></div>`).join('');
+    sheet.innerHTML=`<div class="grabber"></div><div class="eyebrow">Check-in · Optional</div><h2 style="font-size:29px;margin:5px 0 2px">Body composition & tape</h2><p class="muted" style="margin-top:0">Add as much or as little as you want. These readings become extra evidence for Hercules rather than replacing weight, training or visual analysis.</p><div class="gf30-measure-grid"><div class="gf30-measure-field"><label>Date</label><input id="gf30BodyDate" class="input" type="date" value="${todayISO()}"></div><div class="gf30-measure-field"><label>Body-fat method</label><select id="gf30BodyMethod" class="input" onchange="gf30BodyMethodChanged()"><option value="">Not measured</option><option value="electronic_device">Electronic device</option><option value="calipers">Calipers</option><option value="photo_estimate">App photo estimate</option></select></div><div class="gf30-measure-field wide"><label>Body fat · %</label><div class="gf30-bf-row"><input id="gf30BodyFat" class="input" inputmode="decimal" placeholder="optional"><button id="gf30UsePhotoEstimate" class="btn secondary" type="button" onclick="gf30UsePhotoEstimate()" style="display:none">Estimate from latest photo</button></div></div></div><div class="section" style="margin-top:16px"><h3>Tape measurements</h3><span class="small">optional · cm</span></div><div class="gf30-measure-grid">${fields}</div><div class="profile-editor-actions"><button class="btn secondary" onclick="closeSession()">Cancel</button><button class="btn primary" onclick="gf30SaveBodyComp()">Save measurement</button></div>`;
+    document.getElementById('sessionModal').classList.add('open');
+  };
+  window.gf30BodyMethodChanged=function(){const m=document.getElementById('gf30BodyMethod')?.value,b=document.getElementById('gf30UsePhotoEstimate');if(b)b.style.display=m==='photo_estimate'?'inline-flex':'none'};
+  window.gf30UsePhotoEstimate=function(){const x=gf30PhotoBodyFatEstimate();if(!Number.isFinite(x)){toast('Complete a visual check-in first');return}const inp=document.getElementById('gf30BodyFat');if(inp)inp.value=x;toast('Rough photo estimate added — treat as low confidence')};
+  window.gf30SaveBodyComp=function(){
+    gf30EnsureBodyComposition();const date=document.getElementById('gf30BodyDate')?.value||todayISO(),method=document.getElementById('gf30BodyMethod')?.value||'',bfRaw=document.getElementById('gf30BodyFat')?.value,bf=bfRaw===''?null:Number(bfRaw);
+    if(Number.isFinite(bf)&&(bf<3||bf>60)){toast('Check the body-fat percentage');return}
+    const measurements={};for(const [k] of GF30_TAPE){const raw=document.getElementById(`gf30m_${k}`)?.value;if(raw!==''){const v=Number(raw);if(v>0&&v<300)measurements[k]=round(v,1)}}
+    if(!Number.isFinite(bf)&&!Object.keys(measurements).length){toast('Add a body-fat reading or at least one tape measurement');return}
+    progress.bodyCompositionLogs.push({id:'bodycomp-'+canonicalUid(),date,createdAt:new Date().toISOString(),bodyFatPct:Number.isFinite(bf)?round(bf,1):null,bodyFatMethod:method||null,bodyFatConfidence:method==='photo_estimate'?'low':method?'user-measured':'',measurementsCm:measurements});
+    write();closeSession();renderAll();toast('Body composition measurement saved');
+  };
+
+  // Add body composition as a fourth selectable trending-statistics mode.
+  window.gf30BodyCompTrendHTML=function(){return `<div id="gf30BodyFatChart" class="chart" style="height:235px"></div><div id="gf30TapeTrendSummary"></div><p class="gf26-trend-note">Body-fat readings and tape measurements are optional. Compare repeated measurements taken with the same method and conditions; photo estimates carry lower confidence.</p>`};
+  window.gf30DrawBodyCompTrend=function(){
+    const el=document.getElementById('gf30BodyFatChart');if(!el)return;const rows=gf30BodyCompLogs().filter(x=>Number.isFinite(Number(x.bodyFatPct))),points=rows.map(x=>({date:x.date,value:Number(x.bodyFatPct)}));
+    el.innerHTML=buildLineChartSVG({series:points.length?[{label:'Body fat',color:'#7fd6ff',points,strokeWidth:3}]:[],yLabel:'Body fat (%)',yTickFormatter:v=>`${round(v,1)}%`,emptyText:'No body-fat history yet'});
+    const target=document.getElementById('gf30TapeTrendSummary');if(target){const vals=GF30_TAPE.map(([k,label])=>({k,label,d:gf30BodyCompDelta(k)})).filter(x=>Number.isFinite(x.d)).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,6);target.innerHTML=vals.length?`<div class="gf30-tape-trends">${vals.map(x=>`<div><span>${esc(x.label)}</span><b>${x.d>=0?'+':''}${x.d} cm</b></div>`).join('')}</div>`:`<div class="muted" style="padding:10px 2px">Two tape measurements unlock regional growth trends.</div>`}
+  };
+  const baseTrendMount=window.gf26TrendMountHTML,baseTrendHub=window.gf26TrendHubHTML,baseDrawTrend=window.gf26DrawSelectedTrend;
+  window.gf26TrendMountHTML=function(){if(gf26TrendMode==='bodycomp')return gf30BodyCompTrendHTML();return baseTrendMount()};
+  window.gf26TrendHubHTML=function(){return `<div class="gf26-trend-tabs gf30-trend-tabs"><button class="${gf26TrendMode==='weight'?'on':''}" onclick="gf26SetTrendMode('weight')">Weight</button><button class="${gf26TrendMode==='strength'?'on':''}" onclick="gf26SetTrendMode('strength')">Strength</button><button class="${gf26TrendMode==='nutrition'?'on':''}" onclick="gf26SetTrendMode('nutrition')">Nutrition</button><button class="${gf26TrendMode==='bodycomp'?'on':''}" onclick="gf26SetTrendMode('bodycomp')">Body comp</button></div><div id="gf26TrendMount">${gf26TrendMountHTML()}</div>`};
+  window.gf26SetTrendMode=function(mode){if(!['weight','strength','nutrition','bodycomp'].includes(mode))return;gf26TrendMode=mode;const body=document.getElementById('gf26TrendBody');if(body)body.innerHTML=gf26TrendHubHTML();gf26DrawSelectedTrend()};
+  window.gf26DrawSelectedTrend=function(){setTimeout(()=>{if(gf26TrendMode==='bodycomp')gf30DrawBodyCompTrend();else baseDrawTrend()},0)};
+
+  // Emerging-trend intelligence gains body-fat and tape deviations.
+  const baseEmerging=window.gf26EmergingHTML;
+  window.gf26EmergingHTML=function(){
+    let html=baseEmerging();const logs=gf30BodyCompLogs(),signals=[];if(logs.length>=2){const bf=gf30BodyFatDelta();if(Number.isFinite(bf)&&Math.abs(bf)>=1)signals.push({icon:bf<0?'↓':'↑',title:'Body-fat trend',text:`Body-fat readings are ${Math.abs(bf).toFixed(1)} percentage points ${bf<0?'lower':'higher'} than the first logged measurement. Method consistency matters when interpreting this.`,cls:bf<0?'good':'watch'});for(const k of ['chest','shoulders','left_upper_arm','right_upper_arm','waist','left_thigh','right_thigh']){const d=gf30BodyCompDelta(k);if(Number.isFinite(d)&&Math.abs(d)>=1){const label=(GF30_TAPE.find(x=>x[0]===k)||[k,k])[1];signals.push({icon:d>0?'+':'−',title:`${label} tape trend`,text:`${label} is ${Math.abs(d).toFixed(1)} cm ${d>0?'above':'below'} the first logged tape measurement.`,cls:(k==='waist'&&d>2)?'watch':(d>0&&k!=='waist')?'good':''})}}
+    }
+    if(!signals.length)return html;const extra=`<div class="gf30-extra-signals">${signals.slice(0,4).map(r=>`<div class="gf26-signal ${r.cls||''}"><i>${esc(r.icon)}</i><div><b>${esc(r.title)}</b><span>${esc(r.text)}</span></div></div>`).join('')}</div>`;return html.replace('<div class="gf-workout-analysis-note"',extra+'<div class="gf-workout-analysis-note"')
+  };
+
+  // Hercules context now includes body-composition evidence and plan-protection state.
+  const baseHContext=window.herculesContext;
+  window.herculesContext=function(){const c=baseHContext();const latest=gf30LatestBodyComp();c.bodyComposition={optional:true,latest:latest?{date:latest.date,bodyFatPct:latest.bodyFatPct,bodyFatMethod:latest.bodyFatMethod,measurementsCm:latest.measurementsCm}:null,bodyFatDeltaPctPoints:gf30BodyFatDelta(),tapeDeltas:Object.fromEntries(GF30_TAPE.map(([k])=>[k,gf30BodyCompDelta(k)]).filter(([,v])=>Number.isFinite(v)))};c.trainingPlanProtection={label:plan?.training?.planLabel||plan?.training?.name,originalProtected:!!plan?.training?.originalPlan,warnBeforeChanges:true,revertAvailable:!!plan?.training?.originalPlan};return c};
+
+  // ----- Single onboarding video -> front / side / back extracted stills -----
+  const baseFresh=window.freshCanonicalOnboarding;
+  window.freshCanonicalOnboarding=function(){const o=baseFresh();o.poseVideo=null;o.legsVisibility='visible';return o};
+  window.gf30SetPoseVideo=function(input){const f=input?.files?.[0];if(!f)return;canonicalOnboarding.poseVideo=f;canonicalOnboarding.videos={front:null,side:null,back:null};renderCanonicalOnboarding()};
+  window.gf30SetOnboardingLegs=function(v){canonicalOnboarding.legsVisibility=v;renderCanonicalOnboarding()};
+  function gf30SeekVideo(v,t){return new Promise((resolve,reject)=>{const done=()=>{cleanup();resolve()},fail=()=>{cleanup();reject(new Error('Could not read this point in the video'))},cleanup=()=>{v.removeEventListener('seeked',done);v.removeEventListener('error',fail)};v.addEventListener('seeked',done,{once:true});v.addEventListener('error',fail,{once:true});v.currentTime=Math.min(Math.max(.05,t),Math.max(.05,v.duration-.05))})}
+  window.gf30ExtractVideoFrame=async function(file,fraction,name){const url=URL.createObjectURL(file);try{const v=document.createElement('video');v.muted=true;v.playsInline=true;v.preload='metadata';v.src=url;await new Promise((res,rej)=>{v.onloadedmetadata=res;v.onerror=()=>rej(new Error('Could not load video'))});await gf30SeekVideo(v,v.duration*fraction);const maxW=720,scale=Math.min(1,maxW/(v.videoWidth||maxW)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(v.videoWidth*scale));c.height=Math.max(1,Math.round(v.videoHeight*scale));c.getContext('2d').drawImage(v,0,0,c.width,c.height);const blob=await new Promise(res=>c.toBlob(res,'image/jpeg',.86));return new File([blob],name,{type:'image/jpeg',lastModified:Date.now()})}finally{URL.revokeObjectURL(url)}};
+  window.gf30ExtractOnboardingPoses=async function(){const o=canonicalOnboarding,f=o?.poseVideo;if(!f){toast('Choose the onboarding physique video first');return}const btn=document.getElementById('gf30ExtractPoseBtn');if(btn){btn.disabled=true;btn.textContent='Extracting…'}try{o.videos.front=await gf30ExtractVideoFrame(f,.16,'front-pose.jpg');o.videos.side=await gf30ExtractVideoFrame(f,.50,'side-pose.jpg');o.videos.back=await gf30ExtractVideoFrame(f,.84,'back-pose.jpg');toast('Front, side and back poses extracted');renderCanonicalOnboarding()}catch(e){console.error(e);toast('Could not extract the three poses from this video');renderCanonicalOnboarding()}};
+  window.gf30AnalyseOnboardingPoses=async function(){const o=canonicalOnboarding,files=['front','side','back'].map(k=>o.videos?.[k]).filter(Boolean);if(files.length<3){toast('Extract the three poses first');return}const btn=document.getElementById('canonAnalyseBtn');if(btn){btn.disabled=true;btn.textContent='Analysing…'}const results=[];for(const f of files){try{if(String(f.type||'').startsWith('image/'))results.push(await gfAnalyseImageBlob(f));else{const r=await analyseCanonicalVideoFile(f);results.push({metrics:r,detail:{definitionIndex:null},quality:r.quality||60})}}catch(e){console.warn(e)}}if(!results.length){toast('Could not analyse the extracted poses');return}const keys=['armRatio','chestH','waistH','legH','taper','shoulderH'],m={};keys.forEach(k=>m[k]=gfArrayMean(results.map(r=>Number(r.metrics?.[k])).filter(Number.isFinite)));const scores=scorePhysiqueMetrics(m);const legsVisible=o.legsVisibility!=='covered';if(!legsVisible)scores.legs=null;const ordered=Object.entries(scores).filter(([,v])=>Number.isFinite(Number(v))).sort((a,b)=>b[1]-a[1]),developing=ordered.slice(0,2).map(x=>x[0]),priority=ordered.slice(-2).reverse().map(x=>x[0]),maintain=ordered.slice(2,3).map(x=>x[0]),definition=round(gfArrayMean(results.map(r=>Number(r.detail?.definitionIndex)).filter(Number.isFinite)),1);o.analysis={engine:'single-video-extracted-poses-v1',createdAt:new Date().toISOString(),framesAnalysed:3,quality:Math.round(gfArrayMean(results.map(r=>Number(r.quality)||60))),scores:Object.fromEntries(Object.entries(scores).map(([k,v])=>[k,Number.isFinite(Number(v))?round(v,1):null])),definitionIndex:Number.isFinite(definition)?definition:null,visibility:{legs:legsVisible,legsReason:legsVisible?'':'Client stated legs are not clearly visible, so lower-body visual analysis is excluded.'},developing,priority,maintain,summary:`${regionLabel(developing[0]||'shoulders')} currently reads as a relative visual strength. ${regionLabel(priority[0]||'chest')} is the clearest first-block focus candidate.${legsVisible?'':' Leg analysis is excluded by the client visibility setting.'}`};o.goal.focus=[...priority.map(regionLabel),...maintain.map(regionLabel)];canonicalNext()};
+  const baseRenderOnboarding=window.renderCanonicalOnboarding;
+  window.renderCanonicalOnboarding=function(){
+    const o=canonicalOnboarding||freshCanonicalOnboarding();canonicalOnboarding=o;
+    if(canonicalOnboardingStep===1){const count=Object.values(o.videos||{}).filter(Boolean).length,legs=o.legsVisibility||'visible';const video=o.poseVideo;const body=canonicalOnboardingShell('Record one baseline video.','Move slowly through front → side → back and hold each pose briefly. Gain Focus extracts the three reference pictures automatically.',`<label class="canon-video ${video?'ready':''}"><input class="hidden" type="file" accept="video/*,.mp4,.mov,.m4v" onchange="gf30SetPoseVideo(this)"><b>${video?'✓ ':''}Physique video</b><span>${video?esc(video.name):'Choose one video from Photos or Files'}</span><small>Front → side → back · hold each pose briefly</small></label><div class="gf30-leg-choice"><span>Are the legs clearly visible?</span><div><button type="button" class="${legs==='visible'?'on':''}" onclick="gf30SetOnboardingLegs('visible')">Yes · analyse legs</button><button type="button" class="${legs==='covered'?'on':''}" onclick="gf30SetOnboardingLegs('covered')">No · exclude legs</button></div></div>${count===3?`<div class="gf30-pose-status"><b>✓ Three poses extracted</b><span>Front · Side · Back</span></div>`:''}<div class="gf-setup-banner">The video is optional during onboarding. If skipped, the profile alert remains until baseline media is added later.</div>`,`<div class="tour-actions"><button class="btn secondary" onclick="gfSkipCanonicalBaseline()">Skip for now</button>${video&&count<3?`<button id="gf30ExtractPoseBtn" class="btn primary" onclick="gf30ExtractOnboardingPoses()">Extract poses</button>`:`<button class="btn primary" onclick="canonicalNext()">Continue${count===3?' · 3/3':''}</button>`}</div>`);setOnboardCard(body);return}
+    if(canonicalOnboardingStep===2){const count=Object.values(o.videos||{}).filter(Boolean).length;const body=canonicalOnboardingShell('Analyse the baseline.','Hercules uses the extracted front, side and back pictures as the starting visual reference. Your leg-visibility choice controls whether lower-body analysis is included.',o.analysis&&!o.analysis.pending?`<div class="canon-analysis"><h3>Baseline ready</h3><p>${esc(o.analysis.summary)}</p></div>`:`<div class="canon-analysis"><h3>${count===3?'Three extracted poses ready':'Analysis optional'}</h3><p>${count===3?'Run the baseline analysis now, or continue and analyse later.':'No complete pose set is available yet.'}</p></div>`,`<div class="tour-actions"><button class="btn secondary" onclick="gfSkipCanonicalBaseline()">Continue without analysis</button>${count===3?`<button id="canonAnalyseBtn" class="btn primary" onclick="gf30AnalyseOnboardingPoses()">Analyse extracted poses</button>`:''}</div>`);setOnboardCard(body);return}
+    return baseRenderOnboarding();
+  };
+
+  // Render insertions after the main subject, before analysis accordions.
+  const baseCheckin=window.renderCheckin;
+  window.renderCheckin=function(){baseCheckin();gf30EnsureBodyComposition();const root=document.getElementById('checkin');if(!root)return;root.querySelector('.gf30-bodycomp-section')?.remove();const section=document.createElement('details');section.className='gf26-accordion gf30-bodycomp-section';section.innerHTML=`<summary><div class="gf26-summary-copy"><b>Body composition & measurements</b><span>Optional body fat + regional tape measurements</span></div></summary><div class="gf26-accordion-body">${gf30BodyCompSummaryHTML()}</div>`;const analyses=root.querySelector('.gf26-checkin-section');if(analyses)root.insertBefore(section,analyses);else root.appendChild(section)};
+  const baseTrain=window.renderTrain;
+  window.renderTrain=function(){gf30EnsurePlanProtection();baseTrain();const root=document.getElementById('train');if(!root)return;root.querySelector('.gf30-plan-protection')?.remove();const launch=root.querySelector('.training-launch');if(launch)launch.insertAdjacentHTML('afterend',gf30PlanProtectionCardHTML());else root.insertAdjacentHTML('afterbegin',gf30PlanProtectionCardHTML())};
+  const baseSettings=window.openSettings;
+  window.openSettings=function(){gf30EnsurePlanProtection();baseSettings();const sheet=document.getElementById('settingsSheet');if(!sheet)return;sheet.querySelector('.gf30-settings-plan')?.remove();const box=document.createElement('div');box.className='settings-group gf30-settings-plan';box.innerHTML=`<div class="eyebrow">Training plan</div><h3 style="margin:5px 0 4px">${esc(plan.training.planLabel||plan.training.name)}</h3><p class="muted" style="font-size:11px;line-height:1.45">Programme changes require confirmation. The protected original can be restored without deleting workout history.</p><button class="btn secondary" style="width:100%;margin-top:8px" onclick="gf30RestoreOriginalTrainingPlan()">Revert to original plan</button>`;sheet.insertBefore(box,sheet.querySelector('.settings-group')||sheet.lastElementChild)};
+
+  // Make imported clients immediately compatible with the new structures.
+  try{if(plan&&progress){gf30EnsurePlanProtection();gf30EnsureBodyComposition();write();renderAll()}}catch(e){console.warn('v4.0.30 upgrade init skipped',e)}
+})();
+
 </script>
 
 <script>
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.28', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.30', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
 })();
 </script>
 
-<!-- Gain Focus build 4.0.28 -->
+<!-- Gain Focus build 4.0.30 -->
 </body>
 </html>
