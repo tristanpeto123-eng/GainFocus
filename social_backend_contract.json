@@ -1,0 +1,53 @@
+{
+  "schema": "gain-focus-social/v1",
+  "purpose": "Backend-ready contract for replacing the local V1 social directory with authenticated users.",
+  "profile": {
+    "userId": "string",
+    "displayName": "string",
+    "handle": "string",
+    "avatarUrl": "string|null",
+    "ratings": {
+      "overall": "0-99",
+      "strength": "0-99",
+      "development": "0-99",
+      "conditioning": "0-99",
+      "consistency": "0-99",
+      "nutrition": "0-99",
+      "progress": "0-99"
+    },
+    "tier": "string",
+    "trophyIds": [
+      "string"
+    ]
+  },
+  "friendship": {
+    "requestId": "string",
+    "fromUserId": "string",
+    "toUserId": "string",
+    "status": "pending|accepted|declined|blocked",
+    "createdAt": "ISO-8601"
+  },
+  "leaderboard": {
+    "scope": "friends|global",
+    "metric": "overall|strength|development|conditioning|consistency|nutrition|progress",
+    "period": "week|month|all_time",
+    "rows": [
+      "profile summary"
+    ]
+  },
+  "recommendedEndpoints": [
+    "GET /me/social-profile",
+    "GET /users/search?q=",
+    "POST /friends/requests",
+    "PATCH /friends/requests/:id",
+    "DELETE /friends/:userId",
+    "GET /leaderboard?scope=&metric=&period=",
+    "GET /users/:id/compare"
+  ],
+  "securityNotes": [
+    "Calculate authoritative ratings server-side from trusted logged data.",
+    "Require authenticated user IDs for friendship mutations.",
+    "Do not expose private health/media data in public leaderboard responses.",
+    "Rate-limit user search and friend-request endpoints."
+  ]
+}
