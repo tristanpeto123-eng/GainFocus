@@ -1321,7 +1321,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.43';
+const APP_VERSION='4.0.44';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -2881,6 +2881,8 @@ function ensureTwinkleSky(){
 ensureTwinkleSky();
 
 setTimeout(()=>{introReady=true; const btn=document.querySelector('.enter-card'); if(btn){btn.style.pointerEvents='auto';}},2830);
+// v4.0.44 boot watchdog: if Safari misses/delays the reveal animation, never leave the entry control hidden.
+setTimeout(()=>{try{introReady=true;const btn=document.querySelector('.enter-card');if(btn&&!document.getElementById('splash')?.classList.contains('opening')){btn.style.visibility='visible';btn.style.opacity='1';btn.style.pointerEvents='auto';btn.style.transform='none'}}catch(e){console.warn('Gain Focus boot watchdog',e)}},3400);
 
 if(plan&&validPlan(plan)){
   if(!progress||progress.clientId!==plan.client.id){progress=newProgress();write()}
@@ -4249,9 +4251,9 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.38', {scope:'./'}).catch(function(err){
-      console.warn('Gain Focus service worker registration failed:', err);
-    });
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.44', {scope:'./', updateViaCache:'none'})
+      .then(function(reg){ try{ reg.update(); }catch(_){} })
+      .catch(function(err){ console.warn('Gain Focus service worker registration failed:', err); });
   });
 })();
 
@@ -4519,7 +4521,7 @@ window.gf26DrawSelectedTrend=function(){
 @media(max-width:430px){.gf38-history-summary{grid-template-columns:1fr 1fr}}
 </style>
 <script id="gf38-data-fixes">
-// v4.0.43 · data wiring + historic heat-map correction
+// v4.0.44 · data wiring + historic heat-map correction
 function gf38ValidDate(v){return /^\d{4}-\d{2}-\d{2}$/.test(String(v||'').slice(0,10))}
 function gf38WeekStart(dateStr){
   const raw=String(dateStr||'').slice(0,10);if(!gf38ValidDate(raw))return '';
@@ -4652,7 +4654,7 @@ window.drawStrengthChart=gf38DrawStrengthChart;window.drawMacroTrendChart=gf38Dr
 
 
 <script id="gf39-nutrition-inline-render">
-// v4.0.43 · render the macro chart synchronously with the trend widget.
+// v4.0.44 · render the macro chart synchronously with the trend widget.
 // This avoids Safari/iOS timing races where the draw callback can fire before
 // #macroTrendChart has been mounted after switching trend tabs.
 function gf39MacroTrendSVG(){
@@ -4692,7 +4694,7 @@ window.gf26DrawSelectedTrend=function(){requestAnimationFrame(()=>requestAnimati
 
 
 <script id="gf41-correlation-engine">
-// v4.0.43 · Cross-domain correlation engine.
+// v4.0.44 · Cross-domain correlation engine.
 // Finds repeated associations across nutrition, scale weight, training exposure,
 // tape measurements and visual-mass history. Correlation is descriptive, not causal.
 function gf41Mean(a){const v=(a||[]).map(Number).filter(Number.isFinite);return v.length?v.reduce((s,x)=>s+x,0)/v.length:null}
@@ -4752,7 +4754,7 @@ window.gf26TrendMountHTML=function(){if(gf26TrendMode==='strength')return `<div 
 
 <script id="gf42-unified-history">
 // ============================================================================
-// Gain Focus v4.0.43 · unified historic timeline + period-controlled muscle maps
+// Gain Focus v4.0.44 · unified historic timeline + period-controlled muscle maps
 // ============================================================================
 function gf42DateOnly(v){const s=String(v||'').slice(0,10);return /^\d{4}-\d{2}-\d{2}$/.test(s)?s:null}
 function gf42DateMs(v){const s=gf42DateOnly(v);if(!s)return NaN;return new Date(s+'T12:00:00').getTime()}
