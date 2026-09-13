@@ -1,24 +1,12 @@
 {
-  "id": "./",
   "name": "Gain Focus",
   "short_name": "Gain Focus",
-  "description": "Adaptive fitness coaching with Hercules, guided workouts, nutrition, check-ins and analysis.",
-  "start_url": "./index.html",
+  "description": "Gain Focus fitness coaching and analysis",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "display_override": [
-    "standalone",
-    "minimal-ui"
-  ],
-  "background_color": "#eaf4ff",
-  "theme_color": "#071326",
-  "orientation": "portrait-primary",
-  "lang": "en-GB",
-  "categories": [
-    "fitness",
-    "health",
-    "lifestyle"
-  ],
+  "background_color": "#030814",
+  "theme_color": "#030814",
   "icons": [
     {
       "src": "./icon-192.png",

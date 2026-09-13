@@ -1027,7 +1027,7 @@ body.coach-home-active > .gf-setup-alert{
 
 
 <style id="gf-v4026-layout">
-/* Gain Focus v4.0.36 · Hercules placement + direct profile visuals */
+/* Gain Focus v4.0.37 · Hercules placement + direct profile visuals */
 .gf26-accordion{margin:12px 0;border:1px solid rgba(126,174,235,.13);border-radius:22px;background:linear-gradient(145deg,rgba(12,25,47,.82),rgba(6,13,29,.84));overflow:hidden}
 .gf26-accordion>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 16px;min-height:58px;-webkit-tap-highlight-color:transparent}
 .gf26-accordion>summary::-webkit-details-marker{display:none}.gf26-accordion>summary:after{content:'+';width:28px;height:28px;flex:0 0 28px;border-radius:10px;display:grid;place-items:center;background:rgba(120,178,255,.08);border:1px solid rgba(120,178,255,.10);color:#b8dcff;font-size:18px;font-weight:500;transition:transform .22s ease}
@@ -1049,7 +1049,7 @@ body.coach-home-active > .gf-setup-alert{
 body.coach-home-active{overflow:hidden}body.coach-home-active #app{max-width:720px;width:100%;height:100dvh;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 16px calc(82px + env(safe-area-inset-bottom));overflow:hidden;display:flex!important;flex-direction:column}body.coach-home-active .topbar{display:flex;position:sticky;flex:0 0 auto;margin:0 -16px 4px}body.coach-home-active #today.screen.active{display:block;flex:1;height:auto;min-height:0;margin:0;padding:0;overflow:hidden}body.coach-home-active .coach-home{height:100%;min-height:0}body.coach-home-active .coach-mini-brand{display:none}body.coach-home-active > .gf-setup-alert{display:none!important}
 @media(max-width:430px){.gf26-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.gf26-help-grid{grid-template-columns:1fr 1fr}}
 
-/* v4.0.36 · Hercules console placement + direct Profile Start ↔ Goal */
+/* v4.0.37 · Hercules console placement + direct Profile Start ↔ Goal */
 body.coach-home-active .coach-home-bottom{
   transform:translateY(clamp(54px,8vh,88px));
 }
@@ -1062,7 +1062,7 @@ body.coach-home-active .coach-home-bottom{
 </style>
 
 <style id="gf30-style">
-/* Gain Focus v4.0.36 */
+/* Gain Focus v4.0.37 */
 .gf30-plan-protection{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;padding:12px 13px;border-radius:18px;background:rgba(76,135,219,.07);border:1px solid rgba(120,180,255,.12)}
 .gf30-plan-protection>div{min-width:0}.gf30-plan-protection span,.gf30-plan-protection small{display:block;color:var(--muted);font-size:9px}.gf30-plan-protection b{display:block;margin:2px 0 3px;font-size:12px;color:#e8f4ff}.gf30-plan-protection button{flex:0 0 auto;border:1px solid rgba(135,190,255,.14);background:rgba(9,25,48,.82);color:#cfe8ff;border-radius:12px;padding:9px 10px;font-size:9px;font-weight:750}
 .gf30-bodycomp-empty{display:grid;gap:8px;padding:4px 0}.gf30-bodycomp-empty b{font-size:12px}.gf30-bodycomp-empty span{font-size:10px;line-height:1.45;color:var(--muted)}
@@ -1076,7 +1076,7 @@ body.coach-home-active .coach-home-bottom{
 
 </style>
 <style id="gf32-hercules-responsive-layout">
-/* Gain Focus v4.0.36 · Hercules home responsive structural layout
+/* Gain Focus v4.0.37 · Hercules home responsive structural layout
    Header -> greeting -> Hercules -> input -> footer. No independent positional nudges. */
 body.coach-home-active{
   overflow:hidden;
@@ -1321,11 +1321,11 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.34';
+const APP_VERSION='4.0.38';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
-const PROFILE_PHOTO_KEY='gainFocusProfilePhotoV1';
+const PROFILE_PHOTO_KEY='gainFocusProfilePhotoV2';
 const todayISO=()=>new Date().toISOString().slice(0,10);
 const round=(n,d=1)=>Number(Number(n).toFixed(d));
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -1342,7 +1342,8 @@ function planClientName(){const n=String(plan?.client?.name||'').trim();return /
 function clientNameValue(){return storedClientName()||planClientName()}
 function setClientName(value){const n=String(value||'').trimStart().slice(0,48);if(n.trim())localStorage.setItem(CLIENT_NAME_KEY,n.trim());else localStorage.removeItem(CLIENT_NAME_KEY);if(plan?.client&&n.trim()){plan.client.name=n.trim();write()}updateTourContinue()}
 
-function profilePhoto(){return String(localStorage.getItem(PROFILE_PHOTO_KEY)||'')}
+function profilePhotoStorageKey(){const id=String(plan?.client?.id||progress?.clientId||'').trim();return id?`${PROFILE_PHOTO_KEY}:${id}`:''}
+function profilePhoto(){const key=profilePhotoStorageKey();return key?String(localStorage.getItem(key)||''):''}
 function profileAvatarHTML(cls='account-summary-avatar'){
   const photo=profilePhoto(),name=clientNameValue()||plan?.client?.name||'GF';
   return `<div class="${cls}">${photo?`<img src="${photo}" alt="Profile picture">`:`<span>${esc(initials(name))}</span>`}</div>`
@@ -1362,9 +1363,9 @@ async function compressProfilePhoto(file){
   }finally{URL.revokeObjectURL(url)}
 }
 async function profilePhotoSelected(input){
-  const f=input?.files?.[0];if(!f)return;try{const data=await compressProfilePhoto(f);localStorage.setItem(PROFILE_PHOTO_KEY,data);refreshProfileMenuButton();openProfileEditor();toast('Profile picture updated')}catch(e){toast(e.message||'Could not use that image')}
+  const f=input?.files?.[0];if(!f)return;try{const data=await compressProfilePhoto(f),key=profilePhotoStorageKey();if(!key)throw new Error('Load a client first');localStorage.setItem(key,data);refreshProfileMenuButton();openProfileEditor();toast('Profile picture updated')}catch(e){toast(e.message||'Could not use that image')}
 }
-function removeProfilePhoto(){localStorage.removeItem(PROFILE_PHOTO_KEY);refreshProfileMenuButton();openProfileEditor();toast('Profile picture removed')}
+function removeProfilePhoto(){const key=profilePhotoStorageKey();if(key)localStorage.removeItem(key);refreshProfileMenuButton();openProfileEditor();toast('Profile picture removed')}
 function openProfileEditor(){
   closeSettings();const c=plan?.client||{},current=Number(latestWeight())||Number(c.startWeightKg)||0,goal=Number(plan?.goal?.targetWeightKg)||0;
   const sex=String(c.sex||'').toLowerCase(),experience=String(c.experience||'intermediate'),equipment=String(c.equipment||'gym');
@@ -1383,6 +1384,7 @@ function saveProfileEdits(){
 }
 
 function applyStoredClientName(){const n=storedClientName();if(n&&plan?.client){plan.client.name=n;write()}}
+// Profile photos are intentionally client-scoped. Legacy global photos are ignored to prevent cross-client avatar bleed.
 function updateTourContinue(){const b=document.getElementById('tourContinue');if(!b)return;b.disabled=(slides?.[tour]?.needsPlan&&!plan)||(tour===0&&!clientNameValue())}
 function validPlan(x){return x&&x.client&&x.goal&&x.nutrition&&x.training&&Array.isArray(x.training.sessions)}
 function newProgress(){return {schema:'gain-focus-progress/v3',appVersion:APP_VERSION,clientId:plan.client.id,createdAt:new Date().toISOString(),weighIns:[{date:plan.goal.startDate||todayISO(),weightKg:plan.client.startWeightKg}],weeklyCheckins:[],setLogs:[],nutritionLogs:[],settings:{restSeconds:120,trainingWeekdays:null,trainingDayOverrides:{},trainingReminderTime:'18:00'},tutorialComplete:false}}
@@ -2082,7 +2084,7 @@ function bodyMapSVG(view='front'){
 #progress .weekly-review-history > .weekly-review-card:nth-child(n+6){display:none!important}
 #progress .history-see-all{width:100%;margin:9px 0 4px}
 
-/* v4.0.36 · Workout logger ergonomics
+/* v4.0.37 · Workout logger ergonomics
    Finish/End controls live at the true bottom of the workout content instead of
    floating over fields while the sheet scrolls. */
 #sessionSheet.workout-sheet .workout-dock{
@@ -3936,7 +3938,7 @@ setTimeout(()=>{try{if(plan&&progress)renderAll()}catch(e){console.warn('v4.0.25
 
 <script id="gf-v4027-ia">
 // ============================================================================
-// Gain Focus v4.0.36 · Hercules placement + direct profile visuals + nested information architecture
+// Gain Focus v4.0.37 · Hercules placement + direct profile visuals + nested information architecture
 // Start/onboarding intentionally unchanged.
 // ============================================================================
 let gf26MuscleMode='load';
@@ -4063,11 +4065,11 @@ const gf26BaseShowTab=showTab;
 showTab=function(tab){const r=gf26BaseShowTab.apply(this,arguments);gfMountSetupAlertForCurrentTab();gf26EnsureHelpButton();if(tab==='today'){const t=document.getElementById('pageTitle');if(t)t.textContent='Hercules'}if(tab==='progress'){const t=document.getElementById('pageTitle');if(t)t.textContent='Analysis'}return r};
 
 // Make sure all final wrappers render immediately after this upgrade.
-setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTab();gf26EnsureHelpButton();showTab(currentTab||'today')}}catch(e){console.warn('v4.0.36 layout refresh skipped',e)}},120);
+setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTab();gf26EnsureHelpButton();showTab(currentTab||'today')}}catch(e){console.warn('v4.0.37 layout refresh skipped',e)}},120);
 </script>
 
 <script id="gf30-extension">
-// Gain Focus v4.0.36 · single-video pose extraction, body composition tracking, protected tailored plan
+// Gain Focus v4.0.37 · single-video pose extraction, body composition tracking, protected tailored plan
 (function(){
   const deepCopy=x=>JSON.parse(JSON.stringify(x));
 
@@ -4216,7 +4218,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
   window.openSettings=function(){gf30EnsurePlanProtection();baseSettings();const sheet=document.getElementById('settingsSheet');if(!sheet)return;sheet.querySelector('.gf30-settings-plan')?.remove();const box=document.createElement('div');box.className='settings-group gf30-settings-plan';box.innerHTML=`<div class="eyebrow">Training plan</div><h3 style="margin:5px 0 4px">${esc(plan.training.planLabel||plan.training.name)}</h3><p class="muted" style="font-size:11px;line-height:1.45">Programme changes require confirmation. The protected original can be restored without deleting workout history.</p><button class="btn secondary" style="width:100%;margin-top:8px" onclick="gf30RestoreOriginalTrainingPlan()">Revert to original plan</button>`;sheet.insertBefore(box,sheet.querySelector('.settings-group')||sheet.lastElementChild)};
 
   // Make imported clients immediately compatible with the new structures.
-  try{if(plan&&progress){gf30EnsurePlanProtection();gf30EnsureBodyComposition();write();renderAll()}}catch(e){console.warn('v4.0.36 upgrade init skipped',e)}
+  try{if(plan&&progress){gf30EnsurePlanProtection();gf30EnsureBodyComposition();write();renderAll()}}catch(e){console.warn('v4.0.37 upgrade init skipped',e)}
 })();
 
 </script>
@@ -4225,7 +4227,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.34', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.38', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
@@ -4233,7 +4235,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 
 
 // ============================================================================
-// v4.0.36 · EMBEDDED BASELINE MEDIA COMPATIBILITY
+// v4.0.37 · EMBEDDED BASELINE MEDIA COMPATIBILITY
 // Client-plan JSON may carry front / side / back reference images directly.
 // These count as completed baseline views exactly like locally stored media.
 // ============================================================================
@@ -4309,7 +4311,7 @@ setTimeout(()=>{try{gf31SyncEmbeddedBaselineOnImport();updateProfileSetupAlert()
 
 
 // ============================================================================
-// v4.0.36 · WORKOUT LOGGER MEMORY + NON-FLOATING FINISH CONTROLS
+// v4.0.37 · WORKOUT LOGGER MEMORY + NON-FLOATING FINISH CONTROLS
 // Reuse the last entered load/reps so repeated working sets need minimal typing.
 // Inputs stay fully editable. First set falls back to the matching exercise from
 // the previous completed workout when available.
@@ -4360,8 +4362,9 @@ renderCanonicalWorkout=function(){
 .gf36-muscle-legend i{width:10px;height:3px;border-radius:999px;display:inline-block}
 .gf36-chart-caption{margin:9px 2px 0;font-size:10px;line-height:1.45;color:var(--muted)}
 </style>
-\n<script id="gf36-trend-fixes">
-// v4.0.36 · meaningful strength trends + robust macro trends.
+
+<script id="gf36-trend-fixes">
+// v4.0.37 · meaningful strength trends + robust macro trends.
 // Strength is normalised per exercise before muscle aggregation, preventing
 // different exercises with incompatible absolute loads from creating saw-tooth charts.
 const GF36_MUSCLE_COLORS={
@@ -4379,7 +4382,7 @@ function gf36MuscleStrengthSeries(){
   const exercises=new Map();
   for(const w of (progress?.workoutLogs||[])){
     if(w?.completed===false)continue;
-    const date=String(w?.date||w?.completedAt||'').slice(0,10); if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date))continue;
+    const date=String(w?.date||w?.completedAt||'').slice(0,10); if(!/^\d{4}-\d{2}-\d{2}$/.test(date))continue;
     const week=gf36WeekStart(date);
     for(const s of (Array.isArray(w?.setEntries)?w.setEntries:[])){
       const score=e1RM(s?.weightKg,s?.reps); if(!(score>0))continue;
@@ -4434,7 +4437,7 @@ function gf36MacroDaily(){
   const target={protein:Number(n.proteinG??n.protein)||0,carbs:Number(n.carbsG??n.carbohydrateG??n.carbs)||0,fat:Number(n.fatG??n.fatsG??n.fat)||0};
   const byDate=new Map();
   for(const x of (progress?.nutritionLogs||[])){
-    const date=String(x?.date||x?.createdAt||'').slice(0,10); if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date))continue;
+    const date=String(x?.date||x?.createdAt||'').slice(0,10); if(!/^\d{4}-\d{2}-\d{2}$/.test(date))continue;
     if(!byDate.has(date))byDate.set(date,{protein:0,carbs:0,fat:0}); const d=byDate.get(date);
     d.protein+=Number(x?.protein??x?.proteinG)||0; d.carbs+=Number(x?.carbs??x?.carbsG)||0; d.fat+=Number(x?.fat??x?.fatG)||0;
   }
@@ -4478,5 +4481,152 @@ window.gf26DrawSelectedTrend=function(){
     else if(gf26TrendMode==='bodycomp')gf30DrawBodyCompTrend?.();
   }));
 };
-</script>\n</body>
+</script>
+
+<style id="gf38-data-fixes">
+.gf38-history-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 4px 0}
+.gf38-history-summary>div{padding:9px 10px;border-radius:13px;background:rgba(92,160,235,.055);border:1px solid rgba(110,178,255,.085)}
+.gf38-history-summary span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.09em;color:rgba(215,228,255,.42)}
+.gf38-history-summary b{display:block;margin-top:3px;font-size:10px;color:#d8edff}
+.gf38-region-legend{display:flex;flex-wrap:wrap;gap:6px 10px;margin:8px 4px 2px}
+.gf38-region-legend span{display:inline-flex;align-items:center;gap:5px;font-size:8.5px;color:rgba(226,236,255,.70);white-space:nowrap}
+.gf38-region-legend i{width:10px;height:3px;border-radius:999px;display:inline-block}
+.gf38-bodyfat-block{margin-top:13px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06)}
+.gf38-bodyfat-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 3px 6px}.gf38-bodyfat-head b{font-size:11px}.gf38-bodyfat-head span{font-size:9px;color:var(--muted)}
+.gf38-chart-empty{display:grid;place-items:center;min-height:220px;padding:30px;text-align:center;color:var(--muted);font-size:13px;line-height:1.5}
+@media(max-width:430px){.gf38-history-summary{grid-template-columns:1fr 1fr}}
+</style>
+<script id="gf38-data-fixes">
+// v4.0.38 · data wiring + historic heat-map correction
+function gf38ValidDate(v){return /^\d{4}-\d{2}-\d{2}$/.test(String(v||'').slice(0,10))}
+function gf38WeekStart(dateStr){
+  const raw=String(dateStr||'').slice(0,10);if(!gf38ValidDate(raw))return '';
+  const d=new Date(raw+'T12:00:00');if(Number.isNaN(d.getTime()))return '';
+  const day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return localISODate(d)
+}
+function gf38Mean(a){const x=(a||[]).map(Number).filter(Number.isFinite);return x.length?x.reduce((s,v)=>s+v,0)/x.length:null}
+function gf38Pct(cur,base){cur=Number(cur);base=Number(base);return Number.isFinite(cur)&&Number.isFinite(base)&&base>0?(cur/base-1)*100:null}
+const GF38_MUSCLE_COLORS={
+  chest:'#7fd6ff',shoulders:'#9d8cff',biceps:'#ff9bd7',triceps:'#ffb27f',forearms:'#8dd7d0',
+  traps:'#ffd36e',lats:'#61b7ff',midBack:'#6fe0bd',rearDelts:'#c7a0ff',abs:'#e7e879',
+  quads:'#75e6ff',hamstrings:'#72c4a3',glutes:'#ff8fba',calves:'#9fd879',adductors:'#e8aa70',
+  lowerBack:'#9aa8ff',erectors:'#b7c3d9'
+};
+
+// --- Strength: each exercise normalised to its own first e1RM, then carried
+// forward week-to-week before muscle weighting. This prevents exercise mix
+// changes from producing false spikes or blank series.
+function gf38MuscleStrengthSeries(){
+  const exMap=new Map(),allWeeks=new Set();
+  for(const w of (progress?.workoutLogs||[])){
+    if(w?.completed===false)continue;const date=String(w?.date||w?.completedAt||'').slice(0,10);if(!gf38ValidDate(date))continue;
+    const week=gf38WeekStart(date);if(!week)continue;allWeeks.add(week);
+    for(const s of (Array.isArray(w?.setEntries)?w.setEntries:[])){
+      const score=e1RM(s?.weightKg,s?.reps);if(!(score>0))continue;
+      const name=String(s?.exerciseName||s?.name||s?.exerciseKey||'Exercise'),key=String(s?.exerciseKey||name).trim().toLowerCase();
+      const weights=exerciseMuscleWeights({name,focus:s?.focus||''});if(!Object.keys(weights).length)continue;
+      let ex=exMap.get(key);if(!ex){ex={name,weights:{...weights},weeks:new Map()};exMap.set(key,ex)}
+      for(const [k,v] of Object.entries(weights))ex.weights[k]=Math.max(Number(ex.weights[k])||0,Number(v)||0);
+      ex.weeks.set(week,Math.max(Number(ex.weeks.get(week))||0,score));
+    }
+  }
+  const weeks=[...allWeeks].sort(),bucket=new Map(weeks.map(w=>[w,{}]));
+  for(const ex of exMap.values()){
+    const own=[...ex.weeks.keys()].sort();if(!own.length)continue;const baseline=Number(ex.weeks.get(own[0]));if(!(baseline>0))continue;
+    let last=null,started=false;
+    for(const week of weeks){
+      if(ex.weeks.has(week)){last=Number(ex.weeks.get(week))/baseline*100;started=true}
+      if(!started||!Number.isFinite(last))continue;
+      const row=bucket.get(week);
+      for(const [muscle,wt0] of Object.entries(ex.weights||{})){const wt=Number(wt0)||0;if(!(wt>0)||!GF_DEV_KEYS.includes(muscle))continue;if(!row[muscle])row[muscle]={sum:0,weight:0};row[muscle].sum+=last*wt;row[muscle].weight+=wt}
+    }
+  }
+  const out={};for(const muscle of GF_DEV_KEYS){const pts=[];for(const week of weeks){const b=bucket.get(week)?.[muscle];if(b?.weight>0)pts.push({date:week,value:round(b.sum/b.weight,1)})}if(pts.length)out[muscle]=pts}return out
+}
+function gf38DrawStrengthChart(){
+  const el=document.getElementById('strengthChart');if(!el)return;const data=gf38MuscleStrengthSeries();const keys=GF_DEV_KEYS.filter(k=>(data[k]||[]).length>=2);
+  if(!keys.length){el.innerHTML='<div class="gf38-chart-empty">Two comparable logged strength readings unlock the muscle-group trend.</div>';return}
+  const dates=[...new Set(keys.flatMap(k=>data[k].map(p=>p.date)))].sort(),base=dates.length?[{date:dates[0],value:100},{date:dates.at(-1),value:100}]:[];
+  const series=keys.map(k=>({label:gfDevLabel(k),color:GF38_MUSCLE_COLORS[k]||'#d6e8ff',points:data[k],strokeWidth:2.15}));series.push({label:'Baseline',color:'rgba(255,255,255,.30)',points:base,strokeWidth:1.2,dash:'4 6'});
+  const svg=buildLineChartSVG({series,yLabel:'Strength index (baseline = 100)',yTickFormatter:v=>String(Math.round(v)),legend:[{label:'100 baseline',color:'rgba(255,255,255,.38)',dash:'4 6'}],emptyText:'No comparable strength data yet'});
+  const legend=`<div class="gf36-muscle-legend">${keys.map(k=>`<span><i style="background:${GF38_MUSCLE_COLORS[k]||'#d6e8ff'}"></i>${esc(gfDevLabel(k))}</span>`).join('')}</div>`;el.innerHTML=svg+legend
+}
+
+// --- Nutrition: accepts both top-level targets and dietPlan.dailyTargets and
+// aggregates actual food logs into weekly Protein/Carbs/Fat adherence.
+function gf38NutritionTargets(){const n=plan?.nutrition||{},d=n?.dietPlan?.dailyTargets||n?.dailyTargets||{};return {protein:Number(n.proteinG??n.protein??d.proteinG??d.protein)||0,carbs:Number(n.carbsG??n.carbohydrateG??n.carbs??d.carbsG??d.carbs)||0,fat:Number(n.fatG??n.fatsG??n.fat??d.fatG??d.fat)||0}}
+function gf38MacroWeekly(){
+  const t=gf38NutritionTargets(),days=new Map();
+  for(const x of (progress?.nutritionLogs||[])){const date=String(x?.date||x?.createdAt||'').slice(0,10);if(!gf38ValidDate(date))continue;if(!days.has(date))days.set(date,{protein:0,carbs:0,fat:0});const d=days.get(date);d.protein+=Number(x?.protein??x?.proteinG)||0;d.carbs+=Number(x?.carbs??x?.carbsG)||0;d.fat+=Number(x?.fat??x?.fatG)||0}
+  const weeks=new Map();for(const [date,d] of [...days.entries()].sort((a,b)=>a[0].localeCompare(b[0]))){const wk=gf38WeekStart(date);if(!wk)continue;if(!weeks.has(wk))weeks.set(wk,{protein:[],carbs:[],fat:[]});const w=weeks.get(wk);for(const k of ['protein','carbs','fat'])if(t[k]>0)w[k].push(d[k]/t[k]*100)}
+  return [...weeks.entries()].sort((a,b)=>a[0].localeCompare(b[0])).map(([date,w])=>({date,protein:w.protein.length?round(gf38Mean(w.protein),1):null,carbs:w.carbs.length?round(gf38Mean(w.carbs),1):null,fat:w.fat.length?round(gf38Mean(w.fat),1):null}))
+}
+function gf38DrawMacroTrendChart(){
+  const el=document.getElementById('macroTrendChart');if(!el)return;const weekly=gf38MacroWeekly(),make=k=>weekly.filter(x=>Number.isFinite(x[k])).map(x=>({date:x.date,value:x[k]})),p=make('protein'),c=make('carbs'),f=make('fat');
+  if(!(p.length||c.length||f.length)){el.innerHTML='<div class="gf38-chart-empty">No usable Protein, Carbs or Fat history was found for this client.</div>';return}
+  const dates=[...new Set([...p,...c,...f].map(x=>x.date))].sort(),target=[{date:dates[0],value:100},{date:dates.at(-1),value:100}],series=[];
+  if(p.length)series.push({label:'Protein',color:'#7fd6ff',points:p,strokeWidth:3});if(c.length)series.push({label:'Carbs',color:'#9d8cff',points:c,strokeWidth:3});if(f.length)series.push({label:'Fat',color:'#7cffc7',points:f,strokeWidth:3});series.push({label:'Target',color:'rgba(255,255,255,.38)',points:target,strokeWidth:1.4,dash:'4 6'});
+  el.innerHTML=buildLineChartSVG({series,yLabel:'Macro target met (%)',yTickFormatter:v=>`${Math.round(v)}%`,legend:[{label:'Protein',color:'#7fd6ff'},{label:'Carbs',color:'#9d8cff'},{label:'Fat',color:'#7cffc7'},{label:'100% target',color:'rgba(255,255,255,.38)',dash:'4 6'}],emptyText:'No macro history yet'})
+}
+
+// --- Body composition: compare regional tape growth on a common baseline=100
+// scale, while body fat remains a separate percentage chart in the same widget.
+const GF38_BODY_REGIONS=[
+ ['shoulders','Shoulders',m=>Number(m?.shoulders)],['chest','Chest',m=>Number(m?.chest)],
+ ['upperArms','Upper arms',m=>gf38Mean([m?.left_upper_arm,m?.right_upper_arm])],['forearms','Forearms',m=>gf38Mean([m?.left_forearm,m?.right_forearm])],
+ ['waist','Waist',m=>Number(m?.waist)],['hips','Hips',m=>Number(m?.hips)],['thighs','Thighs',m=>gf38Mean([m?.left_thigh,m?.right_thigh])],['calves','Calves',m=>gf38Mean([m?.left_calf,m?.right_calf])]
+];
+const GF38_BODY_COLORS={shoulders:'#9d8cff',chest:'#7fd6ff',upperArms:'#ff9bd7',forearms:'#8dd7d0',waist:'#ffd36e',hips:'#ff8fba',thighs:'#75e6ff',calves:'#9fd879'};
+function gf38BodyRegionSeries(){const logs=gf30BodyCompLogs?.()||[],out={};for(const [key,label,get] of GF38_BODY_REGIONS){const raw=logs.map(x=>({date:String(x?.date||'').slice(0,10),value:get(x?.measurementsCm||{})})).filter(x=>gf38ValidDate(x.date)&&Number.isFinite(x.value)&&x.value>0);if(raw.length<2)continue;const base=raw[0].value;out[key]={label,raw,points:raw.map(x=>({date:x.date,value:round(x.value/base*100,2)})),deltaCm:round(raw.at(-1).value-base,1)}}return out}
+window.gf30BodyCompTrendHTML=function(){return `<div id="gf38TapeChart" class="chart" style="height:285px"></div><div id="gf38TapeLegend"></div><div class="gf38-bodyfat-block"><div class="gf38-bodyfat-head"><b>Body-fat trend</b><span>Separate % scale</span></div><div id="gf30BodyFatChart" class="chart" style="height:190px"></div></div><div id="gf30TapeTrendSummary"></div><p class="gf26-trend-note">Regional tape lines are normalised to each region's first measurement (100), so chest, shoulders, arms, waist and legs can be compared on the same scale. Body fat remains on its own percentage scale.</p>`};
+window.gf30DrawBodyCompTrend=function(){
+  const tape=document.getElementById('gf38TapeChart'),legendEl=document.getElementById('gf38TapeLegend'),regions=gf38BodyRegionSeries(),keys=Object.keys(regions);if(tape){if(keys.length){const dates=[...new Set(keys.flatMap(k=>regions[k].points.map(p=>p.date)))].sort(),baseline=[{date:dates[0],value:100},{date:dates.at(-1),value:100}],series=keys.map(k=>({label:regions[k].label,color:GF38_BODY_COLORS[k]||'#d6e8ff',points:regions[k].points,strokeWidth:2.25}));series.push({label:'Baseline',color:'rgba(255,255,255,.30)',points:baseline,strokeWidth:1.2,dash:'4 6'});tape.innerHTML=buildLineChartSVG({series,yLabel:'Tape growth index (baseline = 100)',yTickFormatter:v=>String(round(v,1)),legend:[{label:'100 baseline',color:'rgba(255,255,255,.38)',dash:'4 6'}],emptyText:'Two tape measurements unlock regional trends'});if(legendEl)legendEl.innerHTML=`<div class="gf38-region-legend">${keys.map(k=>`<span><i style="background:${GF38_BODY_COLORS[k]}"></i>${esc(regions[k].label)}</span>`).join('')}</div>`}else{tape.innerHTML='<div class="gf38-chart-empty">Two tape measurements unlock regional growth lines.</div>';if(legendEl)legendEl.innerHTML=''}}
+  const bf=document.getElementById('gf30BodyFatChart');if(bf){const pts=(gf30BodyCompLogs?.()||[]).filter(x=>Number.isFinite(Number(x.bodyFatPct))&&gf38ValidDate(x.date)).map(x=>({date:x.date,value:Number(x.bodyFatPct)}));bf.innerHTML=buildLineChartSVG({series:pts.length?[{label:'Body fat',color:'#7fd6ff',points:pts,strokeWidth:3}]:[],yLabel:'Body fat (%)',yTickFormatter:v=>`${round(v,1)}%`,emptyText:'No body-fat history yet'})}
+  const target=document.getElementById('gf30TapeTrendSummary');if(target){target.innerHTML=keys.length?`<div class="gf30-tape-trends">${keys.map(k=>`<div><span>${esc(regions[k].label)}</span><b>${regions[k].deltaCm>=0?'+':''}${regions[k].deltaCm} cm</b></div>`).join('')}</div>`:''}
+};
+
+// --- Historical development maps ---
+function gf38ConditioningSeries(){
+  const weeks=new Map();
+  for(const w of (progress?.workoutLogs||[])){if(w?.completed===false)continue;const date=String(w?.date||w?.completedAt||'').slice(0,10);if(!gf38ValidDate(date))continue;const wk=gf38WeekStart(date);if(!weeks.has(wk))weeks.set(wk,Object.fromEntries(GF_DEV_KEYS.map(k=>[k,{sets:0,reps:0}])));const row=weeks.get(wk);
+    for(const s of (Array.isArray(w?.setEntries)?w.setEntries:[])){const weights=exerciseMuscleWeights({name:s?.exerciseName||s?.name||s?.exerciseKey||'',focus:s?.focus||''}),reps=Math.max(0,Number(s?.reps)||0);for(const [k,wt0] of Object.entries(weights)){const wt=Number(wt0)||0;if(row[k]&&wt>0){row[k].sets+=wt;row[k].reps+=reps*wt}}}
+  }
+  const dates=[...weeks.keys()].sort(),out={};for(const k of GF_DEV_KEYS){const pts=[];for(const date of dates){const x=weeks.get(date)[k];if(x.sets>0||x.reps>0)pts.push({date,sets:x.sets,reps:x.reps,value:x.sets*8+x.reps})}if(pts.length)out[k]=pts}return out
+}
+function gf38MassHistorySeries(){
+  const startWeight=Number(plan?.client?.startWeightKg)||1,rows=new Map();
+  const add=(date,a,weight)=>{date=String(date||a?.createdAt||'').slice(0,10);if(!gf38ValidDate(date)||!a)return;const d=gfMassDistributionFromAnalysis(a);if(!d?.shares)return;const w=Number(weight)||Number(a?.bodyWeightKg)||startWeight,vals={};for(const k of GF_DEV_KEYS){const share=Number(d.shares?.[k]);vals[k]=Number.isFinite(share)?share*(w/startWeight):null}rows.set(date,vals)};
+  if(progress?.baselineAnalysis)add(String(progress.baselineAnalysis.createdAt||plan?.goal?.startDate||'').slice(0,10),progress.baselineAnalysis,progress.baselineAnalysis.bodyWeightKg||startWeight);
+  for(const r of (progress?.weeklyCheckins||[]))if(r?.analysis)add(r.date,r.analysis,r.weightKg);
+  const dates=[...rows.keys()].sort(),out={};for(const k of GF_DEV_KEYS){const pts=dates.map(date=>({date,value:rows.get(date)[k]})).filter(p=>Number.isFinite(p.value));if(pts.length)out[k]=pts}return out
+}
+function gf38DevelopmentStats(){
+  const cond=gf38ConditioningSeries(),str=gf38MuscleStrengthSeries(),mass=gf38MassHistorySeries(),out={conditioning:{},strength:{},mass:{},series:{conditioning:cond,strength:str,mass}};
+  for(const k of GF_DEV_KEYS){
+    const cp=cond[k]||[];if(cp.length){const n=Math.min(2,cp.length),basePts=cp.slice(0,n),curPts=cp.slice(-n),base=gf38Mean(basePts.map(x=>x.value)),current=gf38Mean(curPts.map(x=>x.value));out.conditioning[k]={base,current,delta:gf38Pct(current,base),baseSets:gf38Mean(basePts.map(x=>x.sets)),currentSets:gf38Mean(curPts.map(x=>x.sets)),currentReps:gf38Mean(curPts.map(x=>x.reps)),historyCount:cp.length}}
+    const sp=str[k]||[];if(sp.length){const base=Number(sp[0].value),current=Number(sp.at(-1).value);out.strength[k]={base,current,delta:gf38Pct(current,base),historyCount:sp.length}}
+    const mp=mass[k]||[];if(mp.length){const base=Number(mp[0].value),current=Number(mp.at(-1).value);const latestAnalysis=[...(progress?.weeklyCheckins||[])].filter(x=>x?.analysis).sort((a,b)=>String(a.date).localeCompare(String(b.date))).at(-1)?.analysis;const share=gfMassDistributionFromAnalysis(latestAnalysis||progress?.baselineAnalysis)?.shares?.[k];out.mass[k]={base,current,delta:gf38Pct(current,base),share:Number.isFinite(Number(share))?Number(share):null,historyCount:mp.length}}
+  }
+  return out
+}
+function gf38HistoryHeatColor(delta,mode,stats){if(!Number.isFinite(Number(delta)))return heatColor(0);const vals=GF_DEV_KEYS.map(k=>Number(stats?.[mode]?.[k]?.delta)).filter(Number.isFinite),max=Math.max(0,...vals);if(max<=0)return heatColor(0);const d=Number(delta);if(d<=0)return heatColor(0);return heatColor(clamp(d/max,0,1))}
+window.gfDevelopmentStats=gf38DevelopmentStats;
+window.gfDevelopmentSVG=function(view,mode,stats){let svg=bodyMapSVG(view);svg=svg.replace(/id="muscleMap"/g,'').replace(/id="zone-[^"]+"/g,'').replace(/showMuscleDetail\(/g,'gfShowDevelopmentMuscleDetail(');svg=svg.replace(/(<g class="zone"[^>]*data-muscle="([^"]+)"[^>]*style="--zone-fill:)[^"]+("[^>]*>)/g,(m,a,k,c)=>`${a}${gf38HistoryHeatColor(stats?.[mode]?.[k]?.delta,mode,stats)}${c}`);return svg.replace('muscle-map ',`muscle-map development-muscle-map `)};
+window.gfDevelopmentLegendCopy=function(mode){return ['No / lowest historic gain','Greatest historic gain']};
+function gf38HistorySummaryHTML(mode,stats){const rows=GF_DEV_KEYS.map(k=>({k,d:Number(stats?.[mode]?.[k]?.delta),n:Number(stats?.[mode]?.[k]?.historyCount)||0})).filter(x=>Number.isFinite(x.d));if(!rows.length)return `<div class="gf-development-cold-note"><b>Cold baseline</b><span>No comparable historic data yet for this signal.</span></div>`;rows.sort((a,b)=>b.d-a.d);const best=rows[0],count=Math.max(...rows.map(x=>x.n));return `<div class="gf38-history-summary"><div><span>Historic evidence</span><b>${count} ${mode==='mass'?'visual check-ins':'weekly points'}</b></div><div><span>Strongest historic change</span><b>${esc(gfDevLabel(best.k))} · ${best.d>=0?'+':''}${Math.round(best.d)}%</b></div></div>`}
+window.gfDevelopmentDetailHTML=function(k,mode,stats){const d=stats?.[mode]?.[k]||{},delta=Number(d.delta),goal=gfGoalFocusMuscles().includes(k),cls=Number.isFinite(delta)?(delta>=0?'pos':'neg'):'na',deltaText=Number.isFinite(delta)?`${delta>=0?'+':''}${Math.round(delta)}%`:'N/A',n=Number(d.historyCount)||0;let kpis='';if(mode==='conditioning')kpis=`<div><span>Baseline index</span><b>${Number.isFinite(d.base)?Math.round(d.base):'—'}</b></div><div><span>Recent index</span><b>${Number.isFinite(d.current)?Math.round(d.current):'—'}</b></div><div><span>History</span><b>${n||'—'} weeks</b></div>`;else if(mode==='strength')kpis=`<div><span>Baseline index</span><b>${Number.isFinite(d.base)?round(d.base,1):'—'}</b></div><div><span>Current index</span><b>${Number.isFinite(d.current)?round(d.current,1):'—'}</b></div><div><span>History</span><b>${n||'—'} weeks</b></div>`;else kpis=`<div><span>Visual share</span><b>${Number.isFinite(d.share)?d.share.toFixed(1)+'%':'N/A'}</b></div><div><span>Start index</span><b>${Number.isFinite(d.base)?d.base.toFixed(2):'—'}</b></div><div><span>Current index</span><b>${Number.isFinite(d.current)?d.current.toFixed(2):'—'}</b></div>`;return `<div class="gf-development-detail"><div class="gf-development-detail-top"><div><div class="eyebrow">Selected muscle${goal?' · Goal focus':''}</div><h4>${esc(gfDevLabel(k))}</h4><p>${mode==='conditioning'?'Historic work-capacity change from logged working sets and reps':mode==='strength'?'Historic strength index change; each exercise is normalised to its own baseline':'Historic analyser-perceived visual-mass change from comparable check-ins'}</p></div><div class="gf-development-delta ${cls}">${deltaText}</div></div><div class="gf-development-kpis">${kpis}</div></div>`};
+window.gfDevelopmentMapMountHTML=function(){const stats=gf38DevelopmentStats(),focus=gfGoalFocusMuscles(),goalText=focus.length?focus.map(gfDevLabel):[(plan?.goal?.focus||[])[0]||'Overall development'],legend=gfDevelopmentLegendCopy(gfDevelopmentMode);return `<div class="gf-development-tabs"><button class="${gfDevelopmentMode==='conditioning'?'on':''}" onclick="gfSetDevelopmentMode('conditioning')">Conditioning</button><button class="${gfDevelopmentMode==='strength'?'on':''}" onclick="gfSetDevelopmentMode('strength')">Strength</button><button class="${gfDevelopmentMode==='mass'?'on':''}" onclick="gfSetDevelopmentMode('mass')">Visual mass</button></div><div class="gf-goal-focus-row">${goalText.map(x=>`<span>Goal · ${esc(x)}</span>`).join('')}</div><div class="gf-development-grid"><div class="gf-development-stage"><div class="bodyviz-label">Front</div>${gfDevelopmentSVG('front',gfDevelopmentMode,stats)}</div><div class="gf-development-stage"><div class="bodyviz-label">Back</div>${gfDevelopmentSVG('back',gfDevelopmentMode,stats)}</div></div><div class="gf-development-legend"><span>${esc(legend[0])}</span><div class="gf-development-gradient"></div><span>${esc(legend[1])}</span></div>${gf38HistorySummaryHTML(gfDevelopmentMode,stats)}${gfDevelopmentDetailHTML(gfDevelopmentSelected,gfDevelopmentMode,stats)}`};
+
+// Final trend routing: always use the v38 renderers.
+window.gf26TrendMountHTML=function(){
+  if(gf26TrendMode==='strength')return `<div id="strengthChart" class="chart" style="height:315px"></div><p class="gf26-trend-note">One line per trained muscle group. Every exercise is normalised to its own first logged e1RM (100), then combined by muscle, so different exercise loads cannot create false spikes.</p>`;
+  if(gf26TrendMode==='nutrition')return `<div id="macroTrendChart" class="chart" style="height:260px"></div><p class="gf26-trend-note">Weekly Protein, Carbs and Fat adherence from actual food logs. 100% means the client hit the planned daily macro target on average.</p>`;
+  if(gf26TrendMode==='bodycomp')return gf30BodyCompTrendHTML();
+  return `<div id="weightChart" class="chart" style="height:245px"></div><div class="gf26-trend-goal"><span>Goal</span><b>${round(Number(plan?.goal?.targetWeightKg)||latestWeight(),1)} kg · ${shortDateLabel(gfGoalDateISO())}</b></div><p class="gf26-trend-note">Actual bodyweight is solid. The dashed guide follows the planned weekly gain and stops at the target.</p>`
+};
+window.gf26DrawSelectedTrend=function(){requestAnimationFrame(()=>requestAnimationFrame(()=>{if(gf26TrendMode==='weight')drawWeightChart?.();else if(gf26TrendMode==='strength')gf38DrawStrengthChart();else if(gf26TrendMode==='nutrition')gf38DrawMacroTrendChart();else if(gf26TrendMode==='bodycomp')gf30DrawBodyCompTrend?.()}))};
+window.drawStrengthChart=gf38DrawStrengthChart;window.drawMacroTrendChart=gf38DrawMacroTrendChart;
+</script>
+
+</body>
 </html>
