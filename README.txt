@@ -1,3 +1,2 @@
-Gain Focus v4.0.38
-Fixes strength, nutrition and body-composition trend data plus historic development heat-map scaling.
-Upload all files in this folder to the GitHub Pages root.
+Gain Focus PWA v4.0.43
+Adds non-destructive profile logout from Account settings. Logging out returns to saved-user login and keeps client data/history on-device.

@@ -1321,7 +1321,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.42';
+const APP_VERSION='4.0.43';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -2770,7 +2770,29 @@ function resumeWorkout(id){const w=(progress.workoutLogs||[]).find(x=>x.id===id)
 
 // Settings: replay onboarding, replace plan, restore progress, rest timer, sound, reset.
 function saveCanonicalSettings(){ensureWorkoutSettings();const r=Number(document.getElementById('restSecondsSetting')?.value);if(r>=30&&r<=600)progress.settings.restSeconds=Math.round(r);progress.settings.sound=!!document.getElementById('restSoundSetting')?.checked;write();toast('Workout settings saved')}
-function openSettings(){ensureWorkoutSettings();document.getElementById('settingsSheet').innerHTML=`<div class="grabber"></div><div class="eyebrow">Account</div><div class="account-summary-card">${profileAvatarHTML()}<div class="account-summary-copy"><b>${esc(plan.client.name)}</b><span>${plan.client.heightCm?esc(plan.client.heightCm)+' cm · ':''}${round(latestWeight(),1)} kg · ${plan.goal.targetWeightKg} kg goal</span></div><button class="profile-edit-link" type="button" onclick="openProfileEditor()">Edit</button></div><button class="btn primary" style="width:100%;margin-top:4px" onclick="openProfileEditor()">Edit account details</button><button class="btn primary" style="width:100%;margin-top:8px" onclick="closeSettings();openPhysiqueGallery('current')">Open physique library</button><div class="settings-group"><div class="eyebrow">Workout</div><div class="settings-row"><span class="small">Rest timer seconds</span><input id="restSecondsSetting" class="input" type="number" min="30" max="600" value="${progress.settings.restSeconds||120}"></div><div class="settings-row"><span class="small">Timer sound</span><input id="restSoundSetting" type="checkbox" ${progress.settings.sound!==false?'checked':''}></div><button class="btn secondary" style="width:100%;margin-top:8px" onclick="saveCanonicalSettings()">Save workout settings</button></div><div class="settings-group"><div class="eyebrow">Client data</div><button class="btn secondary" style="width:100%;margin-top:8px" onclick="replayOnboarding()">Replay / rebuild onboarding</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="document.getElementById('settingsPlanFile').click()">Replace client plan JSON</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="document.getElementById('settingsProgressFile').click()">Restore progress JSON</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="downloadJSON(progress,'gain-focus-progress-${plan.client.id}-${todayISO()}.json')">Export progress JSON</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="downloadJSON(plan,'gain-focus-client-${plan.client.id}.json')">Export client plan</button></div><div class="settings-group"><div class="eyebrow">Hercules AI</div><p class="muted" style="font-size:12px;line-height:1.45;margin:7px 0 9px">Local coaching uses training, macros, weight trend, check-ins and physique feedback. Add a secure model endpoint for fully open-ended questions.</p><input id="herculesEndpointSetting" class="input" placeholder="https://your-domain.com/api/hercules" value="${esc(herculesEndpoint())}"><button class="btn secondary" style="width:100%;margin-top:8px" onclick="setHerculesEndpoint(document.getElementById('herculesEndpointSetting').value)">Save AI endpoint</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="localStorage.removeItem(HERCULES_HISTORY_KEY);toast('Hercules conversation cleared')">Clear Hercules history</button></div><div class="settings-group"><button class="btn secondary settings-danger" style="width:100%" onclick="resetGainFocusLocal()">Reset local client & app</button></div><button class="btn secondary" style="width:100%;margin-top:8px" onclick="closeSettings()">Close</button>`;document.getElementById('settingsModal').classList.add('open')}
+function openSettings(){ensureWorkoutSettings();document.getElementById('settingsSheet').innerHTML=`<div class="grabber"></div><div class="eyebrow">Account</div><div class="account-summary-card">${profileAvatarHTML()}<div class="account-summary-copy"><b>${esc(plan.client.name)}</b><span>${plan.client.heightCm?esc(plan.client.heightCm)+' cm · ':''}${round(latestWeight(),1)} kg · ${plan.goal.targetWeightKg} kg goal</span></div><button class="profile-edit-link" type="button" onclick="openProfileEditor()">Edit</button></div><button class="btn primary" style="width:100%;margin-top:4px" onclick="openProfileEditor()">Edit account details</button><button class="btn primary" style="width:100%;margin-top:8px" onclick="closeSettings();openPhysiqueGallery('current')">Open physique library</button><div class="settings-group"><div class="eyebrow">Workout</div><div class="settings-row"><span class="small">Rest timer seconds</span><input id="restSecondsSetting" class="input" type="number" min="30" max="600" value="${progress.settings.restSeconds||120}"></div><div class="settings-row"><span class="small">Timer sound</span><input id="restSoundSetting" type="checkbox" ${progress.settings.sound!==false?'checked':''}></div><button class="btn secondary" style="width:100%;margin-top:8px" onclick="saveCanonicalSettings()">Save workout settings</button></div><div class="settings-group"><div class="eyebrow">Client data</div><button class="btn secondary" style="width:100%;margin-top:8px" onclick="replayOnboarding()">Replay / rebuild onboarding</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="document.getElementById('settingsPlanFile').click()">Replace client plan JSON</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="document.getElementById('settingsProgressFile').click()">Restore progress JSON</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="downloadJSON(progress,'gain-focus-progress-${plan.client.id}-${todayISO()}.json')">Export progress JSON</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="downloadJSON(plan,'gain-focus-client-${plan.client.id}.json')">Export client plan</button></div><div class="settings-group"><div class="eyebrow">Hercules AI</div><p class="muted" style="font-size:12px;line-height:1.45;margin:7px 0 9px">Local coaching uses training, macros, weight trend, check-ins and physique feedback. Add a secure model endpoint for fully open-ended questions.</p><input id="herculesEndpointSetting" class="input" placeholder="https://your-domain.com/api/hercules" value="${esc(herculesEndpoint())}"><button class="btn secondary" style="width:100%;margin-top:8px" onclick="setHerculesEndpoint(document.getElementById('herculesEndpointSetting').value)">Save AI endpoint</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="localStorage.removeItem(HERCULES_HISTORY_KEY);toast('Hercules conversation cleared')">Clear Hercules history</button></div><div class="settings-group"><div class="eyebrow">Session</div><button class="btn secondary" style="width:100%;margin-top:8px" onclick="logoutGainFocusProfile()">Log out of profile</button><p class="muted" style="font-size:10px;line-height:1.45;margin:7px 2px 0">Returns to the login screen. Client data and history remain saved on this device.</p></div><div class="settings-group"><button class="btn secondary settings-danger" style="width:100%" onclick="resetGainFocusLocal()">Reset local client & app</button></div><button class="btn secondary" style="width:100%;margin-top:8px" onclick="closeSettings()">Close</button>`;document.getElementById('settingsModal').classList.add('open')}
+function logoutGainFocusProfile(){
+  const name=clientNameValue()||plan?.client?.name||'this profile';
+  if(!confirm(`Log out of ${name}? All client data stays saved on this device.`))return;
+  try{closeSettings()}catch{}
+  try{closeSession()}catch{}
+  try{closePhysiqueGallery()}catch{}
+  try{closeHerculesEntrySummary()}catch{}
+  if(typeof canonicalRestHandle!=='undefined'&&canonicalRestHandle){clearInterval(canonicalRestHandle);canonicalRestHandle=null}
+  if(typeof canonicalRestRemaining!=='undefined')canonicalRestRemaining=0;
+  if(typeof canonicalRestPaused!=='undefined')canonicalRestPaused=false;
+  if(typeof canonicalWorkout!=='undefined')canonicalWorkout=null;
+  if(typeof gfEntryBriefShown!=='undefined')gfEntryBriefShown=false;
+  document.body.classList.remove('coach-home-active');
+  document.getElementById('app')?.classList.remove('open');
+  document.getElementById('nav')?.classList.add('hidden');
+  document.getElementById('gfProfileSetupAlert')?.classList.remove('show');
+  const ob=document.getElementById('onboarding');
+  if(ob){ob.style='';ob.classList.add('open');renderLoginGate()}
+  currentTab='today';
+  toast('Logged out · client data kept on this device');
+}
+
 async function resetGainFocusLocal(){if(!confirm('Reset the local Gain Focus client, progress, saved media and Hercules history?'))return;localStorage.removeItem(PLAN_KEY);localStorage.removeItem(PROGRESS_KEY);localStorage.removeItem(CLIENT_NAME_KEY);localStorage.removeItem(HERCULES_HISTORY_KEY);await clearMediaDB();location.reload()}
 function importSettingsPlan(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!validPlan(x))throw new Error();plan=x;localStorage.setItem(CLIENT_NAME_KEY,x.client.name||'');if(!progress||progress.clientId!==x.client.id)progress=newProgress();write();closeSettings();renderAll();toast('Client plan replaced')}catch{alert('That JSON is not a valid Gain Focus client plan.')}};r.readAsText(file)}
 function importSettingsProgress(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!progressCompatible(x))throw new Error();progress=x;progress.appVersion=APP_VERSION;ensureProgressExtras();if(typeof ensureWeeklyReviewIds==='function')ensureWeeklyReviewIds();write();closeSettings();renderAll();toast('Progress restored')}catch(e){console.error(e);alert('That progress JSON does not belong to this client.')}};r.readAsText(file)}
@@ -4056,7 +4078,7 @@ const GF26_HELP={
   nutrition:{title:'Log nutrition',intro:'Use label scanning for packaged food or manual entry for anything else.',steps:['Open Nutrition and review today’s remaining calories/macros.','Use Nutrition label photo or Manual entry.','Save repeat foods as favourites for faster logging later.','Open Nutrition analysis at the bottom to inspect macro adherence over time.']},
   checkin:{title:'Complete a check-in',intro:'Check-in is the only place for current physique-review analysis.',steps:['Enter current bodyweight and choose a progress video.','Set leg visibility if trousers or framing obscure the lower body.','Run Analyse video before saving so Hercules can compare the review.','After the main check-in form, open the summary, latest analysis or check-in history sections.']},
   analysis:{title:'Read Analysis',intro:'Analysis is deliberately condensed so the useful signal stays visible.',steps:['The muscle map is always visible. Switch between Training load, Conditioning, Strength and Visual mass.','Open Trending statistics to switch between Weight, Strength and Nutrition graphs.','Open Emerging trends & deviations for cross-data changes that stand out.','Open Historical data only when you need older check-ins, workouts or reviews.']},
-  profile:{title:'Profile & setup',intro:'Profile holds identity, client data and visual goal references.',steps:['Tap the profile circle in the top-right header.','Open Start ↔ Goal to compare the baseline and generated goal image.','If the ! alert is visible, tap it to complete missing baseline views.','Export the client plan and progress JSON before moving devices or making major resets.']}
+  profile:{title:'Profile & setup',intro:'Profile holds identity, client data and visual goal references.',steps:['Tap the profile circle in the top-right header.','Open Start ↔ Goal to compare the baseline and generated goal image.','If the ! alert is visible, tap it to complete missing baseline views.','Use Log out of profile to leave the client without deleting their local data. Export the client plan and progress JSON before moving devices or making major resets.']}
 };
 function gf26HelpTopic(key){const d=GF26_HELP[key]||GF26_HELP.start,body=document.getElementById('gf26HelpBody');if(!body)return;body.innerHTML=`<div class="eyebrow">Guided help</div><h3 style="font-size:22px;margin:5px 0 3px">${esc(d.title)}</h3><p class="muted" style="margin:0">${esc(d.intro)}</p><div class="gf26-help-steps">${d.steps.map((s,i)=>`<div class="gf26-help-step"><i>${i+1}</i><span>${esc(s)}</span></div>`).join('')}</div>`}
 function gf26OpenHelp(){const sheet=document.getElementById('sessionSheet');sheet.classList.remove('workout-sheet');sheet.innerHTML=`<div class="grabber"></div><div class="eyebrow">Hercules Help</div><h2 style="font-size:29px;margin:5px 0 2px">How can I help?</h2><p class="muted" style="margin-top:0">Guided FAQ for operating Gain Focus.</p><div class="gf26-help-grid"><button class="gf26-help-topic" onclick="gf26HelpTopic('workout')"><b>Workouts</b><span>Start, log sets, rest timer, finish.</span></button><button class="gf26-help-topic" onclick="gf26HelpTopic('nutrition')"><b>Nutrition</b><span>Food logging, labels and favourites.</span></button><button class="gf26-help-topic" onclick="gf26HelpTopic('checkin')"><b>Check-in</b><span>Video analysis and weekly reviews.</span></button><button class="gf26-help-topic" onclick="gf26HelpTopic('analysis')"><b>Analysis</b><span>Maps, trends and deviations.</span></button><button class="gf26-help-topic" onclick="gf26HelpTopic('profile')"><b>Profile</b><span>Setup, Start ↔ Goal and backups.</span></button><button class="gf26-help-topic" onclick="gf26HelpTopic('start')"><b>App basics</b><span>Navigation and where things live.</span></button></div><div id="gf26HelpBody"></div><button class="btn secondary" style="width:100%;margin-top:10px" onclick="closeSession()">Close help</button>`;document.getElementById('sessionModal').classList.add('open');gf26HelpTopic('start')}
@@ -4497,7 +4519,7 @@ window.gf26DrawSelectedTrend=function(){
 @media(max-width:430px){.gf38-history-summary{grid-template-columns:1fr 1fr}}
 </style>
 <script id="gf38-data-fixes">
-// v4.0.42 · data wiring + historic heat-map correction
+// v4.0.43 · data wiring + historic heat-map correction
 function gf38ValidDate(v){return /^\d{4}-\d{2}-\d{2}$/.test(String(v||'').slice(0,10))}
 function gf38WeekStart(dateStr){
   const raw=String(dateStr||'').slice(0,10);if(!gf38ValidDate(raw))return '';
@@ -4630,7 +4652,7 @@ window.drawStrengthChart=gf38DrawStrengthChart;window.drawMacroTrendChart=gf38Dr
 
 
 <script id="gf39-nutrition-inline-render">
-// v4.0.42 · render the macro chart synchronously with the trend widget.
+// v4.0.43 · render the macro chart synchronously with the trend widget.
 // This avoids Safari/iOS timing races where the draw callback can fire before
 // #macroTrendChart has been mounted after switching trend tabs.
 function gf39MacroTrendSVG(){
@@ -4670,7 +4692,7 @@ window.gf26DrawSelectedTrend=function(){requestAnimationFrame(()=>requestAnimati
 
 
 <script id="gf41-correlation-engine">
-// v4.0.42 · Cross-domain correlation engine.
+// v4.0.43 · Cross-domain correlation engine.
 // Finds repeated associations across nutrition, scale weight, training exposure,
 // tape measurements and visual-mass history. Correlation is descriptive, not causal.
 function gf41Mean(a){const v=(a||[]).map(Number).filter(Number.isFinite);return v.length?v.reduce((s,x)=>s+x,0)/v.length:null}
@@ -4730,7 +4752,7 @@ window.gf26TrendMountHTML=function(){if(gf26TrendMode==='strength')return `<div 
 
 <script id="gf42-unified-history">
 // ============================================================================
-// Gain Focus v4.0.42 · unified historic timeline + period-controlled muscle maps
+// Gain Focus v4.0.43 · unified historic timeline + period-controlled muscle maps
 // ============================================================================
 function gf42DateOnly(v){const s=String(v||'').slice(0,10);return /^\d{4}-\d{2}-\d{2}$/.test(s)?s:null}
 function gf42DateMs(v){const s=gf42DateOnly(v);if(!s)return NaN;return new Date(s+'T12:00:00').getTime()}
