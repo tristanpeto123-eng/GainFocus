@@ -1,4 +1,4 @@
-Gain Focus PWA v4.0.30
+Gain Focus PWA v4.0.32
 - Hercules Ask bar moved lower on the home screen.
 - Start ↔ Goal is visible directly in Profile instead of inside a nested accordion.
 - Hercules cosmic app icon retained.

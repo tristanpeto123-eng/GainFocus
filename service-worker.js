@@ -1,10 +1,11 @@
-const CACHE_NAME = 'gain-focus-v4-0-30-pwa-1';
+const CACHE_NAME = 'gain-focus-v4-0-32-pwa-1';
 const CORE_ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png',
+  './icon-maskable-512.png',
   './apple-touch-icon.png'
 ];
 
