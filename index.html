@@ -1340,8 +1340,6 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 }
 
 </style>
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#07101f">
 
 <style id="gf45-final-fixes-css">
 /* v4.0.45 FINAL · meal-specific reminders + challenge rewards + remote push connection */
@@ -1350,6 +1348,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 .gf45-challenge-reward{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px;padding:9px 10px;border-radius:13px;background:linear-gradient(90deg,rgba(255,211,105,.10),rgba(117,183,255,.07));border:1px solid rgba(255,220,133,.12)}.gf45-challenge-reward b{font-size:10px}.gf45-challenge-reward span{font-size:8px;color:#ffe39a;font-weight:900;letter-spacing:.06em}.gf45-challenge-progress{height:5px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:9px}.gf45-challenge-progress i{display:block;height:100%;width:var(--p);border-radius:inherit;background:linear-gradient(90deg,#67b7ff,#80f4ff,#a482ff)}
 .gf45-push-backend{margin-top:8px;padding:9px 10px;border-radius:13px;border:1px solid rgba(133,202,255,.09);background:rgba(96,160,255,.035);font-size:8px;line-height:1.4;color:rgba(222,236,255,.68)}.gf45-push-backend.live{border-color:rgba(104,225,164,.15);background:rgba(66,196,131,.045);color:#a9e9c7}
 </style>
+<meta name="color-scheme" content="dark">
 </head>
 <body>
 <div class="ambient"></div><div class="ambient-blur"></div>
@@ -4436,7 +4435,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.38', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.48', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
@@ -5242,7 +5241,7 @@ window.gf30OpenBodyCompForm=function(){gf30EnsureBodyComposition();const sheet=d
 function gf45DefaultNotificationPrefs(){return {enabled:false,workouts:true,meals:true,inactivity:true,social:true,challenges:true,workoutTime:'18:00',breakfastTime:'08:30',lunchTime:'13:00',dinnerTime:'19:00',inactivityDays:3,quietStart:'22:30',quietEnd:'07:30'}}
 window.ensureProgressExtras=function(){GF45_ORIGINAL.ensureProgressExtras?.();if(!progress)return;progress.settings||(progress.settings={});progress.settings.notificationPrefs={...gf45DefaultNotificationPrefs(),...(progress.settings.notificationPrefs||{})};if(!Array.isArray(progress.settings.availableWeekdays))progress.settings.availableWeekdays=[...(plan?.training?.availableWeekdays||progress.settings.trainingWeekdays||[])];if(!Array.isArray(progress.notificationFeed))progress.notificationFeed=[]};
 function gf45PushStatus(){if(!('Notification'in window))return 'Browser notifications are unavailable here.';if(location.protocol==='file:')return 'Open the hosted PWA to enable system notifications. Calendar reminders still work from this file.';return Notification.permission==='granted'?'System notifications enabled.':'Tap Enable notifications. iPhone web push requires the hosted app added to the Home Screen.'}
-async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./gain-focus-sw.js')}catch(e){console.warn(e);return null}}
+async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.48')}catch(e){console.warn(e);return null}}
 async function gf45RequestNotifications(){if(!('Notification'in window)){toast('Notifications are not supported here');return}if(location.protocol==='file:'){toast('Host/install the PWA to enable push');return}const reg=await gf45RegisterSW(),permission=await Notification.requestPermission();ensureProgressExtras();progress.settings.notificationPrefs.enabled=permission==='granted';write();if(permission==='granted'&&reg){await reg.showNotification('Gain Focus notifications enabled',{body:'Hercules can now surface training, nutrition and social reminders.',tag:'gf-enabled'});toast('Notifications enabled')}else toast('Notification permission not granted');gfRenderSocialHub()}
 async function gf45TestNotification(){const reg=await gf45RegisterSW();if(('Notification' in window)&&Notification.permission==='granted'&&reg){await reg.showNotification('Hercules · Test',{body:'Notifications are connected. Keep the hosted PWA installed for background alerts.',tag:'gf-test'});return}toast('Enable notifications first')}
 function gf45SaveNotificationSettings(){ensureProgressExtras();const p=progress.settings.notificationPrefs;for(const k of ['workouts','meals','inactivity','social','challenges'])p[k]=!!document.getElementById('gf45n_'+k)?.checked;for(const k of ['workoutTime','breakfastTime','lunchTime','dinnerTime','quietStart','quietEnd']){const v=document.getElementById('gf45n_'+k)?.value;if(v)p[k]=v}p.inactivityDays=clamp(Number(document.getElementById('gf45n_inactivityDays')?.value)||3,1,14);write();toast('Notification preferences saved')}
@@ -5592,91 +5591,340 @@ try{renderLoginGate=gf47RenderExistingUserLogin}catch{}
 gf47EnsureExistingInputs();
 </script>
 
-<style id="gf48-bodyfat-import-fix-style">
-.gf48-bf-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:8px 0 10px}
-.gf48-bf-summary>div{padding:9px 10px;border-radius:13px;background:rgba(255,255,255,.026);border:1px solid rgba(255,255,255,.055);min-width:0}
-.gf48-bf-summary span{display:block;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
-.gf48-bf-summary b{display:block;margin-top:3px;font-size:13px;color:#e5f3ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.gf48-bf-summary small{display:block;margin-top:2px;font-size:7px;color:rgba(221,233,255,.48)}
-@media(max-width:380px){.gf48-bf-summary{grid-template-columns:1fr 1fr}.gf48-bf-summary>div:first-child{grid-column:1/-1}}
+<style id="gf48-workout-intelligence-style">
+/* ========================================================================== */
+/* GAIN FOCUS 4.0.48 · time fitted workouts / exercise intelligence          */
+/* ========================================================================== */
+.gf48-availability-card{display:grid;grid-template-columns:1fr minmax(116px,150px);gap:12px;align-items:center;margin:10px 0 14px}.gf48-availability-card>div>b{display:block;font-size:17px;margin-top:3px}.gf48-availability-card small{display:block;color:var(--muted);font-size:9px;line-height:1.4;margin-top:4px}.gf48-availability-card .input{margin:0}
+.gf48-time-picker{display:grid;grid-template-columns:1fr minmax(120px,150px);gap:12px;align-items:center;padding:13px;border-radius:18px;background:rgba(91,160,255,.055);border:1px solid rgba(106,183,255,.13);margin:12px 0}.gf48-time-picker b{display:block;font-size:12px}.gf48-time-picker span{display:block;color:var(--muted);font-size:9px;line-height:1.4;margin-top:4px}.gf48-time-picker .input{margin:0}.gf48-fit-note{padding:11px 12px;border-radius:16px;background:rgba(255,194,91,.06);border:1px solid rgba(255,194,91,.12);margin:10px 0 6px}.gf48-fit-note b{display:block;font-size:10px;color:#ffda99}.gf48-fit-note span{display:block;font-size:9px;line-height:1.45;color:var(--muted);margin-top:3px}.gf48-station-label{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 2px 5px}.gf48-station-label span{font-size:9px;font-weight:900;letter-spacing:.11em;text-transform:uppercase;color:#8fceff}.gf48-station-label b{font-size:8px;color:rgba(217,232,255,.45);font-weight:700}.gf48-live-station{margin:9px 0 10px;padding:10px 12px;border-radius:15px;background:rgba(90,157,255,.055);border:1px solid rgba(114,186,255,.11)}.gf48-live-station span{font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.gf48-live-station b{display:block;font-size:12px;margin-top:2px}.gf48-live-station small{display:block;font-size:8px;color:rgba(215,230,255,.55);margin-top:3px}.gf48-offplan-btn{width:100%;margin-top:8px!important}
+.gf48-guide-title{font-size:29px!important;margin:6px 0 3px!important;letter-spacing:-.035em}.gf48-guide-purpose{margin:0 0 12px;color:rgba(225,235,255,.72);font-size:11px;line-height:1.5}.gf48-reference-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:12px 0}.gf48-mini-label{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0 0 5px 2px}.gf48-ref-photo{height:190px;border-radius:22px;overflow:hidden;background:#07101f;border:1px solid rgba(120,190,255,.12)}.gf48-ref-photo img,.gf48-ref-photo .exercise-stock{width:100%;height:100%;object-fit:cover;display:block}.gf48-movement-svg{display:block;width:100%;height:190px;border-radius:22px;border:1px solid rgba(120,190,255,.12)}.gf48-tech-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:11px 0}.gf48-tech-card{padding:11px 12px;border-radius:16px;background:rgba(255,255,255,.032);border:1px solid rgba(255,255,255,.065)}.gf48-tech-card span{display:block;font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#94d0ff}.gf48-tech-card p{font-size:10px;line-height:1.48;color:rgba(227,237,255,.72);margin:5px 0 0}.gf48-grip-card{padding:12px;border-radius:18px;background:rgba(72,128,220,.045);border:1px solid rgba(111,180,255,.10);margin:10px 0}.gf48-card-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:8px}.gf48-card-head b{font-size:11px}.gf48-card-head span{font-size:8px;color:var(--muted);text-align:right;max-width:48%}.gf48-grip-svg{display:block;width:100%;height:auto}.gf48-errors{display:grid;gap:6px;padding:11px 12px;border-radius:16px;background:rgba(255,103,125,.045);border:1px solid rgba(255,103,125,.10);margin:10px 0}.gf48-errors span{font-size:9px;color:rgba(255,214,222,.78)}
+.gf48-offplan-form{display:grid;gap:9px;margin-top:13px}.gf48-offplan-form label{font-size:9px;color:var(--muted)}.gf48-offplan-form .input{margin-top:5px}.gf48-four{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.gf48-switch-preview{padding:12px;border-radius:16px;background:rgba(93,166,255,.055);border:1px solid rgba(102,180,255,.12);margin:12px 0}.gf48-switch-preview b{display:block;font-size:10px}.gf48-switch-preview span{display:block;font-size:9px;color:var(--muted);margin-top:4px}
+.gf48-score-ring{--score:0;width:78px;height:78px;flex:0 0 78px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#80c9ff calc(var(--score)*1%),rgba(255,255,255,.075) 0);position:relative}.gf48-score-ring:before{content:'';position:absolute;inset:6px;border-radius:50%;background:#0b1426}.gf48-score-ring>div{position:relative;z-index:1;text-align:center}.gf48-score-ring b{font-size:25px;line-height:1}.gf48-score-ring span{display:block;font-size:8px;color:var(--muted);margin-top:2px}.gf48-score-breakdown{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0 14px}.gf48-score-breakdown div{padding:9px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06)}.gf48-score-breakdown span{display:block;font-size:8px;color:var(--muted);line-height:1.25}.gf48-score-breakdown b{display:block;font-size:15px;margin-top:3px}.gf48-lift-review{display:grid;gap:7px;margin:7px 0 12px}.gf48-lift-row{display:grid;grid-template-columns:29px 1fr 34px;gap:9px;align-items:center;padding:10px 11px;border-radius:15px;background:rgba(255,255,255,.034);border:1px solid rgba(255,255,255,.06)}.gf48-lift-row i{width:29px;height:29px;border-radius:10px;display:grid;place-items:center;font-style:normal;font-weight:900;background:rgba(255,255,255,.055)}.gf48-lift-row.up i{background:rgba(75,222,142,.10);color:#78efad}.gf48-lift-row.down i{background:rgba(255,93,121,.10);color:#ff9cac}.gf48-lift-row.steady i{background:rgba(102,184,255,.09);color:#9dd7ff}.gf48-lift-row b{font-size:10px}.gf48-lift-row span{display:block;font-size:8px;color:var(--muted);margin-top:3px}.gf48-lift-row strong{font-size:13px;text-align:right}.gf48-deviation-review{display:grid;gap:8px;padding:12px;border-radius:18px;background:linear-gradient(135deg,rgba(255,188,82,.08),rgba(132,92,255,.05));border:1px solid rgba(255,191,91,.13);margin:11px 0}.gf48-deviation-review>div>b{display:block;font-size:11px;margin-top:3px}.gf48-deviation-review small{display:block;font-size:8px;line-height:1.4;color:var(--muted);margin-top:4px}.gf48-deviation-review .btn{margin:0}.gf48-toggle{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.055)}.gf48-toggle:last-child{border-bottom:0}.gf48-toggle input{margin-top:3px}.gf48-toggle b{display:block;font-size:10px}.gf48-toggle small{display:block;font-size:8px;color:var(--muted);line-height:1.42;margin-top:3px}.gf48-settings{margin-top:14px}
+@media(max-width:430px){.gf48-availability-card,.gf48-time-picker{grid-template-columns:1fr}.gf48-reference-grid{grid-template-columns:1fr}.gf48-tech-grid{grid-template-columns:1fr}.gf48-four{grid-template-columns:repeat(2,1fr)}.gf48-score-breakdown{grid-template-columns:repeat(2,1fr)}.gf48-card-head{display:block}.gf48-card-head span{display:block;max-width:none;text-align:left;margin-top:3px}.post-workout-hero .gf48-score-ring{width:66px;height:66px;flex-basis:66px}.gf48-score-ring b{font-size:22px}}
+
 </style>
-<script id="gf48-bodyfat-import-fix">
+<script id="gf48-workout-intelligence">
 // ============================================================================
-// GAIN FOCUS 4.0.48 · BODY-COMPOSITION IMPORT / RENDER FIX
-// v4.0.45 plateau rendering accidentally skipped the body-fat chart whenever
-// tape-measurement regions were also present. Keep legacy bodyCompositionLogs
-// intact and always draw body-fat history independently from the tape chart.
+// GAIN FOCUS 4.0.48 · TIME-FITTED WORKOUTS + EXERCISE INTELLIGENCE + DEVIATION
 // ============================================================================
-function gf48BodyFatSummaryHTML(){
-  const logs=typeof gf30BodyCompLogs==='function'?gf30BodyCompLogs():[];
-  const latest=logs.filter(x=>Number.isFinite(Number(x?.bodyFatPct))).at(-1)||null;
-  const baseline=plan?.client?.estimatedBodyFatPct;
-  const target=plan?.goal?.targetBodyFatPct;
-  const latestText=latest?`${round(Number(latest.bodyFatPct),1)}%`:(baseline!=null&&String(baseline).trim()?`${esc(String(baseline))}%`:'—');
-  return `<div class="gf48-bf-summary">
-    <div><span>Latest body fat</span><b>${latestText}</b><small>${latest?`${logs.filter(x=>Number.isFinite(Number(x?.bodyFatPct))).length} logged readings`:'plan estimate'}</small></div>
-    <div><span>Starting estimate</span><b>${baseline!=null&&String(baseline).trim()?`${esc(String(baseline))}%`:'—'}</b><small>client plan</small></div>
-    <div><span>Goal range</span><b>${target!=null&&String(target).trim()?`${esc(String(target))}%`:'—'}</b><small>client goal</small></div>
-  </div>`;
-}
+(function(){
+  const GF48_VERSION='4.0.48';
+  const GF48_MINUTES=[30,45,60,75,90,120];
 
-window.gf30BodyCompTrendHTML=function(){
-  return `<div id="gf38TapeChart" class="chart" style="height:285px"></div>
-    <div id="gf38TapeLegend"></div>
-    <div class="gf38-bodyfat-block">
-      <div class="gf38-bodyfat-head"><b>Body-fat trend</b><span>Separate % scale</span></div>
-      ${gf48BodyFatSummaryHTML()}
-      <div id="gf30BodyFatChart" class="chart" style="height:190px"></div>
-    </div>
-    <div id="gf30TapeTrendSummary"></div>
-    <p class="gf26-trend-note">Regional tape lines are normalised to each region's first measurement (100), so chest, shoulders, arms, waist and legs can be compared on the same scale. Body fat remains on its own percentage scale.</p>`;
-};
-
-window.gf30DrawBodyCompTrend=function(){
-  const domain=typeof gf42HistoricDomain==='function'?gf42HistoricDomain():null;
-  const ticks=domain&&typeof gf42DomainTicks==='function'?gf42DomainTicks(domain):null;
-  const tape=document.getElementById('gf38TapeChart');
-  const legendEl=document.getElementById('gf38TapeLegend');
-  const regions=typeof gf38BodyRegionSeries==='function'?gf38BodyRegionSeries():{};
-  const keys=Object.keys(regions||{});
-
-  if(tape){
-    if(keys.length){
-      const dates=[...new Set(keys.flatMap(k=>(regions[k].points||[]).map(p=>p.date)))].sort();
-      const start=domain?.start||dates[0],end=domain?.end||dates.at(-1);
-      const baseline=[{date:start,value:100},{date:end,value:100}];
-      const series=keys.map(k=>({label:regions[k].label,color:GF38_BODY_COLORS[k]||'#d6e8ff',points:regions[k].points,strokeWidth:2.25}));
-      series.push({label:'Baseline',color:'rgba(255,255,255,.30)',points:baseline,strokeWidth:1.2,dash:'4 6'});
-      const zones=typeof gf45BodyZones==='function'?gf45BodyZones(regions):[];
-      const spec={series,yLabel:'Tape growth index (baseline = 100)',yTickFormatter:v=>String(round(v,1)),legend:[{label:'100 baseline',color:'rgba(255,255,255,.38)',dash:'4 6'}],emptyText:'Two tape measurements unlock regional trends',zones};
-      if(domain){spec.xDomain=domain;if(ticks)spec.xTicks=ticks}
-      tape.innerHTML=buildLineChartSVG(spec);
-      if(legendEl)legendEl.innerHTML=`<div class="gf38-region-legend">${keys.map(k=>`<span><i style="background:${GF38_BODY_COLORS[k]}"></i>${esc(regions[k].label)}</span>`).join('')}</div>`;
-      if(zones.length&&!tape.nextElementSibling?.classList?.contains('gf45-zone-key'))tape.insertAdjacentHTML('afterend','<div class="gf45-zone-key"><span><i></i>Plateau</span><span class="decline"><i></i>Decline</span></div>');
-    }else{
-      tape.innerHTML='<div class="gf38-chart-empty">Two tape measurements unlock regional growth lines.</div>';
-      if(legendEl)legendEl.innerHTML='';
+  function gf48Ensure(){
+    try{ensureProgressExtras?.()}catch{}
+    if(!progress)return;
+    progress.settings||(progress.settings={});
+    if(!Number.isFinite(Number(progress.settings.sessionDurationMinutes)))progress.settings.sessionDurationMinutes=60;
+    if(!progress.settings.sessionDurationOverrides||typeof progress.settings.sessionDurationOverrides!=='object')progress.settings.sessionDurationOverrides={};
+    if(typeof progress.settings.groupExercisesByStation!=='boolean')progress.settings.groupExercisesByStation=true;
+    if(typeof progress.settings.switchUpIfDeviated!=='boolean')progress.settings.switchUpIfDeviated=true;
+    if(!Array.isArray(progress.exerciseDeviations))progress.exerciseDeviations=[];
+    if(plan?.training){
+      if(!Number.isFinite(Number(plan.training.defaultSessionDurationMinutes)))plan.training.defaultSessionDurationMinutes=Number(progress.settings.sessionDurationMinutes)||60;
+      if(!Array.isArray(plan.training.revisionHistory))plan.training.revisionHistory=[];
     }
   }
+  window.gf48Ensure=gf48Ensure;
 
-  // Body-fat must render regardless of whether tape regions exist.
-  const bf=document.getElementById('gf30BodyFatChart');
-  if(bf){
-    const pts=(typeof gf30BodyCompLogs==='function'?gf30BodyCompLogs():[])
-      .filter(x=>Number.isFinite(Number(x?.bodyFatPct))&&(!window.gf38ValidDate||gf38ValidDate(x.date)))
-      .map(x=>({date:String(x.date||'').slice(0,10),value:Number(x.bodyFatPct)}));
-    const zones=typeof gf45SeriesZones==='function'?gf45SeriesZones(pts,'Body fat'):[];
-    const spec={series:pts.length?[{label:'Body fat',color:'#7fd6ff',points:pts,strokeWidth:3}]:[],yLabel:'Body fat (%)',yTickFormatter:v=>`${round(v,1)}%`,emptyText:'No body-fat history yet',zones};
-    if(domain){spec.xDomain=domain;if(ticks)spec.xTicks=ticks}
-    bf.innerHTML=buildLineChartSVG(spec);
+  function gf48Slug(s){return String(s||'exercise').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,64)}
+  function gf48Station(e){
+    const s=`${e?.name||''} ${e?.focus||''}`.toLowerCase();
+    if(/smith/.test(s))return 'Smith machine';
+    if(/cable|pulldown|pushdown|rope|straight-arm|pec deck/.test(s))return /pec deck/.test(s)?'Pec-deck / fly station':'Cable station';
+    if(/leg press/.test(s))return 'Leg press';
+    if(/leg curl/.test(s))return 'Leg curl';
+    if(/hack squat/.test(s))return 'Hack squat';
+    if(/machine/.test(s))return 'Machine';
+    if(/barbell|bench press|ez-bar|squat|romanian|rdl/.test(s))return 'Rack / barbell bench';
+    if(/chest[- ]supported row/.test(s))return 'Chest-supported row station';
+    if(/dumbbell|db |lateral raise|rear-delt fly|shrug|cross-body curl|hammer curl|\bcurl\b/.test(s))return 'Dumbbell area';
+    if(/pull-up|pull up|chin|dip/.test(s))return 'Bodyweight station';
+    if(/calf/.test(s))return 'Calf station';
+    if(/abs|core/.test(s))return 'Mat / core';
+    return 'General floor';
   }
+  window.gf48Station=gf48Station;
 
-  const target=document.getElementById('gf30TapeTrendSummary');
-  if(target){
-    target.innerHTML=keys.length?`<div class="gf30-tape-trends">${keys.map(k=>`<div><span>${esc(regions[k].label)}</span><b>${regions[k].deltaCm>=0?'+':''}${regions[k].deltaCm} cm</b></div>`).join('')}</div>`:'';
+  function gf48IsCompound(e){return /bench|press|pulldown|pull-up|pull up|chin|row|squat|hack|deadlift|rdl|romanian|leg press|dip/i.test(e?.name||'')&&!/fly|raise|curl|extension|pushdown|shrug/i.test(e?.name||'')}
+  function gf48ExerciseMinutes(e){
+    const sets=Math.max(1,Number(e?.sets)||3),compound=gf48IsCompound(e),rest=compound?2.15:1.35,work=0.72;
+    return 1.1+sets*work+Math.max(0,sets-1)*rest;
   }
-};
+  function gf48Grouped(exercises){
+    const rows=(exercises||[]).map((e,i)=>({e,i,station:gf48Station(e),compound:gf48IsCompound(e)}));
+    if(!progress?.settings?.groupExercisesByStation)return rows.map(x=>x.e);
+    const first=new Map();rows.forEach(x=>{if(!first.has(x.station))first.set(x.station,x.i)});
+    rows.sort((a,b)=>first.get(a.station)-first.get(b.station)||(Number(b.compound)-Number(a.compound))||a.i-b.i);
+    return rows.map(x=>x.e);
+  }
+  function gf48SessionMinutes(sessionId){
+    gf48Ensure();const v=Number(progress?.settings?.sessionDurationOverrides?.[sessionId]);
+    return GF48_MINUTES.includes(v)?v:Number(progress?.settings?.sessionDurationMinutes)||60;
+  }
+  window.gf48SessionMinutes=gf48SessionMinutes;
+
+  function gf48FocusBoost(e){
+    const norm=v=>String(v||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(),f=norm(e?.focus),targets=(plan?.goal?.focus||[]).map(norm);
+    if(targets.some(x=>x===f))return 24;
+    if(targets.some(x=>x.includes(f)||f.includes(x)))return 18;
+    const ft=new Set(f.split(/\s+/).map(x=>x.replace(/s$/,'')).filter(x=>x.length>2));
+    return targets.some(x=>norm(x).split(/\s+/).map(y=>y.replace(/s$/,'')).some(y=>ft.has(y)))?14:0;
+  }
+  window.gf48FocusBoost=gf48FocusBoost;
+  function gf48FitSession(s,minutes=gf48SessionMinutes(s?.id)){
+    const all=(s?.exercises||[]).map((e,i)=>({e,i,mins:gf48ExerciseMinutes(e),score:100-i*4+(gf48IsCompound(e)?18:0)+gf48FocusBoost(e),protected:false}));
+    const budget=Math.max(18,Number(minutes)||60),usable=Math.max(14,budget-5),picked=[];let used=0;
+    // Protect the first major movement plus the best direct match for each stated goal focus.
+    const protect=new Set();if(all.length)protect.add(all[0]);
+    const targets=(plan?.goal?.focus||[]).map(x=>String(x).toLowerCase());
+    for(const t of targets){const candidates=all.filter(x=>{const f=String(x.e.focus||'').toLowerCase(),n=String(x.e.name||'').toLowerCase();return f===t||f.includes(t)||t.includes(f)||t.split(/\s+/).some(w=>w.length>3&&(f.includes(w)||n.includes(w)))}).sort((a,b)=>b.score-a.score||a.i-b.i);if(candidates[0])protect.add(candidates[0])}
+    for(const x of protect){x.protected=true;const allowance=x.mins+0.8;if(!picked.includes(x)&&(!picked.length||used+allowance<=usable+5)){picked.push(x);used+=allowance}}
+    const ordered=[...all].filter(x=>!picked.includes(x)).sort((a,b)=>b.score-a.score||a.i-b.i);
+    for(const x of ordered){const allowance=x.mins+0.8;if(used+allowance<=usable){picked.push(x);used+=allowance}}
+    if(picked.length<2&&all.length>=2)for(const x of all.slice(0,2))if(!picked.includes(x))picked.push(x);
+    const estimate=list=>{let est=5,last='';for(const e of list){const st=gf48Station(e);est+=gf48ExerciseMinutes(e)+(last?(st===last?0.45:1.65):1.2);last=st}return est};
+    let selected=picked.sort((a,b)=>a.i-b.i),exercises=gf48Grouped(selected.map(x=>x.e)),est=estimate(exercises);
+    while(exercises.length>2&&est>budget+2){const removable=[...selected].filter(x=>!x.protected).sort((a,b)=>a.score-b.score||b.i-a.i);const lowest=removable[0]||[...selected].sort((a,b)=>a.score-b.score||b.i-a.i)[0];if(!lowest)break;selected=selected.filter(x=>x!==lowest);exercises=gf48Grouped(selected.map(x=>x.e));est=estimate(exercises)}
+    return {minutes:budget,exercises,estimatedMinutes:Math.round(est),plannedExercises:(s?.exercises||[]).length,stationCount:new Set(exercises.map(gf48Station)).size};
+  }
+  window.gf48FitSession=gf48FitSession;
+
+  function gf48RuntimeExercises(w,s){
+    gf48Ensure();
+    if(!w.runtimeExerciseKeys?.length){
+      const fit=gf48FitSession(s,gf48SessionMinutes(s.id));
+      w.runtimeExerciseKeys=fit.exercises.map(workoutExerciseKey);
+      w.targetDurationMinutes=fit.minutes;w.runtimeEstimatedMinutes=fit.estimatedMinutes;w.runtimeStationCount=fit.stationCount;
+      w.plannedExerciseCount=s.exercises.length;w.sessionGrouping='station';
+      try{write()}catch{}
+    }
+    const map=new Map((s.exercises||[]).map(e=>[workoutExerciseKey(e),e]));
+    const rows=w.runtimeExerciseKeys.map(k=>map.get(k)).filter(Boolean);
+    return rows.length?rows:s.exercises;
+  }
+  window.gf48RuntimeExercises=gf48RuntimeExercises;
+
+  function gf48SetSessionMinutes(sessionId,minutes){
+    gf48Ensure();const m=Number(minutes);if(!GF48_MINUTES.includes(m))return;
+    progress.settings.sessionDurationOverrides[sessionId]=m;write();openSession(sessionId);
+  }
+  window.gf48SetSessionMinutes=gf48SetSessionMinutes;
+
+  function gf48SetDefaultMinutes(v){gf48Ensure();const m=Number(v);if(!GF48_MINUTES.includes(m))return;progress.settings.sessionDurationMinutes=m;if(plan?.training)plan.training.defaultSessionDurationMinutes=m;write();renderAll?.();toast(`Workout availability set to ${m} min`)}
+  window.gf48SetDefaultMinutes=gf48SetDefaultMinutes;
+
+  function gf48TogglePref(key,checked){gf48Ensure();progress.settings[key]=!!checked;write();renderAll?.()}
+  window.gf48TogglePref=gf48TogglePref;
+
+  // --------------------------------------------------------------------------
+  // Technique library: descriptive movement-specific instructions + grip map.
+  // --------------------------------------------------------------------------
+  const GF48_GUIDES=[
+    [/bench press/i,{purpose:'Horizontal press for chest, anterior delts and triceps.',setup:'Eyes under the bar, feet planted, upper back tight to the bench. Set the shoulder blades back and slightly down before unracking.',execution:'Lower the bar under control toward the lower-to-mid chest with forearms near vertical. Keep the ribcage stable, touch softly, then press up and slightly back without losing the upper-back position.',grip:'Pronated grip. Start around 1.4–1.7× shoulder width, then adjust so the forearms are close to vertical at the bottom.',tempo:'About 2–3 sec down · controlled touch · strong press.',errors:['Bouncing off the chest','Wrists folded far back','Shoulders rolling forward at the bottom'],gripType:'wide-bar'}],
+    [/incline.*(dumbbell|db)/i,{purpose:'Incline press biased toward the clavicular/upper chest.',setup:'Bench roughly 20–35°. Pull shoulder blades back/down and keep feet planted. Start dumbbells just outside the upper chest.',execution:'Press up and slightly inward while keeping the elbows below the wrists. Lower until the upper arm is just below torso level or to your comfortable shoulder range.',grip:'Neutral-to-semi-pronated grip. Forearms stay nearly vertical through the lower half of the rep.',tempo:'2–3 sec lower · brief controlled bottom · smooth press.',errors:['Bench angle too steep','Elbows flared to 90°','Dumbbells drifting toward the face'],gripType:'db-neutral'}],
+    [/incline.*(barbell|smith)|smith.*press/i,{purpose:'Stable incline press for progressive upper-chest loading.',setup:'Set the bench so the bar tracks toward the upper chest, normally around 20–35°. Retract the shoulder blades and plant the feet.',execution:'Lower with wrists stacked over elbows, touch/approach the upper chest, then press through the same path without shrugging.',grip:'Pronated, slightly wider than shoulder width. Choose a width that keeps the forearms close to vertical near the bottom.',tempo:'2–3 sec lower · no bounce · controlled drive.',errors:['Bench too steep','Bar path too high toward the neck','Losing scapular position'],gripType:'mid-bar'}],
+    [/neutral.*pulldown/i,{purpose:'Vertical pull for lat width with a shoulder-friendly neutral grip.',setup:'Lock the thighs under the pad, sit tall with a small natural lean and brace the torso.',execution:'Depress the shoulder blades first, then drive the elbows down toward the ribs. Finish without turning it into a row; return until the lats are lengthened.',grip:'Neutral handles, usually around shoulder width. Keep wrists stacked and elbows tracking below the hands.',tempo:'1–2 sec pull · brief squeeze · 2–3 sec return.',errors:['Leaning far back','Curling the handle with the arms','Cutting the stretched top position short'],gripType:'neutral-pull'}],
+    [/lat pulldown/i,{purpose:'Vertical pull primarily for lat width, with biceps assisting.',setup:'Thighs secured, chest tall, torso only slightly reclined. Begin from a controlled overhead stretch.',execution:'Pull the elbows down toward the sides of the ribcage until the bar/handle reaches upper-chest level, then return under control.',grip:'Pronated grip slightly wider than shoulder width unless the attachment dictates otherwise. Avoid excessively wide grips that shorten useful range.',tempo:'1–2 sec down · brief squeeze · 2–3 sec up.',errors:['Pulling behind the neck','Swinging the torso','Going excessively wide'],gripType:'wide-pull'}],
+    [/single-arm.*pulldown/i,{purpose:'Unilateral lat work that lets you align the elbow path with the individual lat.',setup:'Sit or kneel square to the cable. Reach long through the shoulder without rotating the torso.',execution:'Drive the elbow down and slightly in toward the hip, pause, then allow a full controlled reach overhead.',grip:'Single D-handle with neutral or slightly supinated hand. Let the wrist rotate naturally rather than forcing it.',tempo:'1–2 sec pull · 1 sec squeeze · 2–3 sec return.',errors:['Torso rotation','Pulling the elbow behind the body','Shrugging at the top'],gripType:'single-neutral'}],
+    [/straight-arm.*pulldown/i,{purpose:'Shoulder-extension isolation for the lats with minimal elbow flexion.',setup:'Stand back from a high cable, soft knees, ribs stacked. Arms start overhead with only a slight elbow bend.',execution:'Sweep the handle down in an arc until the hands approach the thighs while keeping the elbow angle nearly fixed. Return to a long lat stretch.',grip:'Pronated bar or rope; shoulder-width is a good starting point. Rope can allow a more natural finish.',tempo:'2 sec down · squeeze · 2–3 sec controlled return.',errors:['Turning it into a triceps pushdown','Excessive torso swing','Bending the elbows more as fatigue rises'],gripType:'straight-bar'}],
+    [/chest-supported row|wide chest-supported row/i,{purpose:'Stable horizontal row for mid-back thickness with reduced lower-back fatigue.',setup:'Set chest firmly on the pad, feet stable and neck neutral. Start with shoulders reaching forward without rounding the whole spine.',execution:'Pull the elbows back while keeping the chest on the pad. Pause as the shoulder blades move together, then reach forward under control.',grip:'Neutral/medium grip for lats and mid-back; a wider pronated grip biases upper back/rear delts more.',tempo:'1–2 sec pull · 1 sec pause · 2–3 sec lower.',errors:['Lifting the chest off the pad','Shrugging instead of rowing','Shortening the forward reach'],gripType:'row-medium'}],
+    [/one-arm.*row/i,{purpose:'Unilateral horizontal pull for lats and mid-back.',setup:'Brace the torso and square the hips. Let the working shoulder reach forward slightly without twisting.',execution:'Drive the elbow toward the hip/ribcage, pause briefly, then return to a controlled stretch.',grip:'Neutral D-handle. Keep the wrist straight and let the elbow path determine whether the bias is more lat or upper back.',tempo:'1–2 sec pull · pause · 2–3 sec return.',errors:['Rotating the torso','Yanking from the shoulder','Overpulling the elbow far behind the body'],gripType:'single-neutral'}],
+    [/romanian|\brdl\b/i,{purpose:'Hip hinge for hamstrings and glutes with spinal erectors working isometrically.',setup:'Stand tall with the load close to the thighs, knees softly bent and trunk braced.',execution:'Push the hips back while the load tracks close to the legs. Descend until hamstring tension or your neutral-spine range ends, then drive the hips forward to stand.',grip:'Double-overhand or straps for hypertrophy if grip limits the target muscles. Hands just outside the thighs.',tempo:'3 sec lower · controlled turnaround · 1–2 sec stand.',errors:['Squatting the weight down','Letting the bar drift forward','Hyperextending at lockout'],gripType:'narrow-bar'}],
+    [/squat|hack squat/i,{purpose:'Knee-dominant compound for quads with glutes/adductors contributing.',setup:'Brace before each rep and establish a stance that lets the knees track comfortably over the toes.',execution:'Descend with the whole foot loaded, keep knees tracking in line with the toes, reach a controlled depth, then drive through the floor.',grip:'Barbell squat: secure the bar with an even grip. Hack squat: hold the machine handles only for stability.',tempo:'2–3 sec down · controlled bottom · strong ascent.',errors:['Heels lifting','Knees collapsing inward','Losing brace at the bottom'],gripType:'squat-bar'}],
+    [/leg press/i,{purpose:'Machine knee/hip extension for high-output quad and glute work.',setup:'Set the seat so the pelvis stays supported at your deepest comfortable position. Feet flat and symmetrical.',execution:'Lower until your controlled hip/knee range ends, then press through the full foot without locking the knees aggressively.',grip:'Hands stay on the machine handles; grip is for bracing, not pulling.',tempo:'2–3 sec lower · controlled turnaround · smooth press.',errors:['Pelvis rolling off the pad','Knees collapsing inward','Partial reps caused by excessive load'],gripType:'machine-handles'}],
+    [/leg curl/i,{purpose:'Knee-flexion isolation for the hamstrings.',setup:'Align the knee joint with the machine pivot and position the pad just above the heel/ankle.',execution:'Curl through the available range without lifting the hips, squeeze briefly, then extend under control.',grip:'Hold the machine handles lightly enough to stay stable without using the upper body to cheat.',tempo:'1–2 sec curl · 1 sec squeeze · 2–3 sec return.',errors:['Hips lifting','Fast uncontrolled eccentric','Pad positioned too high on the calf'],gripType:'machine-handles'}],
+    [/calf raise/i,{purpose:'Plantar-flexion work for gastrocnemius/soleus.',setup:'Place the ball of the foot securely on the platform with room for the heel to travel.',execution:'Lower into a controlled calf stretch, then rise as high as possible without bouncing. Pause briefly at the top.',grip:'Use the handles/support only for balance.',tempo:'2 sec stretch · strong rise · 1 sec top squeeze.',errors:['Bouncing','Very short range','Rolling the ankles outward'],gripType:'machine-handles'}],
+    [/cable fly|pec deck/i,{purpose:'Chest adduction/isolation with a long tension curve.',setup:'Set handles so the upper arm can open without forcing the shoulder. Keep ribs stacked and shoulder blades controlled.',execution:'Bring the upper arms/hands together in an arc, squeeze the chest, then open under control until a comfortable stretch.',grip:'Neutral handles. Keep wrists straight and elbows softly bent; the elbow angle should stay nearly constant.',tempo:'2 sec close · squeeze · 2–3 sec open.',errors:['Turning it into a press','Overstretching the shoulder','Changing elbow bend to finish reps'],gripType:'single-neutral'}],
+    [/lateral raise/i,{purpose:'Shoulder abduction biased toward the middle deltoid.',setup:'Stand tall with light dumbbells or cable handles and a slight elbow bend.',execution:'Raise the arms in the scapular plane (slightly forward of straight out to the side) until roughly shoulder height, then lower slowly.',grip:'Neutral-to-slightly pronated. Do not force the thumbs sharply downward.',tempo:'1–2 sec up · brief hold · 2–3 sec down.',errors:['Shrugging','Throwing the torso','Using too much load and shortening range'],gripType:'db-neutral'}],
+    [/rear-delt.*fly|rear delt.*fly/i,{purpose:'Horizontal abduction for rear delts and upper back.',setup:'Support the torso where possible. Let the arms hang with a soft elbow bend and shoulders set neutral.',execution:'Sweep the upper arms out/back until the rear delts shorten, then return slowly without letting the shoulders roll forward aggressively.',grip:'Neutral or slight pronation. Think about moving the upper arm rather than squeezing the handles.',tempo:'1–2 sec out · brief squeeze · 2–3 sec return.',errors:['Turning it into a row','Shrugging','Using momentum'],gripType:'db-neutral'}],
+    [/shrug/i,{purpose:'Scapular elevation for upper-trap hypertrophy.',setup:'Stand tall with the load close to the body and neck neutral.',execution:'Elevate the shoulders mostly upward, pause at the top, then lower fully under control. Keep the head still.',grip:'Hands just outside the thighs for a bar, or neutral at the sides with dumbbells/cables. Straps are acceptable if grip limits the traps.',tempo:'1 sec up · 1 sec hold · 2–3 sec lower.',errors:['Rolling the shoulders in circles','Bending the elbows to curl the load','Forward-head movement'],gripType:'narrow-bar'}],
+    [/cross-body.*curl|hammer curl/i,{purpose:'Elbow flexion with strong brachialis/brachioradialis contribution; useful for arm thickness.',setup:'Stand tall with the upper arm close to the torso and shoulder relaxed.',execution:'Curl the dumbbell toward the opposite upper chest/shoulder without moving the elbow far forward. Lower to full control.',grip:'Neutral/hammer grip — thumb stays up. Keep the wrist stacked rather than flexing it.',tempo:'1–2 sec up · squeeze · 2–3 sec down.',errors:['Swinging the torso','Elbow drifting far forward','Wrist bending under the load'],gripType:'db-neutral'}],
+    [/ez-bar curl|curl/i,{purpose:'Elbow flexion for biceps/brachialis with a stable bilateral implement.',setup:'Stand tall, ribs stacked and upper arms close to the torso.',execution:'Curl without throwing the shoulders forward, squeeze at the top, then lower until the elbow is almost fully extended.',grip:'EZ-bar: use the angled section that keeps wrists comfortable, usually around shoulder width. Straight/dumbbell curls: supinated grip.',tempo:'1–2 sec curl · squeeze · 2–3 sec lower.',errors:['Torso swing','Elbows travelling forward excessively','Cutting the eccentric short'],gripType:'curl-bar'}],
+    [/triceps.*extension|pushdown/i,{purpose:'Elbow extension for triceps hypertrophy.',setup:'Brace the torso, keep the upper arm stable and start with the elbow comfortably flexed.',execution:'Extend the elbow to a strong triceps contraction without turning the movement into a shoulder press. Return under control.',grip:'Rope: neutral grip and separate slightly at the bottom. Bar: pronated grip around shoulder width.',tempo:'1–2 sec extend · brief squeeze · 2–3 sec return.',errors:['Elbows drifting forward/back','Leaning bodyweight onto the handle','Snapping into lockout'],gripType:'rope'}],
+    [/pull-up|pull up/i,{purpose:'Bodyweight vertical pull for lats, upper back and elbow flexors.',setup:'Start from a controlled hang with ribs stacked and shoulders active rather than completely loose.',execution:'Drive elbows down, bring the upper chest toward the bar, then lower to a full controlled hang.',grip:'Pronated grip around shoulder width to moderately wider. Neutral handles are a good shoulder-friendly alternative.',tempo:'1–2 sec up · controlled top · 2–3 sec down.',errors:['Kipping unless intended','Craning the neck','Short eccentric range'],gripType:'wide-pull'}],
+    [/dip/i,{purpose:'Compound press for chest and triceps, with torso angle changing the emphasis.',setup:'Support the shoulders actively, brace the trunk and begin with elbows controlled.',execution:'Lower only as far as the shoulder remains comfortable, then press back up without losing scapular control.',grip:'Neutral parallel handles. Keep wrists stacked over the handles.',tempo:'2–3 sec down · smooth turnaround · strong press.',errors:['Dropping too deep','Shoulders collapsing forward','Bouncing out of the bottom'],gripType:'neutral-pull'}]
+  ];
+
+  function gf48ExerciseInfo(e){
+    const name=String(e?.name||'Exercise');
+    const found=GF48_GUIDES.find(([rx])=>rx.test(name))?.[1];
+    if(found)return {...found,station:gf48Station(e)};
+    const type=typeof exerciseGuideType==='function'?exerciseGuideType(e):'general',cues=typeof exerciseCues==='function'?exerciseCues(e):[];
+    const generic={
+      press:{purpose:'Pressing movement for chest/shoulder and triceps development.',setup:'Set the bench or machine so the working joint starts in a comfortable range. Brace the torso and stabilise the shoulder blades.',execution:'Lower under control with wrist stacked over elbow, then press through a repeatable path without shrugging or bouncing.',grip:'Use a pronated or neutral grip that keeps the wrist straight and forearm aligned with the direction of force.',tempo:'2–3 sec lower · controlled bottom · smooth press.',errors:['Elbows flaring beyond a comfortable line','Shoulders rolling forward','Using momentum or bouncing'],gripType:'mid-bar'},
+      row:{purpose:'Horizontal pull for lats, rhomboids, rear delts and mid-back thickness.',setup:'Brace or support the torso and begin from a controlled reach without collapsing the spine.',execution:'Drive the elbow back, pause as the back shortens, then return under control to a full useful reach.',grip:'Neutral/medium grip is a strong default; wider pronated grips bias more upper-back/rear-delt involvement.',tempo:'1–2 sec pull · brief pause · 2–3 sec return.',errors:['Shrugging instead of rowing','Torso swing','Cutting the reach short'],gripType:'row-medium'},
+      pull:{purpose:'Vertical pull for lat width with elbow flexors assisting.',setup:'Stabilise the torso and start from a controlled overhead stretch with active shoulders.',execution:'Lead by driving the elbows down toward the ribs, then return until the lats are lengthened without losing control.',grip:'Choose pronated, neutral or supinated handles that keep the wrist comfortable; avoid unnecessarily extreme widths.',tempo:'1–2 sec pull · brief squeeze · 2–3 sec return.',errors:['Swinging the torso','Turning it into a curl','Shortening the top stretch'],gripType:'wide-pull'},
+      squat:{purpose:'Knee/hip extension movement for quads and glutes.',setup:'Brace before the rep, use a stable foot position and line the knees with the toes.',execution:'Descend under control to your available depth while maintaining whole-foot pressure, then drive up without collapsing inward.',grip:'Use the bar or machine handles only to secure position; hand placement should not force the shoulders into pain.',tempo:'2–3 sec down · controlled bottom · strong ascent.',errors:['Heels lifting','Knees collapsing inward','Losing brace under load'],gripType:'squat-bar'},
+      hinge:{purpose:'Hip-hinge movement for hamstrings and glutes with the trunk braced.',setup:'Set the load close to the body, soften the knees and brace the trunk.',execution:'Push the hips backward while maintaining spinal position, then extend the hips to stand without leaning back.',grip:'Hands just outside the thighs on a bar; straps are acceptable when grip would otherwise limit the target muscles.',tempo:'3 sec lower · controlled turnaround · 1–2 sec stand.',errors:['Squatting instead of hinging','Load drifting away from the body','Hyperextending at lockout'],gripType:'narrow-bar'},
+      curl:{purpose:'Elbow-flexion movement for biceps/brachialis and arm thickness.',setup:'Stand or sit tall with the upper arm stable and wrist stacked.',execution:'Flex the elbow without using torso momentum, squeeze, then return to near-full elbow extension under control.',grip:'Supinated for classic biceps emphasis; neutral/hammer for more brachialis and brachioradialis.',tempo:'1–2 sec up · squeeze · 2–3 sec down.',errors:['Torso swing','Elbows travelling forward excessively','Wrist folding under load'],gripType:'curl-bar'},
+      triceps:{purpose:'Elbow-extension movement for triceps hypertrophy.',setup:'Brace the torso and keep the upper arm stable around the shoulder.',execution:'Extend through the elbow to a strong triceps contraction, then return slowly without throwing the shoulder into the movement.',grip:'Rope usually uses neutral hands; straight/V bars use pronated hands around shoulder width.',tempo:'1–2 sec extend · brief squeeze · 2–3 sec return.',errors:['Elbows drifting excessively','Using bodyweight to force the handle','Snapping lockout'],gripType:'rope'},
+      raise:{purpose:'Isolation movement for deltoid or shoulder-girdle musculature.',setup:'Use a light enough load to hold the torso still and keep the shoulder in a comfortable plane.',execution:'Move the upper arm through the intended arc without shrugging or throwing the torso, then lower slowly.',grip:'Neutral-to-slight pronation is a good default; do not force an internally rotated “thumbs-down” position.',tempo:'1–2 sec raise · brief hold · 2–3 sec lower.',errors:['Shrugging','Momentum','Using excessive load and shortening range'],gripType:'db-neutral'}
+    };
+    const g=generic[type]||{purpose:`${e?.focus||'Target-muscle'} exercise.`,setup:cues[0]||'Set the equipment so you can use a stable, repeatable position.',execution:cues[1]||'Move through a controlled range and keep the target muscle loaded.',grip:'Use a secure, neutral wrist position and choose the handle width that keeps the joints comfortable.',tempo:'Controlled eccentric · smooth concentric.',errors:[cues[2]||'Avoid momentum and technique breakdown.'],gripType:'generic'};
+    return {...g,station:gf48Station(e)};
+  }
+  window.gf48ExerciseInfo=gf48ExerciseInfo;
+
+  function gf48GripSVG(e,info=gf48ExerciseInfo(e)){
+    const t=info.gripType||'generic',W=360,H=116,hand=(x,y,rot=0)=>`<g transform="translate(${x} ${y}) rotate(${rot})"><rect x="-13" y="-8" width="26" height="16" rx="7" fill="rgba(224,238,255,.88)"/><rect x="8" y="-5" width="12" height="6" rx="3" fill="rgba(224,238,255,.88)"/></g>`,bar=`<line x1="40" y1="58" x2="320" y2="58" stroke="#7a8daa" stroke-width="8" stroke-linecap="round"/>`;
+    let body='';
+    if(/wide-bar|mid-bar|narrow-bar|squat-bar|curl-bar|straight-bar/.test(t)){
+      const pts=t==='wide-bar'?[92,268]:t==='mid-bar'?[112,248]:t==='narrow-bar'?[138,222]:t==='curl-bar'?[130,230]:[120,240];body=bar+hand(pts[0],58)+hand(pts[1],58,180)+`<line x1="180" y1="26" x2="180" y2="92" stroke="rgba(117,186,255,.28)" stroke-dasharray="4 5"/><text x="180" y="106" text-anchor="middle" fill="#9ab0cd" font-size="11">${t==='wide-bar'?'wider than shoulders':t==='narrow-bar'?'just outside thighs':'about shoulder to moderate width'}</text>`;
+    }else if(/wide-pull|neutral-pull/.test(t)){
+      if(t==='wide-pull')body=bar+hand(105,58,90)+hand(255,58,-90)+`<text x="180" y="106" text-anchor="middle" fill="#9ab0cd" font-size="11">pronated · moderate width</text>`;
+      else body=`<line x1="125" y1="32" x2="125" y2="84" stroke="#7a8daa" stroke-width="9" stroke-linecap="round"/><line x1="235" y1="32" x2="235" y2="84" stroke="#7a8daa" stroke-width="9" stroke-linecap="round"/>${hand(125,58,90)}${hand(235,58,-90)}<text x="180" y="106" text-anchor="middle" fill="#9ab0cd" font-size="11">neutral · palms facing</text>`;
+    }else if(/db-neutral|single-neutral/.test(t)){
+      body=`<g transform="translate(120 58)"><line x1="-28" y1="0" x2="28" y2="0" stroke="#7a8daa" stroke-width="8"/><circle cx="-31" cy="0" r="12" fill="#53637d"/><circle cx="31" cy="0" r="12" fill="#53637d"/>${hand(0,0,90)}</g><g transform="translate(240 58)"><line x1="-28" y1="0" x2="28" y2="0" stroke="#7a8daa" stroke-width="8"/><circle cx="-31" cy="0" r="12" fill="#53637d"/><circle cx="31" cy="0" r="12" fill="#53637d"/>${hand(0,0,-90)}</g><text x="180" y="106" text-anchor="middle" fill="#9ab0cd" font-size="11">neutral / natural wrist</text>`;
+    }else if(t==='rope'){
+      body=`<path d="M180 18 C165 36 150 55 136 83" fill="none" stroke="#7a8daa" stroke-width="7"/><path d="M180 18 C195 36 210 55 224 83" fill="none" stroke="#7a8daa" stroke-width="7"/>${hand(138,76,55)}${hand(222,76,-55)}<text x="180" y="106" text-anchor="middle" fill="#9ab0cd" font-size="11">neutral grip · separate naturally at finish</text>`;
+    }else if(t==='machine-handles'){
+      body=`<line x1="115" y1="26" x2="115" y2="88" stroke="#7a8daa" stroke-width="10" stroke-linecap="round"/><line x1="245" y1="26" x2="245" y2="88" stroke="#7a8daa" stroke-width="10" stroke-linecap="round"/>${hand(115,58,90)}${hand(245,58,-90)}<text x="180" y="106" text-anchor="middle" fill="#9ab0cd" font-size="11">hold for stability · do not pull through the arms</text>`;
+    }else body=bar+hand(130,58)+hand(230,58,180)+`<text x="180" y="106" text-anchor="middle" fill="#9ab0cd" font-size="11">stable wrist · comfortable joint alignment</text>`;
+    return `<svg class="gf48-grip-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Grip reference for ${esc(e?.name||'exercise')}"><rect width="360" height="116" rx="18" fill="rgba(7,15,30,.86)"/>${body}</svg>`;
+  }
+  window.gf48GripSVG=gf48GripSVG;
+
+  function gf48PathSVG(e){
+    const t=exerciseGuideType?.(e)||'general',W=360,H=190,skin='rgba(224,238,255,.9)',muted='rgba(126,151,190,.42)',accent='#78c5ff',hot='#ff9d73';
+    const person=(x,phase)=>{let arms='',legs='';
+      if(t==='press')arms=phase===0?`<path d="M${x-6} 70 L${x-48} 94 L${x-30} 122 M${x+6} 70 L${x+48} 94 L${x+30} 122"/>`:`<path d="M${x-6} 70 L${x-22} 38 L${x-30} 16 M${x+6} 70 L${x+22} 38 L${x+30} 16"/>`;
+      else if(t==='pull')arms=phase===0?`<path d="M${x-7} 69 L${x-26} 36 L${x-45} 16 M${x+7} 69 L${x+26} 36 L${x+45} 16"/>`:`<path d="M${x-7} 70 L${x-38} 76 L${x-48} 105 M${x+7} 70 L${x+38} 76 L${x+48} 105"/>`;
+      else if(t==='row')arms=phase===0?`<path d="M${x-7} 72 L${x-45} 86 L${x-67} 88 M${x+7} 72 L${x+45} 86 L${x+67} 88"/>`:`<path d="M${x-7} 72 L${x-28} 88 L${x-9} 97 M${x+7} 72 L${x+28} 88 L${x+9} 97"/>`;
+      else if(t==='curl')arms=phase===0?`<path d="M${x-9} 72 L${x-28} 108 L${x-22} 140 M${x+9} 72 L${x+28} 108 L${x+22} 140"/>`:`<path d="M${x-9} 72 L${x-28} 105 L${x-50} 77 M${x+9} 72 L${x+28} 105 L${x+50} 77"/>`;
+      else if(t==='squat')legs=phase===0?`<path d="M${x-9} 112 L${x-20} 148 L${x-23} 175 M${x+9} 112 L${x+20} 148 L${x+23} 175"/>`:`<path d="M${x-9} 112 L${x-34} 139 L${x-7} 170 M${x+9} 112 L${x+34} 139 L${x+7} 170"/>`;
+      else if(t==='hinge')legs=`<path d="M${x-9} 112 L${x-18} 146 L${x-21} 175 M${x+9} 112 L${x+18} 146 L${x+21} 175"/>`;
+      else arms=phase===0?`<path d="M${x-8} 70 L${x-32} 105 L${x-30} 137 M${x+8} 70 L${x+32} 105 L${x+30} 137"/>`:`<path d="M${x-8} 70 L${x-42} 78 L${x-59} 100 M${x+8} 70 L${x+42} 78 L${x+59} 100"/>`;
+      if(!legs)legs=`<path d="M${x-8} 112 L${x-18} 148 L${x-20} 176 M${x+8} 112 L${x+18} 148 L${x+20} 176"/>`;
+      const torso=t==='hinge'&&phase===1?`<path d="M${x} 53 L${x+34} 103 L${x+8} 116"/>`:`<path d="M${x} 52 L${x} 113"/>`;
+      return `<g fill="none" stroke="${phase?skin:muted}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="${x+(t==='hinge'&&phase===1?28:0)}" cy="34" r="12"/>${torso}${arms}${legs}</g>`};
+    const arrow=t==='squat'?`<path d="M180 65 L180 135"/>`:t==='hinge'?`<path d="M174 72 C198 72 212 93 222 112"/>`:`<path d="M165 95 L198 95"/>`;
+    return `<svg class="gf48-movement-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Movement path for ${esc(e?.name||'exercise')}"><rect width="360" height="190" rx="22" fill="rgba(7,15,30,.82)"/>${person(105,0)}${person(255,1)}<g fill="none" stroke="${accent}" stroke-width="4" stroke-linecap="round" marker-end="url(#gf48a)">${arrow}</g><defs><marker id="gf48a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="${accent}"/></marker></defs><text x="105" y="182" text-anchor="middle" fill="#8398b6" font-size="11">START / LENGTHENED</text><text x="255" y="182" text-anchor="middle" fill="#b7dcff" font-size="11">FINISH / SHORTENED</text></svg>`;
+  }
+  window.gf48PathSVG=gf48PathSVG;
+
+  // Replace guide with a much more descriptive in-app technique card.
+  window.openExerciseGuide=function(sessionId,index){
+    const s=plan?.training?.sessions?.find(x=>x.id===sessionId),e=s?.exercises?.[index];if(!s||!e)return;const g=gf48ExerciseInfo(e),sheet=document.getElementById('sessionSheet');sheet.classList.remove('workout-sheet');
+    sheet.innerHTML=`<div class="grabber"></div><button class="btn ghost" style="width:auto;padding:6px 2px;margin:0 0 3px" onclick="openSession('${esc(s.id)}')">‹ ${esc(s.name)}</button><div class="eyebrow">Exercise ${index+1} of ${s.exercises.length} · ${esc(g.station)}</div><h2 class="gf48-guide-title">${esc(e.name)}</h2><p class="gf48-guide-purpose">${esc(g.purpose)}</p><div class="gf48-reference-grid"><div><span class="gf48-mini-label">Reference</span><div class="gf48-ref-photo">${exerciseVisual(e,true)}</div></div><div><span class="gf48-mini-label">Movement path</span>${gf48PathSVG(e)}</div></div><div class="exercise-guide-meta"><span>${e.sets} sets</span><span>${e.repMin}–${e.repMax} reps</span><span>${esc(e.focus||'')}</span><span>${esc(g.station)}</span></div><div class="gf48-tech-grid"><div class="gf48-tech-card"><span>1 · Setup</span><p>${esc(g.setup)}</p></div><div class="gf48-tech-card"><span>2 · Execution</span><p>${esc(g.execution)}</p></div><div class="gf48-tech-card"><span>3 · Tempo</span><p>${esc(g.tempo)}</p></div><div class="gf48-tech-card"><span>4 · Grip</span><p>${esc(g.grip)}</p></div></div><div class="gf48-grip-card"><div class="gf48-card-head"><b>Grip / hand-position diagram</b><span>Use joint comfort + vertical forearm alignment as the final check.</span></div>${gf48GripSVG(e,g)}</div><div class="gf48-errors"><div class="eyebrow">Avoid</div>${(g.errors||[]).map(x=>`<span>× ${esc(x)}</span>`).join('')}</div><a class="exercise-video-btn" href="${exerciseVideoURL(e)}" target="_blank" rel="noopener">▶ Open a form-video search for this exact exercise</a><button class="btn secondary" style="width:100%;margin-top:9px" onclick="openSession('${esc(s.id)}')">Back to session</button>`;
+    document.getElementById('sessionModal').classList.add('open');
+  };
+
+  function gf48OpenGuideByKey(sessionId,key){const s=plan?.training?.sessions?.find(x=>x.id===sessionId);if(!s)return;const i=s.exercises.findIndex(e=>workoutExerciseKey(e)===key);if(i>=0)openExerciseGuide(sessionId,i)}
+  window.gf48OpenGuideByKey=gf48OpenGuideByKey;
+
+  // --------------------------------------------------------------------------
+  // Session overview: time available drives the active exercise count.
+  // --------------------------------------------------------------------------
+  window.openSession=function(id){
+    gf48Ensure();const s=plan?.training?.sessions?.find(x=>x.id===id);if(!s)return;const mins=gf48SessionMinutes(id),fit=gf48FitSession(s,mins),sheet=document.getElementById('sessionSheet');sheet.classList.remove('workout-sheet');
+    const options=GF48_MINUTES.map(m=>`<option value="${m}" ${m===mins?'selected':''}>${m<60?m+' min':m===60?'1 hour':m===90?'1 hr 30':m===120?'2 hours':m+' min'}</option>`).join('');
+    let prev='';const rows=fit.exercises.map(e=>{const st=gf48Station(e),idx=s.exercises.findIndex(x=>workoutExerciseKey(x)===workoutExerciseKey(e)),change=st!==prev;prev=st;return `${change?`<div class="gf48-station-label"><span>${esc(st)}</span><b>station block</b></div>`:''}<div class="exercise-guide-row" onclick="openExerciseGuide('${esc(s.id)}',${idx})"><div class="exercise-guide-thumb">${exerciseVisual(e,false)}</div><div class="exercise-guide-copy"><b>${esc(e.name)}</b><span>${e.sets} × ${e.repMin}–${e.repMax} · ${esc(e.focus||'')}</span><span style="margin-top:3px;color:#80bfff">${esc(st)} · technique + grip guide</span></div><button class="exercise-guide-open" type="button">›</button></div>`}).join('');
+    sheet.innerHTML=`<div class="grabber"></div><div class="eyebrow">Workout overview · time fitted</div><h2 style="font-size:30px;margin:6px 0 3px">${esc(s.name)}</h2><p class="muted" style="margin-top:0">${esc(s.subtitle||'')}</p><div class="gf48-time-picker"><div><b>How long have you got?</b><span>Gain Focus fits the planned work to the time available. The full programme is not deleted.</span></div><select class="input" onchange="gf48SetSessionMinutes('${esc(s.id)}',this.value)">${options}</select></div><div class="session-overview"><div><span>Exercises</span><b>${fit.exercises.length}/${s.exercises.length}</b></div><div><span>Stations</span><b>${fit.stationCount}</b></div><div><span>Estimated</span><b>~${fit.estimatedMinutes} min</b></div></div>${fit.exercises.length<s.exercises.length?`<div class="gf48-fit-note"><b>${s.exercises.length-fit.exercises.length} exercise${s.exercises.length-fit.exercises.length===1?'':'s'} deferred</b><span>The highest-priority work is retained. Lower-priority accessories return automatically when you choose a longer session.</span></div>`:''}<div>${rows}</div><div class="session-start-dock"><button class="btn primary" onclick="startWorkout('${esc(s.id)}')">Start ${esc(s.name)} · ${mins} min</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="closeSession()">Not now</button></div>`;
+    document.getElementById('sessionModal').classList.add('open');
+  };
+
+  // Compact availability control on Training tab.
+  const gf48BaseRenderTrain=window.renderTrain;
+  window.renderTrain=function(){
+    gf48Ensure();const r=gf48BaseRenderTrain.apply(this,arguments),root=document.getElementById('train');if(!root)return r;
+    if(!root.querySelector('.gf48-availability-card')){
+      const mins=Number(progress.settings.sessionDurationMinutes)||60,opts=GF48_MINUTES.map(m=>`<option value="${m}" ${m===mins?'selected':''}>${m===60?'1 hour':m===90?'1 hr 30':m===120?'2 hours':m+' min'}</option>`).join('');
+      const cal=root.querySelector('.gf-calendar-widget');const html=`<div class="card glass gf48-availability-card"><div><span class="eyebrow">Session availability</span><b>${mins===60?'1 hour':mins+' minutes'} default</b><small>Exercise count is fitted automatically; station changes are minimised.</small></div><select class="input" onchange="gf48SetDefaultMinutes(this.value)">${opts}</select></div>`;
+      if(cal)cal.insertAdjacentHTML('afterend',html);else root.insertAdjacentHTML('afterbegin',html);
+    }
+    return r;
+  };
+
+  // --------------------------------------------------------------------------
+  // Active workout renderer uses only the time-fitted runtime exercise list.
+  // --------------------------------------------------------------------------
+  window.renderCanonicalWorkout=function(){
+    gf48Ensure();const w=currentWorkoutRecord();if(!w||!canonicalWorkout)return;const s=plan.training.sessions.find(x=>x.id===w.sessionId);if(!s)return;const list=gf48RuntimeExercises(w,s),i=clamp(canonicalWorkout.exerciseIndex,0,list.length-1),e=list[i],key=workoutExerciseKey(e),today=w.setEntries.filter(x=>x.exerciseKey===key),suggest=typeof gf45LoadPrescription==='function'?gf45LoadPrescription(s.id,e):suggestedLoadFor(s.id,e),targetSets=Number(e.sets)||0;canonicalWorkout.exerciseIndex=i;if(!Number.isFinite(Number(canonicalWorkout.rir)))canonicalWorkout.rir=2;const nextSetNo=Math.min(today.length+1,targetSets||today.length+1),remaining=Math.max((targetSets||0)-today.length,0),sessionSheet=document.getElementById('sessionSheet');sessionSheet.classList.add('workout-sheet');
+    const prev=previousExercisePerformance?.(s.id,e)||[],prevText=prev.length?prev.map(x=>`${x.weightKg?x.weightKg+' kg':'BW'}×${x.reps}`).join(' · '):'No previous performance yet',target=Math.max(1,targetSets||1),progressPct=clamp(((i+(today.length/target))/list.length)*100,0,100),cal=typeof gf45CalBannerHTML==='function'?gf45CalBannerHTML(e,suggest):'';
+    sessionSheet.innerHTML=`<div class="grabber"></div><div class="workout-shell"><div class="guided-workout-progress"><div class="guided-workout-progress-top"><span>${esc(s.name)} · ${w.targetDurationMinutes||gf48SessionMinutes(s.id)} min plan</span><span>${i+1}/${list.length} exercises</span></div><div class="guided-workout-bar"><i style="width:${progressPct}%"></i></div></div><div class="workout-engine-head"><div class="exercise-guide-thumb">${exerciseVisual(e,false)}</div><div class="grow"><h2>${esc(e.name)}</h2><div class="workout-subhead"><p class="muted" style="margin:0">${targetSets} × ${e.repMin}–${e.repMax} · ${esc(e.focus||'')}</p><span class="set-count">Set ${nextSetNo}${targetSets?` / ${targetSets}`:''}</span></div></div></div><div class="previous-performance"><b>Last time:</b> ${esc(prevText)}</div>${cal}<div class="gf48-live-station"><span>Current station</span><b>${esc(gf48Station(e))}</b><small>${i<list.length-1&&gf48Station(list[i+1])===gf48Station(e)?`Next exercise stays here: ${esc(list[i+1].name)}`:'Next station change shown automatically.'}</small></div><div class="workout-progress-line"><span class="small">Log each working set. Rest starts automatically.</span><span class="small">${remaining>0?`${remaining} set${remaining===1?'':'s'} remaining`:`All target sets logged`}</span></div><div class="workout-status-grid"><div class="next-load"><span>Prescription</span><b>${esc(suggest?.message||'Use a controlled working load')}</b></div><div class="rest-panel"><div class="rest-clock"><span>Rest timer</span><b id="canonicalRestClock">${canonicalRestRemaining?formatRest(canonicalRestRemaining):'Ready'}</b></div><div class="rest-actions"><button id="restPauseBtn" class="primary-rest" type="button" onclick="toggleCanonicalRest()">${canonicalRestRemaining?(canonicalRestPaused?'Resume':'Pause'):'Start'}</button><button type="button" onclick="addCanonicalRest(30)">+30 sec</button><button type="button" onclick="skipCanonicalRest()">Skip</button></div></div></div><div class="workout-inputs"><div class="workout-input-card"><label>Weight / load kg</label><input id="canonicalSetWeight" class="input" inputmode="decimal" value="${suggest?.load??''}" placeholder="kg"></div><div class="workout-input-card"><label>Reps</label><input id="canonicalSetReps" class="input" inputmode="numeric" placeholder="${e.repMin}"></div></div><div class="workout-rir"><label>Reps in reserve</label><div class="rir-row">${[0,1,2,3].map(r=>`<button type="button" data-rir="${r}" class="${canonicalWorkout.rir===r?'on':''}" onclick="setWorkoutRIR(${r})">${r} RIR</button>`).join('')}</div></div><div class="workout-primary-row"><button class="btn primary" onclick="saveCanonicalSet()">Log set ${Math.min(today.length+1,target)} of ${target}</button></div><div class="set-history-title"><b>Logged sets</b><span>${today.length} logged</span></div><div class="set-history">${today.length?today.map((x,j)=>`<div class="set-history-row"><div class="set-main"><span>Set ${j+1} · ${x.rir} RIR${typeof gf45SetE1RM==='function'?` · e1RM ${round(gf45SetE1RM(x),1)} kg`:''}</span><b>${x.weightKg?x.weightKg+' kg':'BW'} × ${x.reps}</b></div><div class="set-actions"><button class="set-edit" type="button" onclick="editActiveWorkoutSet('${x.id}')">Edit</button></div></div>`).join(''):`<div class="small" style="text-align:center;padding:12px">No working sets logged yet.</div>`}</div>${today.length>=target&&i<list.length-1?`<button class="btn primary guided-next-btn" onclick="canonicalWorkout.exerciseIndex++;skipCanonicalRest();renderCanonicalWorkout()">Next exercise →</button>`:''}<div class="workout-secondary-links"><div class="workout-nav"><button class="btn secondary" onclick="canonicalWorkout.exerciseIndex=Math.max(0,canonicalWorkout.exerciseIndex-1);renderCanonicalWorkout()">← Previous</button><button class="btn secondary" onclick="canonicalWorkout.exerciseIndex=Math.min(${list.length-1},canonicalWorkout.exerciseIndex+1);renderCanonicalWorkout()">Next →</button></div><a class="workout-guide-btn" href="javascript:void(0)" onclick="gf48OpenGuideByKey('${esc(s.id)}','${esc(key)}')">Technique + grip guide <span>›</span></a><button class="btn secondary gf48-offplan-btn" onclick="gf48OpenOffPlanAdder()">＋ Add exercise not in today’s plan</button></div><div class="workout-dock"><button class="btn primary" onclick="finishCanonicalWorkout()">Finish workout</button><button class="btn secondary" onclick="closeSession()">End later</button></div><div class="workout-spacer"></div></div>`;
+    document.getElementById('sessionModal').classList.add('open');
+  };
+
+  window.saveCanonicalSet=function(){
+    const w=currentWorkoutRecord();if(!w||!canonicalWorkout)return;const s=plan.training.sessions.find(x=>x.id===w.sessionId),list=gf48RuntimeExercises(w,s),e=list[canonicalWorkout.exerciseIndex];if(!e)return;const before=typeof gf45CalibrationFor==='function'?gf45CalibrationFor(e):null,weight=Math.max(0,Number(document.getElementById('canonicalSetWeight')?.value)||0),reps=Math.max(0,Math.round(Number(document.getElementById('canonicalSetReps')?.value)||0));if(!reps){toast('Add reps first');return}const row={id:canonicalUid(),ts:Date.now(),exerciseKey:workoutExerciseKey(e),exerciseName:e.name,focus:e.focus||'',station:gf48Station(e),planned:true,weightKg:weight,reps,rir:Number(canonicalWorkout.rir)};if(typeof gf45SetE1RM==='function')row.e1rmKg=round(gf45SetE1RM(row),1);w.setEntries.push(row);write();const after=typeof gf45CalibrationFor==='function'?gf45CalibrationFor(e):null;startCanonicalRest();renderCanonicalWorkout();if(before&&!before.e1rm&&after?.e1rm)setTimeout(()=>toast(`Calibration started · ${after.e1rm} kg e1RM`),80)
+  };
+
+  // --------------------------------------------------------------------------
+  // Off-plan exercise logging + optional plan switch-up.
+  // --------------------------------------------------------------------------
+  window.gf48OpenOffPlanAdder=function(){
+    const w=currentWorkoutRecord();if(!w)return;const sheet=document.getElementById('sessionSheet');sheet.classList.remove('workout-sheet');
+    sheet.innerHTML=`<div class="grabber"></div><button class="btn ghost" style="width:auto;padding:6px 2px" onclick="renderCanonicalWorkout()">‹ Back to workout</button><div class="eyebrow">Workout deviation</div><h2 class="gf48-guide-title">Add an exercise you actually did</h2><p class="muted">Use this when you switch a movement, add something spontaneous, or the planned machine is unavailable. It is logged as evidence rather than silently rewriting the programme.</p><div class="gf48-offplan-form"><label>Exercise name<input id="gf48OffName" class="input" placeholder="e.g. Cross-body curl"></label><label>Target / focus<input id="gf48OffFocus" class="input" placeholder="e.g. Biceps / brachialis"></label><label>Equipment / station<select id="gf48OffStation" class="input"><option>Dumbbell area</option><option>Cable station</option><option>Machine</option><option>Rack / barbell bench</option><option>Bodyweight station</option><option>General floor</option></select></label><div class="gf48-four"><label>Sets<input id="gf48OffSets" class="input" inputmode="numeric" value="3"></label><label>Load kg<input id="gf48OffLoad" class="input" inputmode="decimal" placeholder="15"></label><label>Reps<input id="gf48OffReps" class="input" inputmode="numeric" value="10"></label><label>RIR<input id="gf48OffRir" class="input" inputmode="numeric" value="2"></label></div></div><button class="btn primary" style="width:100%;margin-top:14px" onclick="gf48SaveOffPlanExercise()">Add to this workout</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="renderCanonicalWorkout()">Cancel</button>`;
+    document.getElementById('sessionModal').classList.add('open');
+  };
+
+  window.gf48SaveOffPlanExercise=function(){
+    gf48Ensure();const w=currentWorkoutRecord();if(!w)return;const name=String(document.getElementById('gf48OffName')?.value||'').trim(),focus=String(document.getElementById('gf48OffFocus')?.value||'').trim()||'Accessory',station=String(document.getElementById('gf48OffStation')?.value||'General floor'),sets=clamp(Math.round(Number(document.getElementById('gf48OffSets')?.value)||0),1,10),load=Math.max(0,Number(document.getElementById('gf48OffLoad')?.value)||0),reps=clamp(Math.round(Number(document.getElementById('gf48OffReps')?.value)||0),1,100),rir=clamp(Math.round(Number(document.getElementById('gf48OffRir')?.value)||2),0,5);if(!name){toast('Add the exercise name');return}const key=`offplan-${gf48Slug(name)}`;
+    for(let i=0;i<sets;i++)w.setEntries.push({id:canonicalUid(),ts:Date.now()+i,exerciseKey:key,exerciseName:name,focus,station,planned:false,offPlan:true,weightKg:load,reps,rir});
+    progress.exerciseDeviations.push({id:canonicalUid(),date:w.date||todayISO(),workoutId:w.id,sessionId:w.sessionId,exerciseKey:key,exerciseName:name,focus,station,sets,weightKg:load,reps,rir});write();toast(`${name} logged as off-plan work`);renderCanonicalWorkout();
+  };
+
+  function gf48DeviationOccurrences(key,limit=5){const done=[...(progress?.workoutLogs||[])].filter(w=>w?.completed!==false).sort((a,b)=>String(b.completedAt||b.date).localeCompare(String(a.completedAt||a.date))).slice(0,limit);return done.filter(w=>(w.setEntries||[]).some(x=>x.offPlan&&x.exerciseKey===key)).length}
+  function gf48DeviationCandidates(w){const map=new Map();for(const x of (w?.setEntries||[]).filter(x=>x.offPlan)){if(!map.has(x.exerciseKey))map.set(x.exerciseKey,{...x,sets:0});map.get(x.exerciseKey).sets++}return [...map.values()].map(x=>({...x,recentCount:gf48DeviationOccurrences(x.exerciseKey,5)}))}
+  window.gf48DeviationCandidates=gf48DeviationCandidates;
+
+  function gf48SimilarPlanned(session,off){
+    const f=String(off?.focus||'').toLowerCase(),name=String(off?.exerciseName||'').toLowerCase();
+    return (session?.exercises||[]).map((e,i)=>{const ef=String(e.focus||'').toLowerCase(),en=String(e.name||'').toLowerCase();let score=0;if(f&&ef&&(ef.includes(f)||f.includes(ef)))score+=5;if(/curl/.test(name)&&/curl/.test(en))score+=6;if(/tricep/.test(name)&&/tricep/.test(en))score+=6;if(/press/.test(name)&&/press/.test(en))score+=3;return {e,i,score}}).sort((a,b)=>b.score-a.score||b.i-a.i);
+  }
+  window.gf48OpenSwitchUp=function(workoutId,key){
+    const w=(progress?.workoutLogs||[]).find(x=>x.id===workoutId),off=gf48DeviationCandidates(w).find(x=>x.exerciseKey===key),s=plan?.training?.sessions?.find(x=>x.id===w?.sessionId);if(!w||!off||!s)return;const cand=gf48SimilarPlanned(s,off),sheet=document.getElementById('sessionSheet');
+    sheet.innerHTML=`<div class="grabber"></div><div class="eyebrow">Switch-up review</div><h2 class="gf48-guide-title">Add ${esc(off.exerciseName)} to the plan?</h2><p class="muted">It appeared in ${off.recentCount||1} of your last 5 completed workouts. Choose what it replaces so total session time does not silently expand.</p><label>Replace planned exercise<select id="gf48ReplaceExercise" class="input">${cand.map(x=>`<option value="${x.i}">${esc(x.e.name)} · ${esc(x.e.focus||'')}</option>`).join('')}</select></label><div class="gf48-switch-preview"><b>New movement</b><span>${esc(off.exerciseName)} · ${off.sets} sets · ${off.reps} reps logged · ${esc(off.station||'')}</span></div><div class="post-workout-actions"><button class="btn secondary" onclick="gfOpenPostWorkoutDebrief('${esc(w.id)}')">Keep plan unchanged</button><button class="btn primary wide" onclick="gf48ApplySwitchUp('${esc(w.id)}','${esc(key)}')">Switch into plan</button></div>`;document.getElementById('sessionModal').classList.add('open');
+  };
+
+  window.gf48ApplySwitchUp=function(workoutId,key){
+    const w=(progress?.workoutLogs||[]).find(x=>x.id===workoutId),off=gf48DeviationCandidates(w).find(x=>x.exerciseKey===key),s=plan?.training?.sessions?.find(x=>x.id===w?.sessionId),idx=Number(document.getElementById('gf48ReplaceExercise')?.value);if(!w||!off||!s||!s.exercises[idx])return;const old=structuredClone(s.exercises[idx]),reps=Math.max(6,Number(off.reps)||10),next={id:gf48Slug(off.exerciseName),name:off.exerciseName,sets:Math.max(2,Math.min(5,Number(off.sets)||3)),repMin:Math.max(5,reps-2),repMax:Math.min(20,reps+2),incrementKg:/curl|raise/i.test(off.exerciseName)?1:2.5,focus:off.focus||old.focus,station:off.station||gf48Station(off)};s.exercises[idx]=next;plan.training.revisionHistory.push({at:new Date().toISOString(),type:'deviation-switch',sessionId:s.id,removed:old,added:structuredClone(next),sourceWorkoutId:w.id,reason:`User logged ${off.exerciseName} off-plan and chose to switch it into the programme.`});write();renderAll();toast(`${off.exerciseName} switched into ${s.name}`);gfOpenPostWorkoutDebrief(w.id)
+  };
+
+  // --------------------------------------------------------------------------
+  // Hercules workout score: consistency + progression + set adherence + effort.
+  // --------------------------------------------------------------------------
+  function gf48StatsForRows(rows){
+    const a=(rows||[]).filter(x=>Number(x.reps)>0),sets=a.length,vol=a.reduce((n,x)=>n+(Number(x.weightKg)||0)*(Number(x.reps)||0),0),best=a.reduce((m,x)=>Math.max(m,e1RM(Number(x.weightKg)||0,Number(x.reps)||0)),0),loads=a.map(x=>Number(x.weightKg)||0).filter(x=>x>0),avg=loads.length?loads.reduce((a,b)=>a+b,0)/loads.length:0,sd=loads.length?Math.sqrt(loads.reduce((n,x)=>n+(x-avg)**2,0)/loads.length):0,cv=avg?sd/avg:0,consistency=loads.length>1?clamp(100-cv*220,45,100):85,maxLoad=loads.length?Math.max(...loads):0;return {sets,vol,best,avgLoad:avg,maxLoad,consistency}
+  }
+  function gf48PrevRows(w,key){
+    const rows=[...(progress?.workoutLogs||[])].filter(x=>x&&x.id!==w.id&&x.completed!==false&&String(x.completedAt||x.date||'')<String(w.completedAt||w.date||'')).sort((a,b)=>String(b.completedAt||b.date).localeCompare(String(a.completedAt||a.date||'')));for(const x of rows){const r=(x.setEntries||[]).filter(z=>z.exerciseKey===key);if(r.length)return r}return []
+  }
+  function gf48LiftReview(w){
+    const by=new Map();for(const x of (w?.setEntries||[])){const k=x.exerciseKey||x.exerciseName;if(!by.has(k))by.set(k,[]);by.get(k).push(x)}const out=[];
+    for(const [key,rows] of by){const cur=gf48StatsForRows(rows),prevRows=gf48PrevRows(w,key),prev=gf48StatsForRows(prevRows),name=rows[0]?.exerciseName||key;let strengthDelta=null,setDelta=null,loadDelta=null,status='baseline',trendScore=76;if(prevRows.length){strengthDelta=prev.best>0?((cur.best/prev.best)-1)*100:null;setDelta=cur.sets-prev.sets;loadDelta=prev.maxLoad>0?((cur.maxLoad/prev.maxLoad)-1)*100:null;if((strengthDelta??0)>1.5||(setDelta>0&&(strengthDelta??0)>-2)){status='up';trendScore=96}else if((strengthDelta??0)<-6||setDelta<-1){status='down';trendScore=48}else if((strengthDelta??0)<-2.5||setDelta<0){status='soft-down';trendScore=65}else{status='steady';trendScore=84}}
+      out.push({key,name,planned:!rows.some(x=>x.offPlan),offPlan:rows.some(x=>x.offPlan),cur,prev:prevRows.length?prev:null,strengthDelta,setDelta,loadDelta,status,trendScore});
+    }
+    return out;
+  }
+  window.gf48LiftReview=gf48LiftReview;
+
+  const gf48BasePostWorkoutData=window.gfPostWorkoutData;
+  window.gfPostWorkoutData=function(w){
+    const d=gf48BasePostWorkoutData?gf48BasePostWorkoutData(w):{},lifts=gf48LiftReview(w),completionScore=clamp(Number(d.completion)||0,0,100),consistencyScore=lifts.length?lifts.reduce((n,x)=>n+x.cur.consistency,0)/lifts.length:75,trendScore=lifts.length?lifts.reduce((n,x)=>n+x.trendScore,0)/lifts.length:75,avgRir=Number(d.avgRir),effortScore=Number.isFinite(avgRir)?(avgRir>=1&&avgRir<=2.5?100:avgRir<0.5?70:avgRir>3.5?72:88):82,score=Math.round(completionScore*.30+trendScore*.30+consistencyScore*.25+effortScore*.15),deviations=gf48DeviationCandidates(w),declines=lifts.filter(x=>x.status==='down'||x.status==='soft-down'),ups=lifts.filter(x=>x.status==='up');let grade=score>=90?'Excellent':score>=82?'Strong':score>=72?'Solid':score>=62?'Mixed':'Review';let coaching='';
+    if(declines.length>=2)coaching=`${declines.slice(0,2).map(x=>x.name).join(' and ')} were down versus their previous comparable exposure. Treat that as a recovery/consistency signal before adding more work.`;
+    else if(ups.length>=2)coaching=`You progressed on ${ups.slice(0,3).map(x=>x.name).join(', ')}. Keep the same execution standard; do not force load increases on every movement next time.`;
+    else if(deviations.length)coaching=`You deviated from the written plan with ${deviations.map(x=>x.exerciseName).join(', ')}. That is now logged as evidence, not ignored. You can switch a repeated deviation into the programme if it proves useful.`;
+    else coaching=d.advice||'Keep the next session repeatable and look for one small improvement at a time.';
+    return {...d,lifts,completionScore,consistencyScore,trendScore,effortScore,score,grade,deviations,declines,ups,advice:coaching};
+  };
+
+  window.gfOpenPostWorkoutDebrief=function(id){
+    gf48Ensure();const w=(progress?.workoutLogs||[]).find(x=>x.id===id);if(!w)return;const d=gfPostWorkoutData(w),sheet=document.getElementById('sessionSheet');sheet.classList.remove('workout-sheet');const volumeText=d.volume?`${Math.round(d.volume).toLocaleString()} kg`:'—',rirText=Number.isFinite(d.avgRir)?d.avgRir.toFixed(1):'—',durationText=d.duration?`${d.duration} min`:'—',feel=w.postWorkout?.feel||'',score=clamp(Number(d.score)||0,0,100);
+    const liftRows=(d.lifts||[]).map(x=>{const icon=x.status==='up'?'↑':x.status==='down'?'↓':x.status==='soft-down'?'↘':x.status==='steady'?'→':'•',cls=x.status==='up'?'up':(x.status==='down'||x.status==='soft-down')?'down':'steady',load=Number.isFinite(x.loadDelta)?`${x.loadDelta>=0?'+':''}${x.loadDelta.toFixed(1)}% load`:'first baseline',sets=Number.isFinite(x.setDelta)?`${x.setDelta>=0?'+':''}${x.setDelta} set${Math.abs(x.setDelta)===1?'':'s'}`:`${x.cur.sets} sets`,cons=`${Math.round(x.cur.consistency)}% consistency`;return `<div class="gf48-lift-row ${cls}"><i>${icon}</i><div><b>${esc(x.name)}${x.offPlan?' · off-plan':''}</b><span>${esc(load)} · ${esc(sets)} · ${esc(cons)}</span></div><strong>${Math.round(x.trendScore)}</strong></div>`}).join('');
+    const dev=(d.deviations||[]).length&&progress.settings.switchUpIfDeviated?`<div class="gf48-deviation-review"><div><span class="eyebrow">Plan deviation detected</span><b>${esc(d.deviations.map(x=>x.exerciseName).join(', '))}</b><small>Hercules keeps the workout log truthful, then lets you decide whether the programme should learn from it.</small></div>${d.deviations.map(x=>`<button class="btn secondary" onclick="gf48OpenSwitchUp('${esc(w.id)}','${esc(x.exerciseKey)}')">Review switch-up · ${x.recentCount||1}/5 recent</button>`).join('')}</div>`:'';
+    sheet.innerHTML=`<div class="grabber"></div><div class="post-workout-hero"><div class="post-workout-avatar"><img src="${GFCoach.portraitSrc}" alt="Hercules"></div><div><div class="eyebrow">Hercules · Post-workout coach</div><h2>${esc(d.grade)} session</h2><p>${esc(w.sessionName||'Workout')} · ${esc(longDateLabel(w.date||todayISO()))}</p></div><div class="gf48-score-ring" style="--score:${score}"><div><b>${score}</b><span>/100</span></div></div></div><div class="post-workout-kpis"><div class="post-workout-kpi"><span>Completion</span><b>${Math.round(d.completion||0)}%</b></div><div class="post-workout-kpi"><span>Lift consistency</span><b>${Math.round(d.consistencyScore||0)}%</b></div><div class="post-workout-kpi"><span>Duration</span><b>${durationText}</b></div><div class="post-workout-kpi"><span>Average RIR</span><b>${rirText}</b></div></div><div class="gf48-score-breakdown"><div><span>Plan completion</span><b>${Math.round(d.completionScore||0)}</b></div><div><span>Progression</span><b>${Math.round(d.trendScore||0)}</b></div><div><span>Set/load consistency</span><b>${Math.round(d.consistencyScore||0)}</b></div><div><span>Effort control</span><b>${Math.round(d.effortScore||0)}</b></div></div><div class="section"><h3>Lift-by-lift review</h3><span class="small">weight · sets · repeatability</span></div><div class="gf48-lift-review">${liftRows||'<div class="small">First workout baseline saved.</div>'}</div><div class="post-workout-advice"><div class="eyebrow">Hercules says</div><p>${esc(d.advice)}</p></div>${dev}<div class="post-workout-feel"><span>How did the session feel? This changes how Hercules interprets the numbers next time.</span><div class="post-workout-feel-row"><button class="${feel==='easy'?'on':''}" onclick="gfSaveWorkoutFeel('${w.id}','easy',this)">Too easy</button><button class="${feel==='good'?'on':''}" onclick="gfSaveWorkoutFeel('${w.id}','good',this)">Good</button><button class="${feel==='hard'?'on':''}" onclick="gfSaveWorkoutFeel('${w.id}','hard',this)">Very hard</button><button class="${feel==='pain'?'on':''}" onclick="gfSaveWorkoutFeel('${w.id}','pain',this)">Pain</button></div></div><div class="post-workout-actions"><button class="btn secondary" onclick="gfAskHerculesAfterWorkout('${w.id}')">Ask Hercules</button><button class="btn secondary" onclick="closeSession();showTab('progress')">Open analysis</button><button class="btn primary wide" onclick="closeSession();showTab('train')">Done</button></div>`;
+    document.getElementById('sessionModal').classList.add('open');setTimeout(()=>{try{GFCoach.pulseSpeak(1800)}catch{}},160)
+  };
+
+  // Settings controls for defaults and deviation behaviour.
+  const gf48BaseSettingsView=window.gfSettingsViewHTML;
+  if(typeof gf48BaseSettingsView==='function')window.gfSettingsViewHTML=function(){gf48Ensure();const base=gf48BaseSettingsView.apply(this,arguments)||'',mins=Number(progress.settings.sessionDurationMinutes)||60,opts=GF48_MINUTES.map(m=>`<option value="${m}" ${m===mins?'selected':''}>${m===60?'1 hour':m===90?'1 hr 30':m===120?'2 hours':m+' min'}</option>`).join('');return base+`<div class="settings-group gf48-settings"><div class="eyebrow">Workout planning</div><div class="settings-row"><span class="small">Default time available</span><select class="input" onchange="gf48SetDefaultMinutes(this.value)">${opts}</select></div><label class="gf48-toggle"><input type="checkbox" ${progress.settings.groupExercisesByStation?'checked':''} onchange="gf48TogglePref('groupExercisesByStation',this.checked)"><span><b>Group exercises by equipment</b><small>Reduce unnecessary machine/station changes while preserving the important work.</small></span></label><label class="gf48-toggle"><input type="checkbox" ${progress.settings.switchUpIfDeviated?'checked':''} onchange="gf48TogglePref('switchUpIfDeviated',this.checked)"><span><b>Switch up if I deviate</b><small>After an off-plan exercise is logged, Hercules can offer to swap it into the programme instead of ignoring the deviation.</small></span></label></div>`};
+
+  gf48Ensure();
+})();
+
 </script>
-
 </body>
 </html>

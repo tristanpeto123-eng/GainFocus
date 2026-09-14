@@ -1,12 +1,41 @@
 {
   "name": "Gain Focus",
-  "short_name": "GAIN FOCUS",
-  "description": "Adaptive training, nutrition, progress and social fitness coaching.",
+  "short_name": "Gain Focus",
+  "description": "Adaptive training, nutrition, physique tracking and Hercules coaching.",
+  "id": "./",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#07101f",
-  "theme_color": "#07101f",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
   "orientation": "portrait-primary",
-  "categories": ["fitness", "health", "lifestyle"]
+  "background_color": "#050814",
+  "theme_color": "#050814",
+  "categories": [
+    "fitness",
+    "health",
+    "lifestyle"
+  ],
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
 }
