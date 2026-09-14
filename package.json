@@ -1,0 +1,15 @@
+{
+  "name": "gain-focus-v4-0-45-final",
+  "version": "4.0.45",
+  "private": true,
+  "description": "Gain Focus PWA + Web Push reference backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "generate-vapid": "web-push generate-vapid-keys"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "web-push": "^3.6.7"
+  }
+}

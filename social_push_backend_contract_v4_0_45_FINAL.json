@@ -1,0 +1,17 @@
+{
+  "version": "4.0.45-final",
+  "push": {
+    "publicKey": {"method":"GET","path":"/api/push/public-key"},
+    "subscribe": {"method":"POST","path":"/api/push/subscribe","body":["userId","subscription","preferences"]},
+    "syncState": {"method":"POST","path":"/api/push/state","body":["userId","timezone","stateDate","preferences","trainingDates","trainingWindowEnd","trainingWeekdays","mealSlotsToday","lastWorkoutDate","workoutTodayCompleted","sessionToday"]},
+    "sendSocial": {"method":"POST","path":"/api/push/send","auth":"x-gain-focus-secret","body":["userId","title","body","tag","url"]}
+  },
+  "social": {
+    "localPrototypeEntities": ["friends","groups","challenges","notifications"],
+    "productionAccountRequirement": "Map authenticated account IDs to push userId values before enabling cross-user events."
+  },
+  "notes": [
+    "Workout, meal and inactivity scheduling can run server-side while the installed PWA is closed after the device has subscribed and synced state.",
+    "Cross-user social push is exposed through the protected send endpoint and should be called by the real account/social backend, never directly with the admin secret from browser code."
+  ]
+}
