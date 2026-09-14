@@ -1,0 +1,59 @@
+GAIN FOCUS PWA v4.0.50 — CONSOLIDATED PATCH
+
+IMPLEMENTED
+[PASS] Daily workout availability drives fitted exercise count and set count.
+[PASS] 90-minute (1 hr 30) daily availability option included.
+[PASS] Changing daily availability clears stale per-session overrides.
+[PASS] Train order: Today's workout -> Recent workouts -> availability -> nested programme -> Tailored training plan -> Workout analysis.
+[PASS] Your programme is nested/collapsible.
+[PASS] Tailored training plan is at the end of Train.
+[PASS] Workout analysis is at the end of Train.
+[PASS] Previous-set kg AND reps are carried forward.
+[PASS] Account menu close control is top-left.
+[PASS] Notifications are accessed from the Hercules Home header.
+[PASS] Notification controls moved out of Account settings into Notifications.
+[PASS] Nutrition keeps only the opening summary expanded; remaining widgets are nested.
+[PASS] Manual nutrition includes region-aware online search and auto-fill.
+[PASS] Region is stored in onboarding/profile/JSON and used for food lookup.
+[PASS] McDonald's UK Double Sausage & Egg McMuffin example resolves in GB.
+[PASS] Check-in first two cards are consolidated into one main check-in widget.
+[PASS] Check-in deeper analysis/history remains nested.
+[PASS] Analysis copy/box descriptions rewritten to explain what each signal means.
+[PASS] Planned bodyweight trajectory now connects start date/start weight directly to goal date/goal weight.
+
+HOW TO USE
+
+WORKOUT TIME
+Train -> Daily workout availability -> choose a time.
+Example: choose "1 hr 30". Each workout preview and Today's workout immediately show how many planned exercises fit.
+Preview a specific workout to make a one-off time change.
+
+RECENT WORKOUTS / PROGRAMME
+Train -> Recent workouts is directly below Today's workout.
+Tap "Your programme" to expand all sessions.
+
+NUTRITION SEARCH
+Nutrition -> Log food -> Manual entry -> Search nutrition data.
+Type a food/menu item and tap Search data.
+The app uses the Region saved in onboarding/profile.
+Tap Use on a result to fill Calories/Protein/Carbs/Fat, then Add to today.
+"Search wider web" opens a region-specific web search if structured data is unavailable.
+
+REGION
+Account -> Edit profile -> Region.
+New users also choose Region during onboarding.
+
+NOTIFICATIONS
+Hercules Home -> bell in the top header.
+Notification feed + notification controls are in this screen.
+
+CHECK-IN
+Check-in -> the top card now contains both the check-in form and Hercules snapshot.
+Body composition, latest analysis and history remain collapsible underneath.
+
+ANALYSIS TRAJECTORY
+Analysis -> Trending statistics -> Weight.
+The dashed planned trajectory starts at the plan's start weight/date and ends at the goal weight/date.
+
+NOTE
+Open Food Facts provides online structured packaged-food data. Restaurant/menu items can vary by country and over time; the app records the lookup region/source when an online result is used.

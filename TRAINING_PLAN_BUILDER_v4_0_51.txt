@@ -1,0 +1,39 @@
+GAIN FOCUS PWA v4.0.51 — TRAINING AVAILABILITY / PLAN BUILDER
+
+WORKFLOW
+1. Set time available per workout (e.g. 90 minutes).
+2. Gain Focus estimates the complete session timeline:
+   - warm-up
+   - lifting time per set
+   - rest between sets
+   - equipment/station transitions
+3. It compares the original weekly plan with the time capacity.
+4. It generates a proposed fitted plan.
+5. The client/coach reviews the proposed sessions before anything is changed.
+6. Sets can be increased/decreased; exercises can be swapped, removed or added.
+7. Hercules produces an impact report.
+8. Only "Apply fitted plan" changes the stored programme.
+
+IMPACT REPORT
+- Weekly planned minutes vs available minutes
+- Working-set coverage vs original plan
+- Priority-muscle set coverage
+- Scale goal date
+- Physique/composition comparison date
+- Adherence/recovery warning if edited plan exceeds availability
+
+IMPORTANT MODEL RULE
+Workout availability does NOT automatically change the scale-weight goal date.
+That date is still primarily driven by nutrition adherence and the selected weekly
+rate of gain. If the training stimulus is reduced materially, the app instead
+flags a later recommended physique/composition date because reaching the same
+bodyweight would not guarantee the same lean-mass proportion.
+
+LIVE WORKOUT RULE
+After a reviewed plan is applied, the live workout uses the stored plan exactly.
+The app no longer silently drops exercises every time Train renders.
+
+ONBOARDING
+New users select workout availability during profile setup.
+The generated programme screen includes a Review/Edit button using the same
+capacity -> edit -> impact flow before account creation.

@@ -1438,7 +1438,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.48';
+const APP_VERSION='4.0.52';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -2844,7 +2844,7 @@ function renderCanonicalWorkout(){
   const nextSetNo=Math.min(today.length+1,targetSets||today.length+1), remaining=Math.max((targetSets||0)-today.length,0);
   const sessionSheet=document.getElementById('sessionSheet');
   sessionSheet.classList.add('workout-sheet');
-  sessionSheet.innerHTML=`<div class="grabber"></div><div class="workout-shell"><div class="eyebrow">${esc(s.name)} · Exercise ${i+1} of ${s.exercises.length}</div><div class="workout-engine-head"><div class="exercise-guide-thumb">${exerciseVisual(e,false)}</div><div class="grow"><h2>${esc(e.name)}</h2><div class="workout-subhead"><p class="muted" style="margin:0">${targetSets} × ${e.repMin}–${e.repMax} · ${esc(e.focus||'')}</p><span class="set-count">Set ${nextSetNo}${targetSets?` / ${targetSets}`:''}</span></div></div></div><div class="workout-progress-line"><span class="small">Log each working set below. The rest timer starts automatically after you save a set.</span><span class="small">${remaining>0?`${remaining} set${remaining===1?'':'s'} remaining`:`All target sets logged`}</span></div><div class="workout-status-grid"><div class="next-load"><span>Next-load guidance</span><b>${esc(suggest.message)}</b></div><div class="rest-panel"><div class="rest-clock"><span>Rest timer</span><b id="canonicalRestClock">${canonicalRestRemaining?formatRest(canonicalRestRemaining):'Ready'}</b></div><div class="rest-actions"><button id="restPauseBtn" class="primary-rest" type="button" onclick="toggleCanonicalRest()">${canonicalRestRemaining?(canonicalRestPaused?'Resume':'Pause'):'Start'}</button><button type="button" onclick="addCanonicalRest(30)">+30 sec</button><button type="button" onclick="skipCanonicalRest()">Skip</button></div></div></div><div class="workout-inputs"><div class="workout-input-card"><label>Weight / load kg</label><input id="canonicalSetWeight" class="input" inputmode="decimal" value="${suggest.load}" placeholder="kg"></div><div class="workout-input-card"><label>Reps</label><input id="canonicalSetReps" class="input" inputmode="numeric" placeholder="${e.repMin}"></div></div><div class="workout-rir"><label>Reps in reserve</label><div class="rir-row">${[0,1,2,3].map(r=>`<button type="button" data-rir="${r}" class="${canonicalWorkout.rir===r?'on':''}" onclick="setWorkoutRIR(${r})">${r} RIR</button>`).join('')}</div></div><div class="workout-primary-row"><button class="btn primary" onclick="saveCanonicalSet()">Log set & start rest</button></div><div class="set-history-title"><b>Logged sets</b><span>${today.length} logged</span></div><div class="set-history">${today.length?today.map((x,j)=>`<div class="set-history-row"><div class="set-main"><span>Set ${j+1} · ${x.rir} RIR</span><b>${x.weightKg?x.weightKg+' kg':'BW'} × ${x.reps}</b></div><div class="set-actions"><button class="set-edit" type="button" onclick="editActiveWorkoutSet('${x.id}')">Edit</button></div></div>`).join(''):`<div class="small" style="text-align:center;padding:12px">No working sets logged yet.</div>`}</div><div class="workout-secondary-links"><div class="workout-nav"><button class="btn secondary" onclick="canonicalWorkout.exerciseIndex=Math.max(0,canonicalWorkout.exerciseIndex-1);renderCanonicalWorkout()">← Previous</button><button class="btn secondary" onclick="canonicalWorkout.exerciseIndex=Math.min(${s.exercises.length-1},canonicalWorkout.exerciseIndex+1);renderCanonicalWorkout()">Next →</button></div><a class="workout-guide-btn" href="javascript:void(0)" onclick="openExerciseGuide('${s.id}',${i})">Open form guide <span>/ video ↗</span></a></div><div class="workout-dock"><button class="btn primary" onclick="finishCanonicalWorkout()">Finish workout</button><button class="btn secondary" onclick="closeSession()">End later</button></div><div class="workout-spacer"></div></div>`;
+  sessionSheet.innerHTML=`<div class="grabber"></div><div class="workout-shell"><div class="eyebrow">${esc(s.name)} · Exercise ${i+1} of ${s.exercises.length}</div><div class="workout-engine-head"><div class="exercise-guide-thumb">${exerciseVisual(e,false)}</div><div class="grow"><h2>${esc(e.name)}</h2><div class="workout-subhead"><p class="muted" style="margin:0">${targetSets} × ${e.repMin}–${e.repMax} · ${esc(e.focus||'')}</p><span class="set-count">Set ${nextSetNo}${targetSets?` / ${targetSets}`:''}</span></div></div></div><div class="workout-progress-line"><span class="small">Log each working set below. The rest timer starts automatically after you save a set.</span><span class="small">${remaining>0?`${remaining} set${remaining===1?'':'s'} remaining`:`All target sets logged`}</span></div><div class="workout-status-grid"><div class="next-load"><span>Next-load guidance</span><b>${esc(suggest.message)}</b></div><div class="rest-panel"><div class="rest-clock"><span>Rest timer</span><b id="canonicalRestClock">${canonicalRestRemaining?formatRest(canonicalRestRemaining):'Ready'}</b></div><div class="rest-actions"><button id="restPauseBtn" class="primary-rest" type="button" onclick="toggleCanonicalRest()">${canonicalRestRemaining?(canonicalRestPaused?'Resume':'Pause'):'Start'}</button><button type="button" onclick="addCanonicalRest(30)">+30 sec</button><button type="button" onclick="skipCanonicalRest()">Skip</button></div></div></div><div class="workout-inputs"><div class="workout-input-card"><label>Weight / load kg</label><input id="canonicalSetWeight" class="input" inputmode="decimal" value="${suggest.load}" placeholder="kg"></div><div class="workout-input-card"><label>Reps</label><input id="canonicalSetReps" class="input" inputmode="numeric" value="${prefillReps}" placeholder="${e.repMin}"></div></div>${lastSet?`<div class="small" style="margin:-2px 2px 10px;color:#8fc9ff">↻ Carried forward from Set ${today.length}: ${lastSet.weightKg?lastSet.weightKg+' kg':'BW'} × ${lastSet.reps} reps</div>`:''}<div class="workout-rir"><label>Reps in reserve</label><div class="rir-row">${[0,1,2,3].map(r=>`<button type="button" data-rir="${r}" class="${canonicalWorkout.rir===r?'on':''}" onclick="setWorkoutRIR(${r})">${r} RIR</button>`).join('')}</div></div><div class="workout-primary-row"><button class="btn primary" onclick="saveCanonicalSet()">Log set & start rest</button></div><div class="set-history-title"><b>Logged sets</b><span>${today.length} logged</span></div><div class="set-history">${today.length?today.map((x,j)=>`<div class="set-history-row"><div class="set-main"><span>Set ${j+1} · ${x.rir} RIR</span><b>${x.weightKg?x.weightKg+' kg':'BW'} × ${x.reps}</b></div><div class="set-actions"><button class="set-edit" type="button" onclick="editActiveWorkoutSet('${x.id}')">Edit</button></div></div>`).join(''):`<div class="small" style="text-align:center;padding:12px">No working sets logged yet.</div>`}</div><div class="workout-secondary-links"><div class="workout-nav"><button class="btn secondary" onclick="canonicalWorkout.exerciseIndex=Math.max(0,canonicalWorkout.exerciseIndex-1);renderCanonicalWorkout()">← Previous</button><button class="btn secondary" onclick="canonicalWorkout.exerciseIndex=Math.min(${s.exercises.length-1},canonicalWorkout.exerciseIndex+1);renderCanonicalWorkout()">Next →</button></div><a class="workout-guide-btn" href="javascript:void(0)" onclick="openExerciseGuide('${s.id}',${i})">Open form guide <span>/ video ↗</span></a></div><div class="workout-dock"><button class="btn primary" onclick="finishCanonicalWorkout()">Finish workout</button><button class="btn secondary" onclick="closeSession()">End later</button></div><div class="workout-spacer"></div></div>`;
   document.getElementById('sessionModal').classList.add('open')
 }
 function saveCanonicalSet(){
@@ -4435,7 +4435,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.48', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.52', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
@@ -5241,7 +5241,7 @@ window.gf30OpenBodyCompForm=function(){gf30EnsureBodyComposition();const sheet=d
 function gf45DefaultNotificationPrefs(){return {enabled:false,workouts:true,meals:true,inactivity:true,social:true,challenges:true,workoutTime:'18:00',breakfastTime:'08:30',lunchTime:'13:00',dinnerTime:'19:00',inactivityDays:3,quietStart:'22:30',quietEnd:'07:30'}}
 window.ensureProgressExtras=function(){GF45_ORIGINAL.ensureProgressExtras?.();if(!progress)return;progress.settings||(progress.settings={});progress.settings.notificationPrefs={...gf45DefaultNotificationPrefs(),...(progress.settings.notificationPrefs||{})};if(!Array.isArray(progress.settings.availableWeekdays))progress.settings.availableWeekdays=[...(plan?.training?.availableWeekdays||progress.settings.trainingWeekdays||[])];if(!Array.isArray(progress.notificationFeed))progress.notificationFeed=[]};
 function gf45PushStatus(){if(!('Notification'in window))return 'Browser notifications are unavailable here.';if(location.protocol==='file:')return 'Open the hosted PWA to enable system notifications. Calendar reminders still work from this file.';return Notification.permission==='granted'?'System notifications enabled.':'Tap Enable notifications. iPhone web push requires the hosted app added to the Home Screen.'}
-async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.48')}catch(e){console.warn(e);return null}}
+async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.52')}catch(e){console.warn(e);return null}}
 async function gf45RequestNotifications(){if(!('Notification'in window)){toast('Notifications are not supported here');return}if(location.protocol==='file:'){toast('Host/install the PWA to enable push');return}const reg=await gf45RegisterSW(),permission=await Notification.requestPermission();ensureProgressExtras();progress.settings.notificationPrefs.enabled=permission==='granted';write();if(permission==='granted'&&reg){await reg.showNotification('Gain Focus notifications enabled',{body:'Hercules can now surface training, nutrition and social reminders.',tag:'gf-enabled'});toast('Notifications enabled')}else toast('Notification permission not granted');gfRenderSocialHub()}
 async function gf45TestNotification(){const reg=await gf45RegisterSW();if(('Notification' in window)&&Notification.permission==='granted'&&reg){await reg.showNotification('Hercules · Test',{body:'Notifications are connected. Keep the hosted PWA installed for background alerts.',tag:'gf-test'});return}toast('Enable notifications first')}
 function gf45SaveNotificationSettings(){ensureProgressExtras();const p=progress.settings.notificationPrefs;for(const k of ['workouts','meals','inactivity','social','challenges'])p[k]=!!document.getElementById('gf45n_'+k)?.checked;for(const k of ['workoutTime','breakfastTime','lunchTime','dinnerTime','quietStart','quietEnd']){const v=document.getElementById('gf45n_'+k)?.value;if(v)p[k]=v}p.inactivityDays=clamp(Number(document.getElementById('gf45n_inactivityDays')?.value)||3,1,14);write();toast('Notification preferences saved')}
@@ -5841,8 +5841,8 @@ gf47EnsureExistingInputs();
   // --------------------------------------------------------------------------
   window.renderCanonicalWorkout=function(){
     gf48Ensure();const w=currentWorkoutRecord();if(!w||!canonicalWorkout)return;const s=plan.training.sessions.find(x=>x.id===w.sessionId);if(!s)return;const list=gf48RuntimeExercises(w,s),i=clamp(canonicalWorkout.exerciseIndex,0,list.length-1),e=list[i],key=workoutExerciseKey(e),today=w.setEntries.filter(x=>x.exerciseKey===key),suggest=typeof gf45LoadPrescription==='function'?gf45LoadPrescription(s.id,e):suggestedLoadFor(s.id,e),targetSets=Number(e.sets)||0;canonicalWorkout.exerciseIndex=i;if(!Number.isFinite(Number(canonicalWorkout.rir)))canonicalWorkout.rir=2;const nextSetNo=Math.min(today.length+1,targetSets||today.length+1),remaining=Math.max((targetSets||0)-today.length,0),sessionSheet=document.getElementById('sessionSheet');sessionSheet.classList.add('workout-sheet');
-    const prev=previousExercisePerformance?.(s.id,e)||[],prevText=prev.length?prev.map(x=>`${x.weightKg?x.weightKg+' kg':'BW'}×${x.reps}`).join(' · '):'No previous performance yet',target=Math.max(1,targetSets||1),progressPct=clamp(((i+(today.length/target))/list.length)*100,0,100),cal=typeof gf45CalBannerHTML==='function'?gf45CalBannerHTML(e,suggest):'';
-    sessionSheet.innerHTML=`<div class="grabber"></div><div class="workout-shell"><div class="guided-workout-progress"><div class="guided-workout-progress-top"><span>${esc(s.name)} · ${w.targetDurationMinutes||gf48SessionMinutes(s.id)} min plan</span><span>${i+1}/${list.length} exercises</span></div><div class="guided-workout-bar"><i style="width:${progressPct}%"></i></div></div><div class="workout-engine-head"><div class="exercise-guide-thumb">${exerciseVisual(e,false)}</div><div class="grow"><h2>${esc(e.name)}</h2><div class="workout-subhead"><p class="muted" style="margin:0">${targetSets} × ${e.repMin}–${e.repMax} · ${esc(e.focus||'')}</p><span class="set-count">Set ${nextSetNo}${targetSets?` / ${targetSets}`:''}</span></div></div></div><div class="previous-performance"><b>Last time:</b> ${esc(prevText)}</div>${cal}<div class="gf48-live-station"><span>Current station</span><b>${esc(gf48Station(e))}</b><small>${i<list.length-1&&gf48Station(list[i+1])===gf48Station(e)?`Next exercise stays here: ${esc(list[i+1].name)}`:'Next station change shown automatically.'}</small></div><div class="workout-progress-line"><span class="small">Log each working set. Rest starts automatically.</span><span class="small">${remaining>0?`${remaining} set${remaining===1?'':'s'} remaining`:`All target sets logged`}</span></div><div class="workout-status-grid"><div class="next-load"><span>Prescription</span><b>${esc(suggest?.message||'Use a controlled working load')}</b></div><div class="rest-panel"><div class="rest-clock"><span>Rest timer</span><b id="canonicalRestClock">${canonicalRestRemaining?formatRest(canonicalRestRemaining):'Ready'}</b></div><div class="rest-actions"><button id="restPauseBtn" class="primary-rest" type="button" onclick="toggleCanonicalRest()">${canonicalRestRemaining?(canonicalRestPaused?'Resume':'Pause'):'Start'}</button><button type="button" onclick="addCanonicalRest(30)">+30 sec</button><button type="button" onclick="skipCanonicalRest()">Skip</button></div></div></div><div class="workout-inputs"><div class="workout-input-card"><label>Weight / load kg</label><input id="canonicalSetWeight" class="input" inputmode="decimal" value="${suggest?.load??''}" placeholder="kg"></div><div class="workout-input-card"><label>Reps</label><input id="canonicalSetReps" class="input" inputmode="numeric" placeholder="${e.repMin}"></div></div><div class="workout-rir"><label>Reps in reserve</label><div class="rir-row">${[0,1,2,3].map(r=>`<button type="button" data-rir="${r}" class="${canonicalWorkout.rir===r?'on':''}" onclick="setWorkoutRIR(${r})">${r} RIR</button>`).join('')}</div></div><div class="workout-primary-row"><button class="btn primary" onclick="saveCanonicalSet()">Log set ${Math.min(today.length+1,target)} of ${target}</button></div><div class="set-history-title"><b>Logged sets</b><span>${today.length} logged</span></div><div class="set-history">${today.length?today.map((x,j)=>`<div class="set-history-row"><div class="set-main"><span>Set ${j+1} · ${x.rir} RIR${typeof gf45SetE1RM==='function'?` · e1RM ${round(gf45SetE1RM(x),1)} kg`:''}</span><b>${x.weightKg?x.weightKg+' kg':'BW'} × ${x.reps}</b></div><div class="set-actions"><button class="set-edit" type="button" onclick="editActiveWorkoutSet('${x.id}')">Edit</button></div></div>`).join(''):`<div class="small" style="text-align:center;padding:12px">No working sets logged yet.</div>`}</div>${today.length>=target&&i<list.length-1?`<button class="btn primary guided-next-btn" onclick="canonicalWorkout.exerciseIndex++;skipCanonicalRest();renderCanonicalWorkout()">Next exercise →</button>`:''}<div class="workout-secondary-links"><div class="workout-nav"><button class="btn secondary" onclick="canonicalWorkout.exerciseIndex=Math.max(0,canonicalWorkout.exerciseIndex-1);renderCanonicalWorkout()">← Previous</button><button class="btn secondary" onclick="canonicalWorkout.exerciseIndex=Math.min(${list.length-1},canonicalWorkout.exerciseIndex+1);renderCanonicalWorkout()">Next →</button></div><a class="workout-guide-btn" href="javascript:void(0)" onclick="gf48OpenGuideByKey('${esc(s.id)}','${esc(key)}')">Technique + grip guide <span>›</span></a><button class="btn secondary gf48-offplan-btn" onclick="gf48OpenOffPlanAdder()">＋ Add exercise not in today’s plan</button></div><div class="workout-dock"><button class="btn primary" onclick="finishCanonicalWorkout()">Finish workout</button><button class="btn secondary" onclick="closeSession()">End later</button></div><div class="workout-spacer"></div></div>`;
+    const prev=previousExercisePerformance?.(s.id,e)||[],prevText=prev.length?prev.map(x=>`${x.weightKg?x.weightKg+' kg':'BW'}×${x.reps}`).join(' · '):'No previous performance yet',lastSet=today.length?today[today.length-1]:null,prefillWeight=lastSet?Number(lastSet.weightKg)||0:(suggest?.load??''),prefillReps=lastSet?Number(lastSet.reps)||'':'',target=Math.max(1,targetSets||1),progressPct=clamp(((i+(today.length/target))/list.length)*100,0,100),cal=typeof gf45CalBannerHTML==='function'?gf45CalBannerHTML(e,suggest):'';
+    sessionSheet.innerHTML=`<div class="grabber"></div><div class="workout-shell"><div class="guided-workout-progress"><div class="guided-workout-progress-top"><span>${esc(s.name)} · ${w.targetDurationMinutes||gf48SessionMinutes(s.id)} min plan</span><span>${i+1}/${list.length} exercises</span></div><div class="guided-workout-bar"><i style="width:${progressPct}%"></i></div></div><div class="workout-engine-head"><div class="exercise-guide-thumb">${exerciseVisual(e,false)}</div><div class="grow"><h2>${esc(e.name)}</h2><div class="workout-subhead"><p class="muted" style="margin:0">${targetSets} × ${e.repMin}–${e.repMax} · ${esc(e.focus||'')}</p><span class="set-count">Set ${nextSetNo}${targetSets?` / ${targetSets}`:''}</span></div></div></div><div class="previous-performance"><b>Last time:</b> ${esc(prevText)}</div>${cal}<div class="gf48-live-station"><span>Current station</span><b>${esc(gf48Station(e))}</b><small>${i<list.length-1&&gf48Station(list[i+1])===gf48Station(e)?`Next exercise stays here: ${esc(list[i+1].name)}`:'Next station change shown automatically.'}</small></div><div class="workout-progress-line"><span class="small">Log each working set. Rest starts automatically.</span><span class="small">${remaining>0?`${remaining} set${remaining===1?'':'s'} remaining`:`All target sets logged`}</span></div><div class="workout-status-grid"><div class="next-load"><span>Prescription</span><b>${esc(suggest?.message||'Use a controlled working load')}</b></div><div class="rest-panel"><div class="rest-clock"><span>Rest timer</span><b id="canonicalRestClock">${canonicalRestRemaining?formatRest(canonicalRestRemaining):'Ready'}</b></div><div class="rest-actions"><button id="restPauseBtn" class="primary-rest" type="button" onclick="toggleCanonicalRest()">${canonicalRestRemaining?(canonicalRestPaused?'Resume':'Pause'):'Start'}</button><button type="button" onclick="addCanonicalRest(30)">+30 sec</button><button type="button" onclick="skipCanonicalRest()">Skip</button></div></div></div><div class="workout-inputs"><div class="workout-input-card"><label>Weight / load kg</label><input id="canonicalSetWeight" class="input" inputmode="decimal" value="${prefillWeight}" placeholder="kg"></div><div class="workout-input-card"><label>Reps</label><input id="canonicalSetReps" class="input" inputmode="numeric" placeholder="${e.repMin}"></div></div><div class="workout-rir"><label>Reps in reserve</label><div class="rir-row">${[0,1,2,3].map(r=>`<button type="button" data-rir="${r}" class="${canonicalWorkout.rir===r?'on':''}" onclick="setWorkoutRIR(${r})">${r} RIR</button>`).join('')}</div></div><div class="workout-primary-row"><button class="btn primary" onclick="saveCanonicalSet()">Log set ${Math.min(today.length+1,target)} of ${target}</button></div><div class="set-history-title"><b>Logged sets</b><span>${today.length} logged</span></div><div class="set-history">${today.length?today.map((x,j)=>`<div class="set-history-row"><div class="set-main"><span>Set ${j+1} · ${x.rir} RIR${typeof gf45SetE1RM==='function'?` · e1RM ${round(gf45SetE1RM(x),1)} kg`:''}</span><b>${x.weightKg?x.weightKg+' kg':'BW'} × ${x.reps}</b></div><div class="set-actions"><button class="set-edit" type="button" onclick="editActiveWorkoutSet('${x.id}')">Edit</button></div></div>`).join(''):`<div class="small" style="text-align:center;padding:12px">No working sets logged yet.</div>`}</div>${today.length>=target&&i<list.length-1?`<button class="btn primary guided-next-btn" onclick="canonicalWorkout.exerciseIndex++;skipCanonicalRest();renderCanonicalWorkout()">Next exercise →</button>`:''}<div class="workout-secondary-links"><div class="workout-nav"><button class="btn secondary" onclick="canonicalWorkout.exerciseIndex=Math.max(0,canonicalWorkout.exerciseIndex-1);renderCanonicalWorkout()">← Previous</button><button class="btn secondary" onclick="canonicalWorkout.exerciseIndex=Math.min(${list.length-1},canonicalWorkout.exerciseIndex+1);renderCanonicalWorkout()">Next →</button></div><a class="workout-guide-btn" href="javascript:void(0)" onclick="gf48OpenGuideByKey('${esc(s.id)}','${esc(key)}')">Technique + grip guide <span>›</span></a><button class="btn secondary gf48-offplan-btn" onclick="gf48OpenOffPlanAdder()">＋ Add exercise not in today’s plan</button></div><div class="workout-dock"><button class="btn primary" onclick="finishCanonicalWorkout()">Finish workout</button><button class="btn secondary" onclick="closeSession()">End later</button></div><div class="workout-spacer"></div></div>`;
     document.getElementById('sessionModal').classList.add('open');
   };
 
@@ -5926,5 +5926,1499 @@ gf47EnsureExistingInputs();
 })();
 
 </script>
+
+<style id="gf50-consolidated-patch-style">
+/* ==========================================================================
+   Gain Focus 4.0.50 consolidated UX patch
+   ========================================================================== */
+.gf50-hidden{display:none!important}
+
+/* shared accordions / coherent boxes */
+.gf50-widget{margin:12px 0;border:1px solid rgba(125,183,255,.12);border-radius:22px;background:linear-gradient(180deg,rgba(13,26,49,.92),rgba(7,14,29,.96));overflow:hidden}
+.gf50-widget>summary{list-style:none;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:16px 17px;cursor:pointer}
+.gf50-widget>summary::-webkit-details-marker{display:none}
+.gf50-widget>summary .gf50-summary-copy b{display:block;font-size:15px;letter-spacing:-.015em}
+.gf50-widget>summary .gf50-summary-copy span{display:block;margin-top:3px;font-size:9px;line-height:1.45;color:var(--muted)}
+.gf50-widget>summary .gf50-chevron{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;border:1px solid rgba(132,190,255,.12);background:rgba(95,160,245,.07);font-size:17px;transition:transform .18s ease}
+.gf50-widget[open]>summary .gf50-chevron{transform:rotate(45deg)}
+.gf50-widget-body{padding:0 14px 15px}
+.gf50-widget-body>.card,.gf50-widget-body>.gf45-engine-card,.gf50-widget-body>.diet-plan-card{margin-top:0}
+.gf50-widget-body>.section:first-child{margin-top:2px}
+
+/* account popup */
+.gf50-account-top{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:8px;margin-bottom:10px}
+.gf50-account-close{width:42px;height:42px;border-radius:14px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045);color:#eef6ff;font-size:23px;line-height:1;display:grid;place-items:center}
+.gf50-account-title{text-align:center;min-width:0}
+.gf50-account-title .eyebrow{margin-bottom:2px}
+.gf50-account-title h2{font-size:22px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gf50-account-spacer{width:42px;height:42px}
+.gf50-settings-moved{margin:10px 0;padding:10px 12px;border-radius:15px;background:rgba(104,177,255,.055);border:1px solid rgba(118,190,255,.1);font-size:9px;line-height:1.45;color:var(--muted)}
+
+/* notifications on home header */
+.gf50-home-bell{position:relative;width:42px;height:42px;border-radius:14px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045);color:#eef6ff;display:grid;place-items:center;padding:0}
+.gf50-home-bell svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.gf50-home-bell i{position:absolute;right:4px;top:3px;min-width:15px;height:15px;padding:0 3px;border-radius:999px;background:#6faeff;color:#06101f;font-style:normal;font-size:8px;font-weight:950;display:grid;place-items:center}
+
+/* train */
+.gf50-train-stack{display:grid;gap:12px}
+.gf50-recent-block{margin:12px 0 2px}
+.gf50-recent-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:0 4px 9px}
+.gf50-recent-head h3{margin:0;font-size:18px}
+.gf50-recent-head span{font-size:9px;color:var(--muted)}
+.gf50-empty{padding:14px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025);font-size:10px;color:var(--muted);text-align:center}
+.gf50-time-state{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:6px}
+.gf50-time-state span{font-size:8px;padding:5px 7px;border-radius:999px;background:rgba(109,181,255,.07);border:1px solid rgba(118,191,255,.11);color:#bfe5ff}
+.gf50-programme-list{display:grid;gap:8px}
+.gf50-programme-list .session-card{margin:0}
+.gf50-end-block{margin-top:12px}
+.gf48-availability-card select{min-height:44px}
+
+/* nutrition web lookup */
+.gf50-food-search{margin:12px 0;padding:12px;border-radius:18px;background:linear-gradient(135deg,rgba(81,155,255,.075),rgba(255,255,255,.025));border:1px solid rgba(109,182,255,.12)}
+.gf50-food-search-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:9px}
+.gf50-food-search-head b{display:block;font-size:12px}
+.gf50-food-search-head span{display:block;font-size:8px;color:var(--muted);margin-top:2px}
+.gf50-region-pill{flex:0 0 auto;padding:5px 7px;border-radius:999px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);font-size:8px!important;color:#cce6ff!important;margin:0!important}
+.gf50-search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px}
+.gf50-search-row .input{margin:0}
+.gf50-search-row button{min-width:82px}
+.gf50-search-status{font-size:8.5px;line-height:1.45;color:var(--muted);margin-top:8px}
+.gf50-search-results{display:grid;gap:7px;margin-top:9px}
+.gf50-food-result{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;text-align:left;padding:10px 11px;border-radius:15px;border:1px solid rgba(255,255,255,.065);background:rgba(255,255,255,.03);color:inherit}
+.gf50-food-result b{display:block;font-size:10px}
+.gf50-food-result span{display:block;margin-top:3px;font-size:8px;color:var(--muted);line-height:1.35}
+.gf50-food-result strong{font-size:9px;color:#9dd7ff}
+.gf50-web-fallback{margin-top:8px;width:100%}
+
+/* check-in consolidated */
+.gf50-checkin-main{padding-bottom:15px}
+.gf50-checkin-main .gf50-checkin-inline{margin:11px 0 13px}
+.gf50-checkin-inline{padding:12px;border-radius:17px;background:linear-gradient(135deg,rgba(85,155,255,.075),rgba(255,255,255,.025));border:1px solid rgba(111,182,255,.11)}
+.gf50-checkin-inline-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.gf50-checkin-inline-head b{font-size:11px}
+.gf50-checkin-inline-head span{font-size:8px;color:#acd9ff}
+.gf50-checkin-inline-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:9px}
+.gf50-checkin-inline-grid div{padding:8px;border-radius:12px;background:rgba(255,255,255,.032);border:1px solid rgba(255,255,255,.055)}
+.gf50-checkin-inline-grid span{display:block;font-size:7px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.gf50-checkin-inline-grid b{display:block;font-size:12px;margin-top:3px}
+.gf50-checkin-inline p{font-size:9px;line-height:1.45;color:var(--muted);margin:9px 1px 0}
+
+/* analysis wording/boxes */
+.analysis-hero.gf50-analysis-hero p{max-width:460px}
+.gf50-analysis-hero .analysis-stat span{line-height:1.25}
+.gf26-muscle-hub.gf50-muscle-hub{border-color:rgba(117,185,255,.13);background:linear-gradient(180deg,rgba(12,31,59,.95),rgba(7,18,35,.97))}
+.gf50-muscle-explainer{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:10px}
+.gf50-muscle-explainer span{padding:7px 8px;border-radius:11px;background:rgba(255,255,255,.027);border:1px solid rgba(255,255,255,.05);font-size:7.5px;color:var(--muted)}
+.gf50-trajectory-note{display:flex;justify-content:space-between;gap:9px;margin:8px 1px 0;font-size:8px;color:var(--muted)}
+.gf50-trajectory-note b{color:#cce8ff;font-weight:800;text-align:right}
+
+/* top left close for profile editor + secondary sheets */
+.gf50-sheet-close{position:sticky;top:0;z-index:4;width:38px;height:38px;margin:-2px 0 8px;border-radius:13px;border:1px solid rgba(255,255,255,.09);background:rgba(8,17,33,.92);color:#eef6ff;font-size:20px;display:grid;place-items:center;backdrop-filter:blur(12px)}
+
+@media(max-width:430px){
+  .gf50-search-row{grid-template-columns:1fr}
+  .gf50-search-row button{width:100%}
+  .gf50-checkin-inline-grid{grid-template-columns:repeat(3,1fr)}
+  .gf50-muscle-explainer{grid-template-columns:1fr 1fr}
+}
+</style>
+
+<script id="gf50-consolidated-patch">
+// ============================================================================
+// Gain Focus 4.0.50 · consolidated patch
+// ============================================================================
+(function(){
+  const GF50_VERSION='4.0.50';
+  const GF50_MINUTES=[30,45,60,75,90,105,120,150];
+
+  function gf50Ensure(){
+    try{ensureProgressExtras?.()}catch{}
+    if(!progress)return;
+    progress.settings||(progress.settings={});
+    if(!Number.isFinite(Number(progress.settings.sessionDurationMinutes)))progress.settings.sessionDurationMinutes=60;
+    progress.settings.sessionDurationOverrides||(progress.settings.sessionDurationOverrides={});
+    if(!progress.settings.regionCode)progress.settings.regionCode=gf50InferRegion();
+  }
+
+  function gf50InferRegion(){
+    const raw=String(
+      plan?.client?.regionCode||
+      plan?.client?.countryCode||
+      plan?.client?.country||
+      plan?.client?.region||
+      plan?.onboarding?.regionCode||
+      plan?.onboarding?.countryCode||
+      progress?.settings?.regionCode||
+      ''
+    ).trim().toUpperCase();
+    const aliases={'UK':'GB','UNITED KINGDOM':'GB','GREAT BRITAIN':'GB','ENGLAND':'GB','WALES':'GB','SCOTLAND':'GB','NORTHERN IRELAND':'GB','UNITED STATES':'US','USA':'US','SOUTH AFRICA':'ZA','IRELAND':'IE','AUSTRALIA':'AU','CANADA':'CA'};
+    if(aliases[raw])return aliases[raw];
+    if(/^[A-Z]{2}$/.test(raw))return raw;
+    const lang=String(navigator.language||'').toUpperCase();
+    const m=lang.match(/-([A-Z]{2})$/);
+    return m?.[1]||'GB';
+  }
+  window.gf50InferRegion=gf50InferRegion;
+
+  function gf50RegionLabel(code=gf50InferRegion()){
+    return ({GB:'United Kingdom',US:'United States',IE:'Ireland',AU:'Australia',CA:'Canada',ZA:'South Africa'})[code]||code;
+  }
+  function gf50RegionOptions(selected){
+    const rows=[['GB','United Kingdom'],['US','United States'],['IE','Ireland'],['AU','Australia'],['CA','Canada'],['ZA','South Africa']];
+    return rows.map(([v,l])=>`<option value="${v}" ${v===selected?'selected':''}>${l}</option>`).join('');
+  }
+  function gf50DurationLabel(m){
+    m=Number(m)||60;
+    if(m===60)return'1 hour';
+    if(m===90)return'1 hr 30';
+    if(m===120)return'2 hours';
+    if(m===150)return'2 hr 30';
+    return `${m} min`;
+  }
+  function gf50DurationOptions(selected){
+    return GF50_MINUTES.map(m=>`<option value="${m}" ${m===Number(selected)?'selected':''}>${gf50DurationLabel(m)}</option>`).join('');
+  }
+
+  // ------------------------------------------------------------------------
+  // Region stored in onboarding + JSON + profile.
+  // ------------------------------------------------------------------------
+  const gf50BaseRenderCanonical=window.renderCanonicalOnboarding;
+  if(typeof gf50BaseRenderCanonical==='function')window.renderCanonicalOnboarding=function(){
+    if(canonicalOnboarding){
+      canonicalOnboarding.profile||(canonicalOnboarding.profile={});
+      if(!canonicalOnboarding.profile.regionCode)canonicalOnboarding.profile.regionCode=gf50InferRegion();
+    }
+    const r=gf50BaseRenderCanonical.apply(this,arguments);
+    if(canonicalOnboardingStep===0){
+      const grid=document.querySelector('#tourCard .canon-grid');
+      if(grid&&!document.getElementById('gf50OnboardRegion')){
+        const div=document.createElement('div');div.className='canon-field wide';
+        div.innerHTML=`<label>Region for food / product data</label><select id="gf50OnboardRegion" class="input">${gf50RegionOptions(canonicalOnboarding?.profile?.regionCode||gf50InferRegion())}</select><div class="onboard-foot" style="margin-top:5px">Used for region-specific nutrition lookup and product data.</div>`;
+        grid.appendChild(div);
+      }
+    }
+    return r;
+  };
+  const gf50BaseCanonicalSave=window.canonicalSaveProfile;
+  if(typeof gf50BaseCanonicalSave==='function')window.canonicalSaveProfile=function(){
+    if(canonicalOnboarding?.profile){
+      const v=document.getElementById('gf50OnboardRegion')?.value;
+      if(v)canonicalOnboarding.profile.regionCode=v;
+    }
+    return gf50BaseCanonicalSave.apply(this,arguments);
+  };
+  const gf50BasePlanPreview=window.canonicalPlanPreview;
+  if(typeof gf50BasePlanPreview==='function')window.canonicalPlanPreview=function(){
+    const p=gf50BasePlanPreview.apply(this,arguments);
+    if(p?.client)p.client.regionCode=canonicalOnboarding?.profile?.regionCode||gf50InferRegion();
+    if(p?.onboarding)p.onboarding.regionCode=p.client?.regionCode||gf50InferRegion();
+    return p;
+  };
+
+  const gf50BaseOpenProfileEditor=window.openProfileEditor;
+  if(typeof gf50BaseOpenProfileEditor==='function')window.openProfileEditor=function(){
+    const r=gf50BaseOpenProfileEditor.apply(this,arguments);
+    const grid=document.querySelector('#sessionSheet .profile-editor-grid');
+    if(grid&&!document.getElementById('gf50ProfileRegion')){
+      const div=document.createElement('div');div.className='wide';
+      div.innerHTML=`<label>Region</label><select id="gf50ProfileRegion" class="input">${gf50RegionOptions(gf50InferRegion())}</select><span class="profile-current-pill">Used for region-specific nutrition lookup</span>`;
+      grid.appendChild(div);
+    }
+    const sh=document.getElementById('sessionSheet');
+    if(sh&&!sh.querySelector('.gf50-sheet-close')){
+      const b=document.createElement('button');b.className='gf50-sheet-close';b.type='button';b.setAttribute('aria-label','Close');b.textContent='×';b.onclick=()=>{closeSession();openSettings()};sh.prepend(b)
+    }
+    return r;
+  };
+  const gf50BaseSaveProfile=window.saveProfileEdits;
+  if(typeof gf50BaseSaveProfile==='function')window.saveProfileEdits=function(){
+    const region=document.getElementById('gf50ProfileRegion')?.value||gf50InferRegion();
+    plan.client.regionCode=region;
+    plan.onboarding||(plan.onboarding={});
+    plan.onboarding.regionCode=region;
+    gf50Ensure();progress.settings.regionCode=region;
+    return gf50BaseSaveProfile.apply(this,arguments);
+  };
+
+  // ------------------------------------------------------------------------
+  // Workout availability is a true daily constraint.
+  // Setting the default deliberately clears old per-session overrides.
+  // ------------------------------------------------------------------------
+  window.gf48SetDefaultMinutes=function(v){
+    gf50Ensure();const m=Number(v);if(!GF50_MINUTES.includes(m))return;
+    progress.settings.sessionDurationMinutes=m;
+    progress.settings.sessionDurationOverrides={};
+    if(plan?.training)plan.training.defaultSessionDurationMinutes=m;
+    try{write()}catch{}
+    renderAll?.();
+    toast(`Daily workout availability set to ${gf50DurationLabel(m)}`);
+  };
+
+  function gf50PatchAvailabilityCard(root){
+    const mins=Number(progress?.settings?.sessionDurationMinutes)||60;
+    let card=root.querySelector('.gf48-availability-card');
+    if(!card){
+      card=document.createElement('div');card.className='card glass gf48-availability-card';
+    }
+    card.innerHTML=`<div><span class="eyebrow">Daily workout availability</span><b>${gf50DurationLabel(mins)} available</b><small>Every session is fitted to this time. Old one-off session overrides are cleared when you change it here.</small></div><select class="input" onchange="gf48SetDefaultMinutes(this.value)">${gf50DurationOptions(mins)}</select>`;
+    return card;
+  }
+
+  function gf50RecentHTML(){
+    const rows=typeof sortedWorkoutLogs==='function'?sortedWorkoutLogs():[];
+    return `<section class="gf50-recent-block"><div class="gf50-recent-head"><h3>Recent workouts</h3><span>${rows.length?`${Math.min(3,rows.length)} shown`:'No history yet'}</span></div>${rows.length?workoutHistoryHTML(3):'<div class="gf50-empty">Completed workouts will appear here immediately after Today’s workout.</div>'}</section>`;
+  }
+
+  function gf50ProgrammeDetails(){
+    const d=document.createElement('details');d.className='gf50-widget gf50-programme-widget';
+    d.innerHTML=`<summary><div class="gf50-summary-copy"><b>Your programme</b><span>${plan?.training?.sessions?.length||0} sessions · tap to expand the full programme</span></div><span class="gf50-chevron">＋</span></summary><div class="gf50-widget-body"><div class="gf50-programme-list"></div></div>`;
+    const list=d.querySelector('.gf50-programme-list');
+    for(const s of (plan?.training?.sessions||[])){
+      const m=Number(progress?.settings?.sessionDurationMinutes)||60,fit=typeof gf48FitSession==='function'?gf48FitSession(s,m):null,shown=fit?.exercises?.length??s.exercises.length,est=fit?.estimatedMinutes??gfWorkoutEstimate(s).mins;
+      const btn=document.createElement('button');btn.className='card glass session-card with-cover';btn.style='width:100%;text-align:left;border:1px solid var(--line)';
+      btn.onclick=()=>openSession(s.id);
+      btn.innerHTML=`${sessionCoverHTML(s)}<div class="grow"><h4>${esc(s.name)}</h4><p>${esc(s.subtitle||'')} · ${shown}/${s.exercises.length} exercises at ${gf50DurationLabel(m)} · ~${est} min</p></div><span class="chev">›</span>`;
+      list.appendChild(btn);
+    }
+    return d;
+  }
+
+  const gf50BaseRenderTrain=window.renderTrain;
+  window.renderTrain=function(){
+    gf50Ensure();
+    const r=gf50BaseRenderTrain?.apply(this,arguments);
+    const root=document.getElementById('train');if(!root)return r;
+
+    const launch=root.querySelector('.training-launch');
+    if(launch){
+      const active=typeof gfActiveWorkout==='function'?gfActiveWorkout():null;
+      const s=active?plan?.training?.sessions?.find(x=>x.id===active.sessionId):(typeof gfTodayWorkout==='function'?gfTodayWorkout():null);
+      if(s){
+        const mins=Number(active?.targetDurationMinutes)||Number(progress.settings.sessionDurationMinutes)||60;
+        const fit=active&&typeof gf48RuntimeExercises==='function'?{exercises:gf48RuntimeExercises(active,s),estimatedMinutes:Number(active.runtimeEstimatedMinutes)||mins}:gf48FitSession(s,mins);
+        const sets=(fit.exercises||[]).reduce((n,e)=>n+(Number(e.sets)||0),0);
+        const meta=launch.querySelector('.training-launch-meta');
+        if(meta)meta.innerHTML=`<div><span>Exercises</span><b>${fit.exercises.length}/${s.exercises.length}</b></div><div><span>Working sets</span><b>${sets}</b></div><div><span>Available</span><b>${gf50DurationLabel(mins)}</b></div>`;
+        const chips=launch.querySelector('.training-exercise-mini');
+        if(chips)chips.innerHTML=(fit.exercises||[]).map(e=>`<span>${esc(e.name)}</span>`).join('');
+        const head=launch.querySelector('.training-launch-head p');
+        if(head)head.insertAdjacentHTML('afterend',`<div class="gf50-time-state"><span>~${fit.estimatedMinutes} min planned</span><span>${fit.exercises.length<s.exercises.length?`${s.exercises.length-fit.exercises.length} lower-priority exercise${s.exercises.length-fit.exercises.length===1?'':'s'} deferred`:'Full session fits'}</span></div>`);
+      }
+    }
+
+    // Remove the older loose sections before rebuilding the requested order.
+    const recentSection=[...root.querySelectorAll('.section')].find(x=>/Recent workouts/i.test(x.textContent||''));
+    if(recentSection){
+      const next=recentSection.nextElementSibling;
+      recentSection.remove();
+      if(next?.classList?.contains('workout-history'))next.remove();
+    }
+    root.querySelector('#gfProgrammeList')?.remove();
+    root.querySelectorAll(':scope > .session-card').forEach(x=>x.remove());
+
+    const planProtection=root.querySelector('.gf30-plan-protection');
+    if(planProtection)planProtection.remove();
+    let workoutAnalysis=[...root.querySelectorAll('details')].find(x=>/Workout analysis/i.test(x.querySelector('summary')?.textContent||''));
+    if(workoutAnalysis)workoutAnalysis.remove();
+
+    const availability=gf50PatchAvailabilityCard(root);
+    availability.remove();
+
+    // Requested order: today -> recent -> availability -> programme -> plan protection -> analysis.
+    if(launch){
+      launch.insertAdjacentHTML('afterend',gf50RecentHTML());
+      const recent=launch.nextElementSibling;
+      recent.insertAdjacentElement('afterend',availability);
+      availability.insertAdjacentElement('afterend',gf50ProgrammeDetails());
+    }else{
+      root.insertAdjacentHTML('afterbegin',gf50RecentHTML());
+      root.querySelector('.gf50-recent-block').insertAdjacentElement('afterend',availability);
+      availability.insertAdjacentElement('afterend',gf50ProgrammeDetails());
+    }
+
+    if(planProtection){planProtection.classList.add('gf50-end-block');root.appendChild(planProtection)}
+    if(workoutAnalysis){workoutAnalysis.classList.add('gf50-end-block');root.appendChild(workoutAnalysis)}
+    gfSyncTrainCalendarButton?.();
+    return r;
+  };
+
+  // Current-session picker supports the full daily options and immediately changes exercise count.
+  const gf50BaseOpenSession=window.openSession;
+  window.openSession=function(id){
+    const r=gf50BaseOpenSession?.apply(this,arguments);
+    const sel=document.querySelector('#sessionSheet .gf48-time-picker select');
+    if(sel){
+      const mins=Number(typeof gf48SessionMinutes==='function'?gf48SessionMinutes(id):progress?.settings?.sessionDurationMinutes)||60;
+      sel.innerHTML=gf50DurationOptions(mins);
+    }
+    const sh=document.getElementById('sessionSheet');
+    if(sh&&!sh.querySelector('.gf50-sheet-close')){
+      const b=document.createElement('button');b.className='gf50-sheet-close';b.type='button';b.textContent='×';b.setAttribute('aria-label','Close workout preview');b.onclick=()=>closeSession();sh.prepend(b)
+    }
+    return r;
+  };
+
+  // Fix the v4.0.49 carry-forward omission: both KG and reps inherit the prior set.
+  const gf50BaseWorkoutRenderer=window.renderCanonicalWorkout;
+  window.renderCanonicalWorkout=function(){
+    const r=gf50BaseWorkoutRenderer?.apply(this,arguments);
+    const w=currentWorkoutRecord?.(),cw=canonicalWorkout;if(!w||!cw)return r;
+    const s=plan?.training?.sessions?.find(x=>x.id===w.sessionId);if(!s)return r;
+    const list=typeof gf48RuntimeExercises==='function'?gf48RuntimeExercises(w,s):s.exercises;
+    const e=list?.[cw.exerciseIndex];if(!e)return r;
+    const key=workoutExerciseKey(e),sets=(w.setEntries||[]).filter(x=>x.exerciseKey===key),last=sets.at(-1);
+    if(last){
+      const wi=document.getElementById('canonicalSetWeight'),ri=document.getElementById('canonicalSetReps');
+      if(wi)wi.value=Number(last.weightKg)||0;
+      if(ri)ri.value=Number(last.reps)||'';
+      const inputs=document.querySelector('#sessionSheet .workout-inputs');
+      if(inputs&&!document.getElementById('gf50CarryForward'))inputs.insertAdjacentHTML('afterend',`<div id="gf50CarryForward" class="small" style="margin:-2px 2px 10px;color:#8fc9ff">↻ Carried forward from Set ${sets.length}: ${last.weightKg?last.weightKg+' kg':'BW'} × ${last.reps} reps</div>`);
+    }
+    return r;
+  };
+
+  // ------------------------------------------------------------------------
+  // Account popup: close always top-left. Notifications move to Home header.
+  // ------------------------------------------------------------------------
+  window.gfRenderSocialHub=function(){
+    const sheet=document.getElementById('settingsSheet');if(!sheet)return;
+    const st=gfSocialRead?.()||{notifications:[]},active=String(gfSocialTab).startsWith('compare:')?'friends':String(gfSocialTab).startsWith('group:')?'groups':gfSocialTab;
+    const title=active==='profile'?'Your athlete card':active==='friends'?'Friends':active==='leaderboard'?'Leaderboard':active==='groups'?'Groups & challenges':active==='notifications'?'Notifications':'Settings';
+    sheet.innerHTML=`<div class="gf-social-hub"><div class="gf50-account-top"><button class="gf50-account-close" onclick="closeSettings()" aria-label="Close account menu">×</button><div class="gf50-account-title"><div class="eyebrow">Gain Focus account</div><h2>${esc(title)}</h2></div><span class="gf50-account-spacer"></span></div><div class="gf-social-tabs"><button class="${active==='profile'?'on':''}" onclick="gfSocialSetTab('profile')">Profile</button><button class="${active==='friends'?'on':''}" onclick="gfSocialSetTab('friends')">Friends</button><button class="${active==='leaderboard'?'on':''}" onclick="gfSocialSetTab('leaderboard')">Ranks</button><button class="${active==='groups'?'on':''}" onclick="gfSocialSetTab('groups')">Groups</button><button class="${active==='settings'?'on':''}" onclick="gfSocialSetTab('settings')">Settings</button></div>${gfSocialBody?.()||''}</div>`;
+    if(active==='settings'){
+      sheet.querySelectorAll('.gf45-notify-box,.gf45-push-backend').forEach(x=>x.remove());
+      const stack=sheet.querySelector('.gf-settings-stack')||sheet.querySelector('.gf-social-hub');
+      stack?.insertAdjacentHTML('beforebegin','<div class="gf50-settings-moved">Notification controls have moved to the bell on the Hercules Home header.</div>');
+    }
+  };
+
+  const gf50BaseNotificationsHTML=window.gf45NotificationsHTML;
+  if(typeof gf50BaseNotificationsHTML==='function')window.gf45NotificationsHTML=function(){
+    const feed=gf50BaseNotificationsHTML.apply(this,arguments)||'';
+    const settings=typeof gf45NotificationSettingsHTML==='function'?gf45NotificationSettingsHTML():'';
+    return `${feed}<div style="margin-top:14px"><div class="eyebrow">Notification controls</div>${settings}</div>`;
+  };
+
+  function gf50UnreadCount(){
+    try{return (gfSocialRead?.().notifications||[]).filter(x=>!x.read).length}catch{return 0}
+  }
+  window.gf50OpenNotifications=function(){
+    gfSocialTab='notifications';
+    openSettings();
+    setTimeout(()=>{gfSocialTab='notifications';gfRenderSocialHub?.();gf50SyncHeaderActions()},0);
+  };
+  function gf50EnsureBell(){
+    const actions=document.getElementById('gfTopbarActions');if(!actions)return null;
+    let b=document.getElementById('gf50HomeBell');
+    if(!b){
+      b=document.createElement('button');b.id='gf50HomeBell';b.className='gf50-home-bell';b.type='button';b.setAttribute('aria-label','Notifications');b.onclick=gf50OpenNotifications;
+      const profile=document.getElementById('profileMenuButton');actions.insertBefore(b,profile||null);
+    }
+    const unread=gf50UnreadCount();
+    b.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>${unread?`<i>${unread}</i>`:''}`;
+    return b;
+  }
+  window.gf50SyncHeaderActions=function(){
+    const bell=gf50EnsureBell();if(bell)bell.style.display=currentTab==='today'?'grid':'none';
+    const cal=document.getElementById('gfTrainCalendarButton');if(cal)cal.style.display=currentTab==='train'?'grid':'none';
+  };
+  const gf50BaseShowTab=window.showTab;
+  window.showTab=function(tab){
+    const r=gf50BaseShowTab.apply(this,arguments);
+    setTimeout(gf50SyncHeaderActions,0);
+    return r;
+  };
+
+  // ------------------------------------------------------------------------
+  // Nutrition: everything after the opening summary is nested.
+  // Manual entry adds region-aware online lookup.
+  // ------------------------------------------------------------------------
+  const GF50_SEED_FOODS=[
+    {id:'mcd-gb-double-sausage-egg-mcmuffin',regions:['GB'],terms:['mcdonald','double sausage','egg mcmuffin'],name:"McDonald's Double Sausage & Egg McMuffin",calories:552,protein:36,carbs:28,fat:33,basis:'per item',source:'McDonald’s UK calories + UK nutrition cross-check'}
+  ];
+  let gf50FoodResults=[],gf50FoodSource='';
+
+  function gf50FoodMatchesSeed(q,region){
+    const s=String(q||'').toLowerCase();
+    return GF50_SEED_FOODS.filter(x=>x.regions.includes(region)&&x.terms.filter(t=>s.includes(t)).length>=2);
+  }
+  async function gf50OpenFoodFacts(q,region){
+    const country=gf50RegionLabel(region);
+    const url=`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=8&tagtype_0=countries&tag_contains_0=contains&tag_0=${encodeURIComponent(country)}`;
+    const res=await fetch(url,{headers:{'Accept':'application/json'}});
+    if(!res.ok)throw new Error('Online food database unavailable');
+    const data=await res.json();
+    return (data.products||[]).map((p,i)=>{
+      const n=p.nutriments||{},per100={
+        calories:Number(n['energy-kcal_100g']),
+        protein:Number(n.proteins_100g),
+        carbs:Number(n.carbohydrates_100g),
+        fat:Number(n.fat_100g)
+      };
+      if(!Number.isFinite(per100.calories))return null;
+      const serving=Number(p.serving_quantity)||0,unit=String(p.serving_quantity_unit||'g').toLowerCase(),factor=serving>0&&unit==='g'?serving/100:1;
+      return {id:`off-${i}`,name:[p.product_name,p.brands].filter(Boolean).join(' · ')||'Food product',calories:per100.calories*factor,protein:(per100.protein||0)*factor,carbs:(per100.carbs||0)*factor,fat:(per100.fat||0)*factor,basis:serving>0&&unit==='g'?`${serving} g serving`:'per 100 g',source:'Open Food Facts',url:p.url||''};
+    }).filter(Boolean);
+  }
+  function gf50RenderFoodResults(){
+    const area=document.getElementById('gf50FoodResults'),status=document.getElementById('gf50FoodSearchStatus');if(!area)return;
+    if(status)status.textContent=gf50FoodSource||'';
+    area.innerHTML=gf50FoodResults.length?gf50FoodResults.map((x,i)=>`<button class="gf50-food-result" type="button" onclick="gf50UseFoodResult(${i})"><div><b>${esc(x.name)}</b><span>${Math.round(x.calories)} kcal · ${round(x.protein,1)}g protein · ${round(x.carbs,1)}g carbs · ${round(x.fat,1)}g fat · ${esc(x.basis||'')}</span></div><strong>Use</strong></button>`).join(''):'';
+  }
+  window.gf50SearchFood=async function(){
+    const input=document.getElementById('gf50FoodQuery'),q=String(input?.value||document.getElementById('foodName')?.value||'').trim(),region=gf50InferRegion();
+    if(q.length<2){toast('Enter a food or menu item');return}
+    const status=document.getElementById('gf50FoodSearchStatus'),btn=document.getElementById('gf50FoodSearchBtn');
+    if(btn)btn.disabled=true;if(status)status.textContent=`Searching ${gf50RegionLabel(region)} food data…`;
+    gf50FoodResults=gf50FoodMatchesSeed(q,region);gf50FoodSource=gf50FoodResults.length?`Region matched: ${gf50RegionLabel(region)} · verified menu item match`:'';
+    try{
+      const online=await gf50OpenFoodFacts(q,region);
+      const names=new Set(gf50FoodResults.map(x=>x.name.toLowerCase()));
+      for(const x of online)if(!names.has(x.name.toLowerCase()))gf50FoodResults.push(x);
+      if(online.length)gf50FoodSource=`Region: ${gf50RegionLabel(region)} · online food database results`;
+    }catch(e){
+      if(!gf50FoodResults.length)gf50FoodSource=`No structured result found. Use Wider web search below for ${gf50RegionLabel(region)}.`;
+    }finally{
+      gf50FoodResults=gf50FoodResults.slice(0,8);gf50RenderFoodResults();if(btn)btn.disabled=false;
+    }
+  };
+  window.gf50UseFoodResult=function(i){
+    const x=gf50FoodResults[i];if(!x)return;
+    const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v};
+    set('foodName',x.name);set('foodCalories',Math.round(x.calories));set('foodProtein',round(x.protein,1));set('foodCarbs',round(x.carbs,1));set('foodFat',round(x.fat,1));
+    const card=document.getElementById('gf50FoodSearch');if(card){card.dataset.source=x.source||'online';card.dataset.region=gf50InferRegion();card.dataset.basis=x.basis||''}
+    toast('Nutrition data copied into manual entry');
+  };
+  window.gf50WiderFoodSearch=function(){
+    const q=String(document.getElementById('gf50FoodQuery')?.value||document.getElementById('foodName')?.value||'').trim();if(!q)return;
+    const region=gf50RegionLabel(gf50InferRegion());
+    window.open(`https://www.google.com/search?q=${encodeURIComponent(`${q} ${region} nutrition calories protein carbs fat`)}`,'_blank','noopener');
+  };
+  function gf50FoodSearchHTML(){
+    const region=gf50InferRegion();
+    return `<div id="gf50FoodSearch" class="gf50-food-search"><div class="gf50-food-search-head"><div><b>Search nutrition data</b><span>Looks up region-matched online food data, then fills the manual fields.</span></div><span class="gf50-region-pill">${esc(gf50RegionLabel(region))}</span></div><div class="gf50-search-row"><input id="gf50FoodQuery" class="input" placeholder="e.g. McDonald’s Double Sausage & Egg McMuffin" onkeydown="if(event.key==='Enter'){event.preventDefault();gf50SearchFood()}"><button id="gf50FoodSearchBtn" class="btn secondary" type="button" onclick="gf50SearchFood()">Search data</button></div><div id="gf50FoodSearchStatus" class="gf50-search-status">Region comes from onboarding / profile JSON.</div><div id="gf50FoodResults" class="gf50-search-results"></div><button class="btn secondary gf50-web-fallback" type="button" onclick="gf50WiderFoodSearch()">Search wider web ↗</button></div>`;
+  }
+
+  const gf50BaseSaveManual=window.saveManualNutritionEntry;
+  window.saveManualNutritionEntry=function(){
+    const before=(progress?.nutritionLogs||[]).length,card=document.getElementById('gf50FoodSearch');
+    const meta=card?{lookupSource:card.dataset.source||'',lookupRegion:card.dataset.region||'',lookupBasis:card.dataset.basis||''}:null;
+    const r=gf50BaseSaveManual?.apply(this,arguments);
+    const rows=progress?.nutritionLogs||[];
+    if(meta&&rows.length>before){
+      const x=rows.at(-1);Object.assign(x,meta);try{write()}catch{}
+    }
+    return r;
+  };
+
+  function gf50MakeDetails(title,sub,nodes,open=false){
+    const d=document.createElement('details');d.className='gf50-widget';d.open=!!open;
+    d.innerHTML=`<summary><div class="gf50-summary-copy"><b>${esc(title)}</b><span>${esc(sub)}</span></div><span class="gf50-chevron">＋</span></summary><div class="gf50-widget-body"></div>`;
+    const body=d.querySelector('.gf50-widget-body');for(const n of nodes.filter(Boolean))body.appendChild(n);
+    return d;
+  }
+
+  const gf50BaseRenderNutrition=window.renderNutrition;
+  window.renderNutrition=function(){
+    gf50Ensure();const r=gf50BaseRenderNutrition?.apply(this,arguments),root=document.getElementById('nutrition');if(!root)return r;
+    const hero=root.querySelector('.hero');if(!hero)return r;
+
+    // Add search only in manual entry.
+    const logCard=[...root.querySelectorAll('.card.glass')].find(x=>x.querySelector('.log-mode'));
+    if(logCard&&nutritionEntryMode==='manual'&&!logCard.querySelector('#gf50FoodSearch')){
+      const mode=logCard.querySelector('.log-mode');mode?.insertAdjacentHTML('afterend',gf50FoodSearchHTML());
+    }
+
+    const engine=root.querySelector('.gf45-engine-card'),meal=root.querySelector('.gf45-meal-slot');
+    const diet=root.querySelector('.diet-plan-card');
+    const favTitle=root.querySelector('.nutrition-fav-title'),favs=root.querySelector('.nutrition-favourites');
+    const todaySection=[...root.querySelectorAll(':scope > .section')].find(x=>/Today.?s food/i.test(x.textContent||''));
+    const foodList=root.querySelector('.food-log-list');
+    const analysis=[...root.querySelectorAll('details')].find(x=>/Nutrition analysis/i.test(x.querySelector('summary')?.textContent||''));
+
+    // Detach direct items and rebuild as nested widgets.
+    [engine,meal,diet,favTitle,favs,logCard,todaySection,foodList,analysis].forEach(x=>x?.remove());
+
+    const widgets=[];
+    if(logCard)widgets.push(gf50MakeDetails('Log food','Photo label, manual entry or online nutrition lookup',[logCard],false));
+    if(todaySection||foodList)widgets.push(gf50MakeDetails('Today’s food',`${todayNutritionLogs?.().length||0} logged entr${todayNutritionLogs?.().length===1?'y':'ies'}`,[todaySection,foodList],false));
+    if(favs)widgets.push(gf50MakeDetails('Favourites','Saved foods for quick reuse',[favTitle,favs],false));
+    if(diet)widgets.push(gf50MakeDetails('Tailored diet plan','Meals, substitutions and guidance from the client plan',[diet],false));
+    if(engine||meal)widgets.push(gf50MakeDetails('Nutrition targets & reminders','Adaptive calorie model, meal slot and current targets',[engine,meal],false));
+    if(analysis){analysis.classList.add('gf50-widget');widgets.push(analysis)}
+    widgets.forEach(x=>root.appendChild(x));
+    return r;
+  };
+
+  // ------------------------------------------------------------------------
+  // Check-in: consolidate the first two cards and keep deeper widgets nested.
+  // ------------------------------------------------------------------------
+  function gf50CheckinInlineHTML(){
+    try{
+      const d=gfCheckinBriefData(),status=Math.abs(d.delta)<=.4?'On track':d.delta<0?'Below guide':'Ahead of guide',work=d.scheduled?`${d.workouts.length}/${d.scheduled}`:`${d.workouts.length}`;
+      return `<div class="gf50-checkin-inline"><div class="gf50-checkin-inline-head"><b>Hercules snapshot</b><span>${esc(status)}</span></div><div class="gf50-checkin-inline-grid"><div><span>Weight</span><b>${d.current.toFixed(1)} kg</b></div><div><span>Vs plan</span><b>${d.delta>0?'+':''}${round(d.delta,1)} kg</b></div><div><span>Training 7d</span><b>${esc(work)}</b></div></div><p>${esc(d.summary||'Your latest weight, training and nutrition context will be used in this check-in.')}</p></div>`;
+    }catch{return''}
+  }
+  const gf50BaseRenderCheckin=window.renderCheckin;
+  window.renderCheckin=function(){
+    const r=gf50BaseRenderCheckin?.apply(this,arguments),root=document.getElementById('checkin');if(!root)return r;
+    const cards=[...root.children].filter(x=>x.classList?.contains('card')&&x.classList?.contains('glass'));
+    const hero=cards[0],form=cards[1];
+    if(hero&&form&&!hero.classList.contains('gf50-checkin-main')){
+      hero.classList.add('gf50-checkin-main');
+      hero.insertAdjacentHTML('beforeend',gf50CheckinInlineHTML());
+      const holder=document.createElement('div');holder.className='gf50-checkin-form';
+      while(form.firstChild)holder.appendChild(form.firstChild);
+      hero.appendChild(holder);form.remove();
+    }
+    // Remove the now-redundant separate summary accordion.
+    const sec=root.querySelector('.gf26-checkin-section');
+    if(sec){
+      [...sec.querySelectorAll('details')].forEach(d=>{if(/Hercules progress summary/i.test(d.querySelector('summary')?.textContent||''))d.remove()});
+      [...sec.querySelectorAll('details')].forEach(d=>d.classList.add('gf50-widget'));
+    }
+    root.querySelectorAll('.gf30-bodycomp-section').forEach(d=>d.classList.add('gf50-widget'));
+    return r;
+  };
+
+  // ------------------------------------------------------------------------
+  // Analysis copy/boxes + mathematically correct planned trajectory.
+  // ------------------------------------------------------------------------
+  window.gf26MuscleHubHTML=function(){
+    const labels={load:'Training load',conditioning:'Conditioning',strength:'Strength',mass:'Visual mass'};
+    return `<section class="gf26-muscle-hub gf50-muscle-hub" id="gf26MuscleHub"><div class="gf26-muscle-head"><div><div class="eyebrow">Muscle development</div><h2>Compare four different signals.</h2><p>These views are not interchangeable. Training load shows where work was logged; conditioning shows work-capacity change; strength uses normalised performance; visual mass uses comparable physique reviews.</p><div class="gf50-muscle-explainer"><span><b>Load</b> = recent weighted sets</span><span><b>Conditioning</b> = sets/reps capacity</span><span><b>Strength</b> = normalised lift trend</span><span><b>Visual mass</b> = comparable check-ins</span></div></div><span class="gf26-muscle-badge">${esc(labels[gf26MuscleMode]||'Muscle data')}</span></div><div class="gf26-tabs"><button class="${gf26MuscleMode==='load'?'on':''}" onclick="gf26SetMuscleMode('load')">Training load</button><button class="${gf26MuscleMode==='conditioning'?'on':''}" onclick="gf26SetMuscleMode('conditioning')">Conditioning</button><button class="${gf26MuscleMode==='strength'?'on':''}" onclick="gf26SetMuscleMode('strength')">Strength</button><button class="${gf26MuscleMode==='mass'?'on':''}" onclick="gf26SetMuscleMode('mass')">Visual mass</button></div><div id="gf26MuscleMount" class="gf26-muscle-mount">${gf26MuscleInner(gf26MuscleMode)}</div></section>`;
+  };
+
+  function gf50GoalDate(){
+    const explicit=plan?.goal?.targetDate||plan?.goal?.goalDate||plan?.goal?.projectedGoalDate;
+    if(/^\d{4}-\d{2}-\d{2}$/.test(String(explicit||'')))return explicit;
+    return gfGoalDateISO?.()||todayISO();
+  }
+  function gf50Trajectory(){
+    const actual=buildWeightSeries?.().actual||[];
+    const startDate=plan?.goal?.startDate||actual[0]?.date||todayISO();
+    const startW=Number(plan?.client?.startWeightKg)||Number(actual[0]?.value)||Number(latestWeight())||0;
+    const goalDate=gf50GoalDate(),goalW=Number(plan?.goal?.targetWeightKg)||startW;
+    return {actual,startDate,startW,goalDate,goalW};
+  }
+
+  window.drawWeightChart=function(){
+    const el=document.getElementById('weightChart');if(!el)return;
+    const t=gf50Trajectory(),end=[t.goalDate,t.actual.at(-1)?.date||t.startDate,todayISO()].sort().at(-1);
+    const domain={start:t.startDate,end};
+    const actual=t.actual.filter(p=>String(p.date)>=domain.start&&String(p.date)<=domain.end);
+    const planned=[{date:t.startDate,value:t.startW},{date:t.goalDate,value:t.goalW}];
+    const goalLine=[{date:t.startDate,value:t.goalW},{date:end,value:t.goalW}];
+    const zones=typeof gf45MergeZones==='function'&&typeof gf45WeightEvents==='function'?gf45MergeZones(gf45WeightEvents()):[];
+    const ticks=[t.startDate];
+    const today=todayISO();if(today>t.startDate&&today<end)ticks.push(today);
+    if(t.goalDate!==t.startDate)ticks.push(t.goalDate);
+    if(end!==t.goalDate&&end!==today)ticks.push(end);
+    el.innerHTML=buildLineChartSVG({series:[
+      {label:'Actual',color:'#9ad6ff',points:actual,strokeWidth:3.5},
+      {label:'Planned trajectory',color:'#8d80ff',points:planned,strokeWidth:2.5,dash:'7 7'},
+      {label:`Goal ${round(t.goalW,1)} kg`,color:'#ffd36c',points:goalLine,strokeWidth:1.7,dash:'3 6'}
+    ],legend:[
+      {label:'Actual',color:'#9ad6ff'},
+      {label:'Planned',color:'#8d80ff',dash:'7 7'},
+      {label:`Goal ${round(t.goalW,1)} kg`,color:'#ffd36c',dash:'3 6'}
+    ],yLabel:'Bodyweight (kg)',yTickFormatter:v=>`${round(v,1)}`,emptyText:'No weight data yet',xDomain:domain,xTicks:[...new Set(ticks)].sort(),zones});
+    if(zones.length&&!el.nextElementSibling?.classList?.contains('gf45-zone-key'))el.insertAdjacentHTML('afterend','<div class="gf45-zone-key"><span><i></i>Plateau</span><span class="decline"><i></i>Decline</span></div>');
+  };
+
+  window.gf26TrendMountHTML=function(){
+    if(gf26TrendMode==='strength')return `<div id="strengthChart" class="chart" style="height:315px"></div><p class="gf26-trend-note">Strength is normalised per movement so one naturally heavier exercise cannot hide another trend.</p>`;
+    if(gf26TrendMode==='nutrition')return `<div id="macroTrendChart" class="chart gf39-inline-chart" style="height:260px">${typeof gf41MacroTrendSVG==='function'?gf41MacroTrendSVG():''}</div>${typeof gf39MacroSummaryHTML==='function'?gf39MacroSummaryHTML():''}<p class="gf26-trend-note">Nutrition compares logged intake with your current targets across the selected history.</p>`;
+    if(gf26TrendMode==='bodycomp')return gf30BodyCompTrendHTML();
+    const t=gf50Trajectory();
+    return `<div id="weightChart" class="chart" style="height:265px"></div><div class="gf26-trend-goal"><span>Planned trajectory</span><b>${round(t.startW,1)} kg ${shortDateLabel(t.startDate)} → ${round(t.goalW,1)} kg ${shortDateLabel(t.goalDate)}</b></div><div class="gf50-trajectory-note"><span>The dashed line always starts at your plan start weight/date.</span><b>It intersects the goal weight on the goal date.</b></div>`;
+  };
+
+  const gf50BaseRenderProgress=window.renderProgress;
+  window.renderProgress=function(){
+    const r=gf50BaseRenderProgress?.apply(this,arguments),root=document.getElementById('progress');if(!root)return r;
+    const hero=root.querySelector('.analysis-hero');
+    if(hero){
+      hero.classList.add('gf50-analysis-hero');
+      const p=hero.querySelector('.analysis-hero-top p');if(p)p.textContent='Your latest logged weight compared with your starting point, target and planned gain curve.';
+      const eye=hero.querySelector('.analysis-hero-top .eyebrow');if(eye)eye.textContent='Current trajectory';
+      const stats=hero.querySelectorAll('.analysis-stat');
+      if(stats[0])stats[0].querySelector('span').textContent='Goal';
+      if(stats[1])stats[1].querySelector('span').textContent='Change since start';
+      if(stats[2])stats[2].querySelector('span').textContent='Vs planned today';
+      if(stats[3])stats[3].querySelector('span').textContent='Nutrition 7d';
+    }
+    root.querySelectorAll('.gf26-accordion').forEach(x=>x.classList.add('gf50-widget'));
+    setTimeout(()=>{if(gf26TrendMode==='weight')drawWeightChart()},0);
+    return r;
+  };
+
+  // Add top-left close control to sheets opened from account/profile flows.
+  const gf50BaseOpenProfileManager=window.gf46OpenProfileManager;
+  if(typeof gf50BaseOpenProfileManager==='function')window.gf46OpenProfileManager=function(){
+    const r=gf50BaseOpenProfileManager.apply(this,arguments),sh=document.getElementById('sessionSheet');
+    if(sh&&!sh.querySelector('.gf50-sheet-close')){const b=document.createElement('button');b.className='gf50-sheet-close';b.type='button';b.textContent='×';b.onclick=()=>closeSession();sh.prepend(b)}
+    return r;
+  };
+
+  gf50Ensure();
+  setTimeout(gf50SyncHeaderActions,0);
+})();
+</script>
+
+
+<style id="gf51-plan-builder-style">
+/* ==========================================================================
+   Gain Focus 4.0.51 · Availability → timeline → editable plan → impact report
+   ========================================================================== */
+.gf51-plan-btn{width:100%;margin-top:9px}
+.gf51-flow{display:grid;gap:12px}
+.gf51-stepbar{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:4px 0 12px}
+.gf51-stepbar span{padding:7px 6px;border-radius:999px;text-align:center;font-size:8px;font-weight:850;color:var(--muted);background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055)}
+.gf51-stepbar span.on{color:#d9f0ff;background:rgba(92,164,255,.12);border-color:rgba(102,183,255,.22)}
+.gf51-capacity{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.gf51-capacity div{padding:12px;border-radius:16px;background:rgba(255,255,255,.032);border:1px solid rgba(255,255,255,.06)}
+.gf51-capacity span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.gf51-capacity b{display:block;font-size:18px;margin-top:4px}
+.gf51-assumptions{display:grid;gap:6px;padding:12px;border-radius:17px;background:rgba(91,160,255,.045);border:1px solid rgba(105,182,255,.10)}
+.gf51-assumptions div{display:flex;justify-content:space-between;gap:10px;font-size:9px}
+.gf51-assumptions span{color:var(--muted)}
+.gf51-session{border:1px solid rgba(119,183,255,.10);border-radius:19px;background:rgba(255,255,255,.025);overflow:hidden}
+.gf51-session-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:12px 13px;border-bottom:1px solid rgba(255,255,255,.05)}
+.gf51-session-head b{display:block;font-size:13px}
+.gf51-session-head span{display:block;font-size:8px;color:var(--muted);margin-top:3px}
+.gf51-session-head strong{font-size:10px;color:#9fd9ff;white-space:nowrap}
+.gf51-ex-list{display:grid}
+.gf51-ex{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.045)}
+.gf51-ex:last-child{border-bottom:0}
+.gf51-ex-copy b{display:block;font-size:10px}
+.gf51-ex-copy span{display:block;font-size:8px;color:var(--muted);margin-top:3px}
+.gf51-ex-actions{display:flex;align-items:center;gap:5px}
+.gf51-mini{width:29px;height:29px;padding:0;border-radius:10px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.035);color:var(--text);display:grid;place-items:center;font-weight:900}
+.gf51-setcount{min-width:42px;text-align:center;font-size:9px;font-weight:850}
+.gf51-replace{width:auto;padding:0 8px;font-size:8px}
+.gf51-add{margin:9px 12px 12px;width:calc(100% - 24px)}
+.gf51-over{color:#ffb5c1!important}
+.gf51-good{color:#96eebd!important}
+.gf51-report-hero{padding:14px;border-radius:19px;background:linear-gradient(135deg,rgba(64,137,240,.11),rgba(76,210,205,.055));border:1px solid rgba(110,184,255,.13)}
+.gf51-report-hero h3{margin:3px 0 5px;font-size:21px}
+.gf51-report-hero p{margin:0;font-size:10px;line-height:1.5;color:var(--muted)}
+.gf51-report-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.gf51-report-grid div{padding:12px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
+.gf51-report-grid span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.gf51-report-grid b{display:block;font-size:15px;margin-top:4px}
+.gf51-impact{display:grid;gap:7px}
+.gf51-impact div{padding:11px 12px;border-radius:15px;background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.055)}
+.gf51-impact b{display:block;font-size:9px;color:#a9dcff}
+.gf51-impact span{display:block;font-size:9px;line-height:1.45;color:var(--muted);margin-top:3px}
+.gf51-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.gf51-actions .wide{grid-column:1/-1}
+.gf51-editor-note{padding:10px 11px;border-radius:15px;background:rgba(255,196,87,.055);border:1px solid rgba(255,196,87,.11);font-size:9px;line-height:1.45;color:var(--muted)}
+.gf51-pref-note{min-height:72px}
+.gf51-onboard-time{margin-top:10px}
+.gf51-plan-summary{display:grid;gap:7px;margin:10px 0}
+.gf51-plan-summary div{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);font-size:9px}
+.gf51-plan-summary span{color:var(--muted)}
+@media(max-width:430px){.gf51-capacity,.gf51-report-grid{grid-template-columns:1fr 1fr}.gf51-ex{grid-template-columns:1fr}.gf51-ex-actions{justify-content:flex-start;flex-wrap:wrap}}
+</style>
+
+<script id="gf51-plan-builder">
+(function(){
+  const GF51_VERSION='4.0.51';
+  let gf51Planner=null;
+  const gf51Clone=x=>{try{return structuredClone(x)}catch{return JSON.parse(JSON.stringify(x))}};
+  const gf51Round=(n,d=1)=>{const p=10**d;return Math.round((Number(n)||0)*p)/p};
+
+  function gf51Station(e){
+    const s=`${e?.name||''} ${e?.focus||''}`.toLowerCase();
+    if(/smith/.test(s))return'Smith';
+    if(/cable|pulldown|pushdown|rope|pec deck/.test(s))return'Cable';
+    if(/dumbbell|\bdb\b|lateral raise|rear-delt|rear delt|shrug/.test(s))return'Dumbbells';
+    if(/barbell|bench press|squat|romanian|\brdl\b|ez-bar/.test(s))return'Barbell / rack';
+    if(/leg press/.test(s))return'Leg press';
+    if(/leg curl/.test(s))return'Leg curl';
+    if(/machine/.test(s))return'Machine';
+    if(/pull-up|pull up|chin|dip/.test(s))return'Bodyweight';
+    return'General';
+  }
+  function gf51Compound(e){
+    return /press|squat|deadlift|romanian|\brdl\b|row|pulldown|pull-up|pull up|chin|leg press|dip/i.test(`${e?.name||''} ${e?.focus||''}`);
+  }
+  function gf51RestSec(e){
+    const own=Number(e?.restSeconds);if(own>=30)return own;
+    const reps=(Number(e?.repMin||8)+Number(e?.repMax||12))/2;
+    if(gf51Compound(e))return reps<=8?165:135;
+    return reps>=15?75:90;
+  }
+  function gf51LiftSec(e){
+    const reps=(Number(e?.repMin||8)+Number(e?.repMax||12))/2;
+    return Math.max(24,Math.min(52,reps*3.1));
+  }
+  function gf51ExerciseMinutes(e,prevStation=''){
+    const sets=Math.max(1,Number(e?.sets)||1),station=gf51Station(e);
+    const change=!prevStation?1.25:(station===prevStation?.8:2.1);
+    const lift=sets*gf51LiftSec(e)/60;
+    const rest=Math.max(0,sets-1)*gf51RestSec(e)/60;
+    return {minutes:change+lift+rest,station,liftMinutes:lift,restMinutes:rest,changeMinutes:change};
+  }
+  function gf51EstimateSession(session){
+    let total=8,prev='',items=[];
+    for(const e of (session?.exercises||[])){
+      const m=gf51ExerciseMinutes(e,prev);items.push({...m,exercise:e});total+=m.minutes;prev=m.station;
+    }
+    total+=2; // close-out / transition buffer
+    return {minutes:gf51Round(total,1),items,warmup:8,buffer:2};
+  }
+  function gf51FocusTerms(){
+    const raw=(gf51Planner?.goalFocus||plan?.goal?.focus||[]).flatMap(x=>String(x).toLowerCase().split(/[,/·]+/)).map(x=>x.trim()).filter(x=>x.length>2);
+    return [...new Set(raw)];
+  }
+  function gf51Priority(e,index,total){
+    const s=`${e?.name||''} ${e?.focus||''}`.toLowerCase(),focus=gf51FocusTerms();
+    let n=gf51Compound(e)?2:0;
+    if(focus.some(f=>s.includes(f)||f.includes(String(e?.focus||'').toLowerCase())))n+=6;
+    n+=Math.max(0,(total-index)/Math.max(1,total))*2;
+    return n;
+  }
+  function gf51SortByStation(exercises){
+    if(progress?.settings?.groupExercisesByStation===false)return exercises;
+    const rows=exercises.map((e,i)=>({e,i,station:gf51Station(e),priority:gf51Priority(e,i,exercises.length)}));
+    // Keep the first two high-priority movements in place, then cluster the rest by station.
+    const first=rows.slice(0,2),rest=rows.slice(2).sort((a,b)=>a.station.localeCompare(b.station)||a.i-b.i);
+    return [...first,...rest].map(x=>x.e);
+  }
+  function gf51FitSession(session,limit){
+    const base=gf51Clone(session),original=gf51Clone(session.exercises||[]);
+    base.exercises=gf51SortByStation(base.exercises||[]);
+    const estimate=()=>gf51EstimateSession(base).minutes;
+    if(estimate()<=limit)return {...base,_gf51:{full:true,estimatedMinutes:estimate(),originalSets:original.reduce((n,e)=>n+(+e.sets||0),0)}};
+
+    // First save time by trimming lower-priority accessory sets.
+    const candidates=()=>base.exercises.map((e,i)=>({e,i,p:gf51Priority(e,i,base.exercises.length)})).sort((a,b)=>a.p-b.p);
+    let guard=0;
+    while(estimate()>limit&&guard++<80){
+      let changed=false;
+      for(const row of candidates()){
+        const min=gf51Compound(row.e)?3:2;
+        if(Number(row.e.sets)>min){row.e.sets=Number(row.e.sets)-1;changed=true;break}
+      }
+      if(!changed)break;
+    }
+    // Then remove lowest-priority accessory movements if still required.
+    guard=0;
+    while(estimate()>limit&&base.exercises.length>2&&guard++<30){
+      const rows=candidates();
+      const removable=rows.find(x=>!gf51Compound(x.e))||rows[0];
+      base.exercises.splice(removable.i,1);
+    }
+    // Last resort: compounds may drop to 2 sets before removing another priority lift.
+    guard=0;
+    while(estimate()>limit&&guard++<40){
+      let changed=false;
+      for(const row of candidates()){
+        if(Number(row.e.sets)>2){row.e.sets=Number(row.e.sets)-1;changed=true;break}
+      }
+      if(!changed)break;
+    }
+    while(estimate()>limit&&base.exercises.length>2){
+      const rows=candidates();base.exercises.splice(rows[0].i,1);
+    }
+    return {...base,_gf51:{full:false,estimatedMinutes:estimate(),originalSets:original.reduce((n,e)=>n+(+e.sets||0),0)}};
+  }
+
+  function gf51WeeklyMinutes(sessions){return gf51Round((sessions||[]).reduce((n,s)=>n+gf51EstimateSession(s).minutes,0),1)}
+  function gf51WeeklySets(sessions){return (sessions||[]).reduce((n,s)=>n+(s.exercises||[]).reduce((a,e)=>a+(Number(e.sets)||0),0),0)}
+  function gf51PrioritySets(sessions){
+    const focus=gf51FocusTerms();
+    return (sessions||[]).reduce((n,s)=>n+(s.exercises||[]).reduce((a,e)=>{
+      const txt=`${e.name||''} ${e.focus||''}`.toLowerCase();
+      return a+(focus.some(f=>txt.includes(f))?(Number(e.sets)||0):0);
+    },0),0);
+  }
+  function gf51DateAdd(date,days){
+    const d=new Date(`${date}T12:00:00`);d.setDate(d.getDate()+days);return d.toISOString().slice(0,10);
+  }
+  function gf51GoalDate(ctx){
+    const g=ctx.goal||{};
+    if(/^\d{4}-\d{2}-\d{2}$/.test(String(g.targetDate||g.goalDate||'')))return g.targetDate||g.goalDate;
+    const start=Number(ctx.startWeight)||0,target=Number(g.targetWeightKg)||start,rate=Math.max(.05,Number(g.weeklyGainKg)||.25);
+    return gf51DateAdd(g.startDate||todayISO(),Math.ceil(Math.max(0,target-start)/rate*7));
+  }
+  function gf51ImpactReport(){
+    const p=gf51Planner,baseSets=gf51WeeklySets(p.baselineSessions),draftSets=gf51WeeklySets(p.draftSessions);
+    const basePriority=gf51PrioritySets(p.baselineSessions),draftPriority=gf51PrioritySets(p.draftSessions);
+    const baseMins=gf51WeeklyMinutes(p.baselineSessions),draftMins=gf51WeeklyMinutes(p.draftSessions);
+    const cap=p.minutes*p.sessionsPerWeek;
+    const volume=baseSets?draftSets/baseSets:1,priority=basePriority?draftPriority/basePriority:1;
+    const score=Math.min(volume,priority);
+    const scaleDate=gf51GoalDate(p);
+    const startDate=p.goal?.startDate||todayISO(),rate=Math.max(.05,Number(p.goal?.weeklyGainKg)||.25);
+    const startW=Number(p.startWeight)||0,targetW=Number(p.goal?.targetWeightKg)||startW;
+    const baseWeeks=Math.max(1,(targetW-startW)/rate);
+    let extension=0,composition='Training support remains close to the intended plan.',status='No composition-date change suggested';
+    if(draftMins>cap+5){composition='The edited plan exceeds the weekly time you said is available, so adherence or recovery is likely to become the limiting factor.';status='Plan exceeds available time'}
+    else if(score>=.90){extension=0}
+    else if(score>=.80){extension=Math.max(1,Math.ceil(baseWeeks*.05));composition='A small amount of weekly stimulus has been lost. Scale gain can still follow the nutrition target, but the same physique outcome may take slightly longer.';status=`Consider +${extension} week${extension===1?'':'s'} for physique quality`}
+    else if(score>=.70){extension=Math.max(2,Math.ceil(baseWeeks*.10));composition='Training stimulus is materially below the original programme, especially if priority-muscle coverage also fell.';status=`Consider +${extension} weeks for the same composition target`}
+    else{extension=Math.max(3,Math.ceil(baseWeeks*.20));composition='The fitted plan is substantially below the original training dose. Reaching the scale weight on time would not imply the same expected lean-mass proportion.';status=`Composition target likely needs +${extension} weeks or more`}
+    const physiqueDate=gf51DateAdd(scaleDate,extension*7);
+    const requiredSessions=Math.max(1,Math.ceil(baseMins/Math.max(1,p.minutes)));
+    return {baseSets,draftSets,baseMins,draftMins,cap,volume,priority,scaleDate,physiqueDate,extension,composition,status,requiredSessions};
+  }
+
+  function gf51Context(mode){
+    if(mode==='onboarding'){
+      const sessions=(canonicalOnboarding?.trainingDraft?.length?canonicalOnboarding.trainingDraft:(typeof gf51BaseCanonicalSessions==='function'?gf51BaseCanonicalSessions():canonicalSessions()));
+      return {
+        sessions:gf51Clone(sessions),
+        minutes:Number(canonicalOnboarding?.profile?.sessionDurationMinutes)||90,
+        sessionsPerWeek:Number(canonicalOnboarding?.profile?.sessions)||sessions.length,
+        goal:gf51Clone(canonicalOnboarding?.goal||{}),
+        goalFocus:[...(canonicalOnboarding?.goal?.focus||[])],
+        startWeight:Number(canonicalOnboarding?.profile?.weightKg)||0
+      };
+    }
+    const sessions=gf51Clone(plan?.training?.sessions||[]);
+    return {
+      sessions,
+      minutes:Number(progress?.settings?.sessionDurationMinutes)||Number(plan?.training?.defaultSessionDurationMinutes)||90,
+      sessionsPerWeek:Number(plan?.training?.sessionsPerWeek)||sessions.length,
+      goal:gf51Clone(plan?.goal||{}),
+      goalFocus:[...(plan?.goal?.focus||[])],
+      startWeight:Number(plan?.client?.startWeightKg)||0
+    };
+  }
+
+  window.gf51OpenPlanBuilder=function(mode='live',minutes=null){
+    const c=gf51Context(mode),m=Number(minutes)||c.minutes||90;
+    gf51Planner={
+      mode,step:0,minutes:m,sessionsPerWeek:c.sessionsPerWeek,
+      goal:c.goal,goalFocus:c.goalFocus,startWeight:c.startWeight,
+      baselineSessions:gf51Clone(c.sessions),
+      draftSessions:c.sessions.map(s=>gf51FitSession(s,m)),
+      preferenceNote:mode==='live'?String(plan?.training?.clientPreferences||''):''
+    };
+    const modal=document.getElementById('sessionModal'),sheet=document.getElementById('sessionSheet');
+    if(!modal||!sheet)return;
+    sheet.classList.remove('workout-sheet');modal.classList.add('open');gf51RenderPlanner();
+  };
+
+  window.gf51PlannerSetMinutes=function(v){
+    const m=Number(v);if(!gf51Planner||m<20)return;
+    gf51Planner.minutes=m;
+    gf51Planner.draftSessions=gf51Planner.baselineSessions.map(s=>gf51FitSession(s,m));
+    gf51RenderPlanner();
+  };
+  window.gf51PlannerStep=function(step){
+    if(!gf51Planner)return;
+    gf51Planner.step=Math.max(0,Math.min(2,Number(step)||0));gf51RenderPlanner();
+  };
+  window.gf51AdjustSets=function(si,ei,d){
+    const e=gf51Planner?.draftSessions?.[si]?.exercises?.[ei];if(!e)return;
+    e.sets=Math.max(1,Math.min(8,(Number(e.sets)||1)+Number(d)));gf51RenderPlanner();
+  };
+  window.gf51RemoveExercise=function(si,ei){
+    const s=gf51Planner?.draftSessions?.[si];if(!s||s.exercises.length<=2){toast('Keep at least two exercises in a session');return}
+    s.exercises.splice(ei,1);gf51RenderPlanner();
+  };
+  window.gf51ReplaceExercise=function(si,ei){
+    const e=gf51Planner?.draftSessions?.[si]?.exercises?.[ei];if(!e)return;
+    const name=prompt(`Replace ${e.name} with:`,e.name);if(name===null)return;
+    const clean=String(name).trim();if(!clean)return;
+    e.name=clean;e.id=`client-${String(clean).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}-${Date.now().toString(36)}`;
+    e.focus=prompt('Primary focus / muscle',e.focus||'Client preference')||e.focus||'Client preference';
+    gf51RenderPlanner();
+  };
+  window.gf51AddExercise=function(si){
+    const s=gf51Planner?.draftSessions?.[si];if(!s)return;
+    const name=prompt('Add exercise name');if(!name?.trim())return;
+    const sets=Math.max(1,Math.min(8,Number(prompt('Working sets','3'))||3));
+    const focus=prompt('Primary focus / muscle','Client preference')||'Client preference';
+    s.exercises.push({id:`client-${Date.now().toString(36)}`,name:name.trim(),sets,repMin:8,repMax:12,focus,targetRIR:2,clientAdded:true});
+    gf51RenderPlanner();
+  };
+  window.gf51ResetSession=function(si){
+    const base=gf51Planner?.baselineSessions?.[si];if(!base)return;
+    gf51Planner.draftSessions[si]=gf51FitSession(base,gf51Planner.minutes);gf51RenderPlanner();
+  };
+
+  function gf51Stepbar(){
+    return `<div class="gf51-stepbar"><span class="${gf51Planner.step===0?'on':''}">1 · Capacity</span><span class="${gf51Planner.step===1?'on':''}">2 · Edit plan</span><span class="${gf51Planner.step===2?'on':''}">3 · Impact</span></div>`;
+  }
+  function gf51CapacityHTML(){
+    const p=gf51Planner,r=gf51ImpactReport(),base=r.baseMins,cap=r.cap;
+    return `${gf51Stepbar()}<div class="gf51-flow">
+      <div class="eyebrow">Availability drives the proposal</div>
+      <div class="gf48-time-picker"><div><b>Time available per workout</b><span>This is the ceiling used to build the proposed plan. The stored training plan is not changed until you Apply it.</span></div><select class="input" onchange="gf51PlannerSetMinutes(this.value)">${typeof gf50DurationOptions==='function'?gf50DurationOptions(p.minutes):[30,45,60,75,90,105,120,150].map(m=>`<option value="${m}" ${m===p.minutes?'selected':''}>${m} min</option>`).join('')}</select></div>
+      <div class="gf51-capacity"><div><span>Current weekly plan</span><b>${base} min</b></div><div><span>Time available</span><b>${cap} min/wk</b></div><div><span>Scheduled workouts</span><b>${p.sessionsPerWeek}/wk</b></div><div><span>Workouts needed for full volume</span><b>${r.requiredSessions}/wk</b></div></div>
+      <div class="gf51-assumptions"><div><span>Warm-up allowance</span><b>8 min/session</b></div><div><span>Compound rest</span><b>~2:15–2:45</b></div><div><span>Accessory rest</span><b>~1:15–1:30</b></div><div><span>Working-set duration</span><b>~25–52 sec</b></div><div><span>Station change</span><b>~1–2 min</b></div></div>
+      <div class="gf51-editor-note">The estimator calculates lifting time, rest time, warm-up and equipment transitions. If the original volume does not fit, lower-priority sets are reduced before an exercise is removed.</div>
+      <div class="gf51-actions"><button class="btn secondary" onclick="closeSession()">Cancel</button><button class="btn primary" onclick="gf51PlannerStep(1)">Generate & review plan →</button></div>
+    </div>`;
+  }
+  function gf51PlanHTML(){
+    const p=gf51Planner;
+    const sessions=p.draftSessions.map((s,si)=>{
+      const est=gf51EstimateSession(s),over=est.minutes>p.minutes;
+      return `<div class="gf51-session"><div class="gf51-session-head"><div><b>${esc(s.name)}</b><span>${s.exercises.length} exercises · ${(s.exercises||[]).reduce((n,e)=>n+(+e.sets||0),0)} working sets</span></div><strong class="${over?'gf51-over':'gf51-good'}">${est.minutes} / ${p.minutes} min</strong></div><div class="gf51-ex-list">${(s.exercises||[]).map((e,ei)=>{
+        const m=gf51ExerciseMinutes(e,ei?gf51Station(s.exercises[ei-1]):'');
+        return `<div class="gf51-ex"><div class="gf51-ex-copy"><b>${esc(e.name)}</b><span>${esc(e.focus||'')} · ${e.repMin||8}–${e.repMax||12} reps · ~${gf51Round(m.minutes,1)} min incl. rest</span></div><div class="gf51-ex-actions"><button class="gf51-mini" onclick="gf51AdjustSets(${si},${ei},-1)">−</button><span class="gf51-setcount">${e.sets} sets</span><button class="gf51-mini" onclick="gf51AdjustSets(${si},${ei},1)">＋</button><button class="gf51-mini gf51-replace" onclick="gf51ReplaceExercise(${si},${ei})">Swap</button><button class="gf51-mini" onclick="gf51RemoveExercise(${si},${ei})">×</button></div></div>`
+      }).join('')}</div><button class="btn secondary gf51-add" onclick="gf51AddExercise(${si})">＋ Add client-preferred exercise</button><button class="btn secondary gf51-add" onclick="gf51ResetSession(${si})">Reset this session to generated fit</button></div>`;
+    }).join('');
+    return `${gf51Stepbar()}<div class="gf51-flow"><div class="eyebrow">Editable proposed programme</div><div class="gf51-editor-note">This is the review stage. Change sets, swap movements, remove exercises or add client-preferred exercises. Nothing is committed yet.</div>${sessions}<label class="small">Client preferences / constraints</label><textarea id="gf51PrefNote" class="input gf51-pref-note" placeholder="e.g. prefers dumbbells, avoid busy cable station, dislikes barbell squats...">${esc(p.preferenceNote||'')}</textarea><div class="gf51-actions"><button class="btn secondary" onclick="gf51PlannerStep(0)">← Capacity</button><button class="btn primary" onclick="gf51Planner.preferenceNote=document.getElementById('gf51PrefNote')?.value||'';gf51PlannerStep(2)">Impact report →</button></div></div>`;
+  }
+  function gf51ReportHTML(){
+    const r=gf51ImpactReport(),p=gf51Planner,coverage=Math.round(r.volume*100),priority=Math.round(r.priority*100),over=r.draftMins>r.cap+5;
+    return `${gf51Stepbar()}<div class="gf51-flow">
+      <div class="gf51-report-hero"><div class="eyebrow">Hercules plan-impact review</div><h3>${esc(r.status)}</h3><p>The scale target and physique target are reported separately. Training availability alone does not automatically move the bodyweight date if nutrition and the planned weekly rate of gain stay unchanged.</p></div>
+      <div class="gf51-report-grid"><div><span>Weekly plan time</span><b class="${over?'gf51-over':'gf51-good'}">${r.draftMins} / ${r.cap} min</b></div><div><span>Working-set coverage</span><b>${coverage}%</b></div><div><span>Priority-muscle coverage</span><b>${priority}%</b></div><div><span>Working sets</span><b>${r.draftSets} / ${r.baseSets}</b></div></div>
+      <div class="gf51-impact">
+        <div><b>Scale goal date</b><span>${shortDateLabel(r.scaleDate)}. No automatic change from workout time alone; this remains driven mainly by the planned bodyweight-gain rate and nutrition adherence.</span></div>
+        <div><b>Physique / composition target</b><span>${r.extension?`Recommended comparison date: ${shortDateLabel(r.physiqueDate)} (+${r.extension} week${r.extension===1?'':'s'}). `:''}${esc(r.composition)}</span></div>
+        <div><b>Adherence / recovery</b><span>${over?`The edited plan exceeds stated availability by ${gf51Round(r.draftMins-r.cap,1)} min/week. Reduce work or add training time before applying.`:'The proposed plan fits the stated weekly time ceiling.'}</span></div>
+        <div><b>Client preference changes</b><span>${p.preferenceNote?esc(p.preferenceNote):'No additional client preference note recorded.'}</span></div>
+      </div>
+      <div class="gf51-editor-note">This report is a planning heuristic, not a promise of body-composition outcome. More sets do not automatically justify an earlier goal date; recovery and progressive performance still matter.</div>
+      <div class="gf51-actions"><button class="btn secondary" onclick="gf51PlannerStep(1)">← Edit plan</button><button class="btn primary" onclick="gf51ApplyPlan()" ${over?'disabled':''}>Apply fitted plan</button></div>
+    </div>`;
+  }
+
+  window.gf51RenderPlanner=function(){
+    const sh=document.getElementById('sessionSheet');if(!sh||!gf51Planner)return;
+    const title=gf51Planner.mode==='onboarding'?'Build the training plan':'Fit the training plan';
+    sh.innerHTML=`<button class="gf50-sheet-close" onclick="closeSession()" aria-label="Close">×</button><div class="eyebrow">${esc(title)}</div><h2 style="font-size:28px;margin:5px 0 4px">${gf51Planner.minutes} minutes available</h2><p class="muted" style="margin-top:0">Availability sets capacity; the generated programme stays editable before anything is saved.</p>${gf51Planner.step===0?gf51CapacityHTML():gf51Planner.step===1?gf51PlanHTML():gf51ReportHTML()}`;
+  };
+
+  window.gf51ApplyPlan=function(){
+    if(!gf51Planner)return;
+    const r=gf51ImpactReport(),p=gf51Planner;
+    if(r.draftMins>r.cap+5){toast('The edited plan still exceeds the available weekly time');return}
+    const cleaned=p.draftSessions.map(s=>{const x=gf51Clone(s);delete x._gf51;return x});
+    if(p.mode==='onboarding'){
+      canonicalOnboarding.trainingDraft=cleaned;
+      canonicalOnboarding.profile.sessionDurationMinutes=p.minutes;
+      canonicalOnboarding.trainingImpactReport={...r,generatedAt:new Date().toISOString(),clientPreferences:p.preferenceNote||''};
+      closeSession();renderCanonicalOnboarding();toast('Training plan fitted and reviewed');
+      return;
+    }
+    plan.training.originalPlan||(plan.training.originalPlan={sessions:gf51Clone(plan.training.sessions),sessionsPerWeek:plan.training.sessionsPerWeek,name:plan.training.name,summary:plan.training.summary});
+    plan.training.sessions=cleaned;
+    plan.training.sessionsPerWeek=cleaned.length;
+    plan.training.defaultSessionDurationMinutes=p.minutes;
+    plan.training.clientPreferences=p.preferenceNote||'';
+    plan.training.timeFitReport={...r,generatedAt:new Date().toISOString(),minutesPerWorkout:p.minutes};
+    plan.training.revisionHistory=Array.isArray(plan.training.revisionHistory)?plan.training.revisionHistory:[];
+    plan.training.revisionHistory.push({at:new Date().toISOString(),type:'availability-fit',minutesPerWorkout:p.minutes,workingSetCoverage:gf51Round(r.volume*100,1),priorityCoverage:gf51Round(r.priority*100,1),physiqueDateExtensionWeeks:r.extension});
+    ensureProgressExtras();progress.settings.sessionDurationMinutes=p.minutes;progress.settings.sessionDurationOverrides={};
+    write();closeSession();renderAll();toast('Reviewed training plan applied');
+  };
+
+  // Availability now opens a planning workflow rather than silently trimming the live workout.
+  window.gf48SetDefaultMinutes=function(v){
+    const m=Number(v);if(!m)return;
+    ensureProgressExtras();progress.settings.sessionDurationMinutes=m;progress.settings.sessionDurationOverrides={};
+    if(plan?.training)plan.training.defaultSessionDurationMinutes=m;
+    write();renderAll?.();
+    setTimeout(()=>gf51OpenPlanBuilder('live',m),80);
+  };
+
+  // Once a plan has been reviewed/applied, live workout views use that stored plan as-is.
+  // Availability is no longer a hidden per-render exercise filter.
+  window.gf48FitSession=function(s,minutes){
+    const est=gf51EstimateSession(s);
+    return {exercises:gf51Clone(s?.exercises||[]),estimatedMinutes:est.minutes,fullCount:s?.exercises?.length||0,trimmedCount:0};
+  };
+
+  // Add explicit Review plan action and correct the description on Train.
+  const gf51BaseRenderTrain=window.renderTrain;
+  window.renderTrain=function(){
+    const r=gf51BaseRenderTrain.apply(this,arguments),root=document.getElementById('train');if(!root)return r;
+    const card=root.querySelector('.gf48-availability-card');
+    if(card){
+      const copy=card.querySelector('small');if(copy)copy.textContent='Used to calculate lifting, rest and transition time. Changing it generates a proposed plan for review — it does not silently remove exercises.';
+      if(!card.querySelector('.gf51-plan-btn')){
+        const btn=document.createElement('button');btn.className='btn secondary gf51-plan-btn';btn.type='button';btn.textContent='Review fitted training plan';btn.onclick=()=>gf51OpenPlanBuilder('live');card.appendChild(btn);
+      }
+    }
+    return r;
+  };
+
+  // ------------------------------------------------------------------------
+  // New-user onboarding: capture availability, show generated estimate, allow edit.
+  // ------------------------------------------------------------------------
+  const gf51BaseFresh=window.freshCanonicalOnboarding;
+  if(typeof gf51BaseFresh==='function')window.freshCanonicalOnboarding=function(){
+    const o=gf51BaseFresh.apply(this,arguments);o.profile||(o.profile={});if(!Number(o.profile.sessionDurationMinutes))o.profile.sessionDurationMinutes=90;return o;
+  };
+
+  const gf51BaseCanonicalSessions=window.canonicalSessions;
+  window.gf51BaseCanonicalSessions=gf51BaseCanonicalSessions;
+  if(typeof gf51BaseCanonicalSessions==='function')window.canonicalSessions=function(){
+    if(canonicalOnboarding?.trainingDraft?.length)return gf51Clone(canonicalOnboarding.trainingDraft);
+    return gf51BaseCanonicalSessions.apply(this,arguments);
+  };
+
+  const gf51BaseRenderCanonical=window.renderCanonicalOnboarding;
+  if(typeof gf51BaseRenderCanonical==='function')window.renderCanonicalOnboarding=function(){
+    const r=gf51BaseRenderCanonical.apply(this,arguments);
+    if(canonicalOnboarding){
+      canonicalOnboarding.profile||(canonicalOnboarding.profile={});
+      if(!Number(canonicalOnboarding.profile.sessionDurationMinutes))canonicalOnboarding.profile.sessionDurationMinutes=90;
+    }
+    if(canonicalOnboardingStep===0){
+      const grid=document.querySelector('#tourCard .canon-grid');
+      if(grid&&!document.getElementById('gf51OnboardTime')){
+        const div=document.createElement('div');div.className='canon-field wide gf51-onboard-time';
+        const m=Number(canonicalOnboarding.profile.sessionDurationMinutes)||90;
+        div.innerHTML=`<label>Time available per workout</label><select id="gf51OnboardTime" class="input">${[30,45,60,75,90,105,120,150].map(x=>`<option value="${x}" ${x===m?'selected':''}>${x===90?'1 hr 30':x===60?'1 hour':x===120?'2 hours':x+' min'}</option>`).join('')}</select><span class="create-help">This sets training capacity before the programme is generated.</span>`;
+        grid.appendChild(div);
+      }
+    }
+    if(canonicalOnboardingStep===5){
+      const card=document.getElementById('tourCard');if(card&&!card.querySelector('.gf51-onboard-review')){
+        const m=Number(canonicalOnboarding.profile.sessionDurationMinutes)||90,sessions=canonicalSessions();
+        const fitted=sessions.map(s=>gf51FitSession(s,m)),before=gf51WeeklySets(sessions),after=gf51WeeklySets(fitted);
+        const box=document.createElement('div');box.className='gf51-onboard-review';
+        box.innerHTML=`<div class="gf51-plan-summary"><div><span>Availability</span><b>${m} min/workout</b></div><div><span>Generated working sets</span><b>${after} / ${before}</b></div><div><span>Weekly sessions</span><b>${sessions.length}</b></div></div><button class="btn secondary" style="width:100%;margin-bottom:10px" onclick="gf51OpenPlanBuilder('onboarding',${m})">Review / edit generated plan</button>`;
+        const actions=card.querySelector('.tour-actions');actions?.insertAdjacentElement('beforebegin',box);
+      }
+    }
+    return r;
+  };
+
+  const gf51BaseCanonicalSave=window.canonicalSaveProfile;
+  if(typeof gf51BaseCanonicalSave==='function')window.canonicalSaveProfile=function(){
+    if(canonicalOnboarding?.profile){
+      const v=Number(document.getElementById('gf51OnboardTime')?.value);if(v)canonicalOnboarding.profile.sessionDurationMinutes=v;
+    }
+    return gf51BaseCanonicalSave.apply(this,arguments);
+  };
+
+  const gf51BasePlanPreview=window.canonicalPlanPreview;
+  if(typeof gf51BasePlanPreview==='function')window.canonicalPlanPreview=function(){
+    const p=gf51BasePlanPreview.apply(this,arguments),m=Number(canonicalOnboarding?.profile?.sessionDurationMinutes)||90;
+    p.training.defaultSessionDurationMinutes=m;
+    p.training.timeFitReport=canonicalOnboarding?.trainingImpactReport||null;
+    p.training.clientPreferences=canonicalOnboarding?.trainingImpactReport?.clientPreferences||'';
+    p.onboarding.workoutAvailabilityMinutes=m;
+    return p;
+  };
+
+  const gf51BaseComplete=window.completeCanonicalOnboarding;
+  if(typeof gf51BaseComplete==='function')window.completeCanonicalOnboarding=async function(){
+    const m=Number(canonicalOnboarding?.profile?.sessionDurationMinutes)||90;
+    const r=await gf51BaseComplete.apply(this,arguments);
+    try{
+      if(progress){ensureProgressExtras();progress.settings.sessionDurationMinutes=m;progress.settings.sessionDurationOverrides={};write()}
+    }catch{}
+    return r;
+  };
+})();
+</script>
+
+
+<style id="gf52-workout-experience-style">
+/* ==========================================================================
+   Gain Focus 4.0.52 · workout experience only
+   Fitbod-inspired interaction patterns, Gain Focus visual identity retained.
+   ========================================================================== */
+.gf52-session{padding-bottom:18px}
+.gf52-session-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:2px 0 8px}
+.gf52-session-title .eyebrow{margin-bottom:3px}
+.gf52-session-title h2{font-size:31px;margin:0;letter-spacing:-.035em}
+.gf52-session-title p{margin:4px 0 0;font-size:11px;color:var(--muted)}
+.gf52-session-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:12px 0}
+.gf52-pill{appearance:none;border:1px solid rgba(255,255,255,.085);background:rgba(255,255,255,.04);color:var(--text);border-radius:999px;min-height:37px;padding:0 12px;font:inherit;font-size:9px;font-weight:800;display:inline-flex;align-items:center;gap:6px}
+.gf52-pill strong{font-size:10px}
+.gf52-pill.primary{border-color:rgba(119,185,255,.22);background:rgba(84,151,242,.11);color:#d8efff}
+.gf52-calibration{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:13px 14px;border-radius:18px;background:linear-gradient(135deg,rgba(69,138,232,.085),rgba(46,207,201,.035));border:1px solid rgba(112,182,255,.12);margin:12px 0 16px}
+.gf52-calibration b{display:block;font-size:11px}
+.gf52-calibration span{display:block;font-size:8.5px;line-height:1.45;color:var(--muted);margin-top:3px}
+.gf52-calibration button{width:auto;white-space:nowrap}
+.gf52-exercise-list{display:grid;gap:9px}
+.gf52-ex-row{display:grid;grid-template-columns:72px minmax(0,1fr) 42px;gap:11px;align-items:center;padding:9px;border-radius:20px;background:linear-gradient(180deg,rgba(16,27,48,.94),rgba(8,14,28,.96));border:1px solid rgba(255,255,255,.065);text-align:left;color:inherit;width:100%;position:relative}
+.gf52-ex-row.priority{border-color:rgba(115,190,255,.20);box-shadow:inset 0 0 0 1px rgba(92,170,255,.035)}
+.gf52-ex-media{position:relative;width:72px;height:72px;border-radius:15px;overflow:hidden;background:#09111f}
+.gf52-ex-media .exercise-stock{width:100%;height:100%;object-fit:cover}
+.gf52-muscle-mini{position:absolute;right:-2px;bottom:-2px;width:34px;height:44px;border-radius:10px;background:rgba(6,13,26,.94);border:1px solid rgba(255,255,255,.10);padding:3px;overflow:hidden}
+.gf52-muscle-mini svg{width:100%;height:100%;display:block}
+.gf52-ex-copy{min-width:0}
+.gf52-priority-tag{display:block;font-size:7px;line-height:1;text-transform:uppercase;letter-spacing:.13em;color:#9ddcff;font-weight:950;margin-bottom:5px}
+.gf52-ex-copy b{display:block;font-size:13px;line-height:1.2}
+.gf52-ex-copy span{display:block;font-size:9px;color:var(--muted);margin-top:4px;line-height:1.35}
+.gf52-ex-copy small{display:block;font-size:8px;color:#83c8ff;margin-top:4px}
+.gf52-more-btn{width:38px;height:38px;border-radius:13px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);color:var(--muted);font-size:20px;display:grid;place-items:center}
+.gf52-session-dock{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom));z-index:6;margin-top:15px;padding:7px;background:rgba(5,10,22,.90);border:1px solid rgba(255,255,255,.075);border-radius:22px;backdrop-filter:blur(18px)}
+.gf52-session-dock .btn{width:100%;min-height:54px;border-radius:17px}
+
+/* strength setup */
+.gf52-strength-grid{display:grid;gap:8px;margin-top:12px}
+.gf52-strength-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025);border-radius:16px}
+.gf52-strength-row b{display:block;font-size:11px}
+.gf52-strength-row span{display:block;margin-top:3px;font-size:8.5px;color:var(--muted)}
+.gf52-strength-state{padding:6px 8px;border-radius:999px;font-size:8px!important;font-weight:900;color:#bde6ff!important;background:rgba(89,164,255,.10);border:1px solid rgba(102,180,255,.14);margin:0!important;white-space:nowrap}
+
+/* exercise guide */
+.gf52-guide{padding-bottom:22px}
+.gf52-guide-hero{position:relative;border-radius:24px;overflow:hidden;min-height:280px;background:#0a101c;margin-bottom:14px}
+.gf52-guide-hero .exercise-stock{width:100%;height:300px;object-fit:cover;display:block}
+.gf52-guide-hero:after{content:"";position:absolute;inset:auto 0 0;height:55%;background:linear-gradient(180deg,transparent,rgba(5,8,18,.94))}
+.gf52-guide-close{position:absolute;top:12px;right:12px;z-index:3;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(6,11,22,.62);color:white;font-size:24px;display:grid;place-items:center;backdrop-filter:blur(10px)}
+.gf52-guide-title{position:absolute;z-index:2;left:18px;right:18px;bottom:18px}
+.gf52-guide-title .gf52-priority-tag{margin-bottom:7px}
+.gf52-guide-title h2{font-size:27px;margin:0;line-height:1.05}
+.gf52-guide-title p{font-size:10px;margin:6px 0 0;color:rgba(232,240,255,.72)}
+.gf52-action-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:10px 0 13px}
+.gf52-action-row button,.gf52-action-row a{min-width:0;min-height:42px;border-radius:15px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.035);color:var(--text);font:inherit;font-size:8.5px;font-weight:800;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:5px;padding:0 6px}
+.gf52-focus-card{padding:13px 14px;border-radius:18px;background:linear-gradient(135deg,rgba(58,129,225,.09),rgba(111,78,190,.055));border:1px solid rgba(111,178,255,.11);margin:10px 0}
+.gf52-focus-card b{display:block;font-size:11px;color:#a7dcff}
+.gf52-focus-card span{display:block;font-size:9px;line-height:1.45;color:var(--muted);margin-top:4px}
+.gf52-howto{display:grid;gap:8px;margin-top:12px}
+.gf52-howto details{border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025);border-radius:16px;overflow:hidden}
+.gf52-howto summary{list-style:none;padding:12px 13px;font-size:10px;font-weight:850;cursor:pointer}
+.gf52-howto summary::-webkit-details-marker{display:none}
+.gf52-howto .gf52-how-body{padding:0 12px 12px;font-size:9px;color:var(--muted);line-height:1.5}
+.gf52-how-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.gf52-how-grid>div{padding:10px;border-radius:14px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05)}
+.gf52-how-grid b{font-size:9px;color:#a9dcff;display:block;margin-bottom:4px}
+
+/* live workout */
+.gf52-live{padding-bottom:118px}
+.gf52-live-hero{position:relative;height:245px;border-radius:0 0 24px 24px;overflow:hidden;background:#070d18;margin:-8px -8px 14px}
+.gf52-live-hero .exercise-stock{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.88) contrast(1.02)}
+.gf52-live-hero:after{content:"";position:absolute;inset:auto 0 0;height:62%;background:linear-gradient(180deg,transparent,rgba(5,8,18,.96))}
+.gf52-live-close{position:absolute;top:12px;right:12px;z-index:4;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(5,10,20,.58);color:white;font-size:24px;display:grid;place-items:center;backdrop-filter:blur(11px)}
+.gf52-live-head{position:absolute;left:17px;right:17px;bottom:17px;z-index:2}
+.gf52-live-head h2{margin:0;font-size:26px;line-height:1.04}
+.gf52-live-head p{margin:6px 0 0;font-size:9px;color:rgba(230,239,255,.7)}
+.gf52-live-progress{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 2px 9px;font-size:8px;color:var(--muted)}
+.gf52-live-progress b{color:#cfe9ff}
+.gf52-mini-bar{height:5px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;margin:0 2px 12px}
+.gf52-mini-bar i{display:block;height:100%;background:linear-gradient(90deg,#68a9ff,#61d6ff);border-radius:inherit}
+.gf52-live-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 0 12px}
+.gf52-live-actions button{min-height:40px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.033);color:var(--text);border-radius:14px;font:inherit;font-size:8.5px;font-weight:800;padding:0 6px}
+.gf52-live-actions button b{display:block;font-size:9px}
+.gf52-live-actions button span{display:block;font-size:7px;color:var(--muted);margin-top:2px}
+.gf52-prescription{padding:12px 13px;border-radius:17px;background:linear-gradient(135deg,rgba(67,139,238,.075),rgba(255,255,255,.02));border:1px solid rgba(108,180,255,.10);margin-bottom:12px}
+.gf52-prescription .eyebrow{margin-bottom:4px}
+.gf52-prescription b{display:block;font-size:10px}
+.gf52-prescription span{display:block;font-size:8.5px;color:var(--muted);line-height:1.45;margin-top:4px}
+.gf52-sets-head{display:grid;grid-template-columns:40px 1fr 1fr 54px;gap:7px;padding:0 8px 5px;font-size:7px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.gf52-sets{display:grid;gap:7px}
+.gf52-set-row{display:grid;grid-template-columns:40px 1fr 1fr 54px;gap:7px;align-items:center;padding:7px;border-radius:16px;border:1px solid rgba(255,255,255,.055);background:rgba(255,255,255,.025)}
+.gf52-set-row.done{background:rgba(79,163,229,.055);border-color:rgba(103,182,255,.10)}
+.gf52-set-row.future{opacity:.46}
+.gf52-set-num{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-size:10px;font-weight:950;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.075)}
+.gf52-set-row.active .gf52-set-num{background:#dff1ff;color:#07101f}
+.gf52-set-row input,.gf52-set-row select{width:100%;height:43px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(6,11,23,.72);color:white;padding:0 10px;font:inherit;font-size:14px;font-weight:800;outline:none}
+.gf52-set-row input:disabled{color:rgba(235,242,255,.72);-webkit-text-fill-color:rgba(235,242,255,.72)}
+.gf52-set-row .gf52-edit-set{height:35px;border-radius:11px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);color:#9bd6ff;font:inherit;font-size:8px;font-weight:850}
+.gf52-rir-strip{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 2px}
+.gf52-rir-strip span{font-size:8px;color:var(--muted)}
+.gf52-rir-picks{display:flex;gap:5px}
+.gf52-rir-picks button{min-width:34px;height:30px;border-radius:10px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);color:var(--muted);font:inherit;font-size:8px;font-weight:850}
+.gf52-rir-picks button.on{background:rgba(91,166,255,.15);border-color:rgba(103,183,255,.28);color:#d9efff}
+.gf52-set-actions{display:grid;grid-template-columns:1fr auto;gap:7px;margin-top:10px}
+.gf52-add-set{min-width:105px}
+.gf52-next-ex{width:100%;margin-top:8px}
+.gf52-live-nav{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0}
+.gf52-live-nav .btn{min-height:42px}
+.gf52-live-dock{position:fixed;z-index:1002;left:max(14px,calc((100vw - 760px)/2 + 14px));right:max(14px,calc((100vw - 760px)/2 + 14px));bottom:calc(12px + env(safe-area-inset-bottom));display:grid;grid-template-columns:1fr auto;gap:7px;padding:7px;border-radius:21px;background:rgba(5,10,22,.92);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(18px);box-shadow:0 18px 50px rgba(0,0,0,.38)}
+.gf52-live-dock .btn{min-height:51px;border-radius:16px}
+.gf52-live-dock .gf52-end-later{width:54px;padding:0}
+
+/* history / replace */
+.gf52-history-list,.gf52-replace-list{display:grid;gap:8px;margin-top:12px}
+.gf52-history-card,.gf52-replace-card{padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025)}
+.gf52-history-card b,.gf52-replace-card b{display:block;font-size:11px}
+.gf52-history-card span,.gf52-replace-card span{display:block;font-size:8.5px;line-height:1.45;color:var(--muted);margin-top:3px}
+.gf52-replace-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+.gf52-replace-card button{width:auto}
+
+/* session modal is intentionally edge-to-edge only for the live workout */
+#sessionSheet.gf52-live-sheet{padding-top:0}
+@media(max-width:430px){
+  .gf52-action-row,.gf52-live-actions{grid-template-columns:repeat(4,1fr)}
+  .gf52-sets-head,.gf52-set-row{grid-template-columns:36px minmax(0,1fr) minmax(0,1fr) 46px}
+  .gf52-ex-row{grid-template-columns:68px minmax(0,1fr) 38px}
+  .gf52-ex-media{width:68px;height:68px}
+}
+</style>
+
+<script id="gf52-workout-experience">
+(function(){
+  // ------------------------------------------------------------------------
+  // Helpers
+  // ------------------------------------------------------------------------
+  function gf52PriorityIndex(s){
+    const rows=(s?.exercises||[]).map((e,i)=>({i,score:(typeof gf48FocusBoost==='function'?gf48FocusBoost(e):0)+(gf48IsCompound?.(e)?8:0)-i*.25}));
+    return rows.sort((a,b)=>b.score-a.score||a.i-b.i)[0]?.i||0;
+  }
+  function gf52EquipmentLabel(){
+    const raw=String(plan?.client?.equipment||plan?.training?.equipment||'gym').toLowerCase();
+    if(raw.includes('home'))return'Home / limited';
+    return'Gym';
+  }
+  function gf52TargetMuscleSVG(e){
+    try{
+      const weights=exerciseMuscleWeights(e)||{};
+      let svg=bodyMapSVG('front');
+      svg=svg.replace(/id="muscleMap"/g,'').replace(/id="zone-[^"]+"/g,'').replace(/\sonclick="[^"]*"/g,'');
+      svg=svg.replace(/(<g class="zone"[^>]*data-muscle="([^"]+)"[^>]*style="--zone-fill:)[^"]+("[^>]*>)/g,(m,a,k,c)=>{
+        const v=Number(weights[k]||0);
+        const col=v>=.75?'#58c7ff':v>=.3?'#397bb5':'#17243b';
+        return `${a}${col}${c}`;
+      });
+      return svg;
+    }catch{return''}
+  }
+  function gf52LoadText(s,e){
+    try{
+      const q=typeof gf45LoadPrescription==='function'?gf45LoadPrescription(s.id,e):suggestedLoadFor(s.id,e);
+      return q?.load!==''&&q?.load!=null?`${q.load} kg suggested`:(q?.calibration?.status==='none'?'calibrate in first set':'choose working load');
+    }catch{return'choose working load'}
+  }
+  function gf52CalibratedCount(s){
+    let live=0,any=0;
+    for(const e of (s?.exercises||[])){
+      const c=typeof gf45CalibrationFor==='function'?gf45CalibrationFor(e):null;
+      if(c?.e1rm)any++;
+      if(c?.status==='live')live++;
+    }
+    return {live,any,total:s?.exercises?.length||0};
+  }
+  function gf52Current(){
+    const w=currentWorkoutRecord?.();if(!w||!canonicalWorkout)return null;
+    const s=plan?.training?.sessions?.find(x=>x.id===w.sessionId);if(!s)return null;
+    const list=gf52RuntimeExercises(w,s);
+    const i=Math.max(0,Math.min(canonicalWorkout.exerciseIndex,list.length-1)),e=list[i];
+    return {w,s,list,i,e,key:workoutExerciseKey(e)};
+  }
+  function gf52BaseRuntime(w,s){
+    return typeof gf48RuntimeExercises==='function'?gf48RuntimeExercises(w,s):(s?.exercises||[]);
+  }
+  function gf52RuntimeExercises(w,s){
+    const base=gf52BaseRuntime(w,s);
+    const over=w?.runtimeExerciseOverrides||{};
+    return base.map(e=>{
+      const key=workoutExerciseKey(e),rep=over[key];
+      return rep?{...rep,_gf52OriginalKey:key,_gf52Substitution:true}:e;
+    });
+  }
+  window.gf52RuntimeExercises=gf52RuntimeExercises;
+
+  // ------------------------------------------------------------------------
+  // Session overview
+  // ------------------------------------------------------------------------
+  window.openSession=function(id){
+    const s=plan?.training?.sessions?.find(x=>x.id===id);if(!s)return;
+    const sheet=document.getElementById('sessionSheet');sheet.classList.remove('workout-sheet','gf52-live-sheet');
+    const mins=Number(progress?.settings?.sessionDurationMinutes)||Number(plan?.training?.defaultSessionDurationMinutes)||90;
+    const priority=gf52PriorityIndex(s),cal=gf52CalibratedCount(s);
+    const rows=(s.exercises||[]).map((e,i)=>{
+      const tag=i===priority?'<span class="gf52-priority-tag">Priority lift</span>':'';
+      return `<div class="gf52-ex-row ${i===priority?'priority':''}">
+        <button type="button" style="display:contents;color:inherit" onclick="openExerciseGuide('${esc(s.id)}',${i})">
+          <span class="gf52-ex-media">${exerciseVisual(e,false)}<span class="gf52-muscle-mini">${gf52TargetMuscleSVG(e)}</span></span>
+          <span class="gf52-ex-copy">${tag}<b>${esc(e.name)}</b><span>${e.sets} sets · ${e.repMin}–${e.repMax} reps · ${esc(e.focus||'')}</span><small>${esc(gf52LoadText(s,e))}</small></span>
+        </button>
+        <button class="gf52-more-btn" type="button" aria-label="Exercise options" onclick="event.stopPropagation();openExerciseGuide('${esc(s.id)}',${i})">•••</button>
+      </div>`;
+    }).join('');
+    sheet.innerHTML=`<button class="gf50-sheet-close" onclick="closeSession()" aria-label="Close">×</button><div class="gf52-session">
+      <div class="gf52-session-top"><div class="gf52-session-title"><div class="eyebrow">Workout plan</div><h2>${esc(s.name)}</h2><p>${esc(s.subtitle||'')}</p></div></div>
+      <div class="gf52-session-actions"><button class="gf52-pill primary" onclick="gf51OpenPlanBuilder?.('live',${mins})"><strong>${mins===90?'1 hr 30':mins+' min'}</strong> ▾</button><span class="gf52-pill">${esc(gf52EquipmentLabel())}</span><button class="gf52-pill" onclick="gf51OpenPlanBuilder?.('live',${mins})">Edit plan</button></div>
+      <div class="gf52-calibration"><div><b>Strength calibration</b><span>${cal.any}/${cal.total} exercises have a working-load baseline. Starting loads refine automatically from your logged sets — no generic max test required.</span></div><button class="btn secondary" onclick="gf52OpenStrengthSetup('${esc(s.id)}')">View</button></div>
+      <div class="gf52-exercise-list">${rows}</div>
+      <div class="gf52-session-dock"><button class="btn primary" onclick="startWorkout('${esc(s.id)}')">Start workout</button></div>
+    </div>`;
+    document.getElementById('sessionModal').classList.add('open');
+  };
+
+  window.gf52OpenStrengthSetup=function(sessionId){
+    const s=plan?.training?.sessions?.find(x=>x.id===sessionId);if(!s)return;
+    const p=gf52PriorityIndex(s);
+    const picks=(s.exercises||[]).map((e,i)=>({e,i,c:typeof gf45CalibrationFor==='function'?gf45CalibrationFor(e):null,q:typeof gf45LoadPrescription==='function'?gf45LoadPrescription(s.id,e):null}))
+      .sort((a,b)=>(b.i===p)-(a.i===p)||(gf48IsCompound?.(b.e)?1:0)-(gf48IsCompound?.(a.e)?1:0)||a.i-b.i).slice(0,5);
+    const sheet=document.getElementById('sessionSheet');sheet.classList.remove('workout-sheet','gf52-live-sheet');
+    sheet.innerHTML=`<button class="gf50-sheet-close" onclick="openSession('${esc(s.id)}')" aria-label="Back">‹</button><div class="eyebrow">Workout calibration</div><h2 style="font-size:29px;margin:5px 0 3px">Starting loads</h2><p class="muted" style="margin-top:0">Gain Focus calibrates from controlled working sets rather than asking you to perform a generic strength test. A valid 5–15 rep set with recorded RIR begins the estimate.</p><div class="gf52-strength-grid">${picks.map(x=>`<div class="gf52-strength-row"><div><b>${esc(x.e.name)}</b><span>${x.c?.e1rm?`Estimated 1RM ${x.c.e1rm} kg · ${x.c.sessions} session${x.c.sessions===1?'':'s'}`:'No baseline yet · first controlled working set will calibrate it'}${x.q?.load?` · suggested ${x.q.load} kg`:''}</span></div><span class="gf52-strength-state">${esc(x.c?.status||'none')}</span></div>`).join('')}</div><button class="btn primary" style="width:100%;margin-top:14px" onclick="startWorkout('${esc(s.id)}')">Start and calibrate from real sets</button><button class="btn secondary" style="width:100%;margin-top:8px" onclick="openSession('${esc(s.id)}')">Back to workout</button>`;
+  };
+
+  // ------------------------------------------------------------------------
+  // Exercise guide
+  // ------------------------------------------------------------------------
+  window.openExerciseGuide=function(sessionId,index){
+    const s=plan?.training?.sessions?.find(x=>x.id===sessionId),e=s?.exercises?.[index];if(!s||!e)return;
+    const g=typeof gf48ExerciseInfo==='function'?gf48ExerciseInfo(e):{purpose:e.focus||'',setup:exerciseCues(e)[0],execution:exerciseCues(e)[1],tempo:'Controlled eccentric · smooth concentric',grip:'Keep the wrist stable and use a comfortable grip.',errors:[exerciseCues(e)[2]]};
+    const priority=index===gf52PriorityIndex(s),prev=previousExercisePerformance?.(s.id,e)||[],cal=typeof gf45CalibrationFor==='function'?gf45CalibrationFor(e):null;
+    const sheet=document.getElementById('sessionSheet');sheet.classList.remove('workout-sheet','gf52-live-sheet');
+    sheet.innerHTML=`<div class="gf52-guide">
+      <div class="gf52-guide-hero">${exerciseVisual(e,true)}<button class="gf52-guide-close" onclick="openSession('${esc(s.id)}')" aria-label="Close">×</button><div class="gf52-guide-title">${priority?'<span class="gf52-priority-tag">Priority lift</span>':''}<h2>${esc(e.name)}</h2><p>${e.sets} sets · ${e.repMin}–${e.repMax} reps · ${esc(e.focus||'')}</p></div></div>
+      <div class="gf52-action-row"><button onclick="gf52ToggleGuideSection('gf52HowTo')">▶ How-to</button><button onclick="gf52OpenPreWorkoutHistory('${esc(s.id)}',${index})">History</button><button onclick="gf52OpenPreWorkoutReplace('${esc(s.id)}',${index})">Replace</button><button onclick="gf52ToggleGuideSection('gf52More')">••• More</button></div>
+      <div class="gf52-focus-card"><b>${priority?'Today’s priority lift':'Exercise role'}</b><span>${esc(g.purpose||e.focus||'This movement supports the current session goal.')}${cal?.e1rm?` Strength baseline: e1RM ${cal.e1rm} kg.`:' Your first controlled working set will help calibrate future loads.'}</span></div>
+      <div id="gf52HowTo" class="gf52-howto" style="display:none"><div class="gf52-how-grid"><div><b>Setup</b>${esc(g.setup||'')}</div><div><b>Execution</b>${esc(g.execution||'')}</div><div><b>Tempo</b>${esc(g.tempo||'')}</div><div><b>Grip</b>${esc(g.grip||'')}</div></div>${typeof gf48PathSVG==='function'?gf48PathSVG(e):''}</div>
+      <div id="gf52More" class="gf52-howto" style="display:none"><details open><summary>Grip / hand position</summary><div class="gf52-how-body">${typeof gf48GripSVG==='function'?gf48GripSVG(e,g):esc(g.grip||'')}</div></details><details><summary>Common errors</summary><div class="gf52-how-body">${(g.errors||[]).map(x=>`• ${esc(x)}`).join('<br>')}</div></details><details><summary>Previous performance</summary><div class="gf52-how-body">${prev.length?prev.map((x,j)=>`Set ${j+1}: ${x.weightKg?x.weightKg+' kg':'BW'} × ${x.reps} · ${x.rir} RIR`).join('<br>'):'No previous logged sets yet.'}</div></details></div>
+      <button class="btn primary" style="width:100%;margin-top:14px" onclick="startWorkout('${esc(s.id)}')">Start workout</button>
+      <button class="btn secondary" style="width:100%;margin-top:8px" onclick="openSession('${esc(s.id)}')">Back to session</button>
+    </div>`;
+    document.getElementById('sessionModal').classList.add('open');
+  };
+  window.gf52ToggleGuideSection=function(id){const x=document.getElementById(id);if(x)x.style.display=x.style.display==='none'?'grid':'none'};
+
+  window.gf52OpenPreWorkoutHistory=function(sessionId,index){
+    const s=plan?.training?.sessions?.find(x=>x.id===sessionId),e=s?.exercises?.[index];if(!s||!e)return;
+    const prev=previousExercisePerformance?.(s.id,e)||[],c=typeof gf45CalibrationFor==='function'?gf45CalibrationFor(e):null;
+    const sheet=document.getElementById('sessionSheet');
+    sheet.innerHTML=`<button class="gf50-sheet-close" onclick="openExerciseGuide('${esc(s.id)}',${index})">‹</button><div class="eyebrow">Exercise history</div><h2 style="font-size:28px;margin:5px 0">${esc(e.name)}</h2><p class="muted">${c?.e1rm?`Current estimated 1RM: ${c.e1rm} kg · ${c.sessions} calibration sessions.`:'No calibrated strength baseline yet.'}</p><div class="gf52-history-list">${prev.length?prev.map((x,j)=>`<div class="gf52-history-card"><b>Set ${j+1} · ${x.weightKg?x.weightKg+' kg':'Bodyweight'} × ${x.reps}</b><span>${x.rir} RIR${typeof gf45SetE1RM==='function'?` · e1RM ${round(gf45SetE1RM(x),1)} kg`:''}</span></div>`).join(''):'<div class="gf52-history-card"><b>No previous session</b><span>Your first logged sets will appear here and drive future load suggestions.</span></div>'}</div>`;
+  };
+  window.gf52OpenPreWorkoutReplace=function(sessionId,index){
+    const s=plan?.training?.sessions?.find(x=>x.id===sessionId),e=s?.exercises?.[index];if(!s||!e)return;
+    const alts=gf52ReplacementCandidates(e,s).slice(0,5);
+    const sheet=document.getElementById('sessionSheet');
+    sheet.innerHTML=`<button class="gf50-sheet-close" onclick="openExerciseGuide('${esc(s.id)}',${index})">‹</button><div class="eyebrow">Exercise alternatives</div><h2 style="font-size:28px;margin:5px 0">Replace ${esc(e.name)}</h2><p class="muted">Alternatives are ranked by overlapping target muscles. Starting the workout still uses your stored programme unless you edit the plan itself.</p><div class="gf52-replace-list">${alts.map(x=>`<div class="gf52-replace-card"><div><b>${esc(x.e.name)}</b><span>${esc(x.e.focus||'')} · ${x.e.sets} × ${x.e.repMin}–${x.e.repMax}</span></div><button class="btn secondary" onclick="toast('Use Edit plan to make a permanent replacement')">Preview</button></div>`).join('')}</div><button class="btn primary" style="width:100%;margin-top:12px" onclick="gf51OpenPlanBuilder?.('live')">Edit programme</button>`;
+  };
+
+  // ------------------------------------------------------------------------
+  // Live workout
+  // ------------------------------------------------------------------------
+  function gf52TargetSets(w,e){
+    const key=e._gf52OriginalKey||workoutExerciseKey(e);
+    w.exerciseSetTargets||(w.exerciseSetTargets={});
+    return Math.max(1,Number(w.exerciseSetTargets[key])||Number(e.sets)||1);
+  }
+  function gf52DraftValue(last,prev,index,field,fallback){
+    if(last&&Number.isFinite(Number(last[field])))return Number(last[field]);
+    const p=prev?.[Math.min(index,Math.max(0,prev.length-1))];
+    if(p&&Number.isFinite(Number(p[field])))return Number(p[field]);
+    return fallback;
+  }
+
+  window.renderCanonicalWorkout=function(){
+    const c=gf52Current();if(!c)return;
+    const {w,s,list,i,e,key}=c,sheet=document.getElementById('sessionSheet');sheet.classList.add('workout-sheet','gf52-live-sheet');
+    const originalKey=e._gf52OriginalKey||key,target=gf52TargetSets(w,e),today=(w.setEntries||[]).filter(x=>x.exerciseKey===key||x.replacesKey===originalKey&&x.exerciseName===e.name),done=today.length,next=today.length;
+    const prev=previousExercisePerformance?.(s.id,e)||[],last=today.at(-1),suggest=typeof gf45LoadPrescription==='function'?gf45LoadPrescription(s.id,e):suggestedLoadFor(s.id,e);
+    const fallbackWeight=Number(suggest?.load)||0,fallbackReps=Number(e.repMin)||8;
+    const preW=gf52DraftValue(last,prev,next,'weightKg',fallbackWeight),preR=gf52DraftValue(last,prev,next,'reps',fallbackReps);
+    const priorityOriginal=gf52PriorityIndex(s),origIndex=(s.exercises||[]).findIndex(x=>workoutExerciseKey(x)===originalKey),priority=origIndex===priorityOriginal;
+    const pct=clamp(((i+(Math.min(done,target)/target))/Math.max(1,list.length))*100,0,100);
+    const restText=canonicalRestRemaining?formatRest(canonicalRestRemaining):`${Math.round((typeof gf51RestSec==='function'?gf51RestSec(e):90)/60*10)/10}m`;
+    const rows=Array.from({length:target},(_,j)=>{
+      const logged=today[j],active=j===done, future=j>done;
+      const valW=logged?Number(logged.weightKg)||0:(active?preW:preW),valR=logged?Number(logged.reps)||0:(active?preR:preR);
+      return `<div class="gf52-set-row ${logged?'done':active?'active':'future'}"><span class="gf52-set-num">${j+1}</span><input ${logged||future?'disabled':''} ${active?'id="canonicalSetReps"':''} inputmode="numeric" value="${valR||''}" aria-label="Set ${j+1} reps"><input ${logged||future?'disabled':''} ${active?'id="canonicalSetWeight"':''} inputmode="decimal" value="${valW||''}" aria-label="Set ${j+1} weight kg">${logged?`<button class="gf52-edit-set" onclick="editActiveWorkoutSet('${esc(logged.id)}')">Edit</button>`:active?`<span style="font-size:8px;color:#9ddcff;text-align:center">NEXT</span>`:'<span></span>'}</div>`;
+    }).join('');
+
+    sheet.innerHTML=`<div class="gf52-live">
+      <div class="gf52-live-hero">${exerciseVisual(e,true)}<button class="gf52-live-close" onclick="closeSession()" aria-label="Close">×</button><div class="gf52-live-head">${priority?'<span class="gf52-priority-tag">Priority lift</span>':''}<h2>${esc(e.name)}</h2><p>${esc(s.name)} · ${esc(e.focus||'')} · ${gf48Station?.(e)||'workout'}</p></div></div>
+      <div class="gf52-live-progress"><span>Exercise <b>${i+1}/${list.length}</b></span><span>${Math.round(pct)}% session progress</span></div><div class="gf52-mini-bar"><i style="width:${pct}%"></i></div>
+      <div class="gf52-live-actions"><button onclick="gf52RestAction()"><b>${esc(restText)}</b><span>Rest</span></button><button onclick="gf52OpenExerciseHistory()"><b>History</b><span>Last time</span></button><button onclick="gf52OpenReplacement()"><b>Replace</b><span>Same target</span></button><button onclick="gf52OpenTechnique()"><b>More</b><span>Form + grip</span></button></div>
+      <div class="gf52-prescription"><div class="eyebrow">${priority?'Today’s priority lift':'Prescription'}</div><b>${target} sets · ${e.repMin}–${e.repMax} reps · target ${canonicalWorkout.rir??2} RIR</b><span>${esc(suggest?.message||'Use a controlled working load and keep execution repeatable.')}${e._gf52Substitution?' · Temporary substitution for this workout.':''}</span></div>
+      <div class="gf52-sets-head"><span>Set</span><span>Reps</span><span>Weight kg</span><span></span></div>
+      <div class="gf52-sets">${rows}</div>
+      ${done<target?`<div class="gf52-rir-strip"><span>RIR for next set</span><div class="gf52-rir-picks">${[0,1,2,3].map(r=>`<button class="${Number(canonicalWorkout.rir)===r?'on':''}" onclick="setWorkoutRIR(${r})">${r}</button>`).join('')}</div></div><div class="gf52-set-actions"><button class="btn primary" onclick="saveCanonicalSet()">Log set ${done+1}</button><button class="btn secondary gf52-add-set" onclick="gf52AddSet()">＋ Add set</button></div>`:`<button class="btn secondary gf52-add-set" style="width:100%;margin-top:9px" onclick="gf52AddSet()">＋ Add another set</button>`}
+      ${done>=target&&i<list.length-1?`<button class="btn primary gf52-next-ex" onclick="canonicalWorkout.exerciseIndex++;skipCanonicalRest();renderCanonicalWorkout()">Next exercise →</button>`:''}
+      <div class="gf52-live-nav"><button class="btn secondary" onclick="canonicalWorkout.exerciseIndex=Math.max(0,canonicalWorkout.exerciseIndex-1);renderCanonicalWorkout()">← Previous</button><button class="btn secondary" onclick="canonicalWorkout.exerciseIndex=Math.min(${list.length-1},canonicalWorkout.exerciseIndex+1);renderCanonicalWorkout()">Next →</button></div>
+      <button class="btn secondary gf48-offplan-btn" style="width:100%" onclick="gf48OpenOffPlanAdder()">＋ Add exercise not in today’s plan</button>
+    </div><div class="gf52-live-dock"><button class="btn primary" onclick="finishCanonicalWorkout()">Finish workout</button><button class="btn secondary gf52-end-later" onclick="closeSession()" aria-label="End later">•••</button></div>`;
+    document.getElementById('sessionModal').classList.add('open');
+  };
+
+  window.gf52AddSet=function(){
+    const c=gf52Current();if(!c)return;const k=c.e._gf52OriginalKey||workoutExerciseKey(c.e);c.w.exerciseSetTargets||(c.w.exerciseSetTargets={});c.w.exerciseSetTargets[k]=gf52TargetSets(c.w,c.e)+1;write();renderCanonicalWorkout();
+  };
+  window.gf52RestAction=function(){
+    if(canonicalRestRemaining)toggleCanonicalRest();else startCanonicalRest();
+    setTimeout(renderCanonicalWorkout,20);
+  };
+  window.gf52OpenExerciseHistory=function(){
+    const c=gf52Current();if(!c)return;const prev=previousExercisePerformance?.(c.s.id,c.e)||[],cal=typeof gf45CalibrationFor==='function'?gf45CalibrationFor(c.e):null,sheet=document.getElementById('sessionSheet');sheet.classList.remove('gf52-live-sheet');
+    sheet.innerHTML=`<button class="gf50-sheet-close" onclick="renderCanonicalWorkout()">‹</button><div class="eyebrow">During workout</div><h2 style="font-size:28px;margin:5px 0">${esc(c.e.name)} history</h2><p class="muted">${cal?.e1rm?`e1RM ${cal.e1rm} kg · ${cal.sessions} calibration sessions`:'No calibrated history yet.'}</p><div class="gf52-history-list">${prev.length?prev.map((x,j)=>`<div class="gf52-history-card"><b>Set ${j+1} · ${x.weightKg?x.weightKg+' kg':'BW'} × ${x.reps}</b><span>${x.rir} RIR${typeof gf45SetE1RM==='function'?` · e1RM ${round(gf45SetE1RM(x),1)} kg`:''}</span></div>`).join(''):'<div class="gf52-history-card"><b>First baseline</b><span>Today’s logged working sets will become your comparison next time.</span></div>'}</div><button class="btn primary" style="width:100%;margin-top:12px" onclick="renderCanonicalWorkout()">Back to set entry</button>`;
+  };
+
+  function gf52Similarity(a,b){
+    const A=exerciseMuscleWeights(a)||{},B=exerciseMuscleWeights(b)||{},keys=new Set([...Object.keys(A),...Object.keys(B)]);
+    let dot=0,aa=0,bb=0;for(const k of keys){const x=Number(A[k]||0),y=Number(B[k]||0);dot+=x*y;aa+=x*x;bb+=y*y}
+    return aa&&bb?dot/Math.sqrt(aa*bb):0;
+  }
+  function gf52ReplacementCandidates(e,currentSession){
+    const used=new Set((currentSession?.exercises||[]).map(workoutExerciseKey));
+    const all=(plan?.training?.sessions||[]).flatMap(s=>(s.exercises||[]).map(x=>({e:x,s})));
+    const seen=new Set(),rows=[];
+    for(const x of all){
+      const k=workoutExerciseKey(x.e);if(k===workoutExerciseKey(e)||seen.has(k))continue;seen.add(k);
+      rows.push({...x,score:gf52Similarity(e,x.e)});
+    }
+    return rows.sort((a,b)=>b.score-a.score||String(a.e.name).localeCompare(String(b.e.name)));
+  }
+  window.gf52ReplacementCandidates=gf52ReplacementCandidates;
+
+  window.gf52OpenReplacement=function(){
+    const c=gf52Current();if(!c)return;const alts=gf52ReplacementCandidates(c.e,c.s).slice(0,6),sheet=document.getElementById('sessionSheet');sheet.classList.remove('gf52-live-sheet');
+    sheet.innerHTML=`<button class="gf50-sheet-close" onclick="renderCanonicalWorkout()">‹</button><div class="eyebrow">Temporary workout substitution</div><h2 style="font-size:28px;margin:5px 0">Replace ${esc(c.e.name)}</h2><p class="muted">Choose an overlapping movement for this workout only. Hercules will log the deviation and can offer a permanent programme switch after the session.</p><div class="gf52-replace-list">${alts.map((x,i)=>`<div class="gf52-replace-card"><div><b>${esc(x.e.name)}</b><span>${Math.round(x.score*100)}% target-muscle overlap · ${esc(x.e.focus||'')}</span></div><button class="btn secondary" onclick="gf52UseReplacement(${i})">Use</button></div>`).join('')}</div><button class="btn secondary" style="width:100%;margin-top:10px" onclick="gf52CustomReplacement()">Custom exercise</button>${c.e._gf52Substitution?'<button class="btn secondary settings-danger" style="width:100%;margin-top:8px" onclick="gf52RestoreOriginal()">Restore planned exercise</button>':''}`;
+    window.gf52ReplacementPool=alts;
+  };
+  window.gf52UseReplacement=function(i){
+    const c=gf52Current(),x=window.gf52ReplacementPool?.[i];if(!c||!x)return;
+    const original=c.e._gf52OriginalKey||workoutExerciseKey(c.e);c.w.runtimeExerciseOverrides||(c.w.runtimeExerciseOverrides={});
+    c.w.runtimeExerciseOverrides[original]={...structuredClone(x.e),sets:Number(c.e.sets)||Number(x.e.sets)||3,repMin:Number(x.e.repMin)||Number(c.e.repMin)||8,repMax:Number(x.e.repMax)||Number(c.e.repMax)||12,replacesName:c.e.name};
+    write();toast(`${x.e.name} substituted for this workout`);renderCanonicalWorkout();
+  };
+  window.gf52CustomReplacement=function(){
+    const c=gf52Current();if(!c)return;const name=prompt('Replacement exercise name');if(!name?.trim())return;
+    const focus=prompt('Primary muscle / focus',c.e.focus||'Accessory')||c.e.focus||'Accessory';
+    const original=c.e._gf52OriginalKey||workoutExerciseKey(c.e);c.w.runtimeExerciseOverrides||(c.w.runtimeExerciseOverrides={});
+    c.w.runtimeExerciseOverrides[original]={id:`offplan-${Date.now().toString(36)}`,name:name.trim(),focus,sets:Number(c.e.sets)||3,repMin:Number(c.e.repMin)||8,repMax:Number(c.e.repMax)||12,incrementKg:Number(c.e.incrementKg)||2.5,replacesName:c.e.name};
+    write();renderCanonicalWorkout();
+  };
+  window.gf52RestoreOriginal=function(){
+    const c=gf52Current();if(!c)return;const original=c.e._gf52OriginalKey;if(original&&c.w.runtimeExerciseOverrides){delete c.w.runtimeExerciseOverrides[original];write()}renderCanonicalWorkout();
+  };
+
+  window.gf52OpenTechnique=function(){
+    const c=gf52Current();if(!c)return;const e=c.e,g=typeof gf48ExerciseInfo==='function'?gf48ExerciseInfo(e):{setup:exerciseCues(e)[0],execution:exerciseCues(e)[1],tempo:'Controlled',grip:'Stable wrist',errors:[exerciseCues(e)[2]]},sheet=document.getElementById('sessionSheet');sheet.classList.remove('gf52-live-sheet');
+    sheet.innerHTML=`<button class="gf50-sheet-close" onclick="renderCanonicalWorkout()">‹</button><div class="eyebrow">Technique & grip</div><h2 style="font-size:28px;margin:5px 0">${esc(e.name)}</h2><div class="gf52-how-grid"><div><b>Setup</b>${esc(g.setup||'')}</div><div><b>Execution</b>${esc(g.execution||'')}</div><div><b>Tempo</b>${esc(g.tempo||'')}</div><div><b>Grip</b>${esc(g.grip||'')}</div></div>${typeof gf48PathSVG==='function'?gf48PathSVG(e):''}${typeof gf48GripSVG==='function'?`<div style="margin-top:8px">${gf48GripSVG(e,g)}</div>`:''}<div class="gf52-focus-card"><b>Avoid</b><span>${(g.errors||[]).map(x=>esc(x)).join(' · ')}</span></div><button class="btn primary" style="width:100%;margin-top:10px" onclick="renderCanonicalWorkout()">Back to workout</button>`;
+  };
+
+  // Save set using the new temporary-substitution-aware runtime list.
+  window.saveCanonicalSet=function(){
+    const c=gf52Current();if(!c)return;const {w,s,e,key}=c,original=e._gf52OriginalKey||key;
+    const weight=Math.max(0,Number(document.getElementById('canonicalSetWeight')?.value)||0),reps=Math.max(0,Math.round(Number(document.getElementById('canonicalSetReps')?.value)||0));
+    if(!reps){toast('Add reps first');return}
+    const before=typeof gf45CalibrationFor==='function'?gf45CalibrationFor(e):null;
+    const row={id:canonicalUid(),ts:Date.now(),exerciseKey:key,exerciseName:e.name,focus:e.focus||'',station:typeof gf48Station==='function'?gf48Station(e):'',planned:!e._gf52Substitution,offPlan:!!e._gf52Substitution,substitution:!!e._gf52Substitution,replacesKey:e._gf52Substitution?original:null,replacesName:e.replacesName||null,weightKg:weight,reps,rir:Number(canonicalWorkout.rir)};
+    if(typeof gf45SetE1RM==='function')row.e1rmKg=round(gf45SetE1RM(row),1);
+    w.setEntries.push(row);write();
+    const after=typeof gf45CalibrationFor==='function'?gf45CalibrationFor(e):null;
+    startCanonicalRest();renderCanonicalWorkout();
+    if(before&&!before.e1rm&&after?.e1rm)setTimeout(()=>toast(`Calibration started · ${after.e1rm} kg e1RM`),80);
+  };
+
+  // Ensure the workout summary/heat map includes substitutions and off-plan work.
+  const gf52BaseFinish=window.finishCanonicalWorkout;
+  window.finishCanonicalWorkout=function(){
+    const w=currentWorkoutRecord?.(),id=w?.id;
+    const r=gf52BaseFinish.apply(this,arguments);
+    if(id){
+      setTimeout(()=>{
+        const done=(progress?.workoutLogs||[]).find(x=>x.id===id);if(!done)return;
+        const map=new Map();
+        for(const x of (done.setEntries||[])){
+          const k=x.exerciseKey||x.exerciseName;
+          if(!map.has(k))map.set(k,{id:k,name:x.exerciseName||k,focus:x.focus||'',sets:0,offPlan:!!x.offPlan,substitution:!!x.substitution});
+          map.get(k).sets++;
+        }
+        done.exercises=[...map.values()];try{write()}catch{}
+      },30);
+    }
+    return r;
+  };
+
+  // Clean live-sheet styling whenever the modal closes.
+  const gf52BaseClose=window.closeSession;
+  if(typeof gf52BaseClose==='function')window.closeSession=function(){document.getElementById('sessionSheet')?.classList.remove('gf52-live-sheet');return gf52BaseClose.apply(this,arguments)};
+})();
+</script>
+
 </body>
 </html>

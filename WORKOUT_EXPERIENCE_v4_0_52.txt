@@ -1,0 +1,41 @@
+GAIN FOCUS PWA v4.0.52 — WORKOUT EXPERIENCE ONLY
+
+No Nutrition, Check-in, Analysis, Account, onboarding logic, goal logic or plan-builder
+workflow was redesigned in this patch.
+
+CHANGED
+[PASS] Session overview rebuilt as a compact workout plan.
+[PASS] 90-minute / equipment / Edit plan controls shown directly under session title.
+[PASS] Priority Lift label added to the highest-priority movement.
+[PASS] Exercise rows use reference thumbnail + target-muscle mini-map.
+[PASS] Each row shows sets, rep range and current load suggestion.
+[PASS] Strength calibration status is visible from the workout screen.
+[PASS] Exercise detail has large reference image and How-to / History / Replace / More actions.
+[PASS] Live workout shows the current exercise as a large visual header.
+[PASS] Rest / History / Replace / More remain one tap away during the workout.
+[PASS] All planned set rows are visible together.
+[PASS] The next set carries forward the latest logged kg AND reps.
+[PASS] Future set rows preview the inherited values.
+[PASS] Add Set is available without leaving the exercise.
+[PASS] RIR is still logged with every set.
+[PASS] Temporary exercise substitution is supported during the workout.
+[PASS] Substitutions are logged truthfully as deviations for Hercules' post-workout review.
+[PASS] Existing Hercules post-workout score/debrief remains intact.
+[PASS] Existing 90-minute availability -> plan proposal -> edit -> impact workflow remains intact.
+
+HOW TO USE
+Train -> tap a programme session or Preview.
+- Tap any exercise row for its detailed reference page.
+- Tap 90 min or Edit plan to use the existing training-plan builder.
+- Tap Strength calibration to see current exercise load confidence.
+
+During workout:
+- Enter reps and kg on the highlighted NEXT set row.
+- Tap Log set. The next row inherits those values.
+- Change the inherited values only when performance changes.
+- Rest starts after a logged set.
+- History shows the previous comparable exposure.
+- Replace creates a temporary substitution for this workout.
+- More opens setup, movement path and grip guidance.
+- Add set extends the target for the current exercise.
+- Finish workout opens the existing Hercules coaching review.
