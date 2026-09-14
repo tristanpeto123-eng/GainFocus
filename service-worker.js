@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gain-focus-v4.0.52';
+const CACHE_NAME = 'gain-focus-v4.0.54';
 const APP_SHELL = [
   './',
   './index.html',

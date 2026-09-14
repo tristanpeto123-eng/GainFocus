@@ -1,0 +1,39 @@
+GAIN FOCUS PWA v4.0.54 — ACCOUNT + WORKOUT HOTFIX
+
+FIXED
+[PASS] Account exit/close is structurally first and pinned at the top-left.
+[PASS] Legacy wrappers can no longer prepend Profile content above the account header.
+[PASS] Start ↔ Goal is nested/collapsible in Profile.
+[PASS] Tailored training plan is nested/collapsible in Profile.
+[PASS] Training-plan actions remain available inside the nested section.
+[PASS] Settings includes a non-destructive "Reboot Gain Focus" button.
+[PASS] Reboot preserves profile, logs, JSON/localStorage and local media.
+[PASS] Start Workout repaired.
+[PASS] Resume Workout repaired.
+[PASS] Resume returns to the first exercise that still has planned sets remaining.
+[PASS] Workout launch now shows a visible repair/retry screen if rendering ever fails.
+
+ROOT CAUSE OF START/RESUME FAILURE
+The v4.0.52 workout experience called `gf48IsCompound` from the older v4.0.48
+module. That helper was private inside its module and had never been exported to
+the global scope. The new Priority Lift calculation therefore raised a
+ReferenceError as the session/live workout screen rendered.
+
+v4.0.54 explicitly exports a safe equivalent helper and replaces Start/Resume
+with a guarded launch path.
+
+ACCOUNT FLOW
+Profile button -> Account header appears first:
+  X (top-left) | Gain Focus Account / current tab
+Then tabs.
+Profile:
+  Start ↔ Goal [nested]
+  Tailored training plan [nested]
+  Athlete card and social/profile information
+Settings:
+  account/data settings
+  App controls -> Reboot Gain Focus
+
+REBOOT VS RESET
+Reboot = reload app, keep all data.
+Reset/Delete = destructive and remains a separate action.

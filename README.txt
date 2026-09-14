@@ -1,4 +1,4 @@
-GAIN FOCUS PWA v4.0.52
+GAIN FOCUS PWA v4.0.54
 
 FILES
 - index.html
@@ -22,8 +22,8 @@ IPHONE INSTALL
 NOTES
 - Offline app-shell caching is enabled.
 - iPhone web notifications require the installed Home Screen PWA and notification permission.
-- v4.0.52 uses one service worker consistently; the older duplicate service-worker registrations were normalised.
+- v4.0.54 uses one service worker consistently; the older duplicate service-worker registrations were normalised.
 
-CHANGE IN v4.0.52
+CHANGE IN v4.0.54
 - Weight and reps automatically carry forward from the previous logged set for the same exercise.
 - Values remain editable before logging the next set.

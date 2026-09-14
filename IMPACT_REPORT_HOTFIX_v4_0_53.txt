@@ -1,0 +1,41 @@
+GAIN FOCUS PWA v4.0.53 — IMPACT REPORT HOTFIX
+
+ROOT CAUSE
+The Impact Report button in v4.0.51/v4.0.52 used an inline click handler that tried
+to access `gf51Planner` directly.
+
+`gf51Planner` is deliberately declared with `let` inside the plan-builder module,
+so it is private to that module. Inline HTML event handlers run outside that lexical
+scope. Pressing "Impact report" therefore raised a ReferenceError and the screen
+did not advance.
+
+FIX
+- Removed the illegal direct reference to the private planner state.
+- Added `gf51OpenImpactReport()` as a public bridge inside the plan-builder module.
+- The bridge saves the preference note, calculates/validates the report, moves to
+  Step 3, and renders the Impact Report.
+- Added visible error handling instead of silently failing.
+- No workout-plan maths or goal logic was changed in this hotfix.
+- v4.0.52 workout-experience UI is retained unchanged.
+
+TEST
+[PASS] Broken scoped-variable handler removed
+[PASS] Impact Report button calls public bridge
+[PASS] Private planner state remains private
+[PASS] Report result validates minutes/capacity before rendering
+[PASS] All inline JavaScript blocks pass syntax checks
+[PASS] Service worker/cache bumped to v4.0.53
+
+HOW TO TEST
+1. Train -> Daily workout availability / Review fitted training plan
+2. Capacity -> Generate & review plan
+3. Edit a set or exercise if desired
+4. Tap "Impact report"
+5. Step 3 should show:
+   - weekly plan time vs available time
+   - working-set coverage
+   - priority-muscle coverage
+   - scale goal date
+   - physique/composition target impact
+   - adherence/recovery impact
+6. Tap "Apply fitted plan" only if you want to commit the proposal.

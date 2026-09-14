@@ -1438,7 +1438,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.52';
+const APP_VERSION='4.0.54';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -4435,7 +4435,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.52', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.54', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
@@ -5241,7 +5241,7 @@ window.gf30OpenBodyCompForm=function(){gf30EnsureBodyComposition();const sheet=d
 function gf45DefaultNotificationPrefs(){return {enabled:false,workouts:true,meals:true,inactivity:true,social:true,challenges:true,workoutTime:'18:00',breakfastTime:'08:30',lunchTime:'13:00',dinnerTime:'19:00',inactivityDays:3,quietStart:'22:30',quietEnd:'07:30'}}
 window.ensureProgressExtras=function(){GF45_ORIGINAL.ensureProgressExtras?.();if(!progress)return;progress.settings||(progress.settings={});progress.settings.notificationPrefs={...gf45DefaultNotificationPrefs(),...(progress.settings.notificationPrefs||{})};if(!Array.isArray(progress.settings.availableWeekdays))progress.settings.availableWeekdays=[...(plan?.training?.availableWeekdays||progress.settings.trainingWeekdays||[])];if(!Array.isArray(progress.notificationFeed))progress.notificationFeed=[]};
 function gf45PushStatus(){if(!('Notification'in window))return 'Browser notifications are unavailable here.';if(location.protocol==='file:')return 'Open the hosted PWA to enable system notifications. Calendar reminders still work from this file.';return Notification.permission==='granted'?'System notifications enabled.':'Tap Enable notifications. iPhone web push requires the hosted app added to the Home Screen.'}
-async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.52')}catch(e){console.warn(e);return null}}
+async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.54')}catch(e){console.warn(e);return null}}
 async function gf45RequestNotifications(){if(!('Notification'in window)){toast('Notifications are not supported here');return}if(location.protocol==='file:'){toast('Host/install the PWA to enable push');return}const reg=await gf45RegisterSW(),permission=await Notification.requestPermission();ensureProgressExtras();progress.settings.notificationPrefs.enabled=permission==='granted';write();if(permission==='granted'&&reg){await reg.showNotification('Gain Focus notifications enabled',{body:'Hercules can now surface training, nutrition and social reminders.',tag:'gf-enabled'});toast('Notifications enabled')}else toast('Notification permission not granted');gfRenderSocialHub()}
 async function gf45TestNotification(){const reg=await gf45RegisterSW();if(('Notification' in window)&&Notification.permission==='granted'&&reg){await reg.showNotification('Hercules · Test',{body:'Notifications are connected. Keep the hosted PWA installed for background alerts.',tag:'gf-test'});return}toast('Enable notifications first')}
 function gf45SaveNotificationSettings(){ensureProgressExtras();const p=progress.settings.notificationPrefs;for(const k of ['workouts','meals','inactivity','social','challenges'])p[k]=!!document.getElementById('gf45n_'+k)?.checked;for(const k of ['workoutTime','breakfastTime','lunchTime','dinnerTime','quietStart','quietEnd']){const v=document.getElementById('gf45n_'+k)?.value;if(v)p[k]=v}p.inactivityDays=clamp(Number(document.getElementById('gf45n_inactivityDays')?.value)||3,1,14);write();toast('Notification preferences saved')}
@@ -6813,6 +6813,28 @@ gf47EnsureExistingInputs();
     if(!gf51Planner)return;
     gf51Planner.step=Math.max(0,Math.min(2,Number(step)||0));gf51RenderPlanner();
   };
+
+  // v4.0.53: public bridge for the Impact Report button.
+  // gf51Planner is intentionally private to this module, so inline HTML must never
+  // reference it directly.
+  window.gf51OpenImpactReport=function(){
+    if(!gf51Planner){
+      toast('Open the training plan builder first');
+      return;
+    }
+    try{
+      gf51Planner.preferenceNote=String(document.getElementById('gf51PrefNote')?.value||'').trim();
+      const report=gf51ImpactReport();
+      if(!report||!Number.isFinite(Number(report.draftMins))||!Number.isFinite(Number(report.cap))){
+        throw new Error('Impact report calculation returned invalid values');
+      }
+      gf51Planner.step=2;
+      gf51RenderPlanner();
+    }catch(err){
+      console.error('Gain Focus impact report error',err);
+      toast('Could not build the impact report · your edits are still saved in this review');
+    }
+  };
   window.gf51AdjustSets=function(si,ei,d){
     const e=gf51Planner?.draftSessions?.[si]?.exercises?.[ei];if(!e)return;
     e.sets=Math.max(1,Math.min(8,(Number(e.sets)||1)+Number(d)));gf51RenderPlanner();
@@ -6865,7 +6887,7 @@ gf47EnsureExistingInputs();
         return `<div class="gf51-ex"><div class="gf51-ex-copy"><b>${esc(e.name)}</b><span>${esc(e.focus||'')} · ${e.repMin||8}–${e.repMax||12} reps · ~${gf51Round(m.minutes,1)} min incl. rest</span></div><div class="gf51-ex-actions"><button class="gf51-mini" onclick="gf51AdjustSets(${si},${ei},-1)">−</button><span class="gf51-setcount">${e.sets} sets</span><button class="gf51-mini" onclick="gf51AdjustSets(${si},${ei},1)">＋</button><button class="gf51-mini gf51-replace" onclick="gf51ReplaceExercise(${si},${ei})">Swap</button><button class="gf51-mini" onclick="gf51RemoveExercise(${si},${ei})">×</button></div></div>`
       }).join('')}</div><button class="btn secondary gf51-add" onclick="gf51AddExercise(${si})">＋ Add client-preferred exercise</button><button class="btn secondary gf51-add" onclick="gf51ResetSession(${si})">Reset this session to generated fit</button></div>`;
     }).join('');
-    return `${gf51Stepbar()}<div class="gf51-flow"><div class="eyebrow">Editable proposed programme</div><div class="gf51-editor-note">This is the review stage. Change sets, swap movements, remove exercises or add client-preferred exercises. Nothing is committed yet.</div>${sessions}<label class="small">Client preferences / constraints</label><textarea id="gf51PrefNote" class="input gf51-pref-note" placeholder="e.g. prefers dumbbells, avoid busy cable station, dislikes barbell squats...">${esc(p.preferenceNote||'')}</textarea><div class="gf51-actions"><button class="btn secondary" onclick="gf51PlannerStep(0)">← Capacity</button><button class="btn primary" onclick="gf51Planner.preferenceNote=document.getElementById('gf51PrefNote')?.value||'';gf51PlannerStep(2)">Impact report →</button></div></div>`;
+    return `${gf51Stepbar()}<div class="gf51-flow"><div class="eyebrow">Editable proposed programme</div><div class="gf51-editor-note">This is the review stage. Change sets, swap movements, remove exercises or add client-preferred exercises. Nothing is committed yet.</div>${sessions}<label class="small">Client preferences / constraints</label><textarea id="gf51PrefNote" class="input gf51-pref-note" placeholder="e.g. prefers dumbbells, avoid busy cable station, dislikes barbell squats...">${esc(p.preferenceNote||'')}</textarea><div class="gf51-actions"><button class="btn secondary" onclick="gf51PlannerStep(0)">← Capacity</button><button class="btn primary" onclick="gf51OpenImpactReport()">Impact report →</button></div></div>`;
   }
   function gf51ReportHTML(){
     const r=gf51ImpactReport(),p=gf51Planner,coverage=Math.round(r.volume*100),priority=Math.round(r.priority*100),over=r.draftMins>r.cap+5;
@@ -7417,6 +7439,241 @@ gf47EnsureExistingInputs();
   // Clean live-sheet styling whenever the modal closes.
   const gf52BaseClose=window.closeSession;
   if(typeof gf52BaseClose==='function')window.closeSession=function(){document.getElementById('sessionSheet')?.classList.remove('gf52-live-sheet');return gf52BaseClose.apply(this,arguments)};
+})();
+</script>
+
+
+<script id="gf53-impact-report-hotfix">
+window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
+</script>
+
+
+<style id="gf54-account-workout-hotfix-style">
+/* ==========================================================================
+   Gain Focus 4.0.54 · account cohesion + workout start/resume hotfix
+   ========================================================================== */
+.gf54-account-shell{min-height:100%;padding-bottom:calc(28px + env(safe-area-inset-bottom))}
+.gf54-account-shell .gf50-account-top{
+  position:sticky;top:0;z-index:25;margin:0 -2px 10px;padding:10px 2px 9px;
+  background:linear-gradient(180deg,rgba(5,9,20,.99) 0%,rgba(5,9,20,.96) 78%,rgba(5,9,20,0) 100%);
+  backdrop-filter:blur(18px)
+}
+.gf54-account-shell .gf50-account-close{grid-column:1;justify-self:start}
+.gf54-account-shell .gf50-account-title{grid-column:2}
+.gf54-account-shell .gf50-account-spacer{grid-column:3}
+.gf54-account-shell .gf-social-tabs{margin-top:2px}
+.gf54-profile-tools{display:grid;gap:9px;margin:12px 0}
+.gf54-profile-tools .gf50-widget{margin:0}
+.gf54-tool-summary{display:flex;align-items:center;gap:10px}
+.gf54-tool-icon{width:34px;height:34px;flex:0 0 34px;border-radius:12px;display:grid;place-items:center;background:rgba(90,164,255,.09);border:1px solid rgba(108,185,255,.13);color:#b9e1ff;font-size:15px}
+.gf54-plan-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:7px 0 11px}
+.gf54-plan-meta>div{padding:9px;border-radius:13px;background:rgba(255,255,255,.027);border:1px solid rgba(255,255,255,.052)}
+.gf54-plan-meta span{display:block;font-size:7px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.gf54-plan-meta b{display:block;margin-top:3px;font-size:10px}
+.gf54-plan-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.gf54-plan-actions .wide{grid-column:1/-1}
+.gf54-system-box{margin-top:13px;padding:13px;border-radius:18px;border:1px solid rgba(112,180,255,.10);background:linear-gradient(135deg,rgba(69,138,232,.055),rgba(255,255,255,.018))}
+.gf54-system-box .eyebrow{margin-bottom:4px}
+.gf54-system-box p{margin:0 0 10px;font-size:9px;line-height:1.45;color:var(--muted)}
+.gf54-reboot{width:100%}
+.gf54-start-error{padding:12px 13px;border-radius:16px;margin:8px 0;background:rgba(255,92,110,.07);border:1px solid rgba(255,116,130,.13);font-size:9px;color:#ffd3d9}
+@media(max-width:430px){.gf54-plan-actions{grid-template-columns:1fr}.gf54-plan-actions .wide{grid-column:auto}}
+</style>
+
+<script id="gf54-account-workout-hotfix">
+(function(){
+  // ------------------------------------------------------------------------
+  // ROOT CAUSE FIX: v4.0.52 used gf48IsCompound from a different private IIFE.
+  // Make the helper explicitly global before any workout screen can call it.
+  // ------------------------------------------------------------------------
+  if(typeof window.gf48IsCompound!=='function'){
+    window.gf48IsCompound=function(e){
+      return /bench|press|pulldown|pull-up|pull up|chin|row|squat|hack|deadlift|rdl|romanian|leg press|dip/i.test(e?.name||'')
+        && !/fly|raise|curl|extension|pushdown|shrug/i.test(e?.name||'');
+    };
+  }
+
+  // ------------------------------------------------------------------------
+  // Reliable start/resume path with explicit error feedback.
+  // ------------------------------------------------------------------------
+  function gf54RuntimeList(w,s){
+    try{
+      if(typeof gf48RuntimeExercises==='function')return gf48RuntimeExercises(w,s);
+    }catch(err){console.warn('Runtime exercise preparation fallback',err)}
+    return s?.exercises||[];
+  }
+  function gf54ResumeIndex(w,s){
+    const list=gf54RuntimeList(w,s);
+    for(let i=0;i<list.length;i++){
+      const e=list[i],key=workoutExerciseKey(e),target=Math.max(1,Number(e.sets)||1);
+      const logged=(w.setEntries||[]).filter(x=>x.exerciseKey===key||x.replacesKey===key).length;
+      if(logged<target)return i;
+    }
+    return Math.max(0,list.length-1);
+  }
+  function gf54BeginWorkout(sessionId,workoutId=null){
+    try{
+      ensureProgressExtras?.();ensureWorkoutSettings?.();
+      const s=plan?.training?.sessions?.find(x=>String(x.id)===String(sessionId));
+      if(!s)throw new Error('Training session is missing from the active plan');
+
+      let w=null;
+      if(workoutId)w=(progress?.workoutLogs||[]).find(x=>String(x.id)===String(workoutId)&&x.completed===false)||null;
+      if(!w)w=(progress?.workoutLogs||[]).find(x=>x.completed===false&&String(x.sessionId)===String(s.id))||null;
+
+      if(!w){
+        w={
+          id:'workout-'+canonicalUid(),
+          date:todayISO(),
+          startedAt:new Date().toISOString(),
+          completed:false,
+          sessionId:s.id,
+          sessionName:s.name,
+          setEntries:[],
+          exercises:[]
+        };
+        progress.workoutLogs.push(w);
+        write();
+      }
+
+      const idx=gf54ResumeIndex(w,s);
+      canonicalWorkout={workoutId:w.id,sessionId:s.id,exerciseIndex:idx,rir:2};
+      editingWorkoutId=null;
+      document.getElementById('sessionModal')?.classList.add('open');
+      renderCanonicalWorkout();
+
+      // A render that silently returned is also treated as a fault.
+      if(!document.querySelector('#sessionSheet .gf52-live')&&!document.querySelector('#sessionSheet .workout-shell')){
+        throw new Error('Workout screen did not render');
+      }
+      return true;
+    }catch(err){
+      console.error('Gain Focus workout launch error',err);
+      canonicalWorkout=null;
+      const msg='Could not open the workout. Your saved plan and progress were not changed.';
+      try{toast(msg)}catch{}
+      const sheet=document.getElementById('sessionSheet');
+      if(sheet){
+        sheet.classList.remove('workout-sheet','gf52-live-sheet');
+        sheet.innerHTML=`<button class="gf50-sheet-close" onclick="closeSession()" aria-label="Close">×</button><div class="gf54-start-error"><b>Workout could not start</b><br>${esc(err?.message||'Unknown workout-render error')}</div><button class="btn primary" style="width:100%" onclick="gf54RepairAndRetry('${esc(String(sessionId))}','${esc(String(workoutId||''))}')">Repair & retry</button>`;
+        document.getElementById('sessionModal')?.classList.add('open');
+      }
+      return false;
+    }
+  }
+  window.gf54BeginWorkout=gf54BeginWorkout;
+  window.startWorkout=function(id){return gf54BeginWorkout(id,null)};
+  window.resumeWorkout=function(id){
+    const w=(progress?.workoutLogs||[]).find(x=>String(x.id)===String(id));
+    if(!w){toast('That workout could not be found');return false}
+    return gf54BeginWorkout(w.sessionId,w.id);
+  };
+  window.gf54RepairAndRetry=function(sessionId,workoutId){
+    // Repair only transient runtime fields; never delete logged sets.
+    const w=(progress?.workoutLogs||[]).find(x=>String(x.id)===String(workoutId));
+    if(w){
+      delete w.runtimeExerciseKeys;
+      delete w.runtimeEstimatedMinutes;
+      delete w.runtimeStationCount;
+      try{write()}catch{}
+    }
+    return gf54BeginWorkout(sessionId,workoutId||null);
+  };
+
+  // ------------------------------------------------------------------------
+  // Cohesive Account: header/exit is always first. Older openSettings wrappers
+  // are intentionally bypassed; their content is reintroduced below as nested tools.
+  // ------------------------------------------------------------------------
+  function gf54ProfileToolsHTML(){
+    const t=plan?.training||{},mins=Number(progress?.settings?.sessionDurationMinutes)||Number(t.defaultSessionDurationMinutes)||90;
+    const sessions=Array.isArray(t.sessions)?t.sessions.length:0;
+    const revisions=Array.isArray(t.revisionHistory)?t.revisionHistory.length:0;
+    const startGoal=typeof gfStartGoalVisualHTML==='function'?gfStartGoalVisualHTML():'<p class="muted">No start/goal visual is available.</p>';
+    return `<div class="gf54-profile-tools">
+      <details class="gf50-widget" ontoggle="if(this.open)setTimeout(()=>gfHydrateAnalysisMedia?.(),0)">
+        <summary><div class="gf54-tool-summary"><span class="gf54-tool-icon">◐</span><div class="gf50-summary-copy"><b>Start ↔ Goal</b><span>Baseline and target physique reference</span></div></div><span class="gf50-chevron">＋</span></summary>
+        <div class="gf50-widget-body">${startGoal}</div>
+      </details>
+      <details class="gf50-widget">
+        <summary><div class="gf54-tool-summary"><span class="gf54-tool-icon">↑</span><div class="gf50-summary-copy"><b>Tailored training plan</b><span>${sessions} sessions · ${mins} min available · protected original</span></div></div><span class="gf50-chevron">＋</span></summary>
+        <div class="gf50-widget-body">
+          <div class="gf54-plan-meta"><div><span>Sessions</span><b>${sessions}/wk</b></div><div><span>Availability</span><b>${mins===90?'1 hr 30':mins+' min'}</b></div><div><span>Approved edits</span><b>${revisions}</b></div></div>
+          <p class="muted" style="font-size:9px;line-height:1.45;margin:0 0 10px">Programme changes require confirmation. Restoring the protected original does not delete workout history.</p>
+          <div class="gf54-plan-actions"><button class="btn primary" onclick="closeSettings();showTab('train');setTimeout(()=>gf51OpenPlanBuilder?.('live',${mins}),80)">Review / edit plan</button><button class="btn secondary" onclick="gf30RestoreOriginalTrainingPlan()">Restore original</button></div>
+        </div>
+      </details>
+    </div>`;
+  }
+
+  const gf54BaseProfileView=window.gfProfileViewHTML;
+  if(typeof gf54BaseProfileView==='function'){
+    window.gfProfileViewHTML=function(){
+      const base=gf54BaseProfileView.apply(this,arguments)||'';
+      return gf54ProfileToolsHTML()+base;
+    };
+  }
+
+  const gf54BaseSettingsView=window.gfSettingsViewHTML;
+  if(typeof gf54BaseSettingsView==='function'){
+    window.gfSettingsViewHTML=function(){
+      let base=gf54BaseSettingsView.apply(this,arguments)||'';
+      // Training plan belongs in the Profile accordion, not loose inside Settings.
+      base=base.replace(/<div class="settings-group gf30-settings-plan">[\s\S]*?<\/div>(?=<div class="settings-group|<div class="gf46-account-actions|$)/,'');
+      return base+`<div class="gf54-system-box"><div class="eyebrow">App controls</div><p>Reboot reloads Gain Focus without deleting the profile, workout history, JSON data or locally stored media.</p><button class="btn secondary gf54-reboot" onclick="gf54RebootApp()">↻ Reboot Gain Focus</button></div>`;
+    };
+  }
+
+  window.gfRenderSocialHub=function(){
+    const sheet=document.getElementById('settingsSheet');if(!sheet)return;
+    const active=String(gfSocialTab).startsWith('compare:')?'friends':String(gfSocialTab).startsWith('group:')?'groups':gfSocialTab;
+    const title=active==='profile'?'Your athlete card':active==='friends'?'Friends':active==='leaderboard'?'Leaderboard':active==='groups'?'Groups & challenges':active==='notifications'?'Notifications':'Settings';
+    sheet.innerHTML=`<div class="gf-social-hub gf54-account-shell">
+      <div class="gf50-account-top">
+        <button class="gf50-account-close" onclick="closeSettings()" aria-label="Close account menu">×</button>
+        <div class="gf50-account-title"><div class="eyebrow">Gain Focus account</div><h2>${esc(title)}</h2></div>
+        <span class="gf50-account-spacer"></span>
+      </div>
+      <div class="gf-social-tabs">
+        <button class="${active==='profile'?'on':''}" onclick="gfSocialSetTab('profile')">Profile</button>
+        <button class="${active==='friends'?'on':''}" onclick="gfSocialSetTab('friends')">Friends</button>
+        <button class="${active==='leaderboard'?'on':''}" onclick="gfSocialSetTab('leaderboard')">Ranks</button>
+        <button class="${active==='groups'?'on':''}" onclick="gfSocialSetTab('groups')">Groups</button>
+        <button class="${active==='settings'?'on':''}" onclick="gfSocialSetTab('settings')">Settings</button>
+      </div>
+      ${gfSocialBody?.()||''}
+    </div>`;
+    if(active==='settings'){
+      sheet.querySelectorAll('.gf45-notify-box,.gf45-push-backend').forEach(x=>x.remove());
+      const stack=sheet.querySelector('.gf-settings-stack')||sheet.querySelector('.gf54-system-box');
+      stack?.insertAdjacentHTML('beforebegin','<div class="gf50-settings-moved">Notification controls live under the bell on the Hercules Home header.</div>');
+    }
+    setTimeout(()=>{try{gfHydrateAnalysisMedia?.()}catch{}},0);
+  };
+
+  // This is deliberately the final Account entry point so no legacy wrapper can
+  // prepend Start↔Goal or Training Plan above the exit/header again.
+  window.openSettings=function(){
+    try{gf30EnsurePlanProtection?.()}catch{}
+    gfSocialTab='profile';
+    gfRenderSocialHub();
+    document.getElementById('settingsModal')?.classList.add('open');
+  };
+
+  window.gf54RebootApp=async function(){
+    try{
+      write?.();
+      gf46VaultUpsertCurrent?.();
+      localStorage.setItem('gainFocusLastRebootAt',new Date().toISOString());
+    }catch{}
+    try{
+      if('serviceWorker' in navigator){
+        const reg=await navigator.serviceWorker.getRegistration();
+        await reg?.update?.();
+      }
+    }catch{}
+    closeSettings?.();
+    setTimeout(()=>location.reload(),80);
+  };
 })();
 </script>
 
