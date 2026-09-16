@@ -1,0 +1,24 @@
+GAIN FOCUS PWA v4.0.56 — LIVE WORKOUT MENU + WEB REFERENCES
+
+CHANGED
+[PASS] Removed Next from the main live workout screen.
+[PASS] Removed Add set from the main live workout screen.
+[PASS] Secondary controls are consolidated under the ••• menu.
+[PASS] The ••• menu now contains:
+       - History
+       - Replace exercise
+       - Technique & web references
+       - Add set target
+       - Remove last unlogged set
+       - Restore original exercise (if substituted)
+       - Previous exercise
+       - Next exercise
+       - Back to session overview
+       - Close for now
+[PASS] Replaced the active-row NEXT label with Active.
+[PASS] The technique screen no longer uses stickman diagrams.
+[PASS] Technique now uses real external web references:
+       - photo references
+       - video tutorial search
+       - grip / hand-position references
+[PASS] Session exercise guide also uses web-reference links instead of stick figures.

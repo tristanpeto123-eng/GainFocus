@@ -1438,7 +1438,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.54';
+const APP_VERSION='4.0.56';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -4435,7 +4435,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.54', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.56', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
@@ -5241,7 +5241,7 @@ window.gf30OpenBodyCompForm=function(){gf30EnsureBodyComposition();const sheet=d
 function gf45DefaultNotificationPrefs(){return {enabled:false,workouts:true,meals:true,inactivity:true,social:true,challenges:true,workoutTime:'18:00',breakfastTime:'08:30',lunchTime:'13:00',dinnerTime:'19:00',inactivityDays:3,quietStart:'22:30',quietEnd:'07:30'}}
 window.ensureProgressExtras=function(){GF45_ORIGINAL.ensureProgressExtras?.();if(!progress)return;progress.settings||(progress.settings={});progress.settings.notificationPrefs={...gf45DefaultNotificationPrefs(),...(progress.settings.notificationPrefs||{})};if(!Array.isArray(progress.settings.availableWeekdays))progress.settings.availableWeekdays=[...(plan?.training?.availableWeekdays||progress.settings.trainingWeekdays||[])];if(!Array.isArray(progress.notificationFeed))progress.notificationFeed=[]};
 function gf45PushStatus(){if(!('Notification'in window))return 'Browser notifications are unavailable here.';if(location.protocol==='file:')return 'Open the hosted PWA to enable system notifications. Calendar reminders still work from this file.';return Notification.permission==='granted'?'System notifications enabled.':'Tap Enable notifications. iPhone web push requires the hosted app added to the Home Screen.'}
-async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.54')}catch(e){console.warn(e);return null}}
+async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.56')}catch(e){console.warn(e);return null}}
 async function gf45RequestNotifications(){if(!('Notification'in window)){toast('Notifications are not supported here');return}if(location.protocol==='file:'){toast('Host/install the PWA to enable push');return}const reg=await gf45RegisterSW(),permission=await Notification.requestPermission();ensureProgressExtras();progress.settings.notificationPrefs.enabled=permission==='granted';write();if(permission==='granted'&&reg){await reg.showNotification('Gain Focus notifications enabled',{body:'Hercules can now surface training, nutrition and social reminders.',tag:'gf-enabled'});toast('Notifications enabled')}else toast('Notification permission not granted');gfRenderSocialHub()}
 async function gf45TestNotification(){const reg=await gf45RegisterSW();if(('Notification' in window)&&Notification.permission==='granted'&&reg){await reg.showNotification('Hercules · Test',{body:'Notifications are connected. Keep the hosted PWA installed for background alerts.',tag:'gf-test'});return}toast('Enable notifications first')}
 function gf45SaveNotificationSettings(){ensureProgressExtras();const p=progress.settings.notificationPrefs;for(const k of ['workouts','meals','inactivity','social','challenges'])p[k]=!!document.getElementById('gf45n_'+k)?.checked;for(const k of ['workoutTime','breakfastTime','lunchTime','dinnerTime','quietStart','quietEnd']){const v=document.getElementById('gf45n_'+k)?.value;if(v)p[k]=v}p.inactivityDays=clamp(Number(document.getElementById('gf45n_inactivityDays')?.value)||3,1,14);write();toast('Notification preferences saved')}
@@ -7673,6 +7673,225 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
     }catch{}
     closeSettings?.();
     setTimeout(()=>location.reload(),80);
+  };
+})();
+</script>
+
+
+<style id="gf56-workout-ui-refactor-style">
+.gf56-live-actions{display:grid;grid-template-columns:minmax(0,1fr) 58px;gap:7px;margin:0 0 12px}
+.gf56-live-actions .gf56-rest-btn{min-height:44px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.033);color:var(--text);border-radius:14px;font:inherit;font-size:8.5px;font-weight:800;padding:0 10px;display:flex;align-items:center;justify-content:center;gap:8px}
+.gf56-live-actions .gf56-rest-btn b{display:block;font-size:10px}
+.gf56-live-actions .gf56-rest-btn span{display:block;font-size:7px;color:var(--muted);margin-top:2px}
+.gf56-live-actions .gf56-more-btn{min-height:44px;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.033);color:var(--text);border-radius:14px;font:inherit;font-size:18px;font-weight:900;padding:0}
+.gf56-active-pill{font-size:8px;color:#9fcfff;letter-spacing:.08em;text-transform:uppercase;font-weight:900;text-align:center}
+.gf56-hidden-note{font-size:8px;color:var(--muted);margin:6px 2px 0}
+.gf56-action-list{display:grid;gap:8px;margin-top:12px}
+.gf56-action-list button,.gf56-action-list .btn,.gf56-action-list a{width:100%}
+.gf56-menu-tip{padding:10px 11px;border-radius:14px;background:rgba(91,166,255,.055);border:1px solid rgba(110,183,255,.11);font-size:9px;line-height:1.45;color:var(--muted)}
+.gf56-web-card{padding:12px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
+.gf56-tech-ref{margin-top:12px;padding:13px;border-radius:18px;background:linear-gradient(135deg,rgba(69,138,232,.06),rgba(255,255,255,.02));border:1px solid rgba(112,182,255,.12)}
+.gf56-tech-ref .eyebrow{margin-bottom:4px}
+.gf56-tech-ref p{margin:0;font-size:9px;line-height:1.48;color:var(--muted)}
+.gf56-link-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.gf56-single-link{margin-top:8px}
+@media(max-width:430px){.gf56-link-row{grid-template-columns:1fr}}
+</style>
+
+<script id="gf56-workout-ui-refactor">
+(function(){
+  window.gf56PhotoSearchURL=function(e){
+    return 'https://www.google.com/search?tbm=isch&q='+encodeURIComponent((e?.name||'exercise')+' proper form');
+  };
+  window.gf56GripSearchURL=function(e){
+    return 'https://www.google.com/search?tbm=isch&q='+encodeURIComponent((e?.name||'exercise')+' grip hand position');
+  };
+  window.gf56VideoSearchURL=function(e){
+    return typeof exerciseVideoURL==='function'
+      ? exerciseVideoURL(e)
+      : ('https://www.youtube.com/results?search_query='+encodeURIComponent((e?.name||'exercise')+' exercise form tutorial'));
+  };
+
+  window.gf56AddSet=function(){
+    const c=typeof gf52Current==='function' ? gf52Current() : null;
+    if(!c)return;
+    const k=c.e._gf52OriginalKey||workoutExerciseKey(c.e);
+    c.w.exerciseSetTargets||(c.w.exerciseSetTargets={});
+    const current=typeof gf52TargetSets==='function' ? gf52TargetSets(c.w,c.e) : Math.max(1,Number(c.e.sets)||1);
+    c.w.exerciseSetTargets[k]=current+1;
+    write();
+    toast('Set target increased');
+    renderCanonicalWorkout();
+  };
+
+  window.gf56RemoveSet=function(){
+    const c=typeof gf52Current==='function' ? gf52Current() : null;
+    if(!c)return;
+    const k=c.e._gf52OriginalKey||workoutExerciseKey(c.e);
+    const current=typeof gf52TargetSets==='function' ? gf52TargetSets(c.w,c.e) : Math.max(1,Number(c.e.sets)||1);
+    const today=(c.w.setEntries||[]).filter(x=>x.exerciseKey===workoutExerciseKey(c.e)||(x.replacesKey===k&&x.exerciseName===c.e.name));
+    if(current<=1){toast('Keep at least 1 target set');return}
+    if(today.length>=current){toast('Cannot remove a set that is already fully logged');return}
+    c.w.exerciseSetTargets||(c.w.exerciseSetTargets={});
+    c.w.exerciseSetTargets[k]=current-1;
+    write();
+    toast('Set target reduced');
+    renderCanonicalWorkout();
+  };
+
+  window.gf56OpenLiveMenu=function(){
+    const c=typeof gf52Current==='function' ? gf52Current() : null;
+    if(!c)return;
+    const {s,list,i,e,w}=c;
+    const canPrev=i>0, canNext=i<list.length-1;
+    const hasSub=!!e?._gf52Substitution;
+    const k=e._gf52OriginalKey||workoutExerciseKey(e);
+    const currentTarget=typeof gf52TargetSets==='function' ? gf52TargetSets(w,e) : Math.max(1,Number(e.sets)||1);
+    const today=(w.setEntries||[]).filter(x=>x.exerciseKey===workoutExerciseKey(e)||(x.replacesKey===k&&x.exerciseName===e.name));
+    const sheet=document.getElementById('sessionSheet');
+    sheet.classList.remove('gf52-live-sheet');
+    sheet.innerHTML=`<button class="gf50-sheet-close" onclick="renderCanonicalWorkout()" aria-label="Back">‹</button>
+      <div class="eyebrow">Workout actions</div>
+      <h2 style="font-size:28px;margin:5px 0 3px">${esc(e.name)}</h2>
+      <p class="muted" style="margin-top:0">${esc(s.name)} · Secondary actions are grouped here to keep the workout screen cleaner.</p>
+      <div class="gf56-menu-tip">Use this menu for history, exercise substitution, set target changes, technique help and manual exercise navigation.</div>
+      <div class="gf56-action-list">
+        <button class="btn secondary" onclick="gf52OpenExerciseHistory()">History</button>
+        <button class="btn secondary" onclick="gf52OpenReplacement()">Replace exercise</button>
+        <button class="btn secondary" onclick="gf52OpenTechnique()">Technique & web references</button>
+        <button class="btn secondary" onclick="gf56AddSet()">Add set target</button>
+        <button class="btn secondary" ${currentTarget<=1 || today.length>=currentTarget ? 'disabled' : ''} onclick="gf56RemoveSet()">Remove last unlogged set</button>
+        ${hasSub?'<button class="btn secondary" onclick="gf52RestoreOriginal()">Restore original exercise</button>':''}
+        <button class="btn secondary" ${canPrev?'':'disabled'} onclick="canonicalWorkout.exerciseIndex=Math.max(0,canonicalWorkout.exerciseIndex-1);renderCanonicalWorkout()">← Previous exercise</button>
+        <button class="btn secondary" ${canNext?'':'disabled'} onclick="canonicalWorkout.exerciseIndex=Math.min(${list.length-1},canonicalWorkout.exerciseIndex+1);skipCanonicalRest?.();renderCanonicalWorkout()">Next exercise →</button>
+        <button class="btn secondary" onclick="openSession('${esc(s.id)}')">Back to session overview</button>
+        <button class="btn secondary" onclick="closeSession()">Close for now</button>
+      </div>`;
+    document.getElementById('sessionModal')?.classList.add('open');
+  };
+
+  window.gf52OpenTechnique=function(){
+    const c=typeof gf52Current==='function' ? gf52Current() : null;
+    if(!c)return;
+    const e=c.e;
+    const g=typeof gf48ExerciseInfo==='function'
+      ? gf48ExerciseInfo(e)
+      : {setup:exerciseCues(e)[0],execution:exerciseCues(e)[1],tempo:'Controlled',grip:'Stable wrist',errors:[exerciseCues(e)[2]]};
+    const sheet=document.getElementById('sessionSheet');
+    sheet.classList.remove('gf52-live-sheet');
+    sheet.innerHTML=`<button class="gf50-sheet-close" onclick="renderCanonicalWorkout()">‹</button>
+      <div class="eyebrow">Technique & web references</div>
+      <h2 style="font-size:28px;margin:5px 0">${esc(e.name)}</h2>
+      <div class="gf56-web-card">${exerciseVisual(e,true)}</div>
+      <div class="gf52-how-grid" style="margin-top:10px">
+        <div><b>Setup</b>${esc(g.setup||'')}</div>
+        <div><b>Execution</b>${esc(g.execution||'')}</div>
+        <div><b>Tempo</b>${esc(g.tempo||'')}</div>
+        <div><b>Grip</b>${esc(g.grip||'')}</div>
+      </div>
+      <div class="gf56-tech-ref">
+        <div class="eyebrow">Web sources instead of stick diagrams</div>
+        <p>Open live image and video sources for this exact exercise. This replaces the generic stickman movement and grip diagrams.</p>
+        <div class="gf56-link-row">
+          <a class="btn secondary" href="${gf56PhotoSearchURL(e)}" target="_blank" rel="noopener">Photo references ↗</a>
+          <a class="btn secondary" href="${gf56VideoSearchURL(e)}" target="_blank" rel="noopener">Video tutorial ↗</a>
+        </div>
+        <a class="btn secondary gf56-single-link" href="${gf56GripSearchURL(e)}" target="_blank" rel="noopener">Grip / hand-position references ↗</a>
+      </div>
+      <div class="gf52-focus-card"><b>Avoid</b><span>${(g.errors||[]).map(x=>esc(x)).join(' · ')}</span></div>
+      <button class="btn primary" style="width:100%;margin-top:10px" onclick="renderCanonicalWorkout()">Back to workout</button>`;
+  };
+
+  window.openExerciseGuide=function(sessionId,index){
+    const s=plan?.training?.sessions?.find(x=>x.id===sessionId),e=s?.exercises?.[index];
+    if(!s||!e)return;
+    const g=typeof gf48ExerciseInfo==='function'
+      ? gf48ExerciseInfo(e)
+      : {purpose:e.focus||'',setup:exerciseCues(e)[0],execution:exerciseCues(e)[1],tempo:'Controlled',grip:'Stable wrist',errors:[exerciseCues(e)[2]],station:'Gym'};
+    const sheet=document.getElementById('sessionSheet');
+    sheet.classList.remove('workout-sheet','gf52-live-sheet');
+    sheet.innerHTML=`<button class="gf50-sheet-close" onclick="openSession('${esc(s.id)}')" aria-label="Back">‹</button>
+      <div class="eyebrow">Exercise ${index+1} of ${s.exercises.length} · ${esc(g.station||'Gym')}</div>
+      <h2 style="font-size:28px;margin:5px 0 3px">${esc(e.name)}</h2>
+      <p class="muted" style="margin-top:0">${esc(g.purpose||e.focus||'')}</p>
+      <div class="gf56-web-card">${exerciseVisual(e,true)}</div>
+      <div class="exercise-guide-meta"><span>${e.sets} sets</span><span>${e.repMin}–${e.repMax} reps</span><span>${esc(e.focus||'')}</span><span>${esc(g.station||'Gym')}</span></div>
+      <div class="gf52-how-grid">
+        <div><b>Setup</b>${esc(g.setup||'')}</div>
+        <div><b>Execution</b>${esc(g.execution||'')}</div>
+        <div><b>Tempo</b>${esc(g.tempo||'')}</div>
+        <div><b>Grip</b>${esc(g.grip||'')}</div>
+      </div>
+      <div class="gf56-tech-ref">
+        <div class="eyebrow">Actual web references</div>
+        <p>Open live external references for the exact exercise rather than showing generic stickman diagrams.</p>
+        <div class="gf56-link-row">
+          <a class="btn secondary" href="${gf56PhotoSearchURL(e)}" target="_blank" rel="noopener">Photo references ↗</a>
+          <a class="btn secondary" href="${gf56VideoSearchURL(e)}" target="_blank" rel="noopener">Video tutorial ↗</a>
+        </div>
+        <a class="btn secondary gf56-single-link" href="${gf56GripSearchURL(e)}" target="_blank" rel="noopener">Grip / hand-position references ↗</a>
+      </div>
+      <div class="gf52-focus-card"><b>Avoid</b><span>${(g.errors||[]).map(x=>esc(x)).join(' · ')}</span></div>
+      <button class="btn primary" style="width:100%;margin-top:12px" onclick="startWorkout('${esc(s.id)}')">Start workout</button>
+      <button class="btn secondary" style="width:100%;margin-top:8px" onclick="openSession('${esc(s.id)}')">Back to session</button>`;
+    document.getElementById('sessionModal')?.classList.add('open');
+  };
+
+  window.renderCanonicalWorkout=function(){
+    const c=typeof gf52Current==='function' ? gf52Current() : null;
+    if(!c)return;
+    const {w,s,list,i,e,key}=c;
+    const sheet=document.getElementById('sessionSheet');
+    sheet.classList.add('workout-sheet','gf52-live-sheet');
+
+    const originalKey=e._gf52OriginalKey||key;
+    const target=typeof gf52TargetSets==='function' ? gf52TargetSets(w,e) : Math.max(1,Number(e.sets)||1);
+    const today=(w.setEntries||[]).filter(x=>x.exerciseKey===key||(x.replacesKey===originalKey&&x.exerciseName===e.name));
+    const done=today.length,next=today.length;
+    const prev=previousExercisePerformance?.(s.id,e)||[];
+    const last=today.at(-1);
+    const suggest=typeof gf45LoadPrescription==='function' ? gf45LoadPrescription(s.id,e) : suggestedLoadFor(s.id,e);
+    const fallbackWeight=Number(suggest?.load)||0;
+    const fallbackReps=Number(e.repMin)||8;
+    const preW=typeof gf52DraftValue==='function' ? gf52DraftValue(last,prev,next,'weightKg',fallbackWeight) : fallbackWeight;
+    const preR=typeof gf52DraftValue==='function' ? gf52DraftValue(last,prev,next,'reps',fallbackReps) : fallbackReps;
+    const priorityOriginal=typeof gf52PriorityIndex==='function' ? gf52PriorityIndex(s) : 0;
+    const origIndex=(s.exercises||[]).findIndex(x=>workoutExerciseKey(x)===originalKey);
+    const priority=origIndex===priorityOriginal;
+    const pct=clamp(((i+(Math.min(done,target)/target))/Math.max(1,list.length))*100,0,100);
+    const restText=canonicalRestRemaining ? formatRest(canonicalRestRemaining) : `${Math.round(((typeof gf51RestSec==='function'?gf51RestSec(e):90)/60)*10)/10}m`;
+
+    const rows=Array.from({length:target},(_,j)=>{
+      const logged=today[j],active=j===done,future=j>done;
+      const valW=logged?Number(logged.weightKg)||0:preW;
+      const valR=logged?Number(logged.reps)||0:preR;
+      return `<div class="gf52-set-row ${logged?'done':active?'active':'future'}">
+        <span class="gf52-set-num">${j+1}</span>
+        <input ${logged||future?'disabled':''} ${active?'id="canonicalSetReps"':''} inputmode="numeric" value="${valR||''}" aria-label="Set ${j+1} reps">
+        <input ${logged||future?'disabled':''} ${active?'id="canonicalSetWeight"':''} inputmode="decimal" value="${valW||''}" aria-label="Set ${j+1} weight kg">
+        ${logged?`<button class="gf52-edit-set" onclick="editActiveWorkoutSet('${esc(logged.id)}')">Edit</button>`:active?`<span class="gf56-active-pill">Active</span>`:'<span></span>'}
+      </div>`;
+    }).join('');
+
+    const midBlock = done<target
+      ? `<div class="gf52-rir-strip"><span>RIR for next set</span><div class="gf52-rir-picks">${[0,1,2,3].map(r=>`<button class="${Number(canonicalWorkout.rir)===r?'on':''}" onclick="setWorkoutRIR(${r})">${r}</button>`).join('')}</div></div><div class="gf52-set-actions"><button class="btn primary" onclick="saveCanonicalSet()">Log set ${done+1}</button></div>`
+      : `<div class="gf56-hidden-note">Target sets complete. Use the ••• menu for next exercise or set-target changes.</div>`;
+
+    sheet.innerHTML=`<div class="gf52-live">
+      <div class="gf52-live-hero">${exerciseVisual(e,true)}<button class="gf52-live-close" onclick="closeSession()" aria-label="Close">×</button><div class="gf52-live-head">${priority?'<span class="gf52-priority-tag">Priority lift</span>':''}<h2>${esc(e.name)}</h2><p>${esc(s.name)} · ${esc(e.focus||'')} · ${(typeof gf48Station==='function'?gf48Station(e):'workout')}</p></div></div>
+      <div class="gf52-live-progress"><span>Exercise <b>${i+1}/${list.length}</b></span><span>${Math.round(pct)}% session progress</span></div>
+      <div class="gf52-mini-bar"><i style="width:${pct}%"></i></div>
+      <div class="gf56-live-actions">
+        <button class="gf56-rest-btn" onclick="gf52RestAction()"><span>Rest</span><b>${esc(restText)}</b></button>
+        <button class="gf56-more-btn" onclick="gf56OpenLiveMenu()" aria-label="More actions">•••</button>
+      </div>
+      <div class="gf52-prescription"><div class="eyebrow">${priority?'Today’s priority lift':'Prescription'}</div><b>${target} sets · ${e.repMin}–${e.repMax} reps · target ${canonicalWorkout.rir??2} RIR</b><span>${esc(suggest?.message||'Use a controlled working load and keep execution repeatable.')}${e._gf52Substitution?' · Temporary substitution for this workout.':''}</span></div>
+      <div class="gf52-sets-head"><span>Set</span><span>Reps</span><span>Weight kg</span><span></span></div>
+      <div class="gf52-sets">${rows}</div>
+      ${midBlock}
+      <button class="btn secondary gf48-offplan-btn" style="width:100%;margin-top:10px" onclick="gf48OpenOffPlanAdder()">＋ Add exercise not in today’s plan</button>
+    </div><div class="gf52-live-dock"><button class="btn primary" onclick="finishCanonicalWorkout()">Finish workout</button><button class="btn secondary gf52-end-later" onclick="gf56OpenLiveMenu()" aria-label="More workout actions">•••</button></div>`;
+    document.getElementById('sessionModal')?.classList.add('open');
   };
 })();
 </script>
