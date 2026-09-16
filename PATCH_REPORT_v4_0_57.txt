@@ -1,0 +1,20 @@
+GAIN FOCUS PWA v4.0.57
+
+FIXED
+[PASS] Recovery-day "Choose another workout" now opens a real session selector.
+[PASS] Selecting a session opens the normal workout overview before starting.
+[PASS] It no longer depends on the removed gfProgrammeList element.
+
+CLIENT MANAGEMENT
+[PASS] Every saved client now has a ••• action menu.
+[PASS] Any individual client can be exported.
+[PASS] Any individual client can be deleted.
+[PASS] Deleting a non-current client removes its vault entry, profile photo and indexed local video media.
+[PASS] Deleting the current client uses the existing full current-profile cleanup flow.
+[PASS] Current client is clearly marked; inactive clients retain Switch.
+[PASS] Delete requires explicit confirmation.
+
+PWA PACKAGE
+[PASS] Restored manifest.webmanifest.
+[PASS] Restored service-worker.js.
+[PASS] Cache version bumped to v4.0.57.

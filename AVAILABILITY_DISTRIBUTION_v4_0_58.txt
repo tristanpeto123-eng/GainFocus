@@ -1,0 +1,26 @@
+GAIN FOCUS PWA v4.0.58 — AVAILABILITY DISTRIBUTION
+
+NEW
+[PASS] Planner can set time available per workout.
+[PASS] Planner can set number of available days per week.
+[PASS] Planner can select the exact available weekdays.
+[PASS] Normal workout count remains separate from days available.
+[PASS] "Keep programme + flex day" mode keeps the normal workout frequency.
+[PASS] An extra available weekday can be selected as the reschedule / overflow day.
+[PASS] If a normal workout exceeds the time ceiling, accessory exercises can be pushed to the overflow day.
+[PASS] "Spread over all available days" redistributes programme exercises across every available weekday.
+[PASS] Edit-plan stage can move any exercise to another day.
+[PASS] Exercise controls remain: sets +/-, Move, Swap, Delete, Add.
+[PASS] Impact report updates after distribution / exercise moves.
+[PASS] Apply writes availableWeekdays, trainingWeekdays, sessionsPerWeek, duration, strategy and overflow day to the profile.
+
+SETTINGS
+[PASS] Training availability is consolidated in Account -> Settings.
+[PASS] Settings shows time/session, number of available days, scheduled workouts, selected weekdays and Flex/Spread mode.
+[PASS] Old duplicate availability blocks are hidden inside Account Settings.
+[PASS] Train page still shows a compact availability summary and opens the same builder.
+
+BEHAVIOUR
+- 5 available days + 4 workouts is valid.
+- In Flex mode the fifth day is a reschedule/overflow day.
+- In Spread mode the same programme is redistributed over all 5 days.
