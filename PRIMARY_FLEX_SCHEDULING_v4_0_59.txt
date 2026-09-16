@@ -1,0 +1,36 @@
+GAIN FOCUS PWA v4.0.59 — PRIMARY WORKOUT DAYS + FLEX OVERRIDE
+
+BUG FIX
+[PASS] "Generate & review plan" no longer touches private planner state from inline HTML.
+[PASS] Every planner button now calls a public function; no direct P.step / private-scope references.
+[PASS] All inline JavaScript blocks pass syntax checks.
+
+NEW SCHEDULING CONTROLS
+[PASS] Explicit Primary Workout Days selector.
+[PASS] Primary days must be a subset of Available Days.
+[PASS] Number of selected primary days must equal Normal Workouts / Week before generation.
+[PASS] Flex / Reschedule Day can be manually overridden.
+[PASS] Flex options are restricted to available days that are NOT primary workout days.
+[PASS] "No automatic overflow" is allowed.
+[PASS] Spread mode still distributes across every available day.
+[PASS] Flex mode maps the normal programme to the user-defined primary days first.
+[PASS] Overflow exercises are pushed only to the manually selected flex day.
+[PASS] Edit stage still supports Move / Swap / Delete / set changes.
+[PASS] Apply stores:
+       availableWeekdays
+       primaryWeekdays
+       selectedWeekdays
+       normalSessionsPerWeek
+       sessionsPerWeek
+       schedulingStrategy
+       overflowWeekday
+       sessionDurationMinutes
+
+EXAMPLE
+Available: Mon, Tue, Thu, Fri, Sat
+Normal workouts: 4
+Primary: Mon, Tue, Thu, Sat
+Flex: Fri
+
+Friday is then the only flex / overflow day and will never be silently replaced
+by one of the four primary workout days.

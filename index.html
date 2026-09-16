@@ -1438,7 +1438,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.58';
+const APP_VERSION='4.0.60';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -4435,7 +4435,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.58', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.60', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
@@ -5241,7 +5241,7 @@ window.gf30OpenBodyCompForm=function(){gf30EnsureBodyComposition();const sheet=d
 function gf45DefaultNotificationPrefs(){return {enabled:false,workouts:true,meals:true,inactivity:true,social:true,challenges:true,workoutTime:'18:00',breakfastTime:'08:30',lunchTime:'13:00',dinnerTime:'19:00',inactivityDays:3,quietStart:'22:30',quietEnd:'07:30'}}
 window.ensureProgressExtras=function(){GF45_ORIGINAL.ensureProgressExtras?.();if(!progress)return;progress.settings||(progress.settings={});progress.settings.notificationPrefs={...gf45DefaultNotificationPrefs(),...(progress.settings.notificationPrefs||{})};if(!Array.isArray(progress.settings.availableWeekdays))progress.settings.availableWeekdays=[...(plan?.training?.availableWeekdays||progress.settings.trainingWeekdays||[])];if(!Array.isArray(progress.notificationFeed))progress.notificationFeed=[]};
 function gf45PushStatus(){if(!('Notification'in window))return 'Browser notifications are unavailable here.';if(location.protocol==='file:')return 'Open the hosted PWA to enable system notifications. Calendar reminders still work from this file.';return Notification.permission==='granted'?'System notifications enabled.':'Tap Enable notifications. iPhone web push requires the hosted app added to the Home Screen.'}
-async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.58')}catch(e){console.warn(e);return null}}
+async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.60')}catch(e){console.warn(e);return null}}
 async function gf45RequestNotifications(){if(!('Notification'in window)){toast('Notifications are not supported here');return}if(location.protocol==='file:'){toast('Host/install the PWA to enable push');return}const reg=await gf45RegisterSW(),permission=await Notification.requestPermission();ensureProgressExtras();progress.settings.notificationPrefs.enabled=permission==='granted';write();if(permission==='granted'&&reg){await reg.showNotification('Gain Focus notifications enabled',{body:'Hercules can now surface training, nutrition and social reminders.',tag:'gf-enabled'});toast('Notifications enabled')}else toast('Notification permission not granted');gfRenderSocialHub()}
 async function gf45TestNotification(){const reg=await gf45RegisterSW();if(('Notification' in window)&&Notification.permission==='granted'&&reg){await reg.showNotification('Hercules · Test',{body:'Notifications are connected. Keep the hosted PWA installed for background alerts.',tag:'gf-test'});return}toast('Enable notifications first')}
 function gf45SaveNotificationSettings(){ensureProgressExtras();const p=progress.settings.notificationPrefs;for(const k of ['workouts','meals','inactivity','social','challenges'])p[k]=!!document.getElementById('gf45n_'+k)?.checked;for(const k of ['workoutTime','breakfastTime','lunchTime','dinnerTime','quietStart','quietEnd']){const v=document.getElementById('gf45n_'+k)?.value;if(v)p[k]=v}p.inactivityDays=clamp(Number(document.getElementById('gf45n_inactivityDays')?.value)||3,1,14);write();toast('Notification preferences saved')}
@@ -8494,6 +8494,601 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
       const btn=card.querySelector('.gf51-plan-btn');if(btn)btn.onclick=()=>gf58OpenPlanBuilder('live');
     },0);
     return r;
+  };
+})();
+</script>
+
+
+<style id="gf59-primary-flex-style">
+/* Gain Focus 4.0.59 · explicit primary workout days + manual flex override */
+.gf59-primary-box{padding:12px;border-radius:17px;background:rgba(86,153,242,.045);border:1px solid rgba(104,181,255,.11)}
+.gf59-primary-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+.gf59-primary-head b{display:block;font-size:10px}
+.gf59-primary-head span{display:block;margin-top:3px;font-size:8px;line-height:1.4;color:var(--muted)}
+.gf59-count{flex:0 0 auto;padding:5px 8px;border-radius:999px;background:rgba(89,164,255,.10);border:1px solid rgba(106,182,255,.14);font-size:8px!important;color:#cceaff!important;margin:0!important}
+.gf59-primary-days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.gf59-primary-day{min-height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.065);background:rgba(255,255,255,.025);color:#78859b;font:inherit;font-size:7.5px;font-weight:850;position:relative}
+.gf59-primary-day.available{color:#b5c0d3}
+.gf59-primary-day.primary{background:rgba(79,151,244,.16);border-color:rgba(104,184,255,.31);color:#e0f2ff}
+.gf59-primary-day.primary:after{content:"PRIMARY";position:absolute;left:50%;bottom:3px;transform:translateX(-50%);font-size:4.8px;letter-spacing:.08em;color:#7dcaff}
+.gf59-primary-day:disabled{opacity:.32}
+.gf59-warning{margin-top:8px;padding:8px 9px;border-radius:12px;background:rgba(255,186,73,.055);border:1px solid rgba(255,189,76,.10);font-size:8px;line-height:1.4;color:#e9c98f}
+.gf59-flex-box{padding:12px;border-radius:17px;background:rgba(71,199,173,.035);border:1px solid rgba(80,206,180,.09)}
+.gf59-role-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:8px}
+.gf59-role-grid span{height:31px;border-radius:10px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.024);font-size:7px;color:#69768a;position:relative}
+.gf59-role-grid span.avail{color:#a8b5c7}
+.gf59-role-grid span.primary{background:rgba(80,152,245,.13);border-color:rgba(101,181,255,.20);color:#d4edff}
+.gf59-role-grid span.flex{background:rgba(68,193,166,.07);border-color:rgba(75,209,179,.12);color:#afe4d8}
+.gf59-role-grid span.primary:after,.gf59-role-grid span.flex:after{content:"";position:absolute;width:4px;height:4px;border-radius:50%;bottom:3px}
+.gf59-role-grid span.primary:after{background:#73c9ff}
+.gf59-role-grid span.flex:after{background:#76d7bd}
+.gf59-source{display:inline-block;margin-left:4px;color:#88caff!important}
+@media(max-width:430px){.gf59-primary-day{font-size:7px}.gf59-primary-day.primary:after{font-size:4.2px}}
+</style>
+
+<script id="gf59-primary-flex-planner">
+(function(){
+  const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const clone=x=>{try{return structuredClone(x)}catch{return JSON.parse(JSON.stringify(x))}};
+  const round1=n=>Math.round((Number(n)||0)*10)/10;
+
+  function S(){return window.gf59PlannerState}
+  function uniq(a){return [...new Set((a||[]).map(Number).filter(x=>x>=0&&x<=6))].sort((a,b)=>a-b)}
+  function storedAvailable(){return uniq(progress?.settings?.availableWeekdays||plan?.training?.availableWeekdays||progress?.settings?.trainingWeekdays||plan?.training?.selectedWeekdays||[1,2,4,6])}
+  function storedPrimary(av){
+    let p=uniq(plan?.training?.primaryWeekdays||plan?.training?.selectedWeekdays||progress?.settings?.trainingWeekdays||[]).filter(x=>av.includes(x));
+    const n=Math.max(1,Math.min(Number(plan?.training?.normalSessionsPerWeek)||Number(plan?.training?.sessionsPerWeek)||p.length||4,av.length));
+    if(p.length>n)p=p.slice(0,n);
+    for(const d of av)if(p.length<n&&!p.includes(d))p.push(d);
+    return uniq(p)
+  }
+  function station(e){
+    if(e?.station)return e.station;
+    const s=String(e?.name||'').toLowerCase();
+    if(/smith/.test(s))return'Smith machine';
+    if(/cable|pulldown|pushdown/.test(s))return'Cable station';
+    if(/dumbbell/.test(s))return'Dumbbell area';
+    if(/barbell|bench|squat|rdl|romanian/.test(s))return'Rack / barbell';
+    return'General'
+  }
+  function compound(e){return /press|squat|deadlift|rdl|romanian|row|pulldown|pull-up|pull up|chin|leg press|dip/i.test(e?.name||'')&&!/fly|raise|curl|extension|pushdown|shrug/i.test(e?.name||'')}
+  function exMinutes(e,prev=''){
+    const sets=Math.max(1,Number(e?.sets)||1),reps=(Number(e?.repMin||8)+Number(e?.repMax||12))/2;
+    const rest=Number(e?.restSeconds)||(compound(e)?135:80),st=station(e);
+    return sets*Math.max(24,Math.min(52,reps*3.1))/60+Math.max(0,sets-1)*rest/60+(!prev?1.2:st===prev?.7:1.8)
+  }
+  function sessionMinutes(s){let n=10,p='';for(const e of s?.exercises||[]){n+=exMinutes(e,p);p=station(e)}return round1(n)}
+  function weeklySets(ss){return ss.reduce((n,s)=>n+(s.exercises||[]).reduce((a,e)=>a+(Number(e.sets)||0),0),0)}
+  function weeklyMinutes(ss){return round1(ss.filter(s=>(s.exercises||[]).length).reduce((n,s)=>n+sessionMinutes(s),0))}
+  function flexDays(){const q=S();return q.available.filter(x=>!q.primary.includes(x))}
+  function ensureOverflow(){
+    const q=S(),f=flexDays();
+    if(q.overflowDay!=null&&!f.includes(q.overflowDay))q.overflowDay=null;
+    if(q.overflowDay==null&&f.length)q.overflowDay=f[0]
+  }
+  function primaryValid(){
+    const q=S();
+    return q.primary.length===q.workoutCount&&q.primary.every(x=>q.available.includes(x))
+  }
+  function flattenBaseline(){
+    const out=[];for(const s of S().baseline)for(const e of s.exercises||[])out.push({...clone(e),_sourceSession:s.name});
+    return out
+  }
+  function balanced(days){
+    const bins=days.map((d,i)=>({id:`gf59-${d}-${i}`,name:`${DAYS[d]} Training`,subtitle:'Redistributed programme',weekdayIndex:d,dayLabel:DAYS[d],scheduleOrder:i,exercises:[]}));
+    const all=flattenBaseline().sort((a,b)=>(compound(b)?1:0)-(compound(a)?1:0));
+    for(const e of all){bins.sort((a,b)=>sessionMinutes(a)-sessionMinutes(b));bins[0].exercises.push(e)}
+    return bins.sort((a,b)=>a.weekdayIndex-b.weekdayIndex)
+  }
+  function flexPlan(){
+    const q=S();if(!primaryValid())return[];
+    let core;
+    if(q.baseline.length===q.workoutCount){
+      core=q.baseline.map((s,i)=>({...clone(s),weekdayIndex:q.primary[i],dayLabel:DAYS[q.primary[i]],scheduleOrder:i}))
+    }else core=balanced(q.primary);
+    ensureOverflow();
+    if(q.overflowDay==null)return core;
+    const over={id:`overflow-${q.overflowDay}`,name:`Overflow · ${DAYS[q.overflowDay]}`,subtitle:'Flex / reschedule day',weekdayIndex:q.overflowDay,dayLabel:DAYS[q.overflowDay],scheduleOrder:core.length,exercises:[],_overflow:true};
+    for(const s of core){
+      let guard=0;
+      while(sessionMinutes(s)>q.minutes&&s.exercises.length>2&&guard++<40){
+        let idx=-1;
+        for(let j=s.exercises.length-1;j>=0;j--){if(!compound(s.exercises[j])){idx=j;break}}
+        if(idx<0)idx=s.exercises.length-1;
+        const e=s.exercises.splice(idx,1)[0];e._sourceSession=e._sourceSession||s.name;over.exercises.push(e)
+      }
+    }
+    return [...core,over]
+  }
+  function regenerate(){const q=S();ensureOverflow();q.draft=q.strategy==='spread'?balanced(q.available):flexPlan()}
+  function capacity(){
+    const q=S(),active=q.draft.filter(s=>(s.exercises||[]).length);
+    return{baseMinutes:weeklyMinutes(q.baseline),draftMinutes:weeklyMinutes(active),baseSets:weeklySets(q.baseline),draftSets:weeklySets(active),active,maxCapacity:q.minutes*q.available.length,normalCapacity:q.minutes*(q.strategy==='spread'?q.available.length:q.workoutCount)}
+  }
+  function init(mode='live',minutes=null){
+    const av=storedAvailable(),pr=storedPrimary(av);
+    window.gf59PlannerState={
+      mode,step:0,
+      minutes:Number(minutes)||Number(progress?.settings?.sessionDurationMinutes)||Number(plan?.training?.defaultSessionDurationMinutes)||90,
+      baseline:clone(plan?.training?.sessions||[]),
+      available:av.length?av:[1,2,4,6],
+      workoutCount:Math.max(1,Math.min(Number(plan?.training?.normalSessionsPerWeek)||Number(plan?.training?.sessionsPerWeek)||pr.length||4,av.length||4)),
+      primary:pr,
+      strategy:String(plan?.training?.schedulingStrategy||'flex')==='spread'?'spread':'flex',
+      overflowDay:Number.isFinite(Number(plan?.training?.overflowWeekday))?Number(plan.training.overflowWeekday):null,
+      preferenceNote:String(plan?.training?.clientPreferences||''),
+      goal:clone(plan?.goal||{})
+    };
+    const q=S();
+    if(q.primary.length>q.workoutCount)q.primary=q.primary.slice(0,q.workoutCount);
+    for(const d of q.available)if(q.primary.length<q.workoutCount&&!q.primary.includes(d))q.primary.push(d);
+    ensureOverflow();regenerate()
+  }
+
+  window.gf59SetMinutes=function(v){S().minutes=Number(v)||90;regenerate();gf59RenderPlanner()};
+  window.gf59SetAvailableCount=function(v){
+    const q=S(),n=Math.max(1,Math.min(7,Number(v)||q.available.length));
+    let a=[...q.available];
+    if(a.length>n){
+      const ordered=[...q.primary.filter(x=>a.includes(x)),...a.filter(x=>!q.primary.includes(x))];
+      a=ordered.slice(0,n)
+    }else while(a.length<n){const x=[1,2,3,4,5,6,0].find(d=>!a.includes(d));if(x==null)break;a.push(x)}
+    q.available=uniq(a);
+    q.primary=q.primary.filter(x=>q.available.includes(x));
+    if(q.workoutCount>q.available.length)q.workoutCount=q.available.length;
+    for(const d of q.available)if(q.primary.length<q.workoutCount&&!q.primary.includes(d))q.primary.push(d);
+    ensureOverflow();regenerate();gf59RenderPlanner()
+  };
+  window.gf59ToggleAvailable=function(d){
+    const q=S();d=Number(d);
+    if(q.available.includes(d)){
+      if(q.available.length<=1){toast('Keep at least one available day');return}
+      q.available=q.available.filter(x=>x!==d);q.primary=q.primary.filter(x=>x!==d)
+    }else q.available=uniq([...q.available,d]);
+    if(q.workoutCount>q.available.length)q.workoutCount=q.available.length;
+    while(q.primary.length>q.workoutCount)q.primary.pop();
+    ensureOverflow();regenerate();gf59RenderPlanner()
+  };
+  window.gf59SetWorkoutCount=function(v){
+    const q=S(),n=Math.max(1,Math.min(q.available.length,Number(v)||1));q.workoutCount=n;
+    if(q.primary.length>n)q.primary=q.primary.slice(0,n);
+    for(const d of q.available)if(q.primary.length<n&&!q.primary.includes(d))q.primary.push(d);
+    ensureOverflow();regenerate();gf59RenderPlanner()
+  };
+  window.gf59TogglePrimary=function(d){
+    const q=S();d=Number(d);
+    if(!q.available.includes(d)){toast('Make that day available first');return}
+    if(q.primary.includes(d))q.primary=q.primary.filter(x=>x!==d);
+    else{
+      if(q.primary.length>=q.workoutCount){toast(`Choose exactly ${q.workoutCount} primary workout days · deselect one first`);return}
+      q.primary=uniq([...q.primary,d])
+    }
+    ensureOverflow();regenerate();gf59RenderPlanner()
+  };
+  window.gf59SetStrategy=function(v){S().strategy=v==='spread'?'spread':'flex';ensureOverflow();regenerate();gf59RenderPlanner()};
+  window.gf59SetOverflow=function(v){const q=S();q.overflowDay=v===''?null:Number(v);ensureOverflow();regenerate();gf59RenderPlanner()};
+  window.gf59GoEdit=function(){
+    if(S().strategy==='flex'&&!primaryValid()){toast(`Select exactly ${S().workoutCount} primary workout days first`);return}
+    regenerate();S().step=1;gf59RenderPlanner()
+  };
+  window.gf59GoCapacity=function(){S().step=0;gf59RenderPlanner()};
+  window.gf59GoImpact=function(){
+    const q=S();q.preferenceNote=String(document.getElementById('gf59Pref')?.value||q.preferenceNote||'').trim();
+    q.step=2;gf59RenderPlanner()
+  };
+  window.gf59GoBackEdit=function(){S().step=1;gf59RenderPlanner()};
+
+  window.gf59AdjustSets=function(si,ei,d){const e=S()?.draft?.[si]?.exercises?.[ei];if(!e)return;e.sets=Math.max(1,Math.min(8,(Number(e.sets)||1)+Number(d)));gf59RenderPlanner()};
+  window.gf59DeleteExercise=function(si,ei){const s=S()?.draft?.[si];if(!s)return;s.exercises.splice(ei,1);gf59RenderPlanner()};
+  window.gf59SwapExercise=function(si,ei){
+    const e=S()?.draft?.[si]?.exercises?.[ei];if(!e)return;
+    const name=prompt(`Replace ${e.name} with:`,e.name);if(name===null||!name.trim())return;
+    e.name=name.trim();e.id=`client-${e.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}-${Date.now().toString(36)}`;
+    const f=prompt('Primary focus / muscle',e.focus||'Client preference');if(f!==null&&f.trim())e.focus=f.trim();
+    gf59RenderPlanner()
+  };
+  window.gf59MoveExercise=function(si,ei){
+    const q=S(),s=q?.draft?.[si],e=s?.exercises?.[ei];if(!s||!e)return;
+    const sh=document.getElementById('sessionSheet');
+    sh.innerHTML=`<button class="gf50-sheet-close" onclick="gf59RenderPlanner()" aria-label="Back">‹</button><div class="eyebrow">Move exercise</div><h2 style="font-size:28px;margin:5px 0 3px">${esc(e.name)}</h2><p class="muted">Choose another day. The impact report will use the new distribution.</p><div class="gf56-action-list">${q.draft.map((x,di)=>di===si?'':`<button class="btn secondary" onclick="gf59CommitMove(${si},${ei},${di})">${esc(x.name)} · ${DAYS[x.weekdayIndex]?.slice(0,3)||''}</button>`).join('')}</div>`;
+  };
+  window.gf59CommitMove=function(si,ei,di){
+    const q=S(),from=q?.draft?.[si],to=q?.draft?.[di];if(!from||!to)return;
+    const [e]=from.exercises.splice(ei,1);if(!e)return;e._sourceSession=e._sourceSession||from.name;to.exercises.push(e);gf59RenderPlanner()
+  };
+  window.gf59AddExercise=function(si){
+    const s=S()?.draft?.[si];if(!s)return;
+    const name=prompt('Exercise name');if(!name?.trim())return;
+    const sets=Math.max(1,Math.min(8,Number(prompt('Working sets','3'))||3)),focus=prompt('Primary focus / muscle','Client preference')||'Client preference';
+    s.exercises.push({id:`client-${Date.now().toString(36)}`,name:name.trim(),sets,repMin:8,repMax:12,focus,targetRIR:2,clientAdded:true,station:'General',restSeconds:90});gf59RenderPlanner()
+  };
+
+  function stepbar(){const q=S();return `<div class="gf51-stepbar"><span class="${q.step===0?'on':''}">1 · Capacity</span><span class="${q.step===1?'on':''}">2 · Edit plan</span><span class="${q.step===2?'on':''}">3 · Impact</span></div>`}
+  function availableButtons(){
+    const q=S();
+    return `<div class="gf58-days">${DAYS.map((d,i)=>`<button type="button" class="gf58-day ${q.available.includes(i)?'on':''}" onclick="gf59ToggleAvailable(${i})">${d.slice(0,2)}</button>`).join('')}</div>`
+  }
+  function primaryButtons(){
+    const q=S();
+    return `<div class="gf59-primary-days">${DAYS.map((d,i)=>`<button type="button" class="gf59-primary-day ${q.available.includes(i)?'available':''} ${q.primary.includes(i)?'primary':''}" ${q.available.includes(i)?'':'disabled'} onclick="gf59TogglePrimary(${i})">${d.slice(0,2)}</button>`).join('')}</div>`
+  }
+  function roleGrid(){
+    const q=S(),flex=q.strategy==='flex'?q.overflowDay:null;
+    return `<div class="gf59-role-grid">${DAYS.map((d,i)=>`<span class="${q.primary.includes(i)?'primary':flex===i?'flex':q.available.includes(i)?'avail':''}">${d.slice(0,2)}</span>`).join('')}</div>`
+  }
+  function capacityHTML(){
+    const q=S(),c=capacity(),extra=flexDays(),valid=primaryValid();
+    const flexOptions=extra.map(d=>`<option value="${d}" ${q.overflowDay===d?'selected':''}>${DAYS[d]}</option>`).join('');
+    return `${stepbar()}<div class="gf51-flow">
+      <div class="eyebrow">Availability drives the proposal</div>
+      <div class="gf58-availability-grid">
+        <div class="gf58-field"><label>Time available per workout</label><select class="input" onchange="gf59SetMinutes(this.value)">${[30,45,60,75,90,105,120,150].map(m=>`<option value="${m}" ${m===q.minutes?'selected':''}>${m===60?'1 hour':m===90?'1 hr 30':m===120?'2 hours':m+' min'}</option>`).join('')}</select></div>
+        <div class="gf58-field"><label>Days available per week</label><select class="input" onchange="gf59SetAvailableCount(this.value)">${[1,2,3,4,5,6,7].map(n=>`<option value="${n}" ${n===q.available.length?'selected':''}>${n} day${n===1?'':'s'}</option>`).join('')}</select></div>
+      </div>
+      <div class="gf58-field"><label>Which days are available?</label>${availableButtons()}</div>
+      <div class="gf58-field"><label>Normal workouts per week</label><select class="input" ${q.strategy==='spread'?'disabled':''} onchange="gf59SetWorkoutCount(this.value)">${q.available.map((_,i)=>i+1).map(n=>`<option value="${n}" ${n===q.workoutCount?'selected':''}>${n} workout${n===1?'':'s'} / week</option>`).join('')}</select></div>
+      <div class="gf59-primary-box">
+        <div class="gf59-primary-head"><div><b>Primary workout days</b><span>Define the normal training days first. Flex day choices are then limited to the remaining available days.</span></div><span class="gf59-count">${q.primary.length}/${q.workoutCount}</span></div>
+        ${primaryButtons()}
+        ${q.strategy==='flex'&&!valid?`<div class="gf59-warning">Select exactly ${q.workoutCount} primary day${q.workoutCount===1?'':'s'} before generating the plan.</div>`:''}
+      </div>
+      <div class="gf58-strategy">
+        <button class="${q.strategy==='flex'?'on':''}" onclick="gf59SetStrategy('flex')"><b>Keep programme + flex day</b><span>Primary days run the normal programme. Any remaining available day can be manually chosen as overflow.</span></button>
+        <button class="${q.strategy==='spread'?'on':''}" onclick="gf59SetStrategy('spread')"><b>Spread over all available days</b><span>Use every available weekday as a training day and redistribute the programme.</span></button>
+      </div>
+      ${q.strategy==='flex'?`<div class="gf59-flex-box"><label class="small">Flex / reschedule day</label>${extra.length?`<select class="input" onchange="gf59SetOverflow(this.value)"><option value="">No automatic overflow</option>${flexOptions}</select><div class="gf59-settings-meta">Only non-primary available days can be used as the flex day.</div>`:`<div class="gf59-warning">All available days are primary workout days. Add another available day if you want a separate flex day.</div>`}${roleGrid()}</div>`:''}
+      <div class="gf58-schedule-summary"><div><span>Weekly plan</span><b>${c.baseMinutes} min</b></div><div><span>Normal capacity</span><b>${c.normalCapacity} min</b></div><div><span>Max availability</span><b>${c.maxCapacity} min</b></div></div>
+      <div class="gf51-actions"><button class="btn secondary" onclick="closeSession()">Cancel</button><button class="btn primary" onclick="gf59GoEdit()">Generate & review plan →</button></div>
+    </div>`
+  }
+  function planHTML(){
+    const q=S();
+    return `${stepbar()}<div class="gf51-flow"><div class="eyebrow">Editable proposed programme</div><div class="gf51-editor-note">Move, swap or delete any exercise. You can also change sets before checking the impact.</div>${q.draft.map((s,si)=>`<div class="gf51-session"><div class="gf51-session-head"><div><b>${esc(s.name)}</b><span>${DAYS[s.weekdayIndex]?.slice(0,3)||''} · ${(s.exercises||[]).length} exercises · ${(s.exercises||[]).reduce((n,e)=>n+(Number(e.sets)||0),0)} sets</span></div><strong class="${sessionMinutes(s)>q.minutes?'gf51-over':'gf51-good'}">${sessionMinutes(s)} / ${q.minutes} min</strong></div><div class="gf51-ex-list">${s.exercises.length?s.exercises.map((e,ei)=>`<div class="gf51-ex"><div class="gf51-ex-copy"><b>${esc(e.name)}</b><span>${esc(e.focus||'')} · ${e.repMin||8}–${e.repMax||12} reps · ~${round1(exMinutes(e))} min${e._sourceSession&&e._sourceSession!==s.name?` <i class="gf59-source">from ${esc(e._sourceSession)}</i>`:''}</span></div><div class="gf51-ex-actions"><button class="gf51-mini" onclick="gf59AdjustSets(${si},${ei},-1)">−</button><span class="gf51-setcount">${e.sets} sets</span><button class="gf51-mini" onclick="gf59AdjustSets(${si},${ei},1)">＋</button><button class="gf51-mini gf58-move" onclick="gf59MoveExercise(${si},${ei})">Move</button><button class="gf51-mini gf51-replace" onclick="gf59SwapExercise(${si},${ei})">Swap</button><button class="gf51-mini" onclick="gf59DeleteExercise(${si},${ei})">×</button></div></div>`).join(''):`<div class="gf58-empty-session">No exercises assigned. Move an exercise here if you want to use this day.</div>`}</div><button class="btn secondary gf51-add" onclick="gf59AddExercise(${si})">＋ Add exercise</button></div>`).join('')}<label class="small">Client preferences / constraints</label><textarea id="gf59Pref" class="input gf51-pref-note">${esc(q.preferenceNote||'')}</textarea><div class="gf51-actions"><button class="btn secondary" onclick="gf59GoCapacity()">← Capacity</button><button class="btn primary" onclick="gf59GoImpact()">Impact report →</button></div></div>`
+  }
+  function reportHTML(){
+    const q=S(),c=capacity(),coverage=c.baseSets?c.draftSets/c.baseSets:1,active=c.active,over=c.draftMinutes>c.maxCapacity+5;
+    const goalDate=typeof gfGoalDateISO==='function'?gfGoalDateISO():(q.goal?.targetDate||'');
+    return `${stepbar()}<div class="gf51-flow"><div class="gf51-report-hero"><div class="eyebrow">Hercules schedule-impact review</div><h3>${over?'Plan exceeds available time':coverage>=.9?'Training volume preserved':'Reduced training volume'}</h3><p>${q.strategy==='spread'?`Programme is spread across ${active.length} available days.`:`Primary workout days: ${q.primary.map(d=>DAYS[d].slice(0,3)).join(', ')}${q.overflowDay!=null?`. Flex day: ${DAYS[q.overflowDay]}.`:'. No automatic flex day.'}`}</p></div><div class="gf51-report-grid"><div><span>Weekly plan time</span><b>${c.draftMinutes} min</b></div><div><span>Max available time</span><b>${c.maxCapacity} min</b></div><div><span>Working-set coverage</span><b>${Math.round(coverage*100)}%</b></div><div><span>Training days used</span><b>${active.length}/${q.available.length}</b></div></div><div class="gf51-impact"><div><b>Scale goal date</b><span>${goalDate?shortDateLabel(goalDate):'Unchanged'}. Rescheduling alone does not change the weight-gain target.</span></div><div><b>Composition impact</b><span>${coverage>=.9?'No composition-date extension suggested from this schedule change.':'Weekly training stimulus is below the original plan; Hercules should review the physique timeline after applying.'}</span></div><div><b>Day roles</b><span>${q.strategy==='spread'?'Every available day becomes a training day.':`Primary: ${q.primary.map(d=>DAYS[d]).join(', ')}${q.overflowDay!=null?` · Flex: ${DAYS[q.overflowDay]}`:''}.`}</span></div></div><div class="gf51-actions"><button class="btn secondary" onclick="gf59GoBackEdit()">← Edit plan</button><button class="btn primary" onclick="gf59Apply()">Apply schedule</button></div></div>`
+  }
+
+  window.gf59Apply=function(){
+    const q=S();
+    const cleaned=q.draft.filter(s=>(s.exercises||[]).length).map((s,i)=>{
+      const x=clone(s);delete x._overflow;
+      x.exercises=(x.exercises||[]).map(e=>{const y=clone(e);delete y._sourceSession;return y});
+      x.scheduleOrder=i;return x
+    });
+    if(!cleaned.length){toast('Keep at least one workout');return}
+    plan.training||(plan.training={});
+    plan.training.originalPlan||(plan.training.originalPlan={sessions:clone(plan.training.sessions||[]),sessionsPerWeek:plan.training.sessionsPerWeek,name:plan.training.name,summary:plan.training.summary});
+    plan.training.sessions=cleaned;
+    plan.training.sessionsPerWeek=cleaned.length;
+    plan.training.normalSessionsPerWeek=q.strategy==='spread'?q.available.length:q.workoutCount;
+    plan.training.defaultSessionDurationMinutes=q.minutes;
+    plan.training.availableWeekdays=[...q.available];
+    plan.training.primaryWeekdays=q.strategy==='spread'?[...q.available]:[...q.primary];
+    plan.training.selectedWeekdays=cleaned.map(s=>Number(s.weekdayIndex)).filter(Number.isFinite);
+    plan.training.schedulingStrategy=q.strategy;
+    plan.training.overflowWeekday=q.strategy==='flex'&&q.overflowDay!=null?q.overflowDay:null;
+    plan.training.clientPreferences=q.preferenceNote||'';
+    plan.training.revisionHistory=Array.isArray(plan.training.revisionHistory)?plan.training.revisionHistory:[];
+    plan.training.revisionHistory.push({at:new Date().toISOString(),type:'primary-flex-schedule',strategy:q.strategy,minutesPerWorkout:q.minutes,availableWeekdays:[...q.available],primaryWeekdays:[...plan.training.primaryWeekdays],overflowWeekday:plan.training.overflowWeekday,sessionsPerWeek:cleaned.length});
+    ensureProgressExtras?.();progress.settings||(progress.settings={});
+    progress.settings.sessionDurationMinutes=q.minutes;
+    progress.settings.sessionDurationOverrides={};
+    progress.settings.availableWeekdays=[...q.available];
+    progress.settings.trainingWeekdays=[...plan.training.selectedWeekdays];
+    progress.settings.primaryWeekdays=[...plan.training.primaryWeekdays];
+    progress.settings.overflowWeekday=plan.training.overflowWeekday;
+    write();closeSession();renderAll?.();toast('Training schedule updated')
+  };
+
+  window.gf59RenderPlanner=function(){
+    const q=S(),sh=document.getElementById('sessionSheet');if(!q||!sh)return;
+    sh.classList.remove('workout-sheet','gf52-live-sheet');
+    sh.innerHTML=`<button class="gf50-sheet-close" onclick="closeSession()" aria-label="Close">×</button><div class="eyebrow">Fit the training plan</div><h2 style="font-size:28px;margin:5px 0 4px">${q.minutes} minutes available</h2><p class="muted" style="margin-top:0">${q.available.length} available day${q.available.length===1?'':'s'} · ${q.strategy==='spread'?'spread across all':'primary + flex scheduling'}.</p>${q.step===0?capacityHTML():q.step===1?planHTML():reportHTML()}`;
+    document.getElementById('sessionModal')?.classList.add('open')
+  };
+
+  window.gf59OpenPlanBuilder=function(mode='live',minutes=null){init(mode,minutes);gf59RenderPlanner()};
+
+  // Replace every older entry point, including buttons already rendered by v4.0.58.
+  window.gf58OpenPlanBuilder=window.gf59OpenPlanBuilder;
+  window.gf51OpenPlanBuilder=window.gf59OpenPlanBuilder;
+  window.gf48SetDefaultMinutes=function(v){gf59OpenPlanBuilder('live',Number(v)||90)};
+})();
+</script>
+
+
+<style id="gf60-reliability-hotfix-style">
+.gf60-pose-note{margin-top:9px;padding:10px 11px;border-radius:14px;background:rgba(86,155,243,.055);border:1px solid rgba(105,182,255,.10);font-size:8.5px;line-height:1.45;color:var(--muted)}
+.gf60-pose-note.warn{background:rgba(255,186,73,.05);border-color:rgba(255,190,80,.11);color:#e6c98f}
+.gf60-workout-error{padding:12px 13px;border-radius:16px;background:rgba(255,92,110,.07);border:1px solid rgba(255,116,130,.13);font-size:9px;line-height:1.45;color:#ffd3d9}
+</style>
+
+<script id="gf60-reliability-hotfix">
+(function(){
+  // ==========================================================================
+  // 1) Workout engine: remove the remaining cross-IIFE/private-scope dependency.
+  // ==========================================================================
+  function gf60PriorityIndex(s){
+    const rows=(s?.exercises||[]).map((e,i)=>{
+      let boost=0;
+      try{boost=typeof gf48FocusBoost==='function'?Number(gf48FocusBoost(e))||0:0}catch{}
+      let comp=false;
+      try{comp=typeof gf48IsCompound==='function'?!!gf48IsCompound(e):/press|squat|row|pulldown|deadlift|rdl|dip/i.test(e?.name||'')}catch{}
+      return {i,score:boost+(comp?8:0)-i*.25}
+    });
+    return rows.sort((a,b)=>b.score-a.score||a.i-b.i)[0]?.i||0
+  }
+  function gf60TargetSets(w,e){
+    const k=e?._gf52OriginalKey||workoutExerciseKey(e);
+    w.exerciseSetTargets||(w.exerciseSetTargets={});
+    return Math.max(1,Number(w.exerciseSetTargets[k])||Number(e?.sets)||1)
+  }
+  function gf60DraftValue(last,prev,index,field,fallback){
+    if(last&&Number.isFinite(Number(last[field])))return Number(last[field]);
+    const p=prev?.[Math.min(index,Math.max(0,(prev?.length||1)-1))];
+    if(p&&Number.isFinite(Number(p[field])))return Number(p[field]);
+    return fallback
+  }
+  function gf60Current(){
+    if(!canonicalWorkout)return null;
+    const w=(progress?.workoutLogs||[]).find(x=>String(x.id)===String(canonicalWorkout.workoutId));
+    if(!w)return null;
+    const s=plan?.training?.sessions?.find(x=>String(x.id)===String(w.sessionId));
+    if(!s||!Array.isArray(s.exercises)||!s.exercises.length)return null;
+    const over=w.runtimeExerciseOverrides||{};
+    const list=s.exercises.map(e=>{
+      const k=workoutExerciseKey(e),rep=over[k];
+      return rep?{...rep,_gf52OriginalKey:k,_gf52Substitution:true}:e
+    });
+    const i=Math.max(0,Math.min(Number(canonicalWorkout.exerciseIndex)||0,list.length-1));
+    const e=list[i];
+    if(!e)return null;
+    return {w,s,list,i,e,key:workoutExerciseKey(e)}
+  }
+
+  // Export the helpers that later patches referenced as if they were global.
+  window.gf52Current=gf60Current;
+  window.gf52TargetSets=gf60TargetSets;
+  window.gf52DraftValue=gf60DraftValue;
+  window.gf52PriorityIndex=gf60PriorityIndex;
+
+  window.renderCanonicalWorkout=function(){
+    try{
+      const c=gf60Current();
+      if(!c)throw new Error('Active workout/session data could not be resolved');
+      const {w,s,list,i,e,key}=c;
+      const sheet=document.getElementById('sessionSheet');
+      if(!sheet)throw new Error('Workout panel is missing');
+      sheet.classList.add('workout-sheet','gf52-live-sheet');
+
+      const originalKey=e._gf52OriginalKey||key;
+      const target=gf60TargetSets(w,e);
+      const today=(w.setEntries||[]).filter(x=>x.exerciseKey===key||(x.replacesKey===originalKey&&x.exerciseName===e.name));
+      const done=today.length,next=today.length;
+      const prev=typeof previousExercisePerformance==='function'?previousExercisePerformance(s.id,e):[];
+      const last=today.at(-1);
+      let suggest={load:'',message:'Choose a controlled working load.'};
+      try{
+        suggest=typeof gf45LoadPrescription==='function'?gf45LoadPrescription(s.id,e):suggestedLoadFor(s.id,e)
+      }catch{}
+      const fallbackWeight=Number(suggest?.load)||0,fallbackReps=Number(e.repMin)||8;
+      const preW=gf60DraftValue(last,prev,next,'weightKg',fallbackWeight);
+      const preR=gf60DraftValue(last,prev,next,'reps',fallbackReps);
+      const priority=gf60PriorityIndex(s)===(s.exercises||[]).findIndex(x=>workoutExerciseKey(x)===originalKey);
+      const pct=clamp(((i+(Math.min(done,target)/target))/Math.max(1,list.length))*100,0,100);
+      const restSeconds=Number(e.restSeconds)||90;
+      const restText=canonicalRestRemaining?formatRest(canonicalRestRemaining):`${Math.round(restSeconds/6)/10}m`;
+
+      const rows=Array.from({length:target},(_,j)=>{
+        const logged=today[j],active=j===done,future=j>done;
+        const valW=logged?Number(logged.weightKg)||0:preW,valR=logged?Number(logged.reps)||0:preR;
+        return `<div class="gf52-set-row ${logged?'done':active?'active':'future'}">
+          <span class="gf52-set-num">${j+1}</span>
+          <input ${logged||future?'disabled':''} ${active?'id="canonicalSetReps"':''} inputmode="numeric" value="${valR||''}" aria-label="Set ${j+1} reps">
+          <input ${logged||future?'disabled':''} ${active?'id="canonicalSetWeight"':''} inputmode="decimal" value="${valW||''}" aria-label="Set ${j+1} weight kg">
+          ${logged?`<button class="gf52-edit-set" onclick="editActiveWorkoutSet('${esc(logged.id)}')">Edit</button>`:active?'<span class="gf56-active-pill">Active</span>':'<span></span>'}
+        </div>`
+      }).join('');
+
+      const mid=done<target
+        ? `<div class="gf52-rir-strip"><span>RIR for next set</span><div class="gf52-rir-picks">${[0,1,2,3].map(r=>`<button data-rir="${r}" class="${Number(canonicalWorkout.rir)===r?'on':''}" onclick="setWorkoutRIR(${r})">${r}</button>`).join('')}</div></div><div class="gf52-set-actions"><button class="btn primary" onclick="saveCanonicalSet()">Log set ${done+1}</button></div>`
+        : `<div class="gf56-hidden-note">Target sets complete. Use the ••• menu for navigation or set-target changes.</div>`;
+
+      sheet.innerHTML=`<div class="gf52-live">
+        <div class="gf52-live-hero">${exerciseVisual(e,true)}<button class="gf52-live-close" onclick="closeSession()" aria-label="Close">×</button><div class="gf52-live-head">${priority?'<span class="gf52-priority-tag">Priority lift</span>':''}<h2>${esc(e.name)}</h2><p>${esc(s.name)} · ${esc(e.focus||'')} · ${esc(e.station||'workout')}</p></div></div>
+        <div class="gf52-live-progress"><span>Exercise <b>${i+1}/${list.length}</b></span><span>${Math.round(pct)}% session progress</span></div>
+        <div class="gf52-mini-bar"><i style="width:${pct}%"></i></div>
+        <div class="gf56-live-actions">
+          <button class="gf56-rest-btn" onclick="gf52RestAction()"><span>Rest</span><b>${esc(restText)}</b></button>
+          <button class="gf56-more-btn" onclick="gf56OpenLiveMenu()" aria-label="More actions">•••</button>
+        </div>
+        <div class="gf52-prescription"><div class="eyebrow">${priority?'Today’s priority lift':'Prescription'}</div><b>${target} sets · ${e.repMin||8}–${e.repMax||12} reps · target ${canonicalWorkout.rir??2} RIR</b><span>${esc(suggest?.message||'Use a controlled working load and keep execution repeatable.')}${e._gf52Substitution?' · Temporary substitution for this workout.':''}</span></div>
+        <div class="gf52-sets-head"><span>Set</span><span>Reps</span><span>Weight kg</span><span></span></div>
+        <div class="gf52-sets">${rows}</div>
+        ${mid}
+        <button class="btn secondary gf48-offplan-btn" style="width:100%;margin-top:10px" onclick="gf48OpenOffPlanAdder()">＋ Add exercise not in today’s plan</button>
+      </div>
+      <div class="gf52-live-dock"><button class="btn primary" onclick="finishCanonicalWorkout()">Finish workout</button><button class="btn secondary gf52-end-later" onclick="gf56OpenLiveMenu()" aria-label="More workout actions">•••</button></div>`;
+      document.getElementById('sessionModal')?.classList.add('open');
+      return true
+    }catch(err){
+      console.error('Gain Focus workout render error',err);
+      const sheet=document.getElementById('sessionSheet');
+      if(sheet){
+        sheet.classList.remove('workout-sheet','gf52-live-sheet');
+        sheet.innerHTML=`<button class="gf50-sheet-close" onclick="closeSession()" aria-label="Close">×</button><div class="gf60-workout-error"><b>Workout could not render</b><br>${esc(err?.message||'Unknown workout error')}</div><button class="btn primary" style="width:100%;margin-top:10px" onclick="gf60RepairWorkout()">Repair & retry</button>`
+      }
+      return false
+    }
+  };
+
+  window.saveCanonicalSet=function(){
+    const c=gf60Current();if(!c)return;
+    const {w,e,key}=c,original=e._gf52OriginalKey||key;
+    const weight=Math.max(0,Number(document.getElementById('canonicalSetWeight')?.value)||0);
+    const reps=Math.max(0,Math.round(Number(document.getElementById('canonicalSetReps')?.value)||0));
+    if(!reps){toast('Add reps first');return}
+    const row={id:canonicalUid(),ts:Date.now(),exerciseKey:key,exerciseName:e.name,focus:e.focus||'',station:e.station||'',planned:!e._gf52Substitution,offPlan:!!e._gf52Substitution,substitution:!!e._gf52Substitution,replacesKey:e._gf52Substitution?original:null,replacesName:e.replacesName||null,weightKg:weight,reps,rir:Number(canonicalWorkout.rir)};
+    try{if(typeof gf45SetE1RM==='function')row.e1rmKg=round(gf45SetE1RM(row),1)}catch{}
+    w.setEntries||(w.setEntries=[]);w.setEntries.push(row);write();startCanonicalRest();renderCanonicalWorkout()
+  };
+
+  window.setWorkoutRIR=function(v){
+    if(!canonicalWorkout)return;
+    canonicalWorkout.rir=Number(v);
+    document.querySelectorAll('.gf52-rir-picks button,[data-rir]').forEach(b=>b.classList.toggle('on',Number(b.dataset.rir)===Number(v)))
+  };
+
+  function gf60ResumeIndex(w,s){
+    const list=(s?.exercises||[]);
+    for(let i=0;i<list.length;i++){
+      const e=list[i],key=workoutExerciseKey(e),target=gf60TargetSets(w,e);
+      const n=(w.setEntries||[]).filter(x=>x.exerciseKey===key||x.replacesKey===key).length;
+      if(n<target)return i
+    }
+    return Math.max(0,list.length-1)
+  }
+  window.gf60StartWorkout=function(sessionId,workoutId=null){
+    try{
+      ensureProgressExtras?.();ensureWorkoutSettings?.();
+      const s=plan?.training?.sessions?.find(x=>String(x.id)===String(sessionId));
+      if(!s||!Array.isArray(s.exercises)||!s.exercises.length)throw new Error('This training day has no valid exercises');
+      progress.workoutLogs||(progress.workoutLogs=[]);
+      let w=workoutId?progress.workoutLogs.find(x=>String(x.id)===String(workoutId)&&x.completed===false):null;
+      if(!w)w=progress.workoutLogs.find(x=>x.completed===false&&String(x.sessionId)===String(s.id))||null;
+      if(!w){
+        w={id:'workout-'+canonicalUid(),date:todayISO(),startedAt:new Date().toISOString(),completed:false,sessionId:s.id,sessionName:s.name,setEntries:[],exercises:[]};
+        progress.workoutLogs.push(w);write()
+      }
+      // Old fitted runtime lists were the source of several stale-session errors.
+      delete w.runtimeExerciseKeys;delete w.runtimeEstimatedMinutes;delete w.runtimeStationCount;
+      canonicalWorkout={workoutId:w.id,sessionId:s.id,exerciseIndex:gf60ResumeIndex(w,s),rir:2};
+      editingWorkoutId=null;
+      document.getElementById('sessionModal')?.classList.add('open');
+      if(!renderCanonicalWorkout())throw new Error('Workout screen did not render');
+      return true
+    }catch(err){
+      console.error('Gain Focus workout start error',err);
+      const sheet=document.getElementById('sessionSheet');
+      if(sheet){
+        sheet.classList.remove('workout-sheet','gf52-live-sheet');
+        sheet.innerHTML=`<button class="gf50-sheet-close" onclick="closeSession()" aria-label="Close">×</button><div class="gf60-workout-error"><b>Workout could not start</b><br>${esc(err?.message||'Unknown workout error')}</div><button class="btn primary" style="width:100%;margin-top:10px" onclick="gf60RepairWorkout('${esc(String(sessionId||''))}','${esc(String(workoutId||''))}')">Repair & retry</button>`;
+        document.getElementById('sessionModal')?.classList.add('open')
+      }
+      return false
+    }
+  };
+  window.startWorkout=function(id){return gf60StartWorkout(id,null)};
+  window.resumeWorkout=function(id){
+    const w=(progress?.workoutLogs||[]).find(x=>String(x.id)===String(id));
+    if(!w){toast('That workout could not be found');return false}
+    return gf60StartWorkout(w.sessionId,w.id)
+  };
+  window.gf60RepairWorkout=function(sessionId='',workoutId=''){
+    const w=workoutId?(progress?.workoutLogs||[]).find(x=>String(x.id)===String(workoutId)):currentWorkoutRecord?.();
+    if(w){delete w.runtimeExerciseKeys;delete w.runtimeEstimatedMinutes;delete w.runtimeStationCount;delete w.sessionGrouping;try{write()}catch{}}
+    const sid=sessionId||w?.sessionId||canonicalWorkout?.sessionId;
+    if(!sid){toast('Open the workout from Train again');return}
+    return gf60StartWorkout(sid,w?.id||null)
+  };
+
+  // ==========================================================================
+  // 2) Onboarding pose analysis: retry the extracted stills and never leave the
+  //    button stuck in "Analysing…" when silhouette isolation fails.
+  // ==========================================================================
+  async function gf60ImageCanvas(blob,maxW=300){
+    const url=URL.createObjectURL(blob);
+    try{
+      const img=await gfImageFromSrc(url),scale=Math.min(1,maxW/Math.max(1,img.naturalWidth));
+      const c=document.createElement('canvas');
+      c.width=Math.max(120,Math.round(img.naturalWidth*scale));
+      c.height=Math.max(180,Math.round(img.naturalHeight*scale));
+      c.getContext('2d',{willReadFrequently:true}).drawImage(img,0,0,c.width,c.height);
+      return c
+    }finally{URL.revokeObjectURL(url)}
+  }
+  function gf60ProvisionalMetrics(quality=24){
+    return {armRatio:.085,chestH:.205,waistH:.183,legH:.15,taper:1.12,shoulderH:.225,quality,provisional:true}
+  }
+  async function gf60AnalysePose(blob){
+    try{return {...await gfAnalyseImageBlob(blob),fallback:false}}catch(firstErr){
+      try{
+        const src=await gf60ImageCanvas(blob,320);
+        // Retry a central crop. This helps iPhone/mirror frames where furniture
+        // or the room edge becomes the largest colour component.
+        const crop=document.createElement('canvas'),sx=Math.round(src.width*.08),sy=Math.round(src.height*.03);
+        crop.width=Math.max(120,src.width-sx*2);crop.height=Math.max(180,src.height-sy*2);
+        crop.getContext('2d',{willReadFrequently:true}).drawImage(src,sx,sy,crop.width,crop.height,0,0,crop.width,crop.height);
+        const metrics=localSilhouetteMetrics(crop);
+        return {metrics,detail:gfCanvasDetailSignals(crop),quality:Math.min(65,metrics.quality||50),fallback:true}
+      }catch(secondErr){
+        console.warn('Pose silhouette fallback used',firstErr,secondErr);
+        let detail={definitionIndex:null};
+        try{detail=gfCanvasDetailSignals(await gf60ImageCanvas(blob,220))}catch{}
+        return {metrics:gf60ProvisionalMetrics(24),detail,quality:24,fallback:true,provisional:true}
+      }
+    }
+  }
+
+  window.gf30AnalyseOnboardingPoses=async function(){
+    const o=canonicalOnboarding,files=['front','side','back'].map(k=>o?.videos?.[k]).filter(Boolean);
+    if(files.length<3){toast('Extract the three poses first');return}
+    const btn=document.getElementById('canonAnalyseBtn');
+    if(btn){btn.disabled=true;btn.textContent='Analysing…'}
+    try{
+      const results=[];
+      for(const f of files)results.push(await gf60AnalysePose(f));
+      const reliable=results.filter(x=>!x.provisional);
+      const keys=['armRatio','chestH','waistH','legH','taper','shoulderH'],m={};
+      keys.forEach(k=>{
+        const vals=(reliable.length?reliable:results).map(r=>Number(r.metrics?.[k])).filter(Number.isFinite);
+        m[k]=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:gf60ProvisionalMetrics()[k]
+      });
+      const scores=scorePhysiqueMetrics(m),legsVisible=o.legsVisibility!=='covered';
+      if(!legsVisible)scores.legs=null;
+      const ordered=Object.entries(scores).filter(([,v])=>Number.isFinite(Number(v))).sort((a,b)=>b[1]-a[1]);
+      const developing=ordered.slice(0,2).map(x=>x[0]),priority=ordered.slice(-2).reverse().map(x=>x[0]),maintain=ordered.slice(2,3).map(x=>x[0]);
+      const defs=results.map(r=>Number(r.detail?.definitionIndex)).filter(Number.isFinite);
+      const definition=defs.length?round(defs.reduce((a,b)=>a+b,0)/defs.length,1):null;
+      const quality=Math.round(results.reduce((a,r)=>a+(Number(r.quality)||24),0)/results.length);
+      const provisional=reliable.length<2;
+      o.analysis={
+        engine:provisional?'single-video-poses-provisional-v2':'single-video-extracted-poses-v2',
+        createdAt:new Date().toISOString(),framesAnalysed:results.length,reliablePoses:reliable.length,quality,
+        scores:Object.fromEntries(Object.entries(scores).map(([k,v])=>[k,Number.isFinite(Number(v))?round(v,1):null])),
+        definitionIndex:Number.isFinite(definition)?definition:null,
+        visibility:{legs:legsVisible,legsReason:legsVisible?'':'Client stated legs are not clearly visible, so lower-body visual analysis is excluded.'},
+        developing:provisional?[]:developing,
+        priority:provisional?[]:priority,
+        maintain:provisional?[]:maintain,
+        provisional,
+        summary:provisional
+          ? 'Baseline poses were saved, but the body outline could not be isolated confidently enough to rank muscle development. The app will keep a provisional baseline and refine it from a clearer future check-in.'
+          : `${regionLabel(developing[0]||'shoulders')} currently reads as a relative visual strength. ${regionLabel(priority[0]||'chest')} is the clearest first-block focus candidate.${legsVisible?'':' Leg analysis is excluded by the client visibility setting.'}`
+      };
+      if(!provisional)o.goal.focus=[...priority.map(regionLabel),...maintain.map(regionLabel)];
+      canonicalNext()
+    }catch(err){
+      console.error('Onboarding pose analysis error',err);
+      toast('Pose analysis failed safely · you can retry or continue without it');
+      renderCanonicalOnboarding()
+    }finally{
+      const b=document.getElementById('canonAnalyseBtn');
+      if(b){b.disabled=false;b.textContent='Analyse extracted poses'}
+    }
+  };
+
+  // Add a confidence note on the analysis step after a provisional run.
+  const gf60BaseRenderOnboarding=window.renderCanonicalOnboarding;
+  if(typeof gf60BaseRenderOnboarding==='function')window.renderCanonicalOnboarding=function(){
+    const r=gf60BaseRenderOnboarding.apply(this,arguments);
+    if(canonicalOnboardingStep===2&&canonicalOnboarding?.analysis?.provisional){
+      document.querySelector('#tourCard .canon-analysis')?.insertAdjacentHTML('beforeend','<div class="gf60-pose-note warn">Low-confidence visual baseline: poses are stored correctly, but Hercules is withholding muscle-development rankings until a clearer comparison is available.</div>')
+    }
+    return r
   };
 })();
 </script>

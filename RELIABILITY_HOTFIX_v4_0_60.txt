@@ -1,0 +1,27 @@
+GAIN FOCUS PWA v4.0.60 — RELIABILITY HOTFIX
+
+WORKOUT START / RESUME
+[PASS] Removed the remaining dependency on gf52Current living inside a private older module.
+[PASS] Current workout/session resolution is now implemented in the final global module.
+[PASS] Start workout uses the stored reviewed plan directly.
+[PASS] Resume finds the first exercise with unfinished target sets.
+[PASS] Stale runtimeExerciseKeys/runtimeEstimatedMinutes/runtimeStationCount are cleared on launch.
+[PASS] Set logging uses the same final workout context as the screen renderer.
+[PASS] kg + reps carry-forward preserved.
+[PASS] RIR, rest, ••• actions, substitutions and Finish workout preserved.
+[PASS] Visible Repair & retry remains available if a genuine data problem is found.
+
+POSE ANALYSIS
+[PASS] Extracted image poses are analysed directly.
+[PASS] If normal silhouette isolation fails, the app retries a centre-cropped version.
+[PASS] If the image still cannot be isolated reliably, onboarding no longer dead-ends.
+[PASS] A low-confidence provisional baseline is saved instead of inventing a muscle ranking.
+[PASS] Provisional analysis does NOT overwrite goal focus with fabricated priorities.
+[PASS] Analyse button is always re-enabled after success/failure.
+[PASS] User can retry later with clearer poses.
+
+v4.0.59 SCHEDULING RETAINED
+[PASS] Explicit primary workout days.
+[PASS] Manual flex / reschedule day override.
+[PASS] Spread over all available days.
+[PASS] Move / Swap / Delete exercises.
