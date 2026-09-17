@@ -1,0 +1,6 @@
+Gain Focus v4.0.66
+- Full two-stage progression card is always visible on Train, including Train fallback mode.
+- Current baseline is explicitly shown inside Progression 1.
+- Account -> Settings now has Current training baseline.
+- Existing onboarded clients can edit workouts/week, exercises/workout, sets/exercise, reps, RIR, partner setup and representative loads.
+- Saving recalculates Progression 1 and leaves workout history + final target programme intact.
