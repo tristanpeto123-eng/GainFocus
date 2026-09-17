@@ -422,10 +422,10 @@ body.coach-home-active #nav{opacity:1;pointer-events:auto;transform:translateX(-
 #splash.opening .constellation-nodes circle{opacity:.56}
 
 /* Five-tab navigation */
-.nav{grid-template-columns:repeat(5,1fr)}
+.nav{grid-template-columns:repeat(6,1fr)}
 .nav button{font-size:9.5px;padding-left:2px;padding-right:2px}
 .nav button b{font-size:18px}
-@media(max-width:360px){.nav button{font-size:8.5px}.nav{gap:2px;padding:6px}}
+@media(max-width:420px){.nav button{font-size:8.1px}.nav{gap:2px;padding:6px}.nav button b{font-size:16px}}
 
 /* Training calendar */
 .training-calendar{padding:16px 15px 15px;overflow:hidden}
@@ -1417,6 +1417,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
   <section id="train" class="screen"></section>
   <section id="nutrition" class="screen"></section>
   <section id="checkin" class="screen"></section>
+  <section id="progression" class="screen"></section>
   <section id="progress" class="screen"></section>
 </main>
 
@@ -1427,7 +1428,8 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
   <button data-tab="train"><b>↑</b>Train</button>
   <button data-tab="nutrition"><b>◒</b>Nutrition</button>
   <button data-tab="checkin"><b>＋</b>Check-in</button>
-  <button data-tab="progress"><b>▥</b>Progression</button>
+  <button data-tab="progression"><b>↗</b>Progression</button>
+  <button data-tab="progress"><b>▥</b>Analysis</button>
 </nav>
 
 <div id="sessionModal" class="modal"><div id="sessionSheet" class="sheet"></div></div>
@@ -1438,7 +1440,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.68';
+const APP_VERSION='4.0.70';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -4435,7 +4437,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.68', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.70', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
@@ -5241,7 +5243,7 @@ window.gf30OpenBodyCompForm=function(){gf30EnsureBodyComposition();const sheet=d
 function gf45DefaultNotificationPrefs(){return {enabled:false,workouts:true,meals:true,inactivity:true,social:true,challenges:true,workoutTime:'18:00',breakfastTime:'08:30',lunchTime:'13:00',dinnerTime:'19:00',inactivityDays:3,quietStart:'22:30',quietEnd:'07:30'}}
 window.ensureProgressExtras=function(){GF45_ORIGINAL.ensureProgressExtras?.();if(!progress)return;progress.settings||(progress.settings={});progress.settings.notificationPrefs={...gf45DefaultNotificationPrefs(),...(progress.settings.notificationPrefs||{})};if(!Array.isArray(progress.settings.availableWeekdays))progress.settings.availableWeekdays=[...(plan?.training?.availableWeekdays||progress.settings.trainingWeekdays||[])];if(!Array.isArray(progress.notificationFeed))progress.notificationFeed=[]};
 function gf45PushStatus(){if(!('Notification'in window))return 'Browser notifications are unavailable here.';if(location.protocol==='file:')return 'Open the hosted PWA to enable system notifications. Calendar reminders still work from this file.';return Notification.permission==='granted'?'System notifications enabled.':'Tap Enable notifications. iPhone web push requires the hosted app added to the Home Screen.'}
-async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.68')}catch(e){console.warn(e);return null}}
+async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.70')}catch(e){console.warn(e);return null}}
 async function gf45RequestNotifications(){if(!('Notification'in window)){toast('Notifications are not supported here');return}if(location.protocol==='file:'){toast('Host/install the PWA to enable push');return}const reg=await gf45RegisterSW(),permission=await Notification.requestPermission();ensureProgressExtras();progress.settings.notificationPrefs.enabled=permission==='granted';write();if(permission==='granted'&&reg){await reg.showNotification('Gain Focus notifications enabled',{body:'Hercules can now surface training, nutrition and social reminders.',tag:'gf-enabled'});toast('Notifications enabled')}else toast('Notification permission not granted');gfRenderSocialHub()}
 async function gf45TestNotification(){const reg=await gf45RegisterSW();if(('Notification' in window)&&Notification.permission==='granted'&&reg){await reg.showNotification('Hercules · Test',{body:'Notifications are connected. Keep the hosted PWA installed for background alerts.',tag:'gf-test'});return}toast('Enable notifications first')}
 function gf45SaveNotificationSettings(){ensureProgressExtras();const p=progress.settings.notificationPrefs;for(const k of ['workouts','meals','inactivity','social','challenges'])p[k]=!!document.getElementById('gf45n_'+k)?.checked;for(const k of ['workoutTime','breakfastTime','lunchTime','dinnerTime','quietStart','quietEnd']){const v=document.getElementById('gf45n_'+k)?.value;if(v)p[k]=v}p.inactivityDays=clamp(Number(document.getElementById('gf45n_inactivityDays')?.value)||3,1,14);write();toast('Notification preferences saved')}
@@ -10902,7 +10904,7 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
   window.gf68SelectLift=function(v){selectedLift=Math.max(0,Number(v)||0);renderChart()}
   window.gf68SelectTape=function(v){selectedTape=String(v||'chest');renderChart()}
 
-  function pageHTML(legacy){
+  function pageHTML(){
     const t=targets(),vol=volumeProjection();
     return `<div class="gf68-page">
       <div class="gf68-hero">
@@ -10931,10 +10933,6 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
         ${analysisCards()}
       </div>
 
-      <details class="gf68-legacy">
-        <summary>Detailed training & physique analysis</summary>
-        <div class="gf68-legacy-body">${legacy}</div>
-      </details>
     </div>`
   }
 
@@ -11055,29 +11053,269 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
     const r=baseOnboard.apply(this,arguments);setTimeout(injectOnboardingGoals,0);return r
   };
 
-  // ------------------ Replace Analysis tab with Progression page ------------------
+  // ------------------ Dedicated Progression page; Analysis remains separate ------------------
   const previousRenderProgress=window.renderProgress;
-  window.renderProgress=function(){
-    const root=document.getElementById('progress');if(!root)return;
-    let legacy='';
-    try{
-      if(typeof previousRenderProgress==='function'){
-        previousRenderProgress.apply(this,arguments);
-        legacy=root.innerHTML||''
-      }
-    }catch(err){
-      legacy=`<div class="gf65-debug">Detailed analysis renderer: ${esc(err?.message||String(err))}</div>`
-    }
-    root.innerHTML=pageHTML(legacy);
-    document.getElementById('pageTitle').textContent='Progression';
+  window.gf68LegacyAnalysisRenderer=previousRenderProgress;
+
+  window.gf68RenderProgressionPage=function(){
+    const root=document.getElementById('progression');if(!root)return;
+    root.innerHTML=pageHTML();
+    if(currentTab==='progression')document.getElementById('pageTitle').textContent='Progression';
     setTimeout(renderChart,0)
   };
 
-  // Guarantee nav copy even on an old cached DOM shell.
+  // Restore the Analysis renderer that existed before v4.0.68.
+  window.renderProgress=previousRenderProgress;
+  try{renderProgress=window.renderProgress}catch{}
+
+  // Guarantee menu copy even on an old cached DOM shell.
   setTimeout(()=>{
-    const b=document.querySelector('.nav button[data-tab="progress"]');if(b)b.innerHTML='<b>▥</b>Progression';
+    const analysis=document.querySelector('.nav button[data-tab="progress"]');
+    if(analysis)analysis.innerHTML='<b>▥</b>Analysis';
+    const progression=document.querySelector('.nav button[data-tab="progression"]');
+    if(progression)progression.innerHTML='<b>↗</b>Progression';
     try{saveTargets(targets())}catch{}
   },100);
+})();
+</script>
+
+
+<style id="gf69-separate-pages-style">
+#progression .gf68-page{padding-top:1px}
+@media(max-width:390px){.nav button{letter-spacing:-.015em}}
+</style>
+<script id="gf69-separate-analysis-progression">
+(function(){
+  window.renderProgression=function(){
+    try{
+      if(typeof window.gf68RenderProgressionPage==='function'){
+        window.gf68RenderProgressionPage();
+        return true;
+      }
+    }catch(err){console.error('Gain Focus Progression render failed',err)}
+    const root=document.getElementById('progression');
+    if(root)root.innerHTML='<div class="card glass hero"><div class="eyebrow">Progression</div><h2>Couldn’t load this section.</h2><p class="muted">Analysis and client data remain available.</p></div>';
+    return false;
+  };
+
+  const baseRenderAll=window.renderAll;
+  window.renderAll=function(){
+    const result=baseRenderAll.apply(this,arguments);
+    try{renderModuleSafe('progression','Progression',window.renderProgression)}
+    catch{window.renderProgression()}
+    return result;
+  };
+  try{renderAll=window.renderAll}catch{}
+
+  const baseShowTab=window.showTab;
+  window.showTab=function(tab){
+    const result=baseShowTab.apply(this,arguments);
+    const title=document.getElementById('pageTitle');
+    if(tab==='progression'){
+      if(title)title.textContent='Progression';
+      setTimeout(()=>window.renderProgression(),0);
+    }else if(tab==='progress'){
+      if(title)title.textContent='Analysis';
+    }
+    return result;
+  };
+  try{showTab=window.showTab}catch{}
+
+  function ensureSeparateShell(){
+    const app=document.getElementById('app');
+    if(app&&!document.getElementById('progression')){
+      const sec=document.createElement('section');
+      sec.id='progression';
+      sec.className='screen';
+      const analysisScreen=document.getElementById('progress');
+      app.insertBefore(sec,analysisScreen||null);
+    }
+    const nav=document.getElementById('nav');
+    if(!nav)return;
+    const analysis=nav.querySelector('button[data-tab="progress"]');
+    let progression=nav.querySelector('button[data-tab="progression"]');
+    if(!progression&&analysis){
+      progression=document.createElement('button');
+      progression.dataset.tab='progression';
+      progression.innerHTML='<b>↗</b>Progression';
+      progression.onclick=()=>showTab('progression');
+      nav.insertBefore(progression,analysis);
+    }
+    if(progression)progression.onclick=()=>showTab('progression');
+    if(analysis){
+      analysis.innerHTML='<b>▥</b>Analysis';
+      analysis.onclick=()=>showTab('progress');
+    }
+  }
+
+  ensureSeparateShell();
+  setTimeout(()=>{
+    ensureSeparateShell();
+    if(plan&&progress){
+      try{window.renderProgression()}catch{}
+      try{window.renderProgress?.()}catch{}
+    }
+  },120);
+})();
+</script>
+
+
+<style id="gf70-exercise-thumbnails">
+.gf70-exact-thumb{width:100%;height:100%;display:block;background:#07101f}
+.gf70-exact-thumb text{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+</style>
+<script id="gf70-exercise-thumbnails">
+(function(){
+  const E={
+    "bench press":["bench","barbell","flat"],
+    "wide-grip lat pulldown":["pulldown","cable","wide"],
+    "incline dumbbell press":["bench","dumbbell","incline"],
+    "chest-supported row":["row","dumbbell","supported"],
+    "cable fly":["fly","cable","standing"],
+    "straight-arm pulldown":["pullover","cable","straight"],
+    "dumbbell shrug":["shrug","dumbbell","standing"],
+    "dumbbell lateral raise":["raise","dumbbell","lateral"],
+    "hack squat":["squat","machine","hack"],
+    "romanian deadlift":["hinge","barbell","rdl"],
+    "leg press":["legpress","machine","seated"],
+    "seated leg curl":["legcurl","machine","seated"],
+    "standing calf raise":["calf","machine","standing"],
+    "cable crunch":["crunch","cable","kneeling"],
+    "incline smith machine press":["bench","smith","incline"],
+    "neutral-grip lat pulldown":["pulldown","cable","neutral"],
+    "machine chest press":["bench","machine","seated"],
+    "one-arm cable lat row":["row","cable","onearm"],
+    "pec deck fly":["fly","machine","pecdeck"],
+    "wide-grip chest-supported row":["row","machine","wide-supported"],
+    "cable shrug":["shrug","cable","standing"],
+    "reverse pec deck fly":["reversefly","machine","pecdeck"],
+    "weighted dips":["dip","weighted","parallel"],
+    "single-arm lat pulldown":["pulldown","cable","onearm"],
+    "high-incline dumbbell press":["bench","dumbbell","highincline"],
+    "pull-ups":["pullup","bodyweight","wide"],
+    "smith machine shrug":["shrug","smith","standing"],
+    "ez-bar curl":["curl","ezbar","standing"],
+    "cable triceps extension":["triceps","cable","standing"],
+    "incline dumbbell curl":["curl","dumbbell","incline"],
+    "hammer curl":["curl","dumbbell","hammer"],
+    "preacher curl":["curl","ezbar","preacher"],
+    "barbell curl":["curl","barbell","standing"],
+    "cable curl":["curl","cable","standing"],
+    "rope pushdown":["triceps","rope","pushdown"],
+    "overhead cable extension":["triceps","cable","overhead"],
+    "skull crusher":["triceps","ezbar","lying"],
+    "leg extension":["legextension","machine","seated"],
+    "walking lunge":["lunge","dumbbell","walking"],
+    "reverse lunge":["lunge","dumbbell","reverse"],
+    "bulgarian split squat":["lunge","dumbbell","bulgarian"],
+    "seated calf raise":["calf","machine","seated"],
+    "pull-up":["pullup","bodyweight","wide"]
+  };
+  const norm=s=>String(s||'').toLowerCase().replace(/[–—]/g,'-').replace(/\s+/g,' ').trim();
+  function spec(e){
+    const n=norm(e?.name);
+    if(E[n])return E[n];
+    // Exact-name inference for newly added exercises; no unrelated stock-photo fallback.
+    if(/shrug/.test(n))return["shrug",/smith/.test(n)?"smith":/cable/.test(n)?"cable":/barbell/.test(n)?"barbell":"dumbbell","standing"];
+    if(/reverse pec deck|rear.?delt.*fly/.test(n))return["reversefly",/pec deck/.test(n)?"machine":"cable","rear"];
+    if(/lateral raise/.test(n))return["raise",/cable/.test(n)?"cable":"dumbbell","lateral"];
+    if(/pulldown/.test(n))return[/straight.arm/.test(n)?"pullover":"pulldown","cable",/single|one.arm/.test(n)?"onearm":/neutral/.test(n)?"neutral":"wide"];
+    if(/pull.?up|chin.?up/.test(n))return["pullup","bodyweight",/chin/.test(n)?"chin":"wide"];
+    if(/row/.test(n))return["row",/cable/.test(n)?"cable":/machine/.test(n)?"machine":"dumbbell",/one.arm/.test(n)?"onearm":/chest.supported/.test(n)?"supported":"standard"];
+    if(/fly|flye/.test(n))return[/reverse|rear/.test(n)?"reversefly":"fly",/pec deck|machine/.test(n)?"machine":"cable","standard"];
+    if(/press|bench/.test(n))return["bench",/smith/.test(n)?"smith":/machine/.test(n)?"machine":/dumbbell/.test(n)?"dumbbell":"barbell",/high.incline/.test(n)?"highincline":/incline/.test(n)?"incline":"flat"];
+    if(/dip/.test(n))return["dip",/weight/.test(n)?"weighted":"bodyweight","parallel"];
+    if(/romanian|rdl|deadlift/.test(n))return["hinge",/dumbbell/.test(n)?"dumbbell":"barbell","rdl"];
+    if(/hack squat/.test(n))return["squat","machine","hack"];
+    if(/leg press/.test(n))return["legpress","machine","seated"];
+    if(/leg extension/.test(n))return["legextension","machine","seated"];
+    if(/leg curl/.test(n))return["legcurl","machine",/seated/.test(n)?"seated":"lying"];
+    if(/lunge|split squat/.test(n))return["lunge",/barbell/.test(n)?"barbell":"dumbbell",/bulgarian/.test(n)?"bulgarian":/reverse/.test(n)?"reverse":"walking"];
+    if(/calf/.test(n))return["calf","machine",/seated/.test(n)?"seated":"standing"];
+    if(/crunch/.test(n))return["crunch",/cable/.test(n)?"cable":"bodyweight","kneeling"];
+    if(/curl/.test(n))return["curl",/preacher/.test(n)?"ezbar":/hammer/.test(n)?"dumbbell":/cable/.test(n)?"cable":/ez/.test(n)?"ezbar":/barbell/.test(n)?"barbell":"dumbbell",/preacher/.test(n)?"preacher":/incline/.test(n)?"incline":/hammer/.test(n)?"hammer":"standing"];
+    if(/tricep|pushdown|skull/.test(n))return["triceps",/rope/.test(n)?"rope":/skull/.test(n)?"ezbar":"cable",/overhead/.test(n)?"overhead":/skull/.test(n)?"lying":"pushdown"];
+    return["general","bodyweight","standard"];
+  }
+  const L=(x1,y1,x2,y2,w=4,c="#dce8fb")=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;
+  const C=(x,y,r=5,c="#dce8fb")=>`<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${c}" stroke-width="3"/>`;
+  function equipment(type,variant){
+    if(type==="cable"||type==="rope")return `${L(12,14,12,82,3,"#5e789c")}${L(12,14,28,14,3,"#5e789c")}${L(12,82,27,82,3,"#5e789c")}${L(12,27,28,27,2,"#5e789c")}`;
+    if(type==="smith")return `${L(15,12,15,84,3,"#5e789c")}${L(83,12,83,84,3,"#5e789c")}${L(12,84,86,84,3,"#5e789c")}`;
+    if(type==="machine")return `${L(13,79,85,79,3,"#5e789c")}${L(22,79,22,55,3,"#5e789c")}${L(22,55,44,55,3,"#5e789c")}`;
+    if(type==="barbell"||type==="ezbar")return `${L(17,23,83,23,3,"#8ecbff")}${L(22,18,22,28,4,"#8ecbff")}${L(78,18,78,28,4,"#8ecbff")}`;
+    if(type==="dumbbell")return `${L(18,28,31,28,3,"#8ecbff")}${L(18,23,18,33,4,"#8ecbff")}${L(31,23,31,33,4,"#8ecbff")}`;
+    if(type==="weighted")return `<circle cx="50" cy="73" r="7" fill="none" stroke="#8ecbff" stroke-width="3"/>`;
+    return "";
+  }
+  function figure(kind,type,variant){
+    let g=equipment(type,variant);
+    const skin="#dce8fb",hot="#ff7c8d",blue="#8ecbff";
+    if(kind==="bench"){
+      const incline=variant==="incline"||variant==="highincline";
+      const y0=incline?60:67, hx=incline?43:34,hy=incline?39:55;
+      g+=`${L(22,76,82,76,3,"#5e789c")}${incline?L(28,70,55,48,4,"#5e789c"):L(26,70,72,70,4,"#5e789c")}${C(hx,hy,6)}${L(hx+6,hy+5,58,y0,5)}${L(58,y0,74,70,5)}${L(52,y0-4,45,31,4,hot)}${L(63,y0-3,69,31,4,hot)}${type==="dumbbell"?`${L(40,28,49,28,3,blue)}${L(65,28,74,28,3,blue)}`:L(34,28,78,28,3,blue)}`;
+    } else if(kind==="pulldown"){
+      g+=`${C(55,31,6)}${L(55,37,55,66,5)}${L(55,66,42,82,5)}${L(55,66,68,82,5)}${variant==="onearm"?`${L(54,46,32,23,4,hot)}${L(54,46,66,50,4)}`:`${L(54,46,34,23,4,hot)}${L(54,46,76,23,4,hot)}${L(27,20,82,20,3,blue)}`}`;
+    } else if(kind==="pullover"){
+      g+=`${C(55,31,6)}${L(55,37,55,68,5)}${L(55,68,43,83,5)}${L(55,68,67,83,5)}${L(54,46,35,36,4,hot)}${L(35,36,25,61,4,hot)}${L(25,61,25,70,3,blue)}`;
+    } else if(kind==="row"){
+      g+=`${C(58,31,6)}${L(58,37,69,58,5)}${L(69,58,81,72,5)}${L(69,58,57,80,5)}${variant==="onearm"?`${L(62,44,37,52,4,hot)}${L(37,52,25,52,4,hot)}`:`${L(62,44,42,51,4,hot)}${L(42,51,28,51,4,hot)}`}${variant.includes("supported")?L(45,62,77,62,4,"#5e789c"):""}`;
+    } else if(kind==="fly"||kind==="reversefly"){
+      const rev=kind==="reversefly";
+      g+=`${C(52,30,6)}${L(52,36,52,67,5)}${L(52,67,42,83,5)}${L(52,67,63,83,5)}${L(52,46,rev?27:25,rev?37:47,4,hot)}${L(52,46,rev?77:79,rev?37:47,4,hot)}${type==="machine"?`${L(20,38,20,72,3,"#5e789c")}${L(84,38,84,72,3,"#5e789c")}`:""}`;
+    } else if(kind==="shrug"){
+      g+=`${C(52,27,6)}${L(52,33,52,66,5)}${L(52,66,42,83,5)}${L(52,66,63,83,5)}${L(52,43,33,57,4,hot)}${L(52,43,71,57,4,hot)}${L(44,36,60,36,7,hot)}${type==="dumbbell"?`${L(28,58,37,58,3,blue)}${L(67,58,76,58,3,blue)}`:L(27,58,77,58,3,blue)}`;
+    } else if(kind==="raise"){
+      g+=`${C(52,28,6)}${L(52,34,52,67,5)}${L(52,67,42,84,5)}${L(52,67,63,84,5)}${L(52,45,25,45,4,hot)}${L(52,45,79,45,4,hot)}${L(21,42,28,42,3,blue)}${L(76,42,83,42,3,blue)}`;
+    } else if(kind==="squat"){
+      g+=`${C(51,29,6)}${L(51,35,58,58,5)}${L(58,58,43,70,5)}${L(43,70,35,84,5)}${L(58,58,73,69,5)}${L(73,69,82,83,5)}${L(43,42,61,42,7,hot)}${variant==="hack"?`${L(28,18,75,75,4,"#5e789c")}${L(27,18,27,73,3,"#5e789c")}`:""}`;
+    } else if(kind==="hinge"){
+      g+=`${C(42,30,6)}${L(47,35,68,51,5)}${L(68,51,78,65,5)}${L(68,51,57,80,5)}${L(53,42,43,65,4,hot)}${L(43,65,36,72,4,hot)}${L(25,72,76,72,3,blue)}`;
+    } else if(kind==="legpress"){
+      g+=`${L(23,68,53,68,4,"#5e789c")}${L(53,68,66,52,4,"#5e789c")}${C(48,48,6)}${L(51,54,62,65,5)}${L(62,65,76,48,5,hot)}${L(76,48,84,34,5,hot)}${L(82,25,82,51,4,blue)}`;
+    } else if(kind==="legcurl"||kind==="legextension"){
+      const ext=kind==="legextension";
+      g+=`${L(24,61,63,61,4,"#5e789c")}${C(42,39,6)}${L(45,45,55,58,5)}${L(55,58,70,64,5,hot)}${L(70,64,ext?84:72,ext?64:82,5,hot)}${L(80,58,86,70,4,blue)}`;
+    } else if(kind==="calf"){
+      g+=`${C(52,27,6)}${L(52,33,52,63,5)}${L(52,63,43,81,5)}${L(52,63,65,80,5)}${L(42,78,37,87,5,hot)}${L(65,78,71,87,5,hot)}${variant==="seated"?L(28,62,72,62,4,"#5e789c"):""}`;
+    } else if(kind==="crunch"){
+      g+=`${C(55,34,6)}${L(55,40,47,57,5,hot)}${L(47,57,57,68,5,hot)}${L(57,68,43,82,5)}${L(57,68,70,82,5)}${L(55,42,35,28,4)}${L(35,28,26,22,3,blue)}`;
+    } else if(kind==="dip"){
+      g+=`${L(25,46,40,46,4,blue)}${L(64,46,79,46,4,blue)}${C(52,28,6)}${L(52,34,52,61,5)}${L(52,44,38,49,4,hot)}${L(52,44,66,49,4,hot)}${L(52,61,43,80,5)}${L(52,61,63,80,5)}${type==="weighted"?`<circle cx="52" cy="73" r="6" fill="none" stroke="${blue}" stroke-width="3"/>`:""}`;
+    } else if(kind==="pullup"){
+      g+=`${L(22,18,82,18,4,blue)}${C(52,38,6)}${L(52,44,52,68,5)}${L(52,49,33,24,4,hot)}${L(52,49,72,24,4,hot)}${L(52,68,42,84,5)}${L(52,68,63,84,5)}`;
+    } else if(kind==="curl"){
+      const seated=variant==="incline"||variant==="preacher";
+      g+=`${C(52,28,6)}${L(52,34,52,65,5)}${L(52,65,42,82,5)}${L(52,65,63,82,5)}${L(52,45,35,56,4,hot)}${L(35,56,42,42,4,hot)}${L(52,45,69,56,4,hot)}${L(69,56,62,42,4,hot)}${seated?L(27,64,72,64,4,"#5e789c"):""}`;
+    } else if(kind==="triceps"){
+      const over=variant==="overhead",lying=variant==="lying";
+      if(lying)g+=`${L(22,70,78,70,4,"#5e789c")}${C(38,55,6)}${L(44,58,62,65,5)}${L(50,57,58,37,4,hot)}${L(58,37,72,28,4,hot)}${L(68,25,82,25,3,blue)}`;
+      else g+=`${C(52,28,6)}${L(52,34,52,66,5)}${L(52,66,42,83,5)}${L(52,66,63,83,5)}${over?`${L(52,43,42,25,4,hot)}${L(42,25,54,16,4,hot)}`:`${L(52,44,36,52,4,hot)}${L(36,52,36,69,4,hot)}${L(52,44,68,52,4,hot)}${L(68,52,68,69,4,hot)}`}`;
+    } else if(kind==="lunge"){
+      g+=`${C(49,28,6)}${L(49,34,54,59,5)}${L(54,59,36,70,5,hot)}${L(36,70,25,82,5,hot)}${L(54,59,72,72,5,hot)}${L(72,72,83,82,5,hot)}${L(49,45,32,57,4)}${L(49,45,66,57,4)}${variant==="bulgarian"?L(69,78,86,78,4,"#5e789c"):""}`;
+    } else {
+      g+=`${C(52,28,6)}${L(52,34,52,66,5)}${L(52,45,34,58,4)}${L(52,45,70,58,4)}${L(52,66,42,83,5)}${L(52,66,63,83,5)}`;
+    }
+    return g;
+  }
+  function thumb(e,large=false){
+    const [kind,type,variant]=spec(e),name=String(e?.name||"Exercise");
+    return `<svg class="gf70-exact-thumb ${large?'large':''}" viewBox="0 0 100 100" role="img" aria-label="${esc(name)} thumbnail">
+      <defs><radialGradient id="g70" cx="50%" cy="43%" r="66%"><stop offset="0" stop-color="#183764"/><stop offset="1" stop-color="#07101f"/></radialGradient></defs>
+      <rect width="100" height="100" rx="12" fill="url(#g70)"/>
+      ${figure(kind,type,variant)}
+      <rect x="4" y="86" width="92" height="10" rx="5" fill="rgba(4,10,22,.78)"/>
+      <text x="50" y="93.2" text-anchor="middle" fill="#d8eaff" font-size="5.2" font-weight="700">${esc(name.length>27?name.slice(0,26)+'…':name)}</text>
+    </svg>`;
+  }
+  window.gf70ExerciseThumbnailSpec=spec;
+  window.gf70ExerciseThumbnail=thumb;
+  window.exerciseVisual=function(e,large=false){return thumb(e,large)};
+  try{exerciseVisual=window.exerciseVisual}catch{}
+
+  // Re-render current views so old cached generic thumbnails are replaced immediately.
+  setTimeout(()=>{try{renderTrain?.()}catch{}},100);
 })();
 </script>
 

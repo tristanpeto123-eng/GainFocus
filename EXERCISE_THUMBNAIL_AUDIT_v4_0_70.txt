@@ -1,0 +1,5 @@
+Gain Focus v4.0.70
+Current programme exact mappings: 29/29
+Generic stock-photo category fallback removed from exerciseVisual.
+Exercise-specific vector thumbnails now encode movement, equipment and setup.
+New/custom exercises use name-based movement/equipment inference rather than an unrelated stock image.

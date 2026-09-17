@@ -1,7 +1,7 @@
 {
   "name": "Gain Focus",
   "short_name": "Gain Focus",
-  "description": "Adaptive training, nutrition, physique tracking and Hercules coaching.",
+  "description": "Adaptive training, nutrition, progression and physique tracking.",
   "id": "./",
   "start_url": "./index.html",
   "scope": "./",

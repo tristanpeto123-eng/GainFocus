@@ -1,0 +1,29 @@
+GAIN FOCUS PWA v4.0.69 — PROGRESSION AND ANALYSIS SEPARATED
+
+MAIN MENU
+Hercules · Train · Nutrition · Check-in · Progression · Analysis
+
+PROGRESSION
+- New additional page and menu item.
+- Contains progression data only:
+  * defined end-goal values
+  * current baseline -> Week 1 -> full-programme graph
+  * Progression 1 ramp
+  * Progression 2 ramp
+  * mass projection
+  * lift-capacity projection
+  * calorie projection
+  * body-fat projection
+  * tape-measure projection
+  * progress-vs-projection status
+- No embedded general Analysis dashboard.
+
+ANALYSIS
+- Restored as a separate page.
+- Uses the detailed Analysis renderer that existed before v4.0.68.
+- Existing muscle maps, workout trends, physique analysis and analysis widgets remain here.
+- Existing workout/check-in flows that previously opened Analysis still open Analysis.
+
+DATA
+- No client/profile/history reset.
+- Existing progression goal/ramp data remains intact.
