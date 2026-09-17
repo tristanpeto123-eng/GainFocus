@@ -1,0 +1,19 @@
+Gain Focus v4.0.67
+
+NEW
+- Progression 2 now has an adjustable ramp from Week 1 capacity to the full programme.
+- Ramp duration: 1, 2, 3, 4, 5, 6, 8, 10, 12 or 16 weeks.
+- Ramp shape:
+  * Conservative (slower early)
+  * Even / linear
+  * Fast start
+  * Custom weekly working-set targets
+- Ramp can be paused and resumed.
+- Full programme volume remains tied to the actual end-goal programme.
+- Full-volume target date is calculated separately from the bodyweight/physique end-goal date.
+- Settings stores the chosen ramp and revision history.
+- The automatic set progression now obeys the selected curve/custom weekly targets.
+
+WHERE
+- Train -> Two-stage progression -> Progression 2 -> Adjust Progression 2 ramp
+- Account -> Settings -> Progression 2 ramp -> Adjust ramp

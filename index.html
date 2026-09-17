@@ -1427,7 +1427,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
   <button data-tab="train"><b>↑</b>Train</button>
   <button data-tab="nutrition"><b>◒</b>Nutrition</button>
   <button data-tab="checkin"><b>＋</b>Check-in</button>
-  <button data-tab="progress"><b>▥</b>Analysis</button>
+  <button data-tab="progress"><b>▥</b>Progression</button>
 </nav>
 
 <div id="sessionModal" class="modal"><div id="sessionSheet" class="sheet"></div></div>
@@ -1438,7 +1438,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.66';
+const APP_VERSION='4.0.68';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -2725,7 +2725,7 @@ function showTab(tab){
   document.body.classList.toggle('coach-home-active',tab==='today');
   document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id===tab));
   document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===tab));
-  document.getElementById('pageTitle').textContent={today:'Hercules',train:'Train',nutrition:'Nutrition',checkin:'Check-in',progress:'Progress'}[tab];
+  document.getElementById('pageTitle').textContent={today:'Hercules',train:'Train',nutrition:'Nutrition',checkin:'Check-in',progress:'Progression'}[tab];
   if(tab==='today')setTimeout(()=>GFCoach.homeActivated(),30);
   if(tab==='nutrition')setTimeout(renderNutrition,0);
   if(tab==='progress')setTimeout(drawChart,0);
@@ -4435,7 +4435,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.66', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.68', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
@@ -5241,7 +5241,7 @@ window.gf30OpenBodyCompForm=function(){gf30EnsureBodyComposition();const sheet=d
 function gf45DefaultNotificationPrefs(){return {enabled:false,workouts:true,meals:true,inactivity:true,social:true,challenges:true,workoutTime:'18:00',breakfastTime:'08:30',lunchTime:'13:00',dinnerTime:'19:00',inactivityDays:3,quietStart:'22:30',quietEnd:'07:30'}}
 window.ensureProgressExtras=function(){GF45_ORIGINAL.ensureProgressExtras?.();if(!progress)return;progress.settings||(progress.settings={});progress.settings.notificationPrefs={...gf45DefaultNotificationPrefs(),...(progress.settings.notificationPrefs||{})};if(!Array.isArray(progress.settings.availableWeekdays))progress.settings.availableWeekdays=[...(plan?.training?.availableWeekdays||progress.settings.trainingWeekdays||[])];if(!Array.isArray(progress.notificationFeed))progress.notificationFeed=[]};
 function gf45PushStatus(){if(!('Notification'in window))return 'Browser notifications are unavailable here.';if(location.protocol==='file:')return 'Open the hosted PWA to enable system notifications. Calendar reminders still work from this file.';return Notification.permission==='granted'?'System notifications enabled.':'Tap Enable notifications. iPhone web push requires the hosted app added to the Home Screen.'}
-async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.66')}catch(e){console.warn(e);return null}}
+async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.68')}catch(e){console.warn(e);return null}}
 async function gf45RequestNotifications(){if(!('Notification'in window)){toast('Notifications are not supported here');return}if(location.protocol==='file:'){toast('Host/install the PWA to enable push');return}const reg=await gf45RegisterSW(),permission=await Notification.requestPermission();ensureProgressExtras();progress.settings.notificationPrefs.enabled=permission==='granted';write();if(permission==='granted'&&reg){await reg.showNotification('Gain Focus notifications enabled',{body:'Hercules can now surface training, nutrition and social reminders.',tag:'gf-enabled'});toast('Notifications enabled')}else toast('Notification permission not granted');gfRenderSocialHub()}
 async function gf45TestNotification(){const reg=await gf45RegisterSW();if(('Notification' in window)&&Notification.permission==='granted'&&reg){await reg.showNotification('Hercules · Test',{body:'Notifications are connected. Keep the hosted PWA installed for background alerts.',tag:'gf-test'});return}toast('Enable notifications first')}
 function gf45SaveNotificationSettings(){ensureProgressExtras();const p=progress.settings.notificationPrefs;for(const k of ['workouts','meals','inactivity','social','challenges'])p[k]=!!document.getElementById('gf45n_'+k)?.checked;for(const k of ['workoutTime','breakfastTime','lunchTime','dinnerTime','quietStart','quietEnd']){const v=document.getElementById('gf45n_'+k)?.value;if(v)p[k]=v}p.inactivityDays=clamp(Number(document.getElementById('gf45n_inactivityDays')?.value)||3,1,14);write();toast('Notification preferences saved')}
@@ -10311,6 +10311,773 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
 
   // Current profiles created before v4.0.63 remain editable without replaying onboarding.
   setTimeout(()=>{try{rebuildProgressionGoals(currentCapacity())}catch{}},100);
+})();
+</script>
+
+
+<style id="gf67-ramp-editor-style">
+.gf67-ramp-btn{
+  width:100%;margin-top:9px;min-height:40px;border-radius:13px;
+  border:1px solid rgba(91,205,177,.14);background:rgba(66,194,166,.055);
+  color:#bcecdf;font:inherit;font-size:8.5px;font-weight:850
+}
+.gf67-ramp-settings{margin:12px 0;padding:14px;border-radius:20px;
+  background:linear-gradient(180deg,rgba(12,27,48,.95),rgba(7,14,29,.98));
+  border:1px solid rgba(88,207,179,.10)}
+.gf67-ramp-settings-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.gf67-ramp-settings-head b{display:block;font-size:13px}
+.gf67-ramp-settings-head span{display:block;margin-top:3px;font-size:8px;line-height:1.4;color:var(--muted)}
+.gf67-ramp-chip{flex:0 0 auto!important;margin:0!important;padding:6px 8px;border-radius:999px;
+  background:rgba(67,194,166,.075);border:1px solid rgba(82,211,180,.12);color:#b9ebdf!important}
+.gf67-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.gf67-field label{display:block;font-size:7.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px}
+.gf67-field .input{margin:0}
+.gf67-preview{margin-top:11px;padding:11px;border-radius:15px;background:rgba(255,255,255,.024);border:1px solid rgba(255,255,255,.05)}
+.gf67-preview-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.gf67-preview-head b{font-size:10px}.gf67-preview-head span{font-size:8px;color:var(--muted)}
+.gf67-week-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px}
+.gf67-week{padding:8px;border-radius:11px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.045)}
+.gf67-week span{display:block;font-size:6.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.gf67-week b{display:block;font-size:9px;margin-top:2px}
+.gf67-custom-list{display:grid;gap:6px;margin-top:8px}
+.gf67-custom-row{display:grid;grid-template-columns:58px minmax(0,1fr) 46px;gap:7px;align-items:center}
+.gf67-custom-row span{font-size:8px;color:var(--muted)}
+.gf67-custom-row .input{margin:0}
+.gf67-custom-row b{font-size:8px;color:#b9ebdf;text-align:right}
+.gf67-ramp-note{margin-top:10px;padding:10px 11px;border-radius:14px;background:rgba(75,154,244,.045);
+  border:1px solid rgba(102,180,255,.09);font-size:8.5px;line-height:1.45;color:var(--muted)}
+.gf67-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+@media(max-width:430px){
+  .gf67-editor-grid{grid-template-columns:1fr}
+  .gf67-week-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .gf67-actions{grid-template-columns:1fr}
+}
+</style>
+
+<script id="gf67-ramp-editor">
+(function(){
+  const clone=x=>{try{return structuredClone(x)}catch{return JSON.parse(JSON.stringify(x))}};
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,Number(v)||0));
+  const weeklySets=s=>(s||[]).reduce((n,x)=>n+(x.exercises||[]).reduce((a,e)=>a+(Number(e.sets)||0),0),0);
+
+  function rampData(){
+    const t=plan?.training||{};
+    const vr=t.volumeRamp||{};
+    const startSets=Number(vr.startWeeklySets)||weeklySets(t.startingPlan?.sessions||t.sessions||[]);
+    const targetSets=Number(vr.targetWeeklySets)||weeklySets(t.targetPlan?.sessions||t.sessions||[]);
+    const weeks=Math.max(1,Number(vr.rampWeeks)||4);
+    const curve=String(vr.curve||'even');
+    const enabled=vr.enabled!==false;
+    const startDate=vr.startDate||plan?.goal?.startDate||todayISO();
+    return {vr,startSets,targetSets,weeks,curve,enabled,startDate}
+  }
+
+  function addDays(dateStr,days){
+    const d=new Date(`${dateStr||todayISO()}T12:00:00`);
+    d.setDate(d.getDate()+Number(days||0));
+    return d.toISOString().slice(0,10)
+  }
+
+  function curveFraction(i,weeks,curve){
+    if(weeks<=1)return 1;
+    const x=i/(weeks-1);
+    if(curve==='conservative')return Math.pow(x,1.55);
+    if(curve==='fast')return Math.pow(x,.68);
+    return x;
+  }
+
+  function generatedTargets(weeks,curve,startSets,targetSets){
+    const out=[];
+    for(let i=0;i<weeks;i++){
+      const f=curveFraction(i,weeks,curve);
+      out.push(Math.round(startSets+(targetSets-startSets)*f))
+    }
+    if(out.length){out[0]=Math.round(startSets);out[out.length-1]=Math.round(targetSets)}
+    // Never allow the generated curve to move backwards.
+    for(let i=1;i<out.length;i++)out[i]=Math.max(out[i],out[i-1]);
+    return out
+  }
+
+  function currentTargets(){
+    const d=rampData();
+    const saved=Array.isArray(d.vr.weeklySetTargets)?d.vr.weeklySetTargets.map(Number).filter(Number.isFinite):[];
+    if(d.curve==='custom'&&saved.length===d.weeks)return saved;
+    return generatedTargets(d.weeks,d.curve,d.startSets,d.targetSets)
+  }
+
+  function summaryText(){
+    const d=rampData(),targets=currentTargets();
+    return `${d.enabled?'Active':'Paused'} · ${d.weeks} week${d.weeks===1?'':'s'} · ${d.curve==='custom'?'custom':d.curve} ramp · ${targets[0]||d.startSets} → ${targets.at?.(-1)||d.targetSets} sets/wk`
+  }
+
+  window.gf67OpenRampEditor=function(){
+    const d=rampData(),sheet=document.getElementById('sessionSheet');if(!sheet)return;
+    sheet.classList.remove('workout-sheet','gf52-live-sheet');
+    sheet.innerHTML=`<button class="gf50-sheet-close" onclick="closeSession()" aria-label="Close">×</button>
+      <div class="eyebrow">Progression 2</div>
+      <h2 style="font-size:28px;margin:5px 0 3px">Adjust ramp to full programme</h2>
+      <p class="muted" style="margin-top:0">This changes how quickly training volume rises from the Week 1 baseline to the full end-goal programme. It does not change your physique/bodyweight target unless you edit that separately.</p>
+
+      <div class="gf67-editor-grid">
+        <div class="gf67-field"><label>Ramp active</label><select id="gf67Enabled" class="input" onchange="gf67RefreshRampPreview()"><option value="1" ${d.enabled?'selected':''}>Active</option><option value="0" ${!d.enabled?'selected':''}>Paused</option></select></div>
+        <div class="gf67-field"><label>Ramp duration</label><select id="gf67Weeks" class="input" onchange="gf67RefreshRampPreview()">${[1,2,3,4,5,6,8,10,12,16].map(n=>`<option value="${n}" ${n===d.weeks?'selected':''}>${n} week${n===1?'':'s'}</option>`).join('')}</select></div>
+        <div class="gf67-field"><label>Ramp shape</label><select id="gf67Curve" class="input" onchange="gf67RefreshRampPreview()">
+          <option value="conservative" ${d.curve==='conservative'?'selected':''}>Conservative · slower early</option>
+          <option value="even" ${d.curve==='even'?'selected':''}>Even · linear</option>
+          <option value="fast" ${d.curve==='fast'?'selected':''}>Fast start · more early</option>
+          <option value="custom" ${d.curve==='custom'?'selected':''}>Custom weekly targets</option>
+        </select></div>
+        <div class="gf67-field"><label>Full programme volume</label><input class="input" value="${d.targetSets} sets / week" disabled></div>
+      </div>
+
+      <div class="gf67-ramp-note">The final programme volume is still defined by the actual exercises/sets in your end-goal plan. This editor controls <b>how quickly you reach it</b>. For custom mode, you can set each week's total working-set target manually.</div>
+
+      <div id="gf67Preview" class="gf67-preview"></div>
+
+      <div class="gf67-actions">
+        <button class="btn secondary" onclick="closeSession()">Cancel</button>
+        <button class="btn primary" onclick="gf67SaveRamp()">Save ramp</button>
+      </div>`;
+    document.getElementById('sessionModal')?.classList.add('open');
+    gf67RefreshRampPreview()
+  };
+
+  window.gf67RefreshRampPreview=function(){
+    const d=rampData(),weeks=Math.max(1,Number(document.getElementById('gf67Weeks')?.value)||d.weeks);
+    const curve=String(document.getElementById('gf67Curve')?.value||d.curve);
+    const enabled=document.getElementById('gf67Enabled')?.value!=='0';
+    const box=document.getElementById('gf67Preview');if(!box)return;
+
+    let targets;
+    if(curve==='custom'){
+      const existing=(d.curve==='custom'&&Array.isArray(d.vr.weeklySetTargets)&&d.vr.weeklySetTargets.length===weeks)
+        ? d.vr.weeklySetTargets
+        : generatedTargets(weeks,'even',d.startSets,d.targetSets);
+      targets=existing;
+      box.innerHTML=`<div class="gf67-preview-head"><b>Custom weekly volume</b><span>${enabled?'Ramp active':'Ramp paused'}</span></div>
+        <div class="gf67-custom-list">${targets.map((x,i)=>`<div class="gf67-custom-row"><span>Week ${i+1}</span><input id="gf67Custom${i}" class="input" type="number" min="${i===0?d.startSets:0}" max="${d.targetSets}" value="${Math.round(x)}"><b>sets/wk</b></div>`).join('')}</div>`;
+    }else{
+      targets=generatedTargets(weeks,curve,d.startSets,d.targetSets);
+      box.innerHTML=`<div class="gf67-preview-head"><b>Ramp preview</b><span>Full volume target: ${addDays(d.startDate,(weeks-1)*7)}</span></div>
+        <div class="gf67-week-grid">${targets.map((x,i)=>`<div class="gf67-week"><span>Week ${i+1}</span><b>${x} sets/wk</b></div>`).join('')}</div>`;
+    }
+  };
+
+  window.gf67SaveRamp=function(){
+    if(!plan?.training)return;
+    const d=rampData(),weeks=Math.max(1,Number(document.getElementById('gf67Weeks')?.value)||d.weeks);
+    const curve=String(document.getElementById('gf67Curve')?.value||'even');
+    const enabled=document.getElementById('gf67Enabled')?.value!=='0';
+    let targets;
+
+    if(curve==='custom'){
+      targets=[];
+      for(let i=0;i<weeks;i++){
+        const raw=Number(document.getElementById(`gf67Custom${i}`)?.value);
+        const min=i===0?d.startSets:(targets[i-1]||d.startSets);
+        let v=Number.isFinite(raw)?raw:min;
+        v=Math.max(min,Math.min(d.targetSets,v));
+        targets.push(Math.round(v))
+      }
+      targets[0]=Math.round(d.startSets);
+      targets[targets.length-1]=Math.round(d.targetSets);
+      for(let i=1;i<targets.length;i++)targets[i]=Math.max(targets[i],targets[i-1])
+    }else{
+      targets=generatedTargets(weeks,curve,d.startSets,d.targetSets)
+    }
+
+    const vr=plan.training.volumeRamp||(plan.training.volumeRamp={});
+    vr.enabled=enabled;
+    vr.rampWeeks=weeks;
+    vr.curve=curve;
+    vr.weeklySetTargets=targets;
+    vr.fullVolumeTargetDate=addDays(vr.startDate||plan?.goal?.startDate||todayISO(),(weeks-1)*7);
+    vr.manualRampAdjusted=true;
+    vr.manualRampAdjustedAt=new Date().toISOString();
+    vr.lastAppliedWeek=0; // force recalculation next Train/workout render
+
+    plan.training.progressionGoals ||= {};
+    plan.training.progressionGoals.phase2 ||= {};
+    plan.training.progressionGoals.phase2.ramp={
+      enabled,weeks,curve,weeklySetTargets:clone(targets),fullVolumeTargetDate:vr.fullVolumeTargetDate
+    };
+
+    plan.training.revisionHistory=Array.isArray(plan.training.revisionHistory)?plan.training.revisionHistory:[];
+    plan.training.revisionHistory.push({
+      at:new Date().toISOString(),
+      type:'progression-2-ramp-adjustment',
+      enabled,weeks,curve,weeklySetTargets:clone(targets),fullVolumeTargetDate:vr.fullVolumeTargetDate
+    });
+
+    try{write();gf46VaultUpsertCurrent?.()}catch{}
+    closeSession();
+    try{renderAll?.()}catch{}
+    toast('Progression 2 ramp updated')
+  };
+
+  // Override the automatic volume-ramp application so it obeys even/conservative/
+  // fast/custom weekly targets rather than assuming a fixed linear interpolation.
+  window.gf63ApplyVolumeRamp=function(){
+    const vr=plan?.training?.volumeRamp,tp=plan?.training?.targetPlan,sp=plan?.training?.startingPlan;
+    if(!vr?.enabled||!tp?.sessions?.length||!sp?.sessions?.length)return false;
+
+    const start=new Date(`${vr.startDate||plan?.goal?.startDate||todayISO()}T12:00:00`);
+    const now=new Date(`${todayISO()}T12:00:00`);
+    const weeks=Math.max(1,Number(vr.rampWeeks)||1);
+    const week=Math.max(1,Math.min(weeks,Math.floor((now-start)/(7*86400000))+1));
+    if(Number(vr.lastAppliedWeek)===week)return false;
+
+    const startTotal=Number(vr.startWeeklySets)||weeklySets(sp.sessions);
+    const targetTotal=Number(vr.targetWeeklySets)||weeklySets(tp.sessions);
+    const targets=(Array.isArray(vr.weeklySetTargets)&&vr.weeklySetTargets.length===weeks)
+      ? vr.weeklySetTargets.map(Number)
+      : generatedTargets(weeks,String(vr.curve||'even'),startTotal,targetTotal);
+    const thisTarget=Math.max(startTotal,Math.min(targetTotal,Number(targets[week-1])||startTotal));
+    const frac=targetTotal===startTotal?1:Math.max(0,Math.min(1,(thisTarget-startTotal)/(targetTotal-startTotal)));
+
+    const tMap=new Map(tp.sessions.map(s=>[String(s.id),s]));
+    const sMap=new Map(sp.sessions.map(s=>[String(s.id),s]));
+    for(const s of plan.training.sessions||[]){
+      const ts=tMap.get(String(s.id)),ss=sMap.get(String(s.id));
+      if(!ts||!ss)continue;
+      (s.exercises||[]).forEach((e,i)=>{
+        const startSets=Number(ss.exercises?.[i]?.sets)||Number(e.sets)||1;
+        const targetSetsN=Number(ts.exercises?.[i]?.sets)||startSets;
+        e.sets=Math.max(1,Math.min(targetSetsN,Math.round(startSets+(targetSetsN-startSets)*frac)))
+      })
+    }
+    vr.lastAppliedWeek=week;
+    vr.currentTargetWeeklySets=thisTarget;
+    vr.currentRampFraction=frac;
+    try{write()}catch{}
+    return true
+  };
+
+  function injectRampControls(){
+    // Train: add direct control inside Progression 2.
+    document.querySelectorAll('.gf66-progress-card').forEach(card=>{
+      const phases=card.querySelectorAll('.gf66-phase-row');
+      const p2=phases[1];
+      if(p2&&!p2.querySelector('.gf67-ramp-btn')){
+        const b=document.createElement('button');
+        b.className='gf67-ramp-btn';
+        b.textContent='Adjust Progression 2 ramp';
+        b.onclick=gf67OpenRampEditor;
+        p2.appendChild(b)
+      }
+    });
+
+    // Settings: add a persistent ramp summary below current baseline.
+    const settings=document.getElementById('settingsSheet');
+    if(settings&&!settings.querySelector('#gf67RampSettings')){
+      const base=settings.querySelector('#gf66BaselineSettings');
+      if(base){
+        const d=rampData();
+        const div=document.createElement('div');
+        div.id='gf67RampSettings';div.className='gf67-ramp-settings';
+        div.innerHTML=`<div class="gf67-ramp-settings-head"><div><b>Progression 2 ramp</b><span>Week 1 capacity → full programme volume.</span></div><span class="gf67-ramp-chip">${d.enabled?d.weeks+' wk':'Paused'}</span></div>
+          <div class="gf66-baseline-summary">${summaryText()}</div>
+          <button class="btn secondary" style="width:100%;margin-top:10px" onclick="closeSettings();setTimeout(gf67OpenRampEditor,80)">Adjust ramp</button>`;
+        base.insertAdjacentElement('afterend',div)
+      }
+    }
+  }
+
+  const baseTrain=window.renderTrain;
+  if(typeof baseTrain==='function'){
+    window.renderTrain=function(){
+      const r=baseTrain.apply(this,arguments);
+      setTimeout(injectRampControls,0);
+      return r
+    }
+  }
+
+  const baseHub=window.gfRenderSocialHub;
+  if(typeof baseHub==='function'){
+    window.gfRenderSocialHub=function(){
+      const r=baseHub.apply(this,arguments);
+      setTimeout(injectRampControls,0);
+      return r
+    }
+  }
+
+  setTimeout(injectRampControls,120);
+})();
+</script>
+
+
+<style id="gf68-progression-page-style">
+/* Gain Focus 4.0.68 · dedicated Progression page */
+.gf68-page{display:grid;gap:12px;padding-bottom:26px}
+.gf68-hero{padding:16px;border-radius:23px;background:linear-gradient(135deg,rgba(38,76,135,.24),rgba(7,15,30,.97));border:1px solid rgba(112,184,255,.13)}
+.gf68-hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.gf68-hero h2{font-size:28px;margin:2px 0 4px}.gf68-hero p{font-size:9px;line-height:1.45;color:var(--muted);margin:0}
+.gf68-edit-goal{flex:0 0 auto;padding:8px 10px;border-radius:999px;border:1px solid rgba(107,184,255,.17);background:rgba(80,155,244,.09);color:#d0ebff;font:inherit;font-size:8px;font-weight:850}
+.gf68-goal-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-top:12px}
+.gf68-goal-kpi{padding:10px;border-radius:14px;background:rgba(255,255,255,.027);border:1px solid rgba(255,255,255,.05);min-width:0}
+.gf68-goal-kpi span{display:block;font-size:6.6px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.gf68-goal-kpi b{display:block;margin-top:3px;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gf68-stage-card,.gf68-chart-card,.gf68-analysis-card{padding:14px;border-radius:21px;background:rgba(8,17,33,.95);border:1px solid rgba(255,255,255,.065)}
+.gf68-stage-head,.gf68-section-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.gf68-stage-head h3,.gf68-section-head h3{font-size:16px;margin:2px 0 0}.gf68-stage-head p,.gf68-section-head p{font-size:8.5px;line-height:1.4;color:var(--muted);margin:4px 0 0}
+.gf68-stage-badge{flex:0 0 auto;padding:6px 8px;border-radius:999px;background:rgba(74,199,171,.07);border:1px solid rgba(82,211,181,.11);font-size:8px;color:#b7e9dd}
+.gf68-volume-svg,.gf68-main-svg{display:block;width:100%;height:auto;margin-top:10px}
+.gf68-phase-legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.gf68-phase-legend span{padding:5px 7px;border-radius:999px;background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.05);font-size:7.5px;color:var(--muted)}
+.gf68-phase-legend b{color:#cceaff}
+.gf68-chart-tabs{display:flex;gap:6px;overflow-x:auto;padding:3px 0 8px;scrollbar-width:none}.gf68-chart-tabs::-webkit-scrollbar{display:none}
+.gf68-chart-tabs button{flex:0 0 auto;padding:7px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025);color:var(--muted);font:inherit;font-size:8px;font-weight:800}
+.gf68-chart-tabs button.on{background:rgba(83,157,245,.11);border-color:rgba(104,182,255,.19);color:#d5edff}
+.gf68-chart-controls{display:flex;gap:7px;align-items:center;margin-bottom:3px}.gf68-chart-controls .input{margin:0;min-height:36px;font-size:9px}
+.gf68-chart-readout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:8px}
+.gf68-chart-readout>div{padding:9px;border-radius:12px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.045)}
+.gf68-chart-readout span{display:block;font-size:6.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.gf68-chart-readout b{display:block;margin-top:3px;font-size:9px}
+.gf68-analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.gf68-analysis-item{padding:10px;border-radius:14px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.045)}
+.gf68-analysis-item b{display:block;font-size:9.5px}.gf68-analysis-item span{display:block;margin-top:4px;font-size:8px;line-height:1.4;color:var(--muted)}
+.gf68-goal-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.gf68-field label{display:block;font-size:7.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px}.gf68-field .input{margin:0}
+.gf68-subsection{margin-top:13px;padding-top:12px;border-top:1px solid rgba(255,255,255,.055)}
+.gf68-subsection-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.gf68-subsection-head b{font-size:10px}.gf68-subsection-head span{font-size:8px;color:var(--muted)}
+.gf68-row-list{display:grid;gap:7px;margin-top:8px}
+.gf68-lift-row{display:grid;grid-template-columns:minmax(0,1.35fr) .65fr .55fr .55fr 34px;gap:6px;align-items:center}
+.gf68-tape-row{display:grid;grid-template-columns:minmax(0,1.2fr) .7fr 34px;gap:6px;align-items:center}
+.gf68-lift-row .input,.gf68-tape-row .input{margin:0;min-width:0}
+.gf68-remove{height:42px;border-radius:11px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);color:#9eabbc;font:inherit;font-size:16px}
+.gf68-editor-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}
+.gf68-goal-completeness{margin:10px 0;padding:10px 11px;border-radius:14px;background:rgba(80,157,246,.045);border:1px solid rgba(104,181,255,.09);font-size:8.5px;line-height:1.45;color:var(--muted)}
+.gf68-legacy{margin-top:2px}.gf68-legacy summary{cursor:pointer;list-style:none;padding:12px 13px;border-radius:17px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.055);font-size:10px;font-weight:850}.gf68-legacy summary::-webkit-details-marker{display:none}
+.gf68-legacy-body{padding-top:10px}
+@media(max-width:620px){.gf68-goal-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.gf68-goal-grid .gf68-goal-kpi:last-child{grid-column:1/-1}.gf68-analysis-grid{grid-template-columns:1fr}.gf68-lift-row{grid-template-columns:minmax(0,1.2fr) .7fr .55fr .55fr 34px}}
+@media(max-width:430px){.gf68-goal-editor-grid{grid-template-columns:1fr}.gf68-chart-readout{grid-template-columns:repeat(3,minmax(0,1fr))}.gf68-lift-row{grid-template-columns:1fr 1fr 1fr 34px}.gf68-lift-row input:first-child{grid-column:1/-1}.gf68-editor-actions{grid-template-columns:1fr}}
+</style>
+
+<script id="gf68-progression-page">
+(function(){
+  const clone=x=>{try{return structuredClone(x)}catch{return JSON.parse(JSON.stringify(x))}};
+  const num=(v,f=null)=>{v=Number(v);return Number.isFinite(v)?v:f};
+  const clampPct=v=>Math.max(0,Math.min(100,Math.round(Number(v)||0)));
+  const dayMs=86400000;
+  let metric='mass', selectedLift=0, selectedTape='chest';
+
+  function dms(s){const d=new Date(`${s||todayISO()}T12:00:00`);return d.getTime()}
+  function dateLabel(s){try{return new Date(`${s}T12:00:00`).toLocaleDateString(undefined,{day:'numeric',month:'short'})}catch{return s}}
+  function lerp(a,b,t){return a+(b-a)*Math.max(0,Math.min(1,t))}
+  function round1(v){return Math.round((Number(v)||0)*10)/10}
+  function weeklySets(ss){return (ss||[]).reduce((n,s)=>n+(s.exercises||[]).reduce((a,e)=>a+(Number(e.sets)||0),0),0)}
+  function e1rm(load,reps,rir=0){load=Number(load);reps=Number(reps);rir=Number(rir)||0;return load>0&&reps>0?load*(1+(reps+Math.max(0,rir))/30):null}
+  function latestBodyComp(){
+    return [...(progress?.bodyCompositionLogs||[])].filter(Boolean).sort((a,b)=>String(a.date||a.createdAt||'').localeCompare(String(b.date||b.createdAt||''))).at(-1)||null
+  }
+  function firstBodyComp(){
+    return [...(progress?.bodyCompositionLogs||[])].filter(Boolean).sort((a,b)=>String(a.date||a.createdAt||'').localeCompare(String(b.date||b.createdAt||'')))[0]||null
+  }
+  function goalDate(){
+    const p=targets(),explicit=p.targetDate||plan?.goal?.targetDate||plan?.goal?.goalDate;
+    if(explicit)return explicit;
+    try{return gfGoalDateISO?.()||todayISO()}catch{return todayISO()}
+  }
+  function tapeLabel(k){
+    return ({neck:'Neck',shoulders:'Shoulders',chest:'Chest',waist:'Waist',hips:'Hips',left_upper_arm:'Left upper arm',right_upper_arm:'Right upper arm',left_forearm:'Left forearm',right_forearm:'Right forearm',left_thigh:'Left thigh',right_thigh:'Right thigh',left_calf:'Left calf',right_calf:'Right calf'})[k]||k
+  }
+  function defaults(){
+    const bc=latestBodyComp(),first=firstBodyComp();
+    const existing=plan?.goal?.progressionTargets||{};
+    const lifts=Array.isArray(existing.liftTargets)?clone(existing.liftTargets):[];
+    if(!lifts.length){
+      for(const x of (plan?.training?.startingLoadBaselines||[]).slice(0,3)){
+        lifts.push({exerciseName:x.exerciseName||'',targetWeightKg:null,targetReps:Number(x.reps)||8,targetRIR:2})
+      }
+    }
+    const measurements=Array.isArray(existing.measurementTargets)?clone(existing.measurementTargets):[];
+    return {
+      targetDate:existing.targetDate||plan?.goal?.targetDate||'',
+      targetMassKg:num(existing.targetMassKg,num(plan?.goal?.targetWeightKg,null)),
+      targetBodyFatPct:num(existing.targetBodyFatPct,num(plan?.goal?.targetBodyFatPct,null)),
+      targetCalories:num(existing.targetCalories,num(plan?.nutrition?.calories,null)),
+      startCalories:num(existing.startCalories,num(plan?.nutrition?.calories,null)),
+      startBodyFatPct:num(existing.startBodyFatPct,num(first?.bodyFatPct,num(plan?.client?.estimatedBodyFatPct,null))),
+      liftTargets:lifts,
+      measurementTargets:measurements,
+      entryRampWeeks:Math.max(1,Math.min(6,num(existing.entryRampWeeks,num(plan?.training?.progressionGoals?.phase1?.bridgeWeeks,1))||1)),
+      entryRampCurve:existing.entryRampCurve||'even'
+    }
+  }
+  function targets(){
+    plan.goal||(plan.goal={});
+    plan.goal.progressionTargets ||= defaults();
+    const t=plan.goal.progressionTargets;
+    t.liftTargets ||= [];t.measurementTargets ||= [];
+    t.entryRampWeeks=Math.max(1,Math.min(6,num(t.entryRampWeeks,1)||1));
+    t.entryRampCurve=t.entryRampCurve||'even';
+    return t
+  }
+  function saveTargets(t){
+    plan.goal.progressionTargets=clone(t);
+    if(num(t.targetMassKg,null)!=null)plan.goal.targetWeightKg=num(t.targetMassKg);
+    if(num(t.targetBodyFatPct,null)!=null)plan.goal.targetBodyFatPct=num(t.targetBodyFatPct);
+    if(num(t.targetCalories,null)!=null){
+      plan.nutrition||(plan.nutrition={});
+      plan.nutrition.endGoalCalories=num(t.targetCalories);
+    }
+    plan.training||(plan.training={});
+    plan.training.progressionGoals ||= {phase1:{},phase2:{}};
+    plan.training.progressionGoals.phase1 ||= {};
+    plan.training.progressionGoals.phase1.bridgeWeeks=t.entryRampWeeks;
+    plan.training.progressionGoals.phase1.bridgeCurve=t.entryRampCurve;
+    const startDate=plan?.goal?.startDate||todayISO();
+    const phase1End=new Date(dms(startDate)+(t.entryRampWeeks*7*dayMs)).toISOString().slice(0,10);
+    plan.training.progressionGoals.phase1.targetDate=phase1End;
+    plan.training.progressionGoals.phase2 ||= {};
+    plan.training.progressionGoals.phase2.startDate=phase1End;
+    try{write();gf46VaultUpsertCurrent?.()}catch{}
+  }
+
+  function currentCapacitySets(){
+    const c=plan?.training?.currentTrainingCapacity||plan?.client?.currentTrainingCapacity||progress?.settings?.currentTrainingCapacity||{};
+    return (Number(c.workoutsPerWeek)||0)*(Number(c.exercisesPerWorkout)||0)*(Number(c.setsPerExercise)||0)
+  }
+  function volumeProjection(){
+    const t=targets(),start=plan?.goal?.startDate||todayISO();
+    const baseline=currentCapacitySets();
+    const week1=Number(plan?.training?.volumeRamp?.startWeeklySets)||weeklySets(plan?.training?.startingPlan?.sessions||plan?.training?.sessions||[]);
+    const full=Number(plan?.training?.volumeRamp?.targetWeeklySets)||weeklySets(plan?.training?.targetPlan?.sessions||plan?.training?.sessions||[]);
+    const entryWeeks=Math.max(1,Number(t.entryRampWeeks)||1);
+    const p2=Array.isArray(plan?.training?.volumeRamp?.weeklySetTargets)&&plan.training.volumeRamp.weeklySetTargets.length
+      ? plan.training.volumeRamp.weeklySetTargets.map(Number)
+      : [week1,full];
+    const rows=[{label:'Now',value:baseline,phase:'P1'}];
+    for(let i=1;i<=entryWeeks;i++){
+      const x=i/entryWeeks;
+      const f=t.entryRampCurve==='conservative'?x*x:t.entryRampCurve==='fast'?Math.sqrt(x):x;
+      rows.push({label:`P1 W${i}`,value:Math.round(lerp(baseline,week1,f)),phase:'P1'})
+    }
+    p2.forEach((v,i)=>rows.push({label:`P2 W${i+1}`,value:Number(v)||week1,phase:'P2'}));
+    if(rows.at(-1)?.value!==full)rows.push({label:'Full',value:full,phase:'P2'});
+    return {rows,baseline,week1,full,entryWeeks,start}
+  }
+
+  function svgLine(points, targetPoints, unit='', targetLabel='Target'){
+    const W=720,H=250,pL=48,pR=16,pT=20,pB=34;
+    const all=[...points,...targetPoints].filter(x=>Number.isFinite(x.v));
+    if(!all.length)return `<div class="muted" style="padding:70px 15px;text-align:center">Define the goal or add progress data to unlock this projection.</div>`;
+    const minT=Math.min(...all.map(x=>x.t)),maxT=Math.max(...all.map(x=>x.t),minT+dayMs);
+    let minV=Math.min(...all.map(x=>x.v)),maxV=Math.max(...all.map(x=>x.v));
+    const pad=Math.max((maxV-minV)*.12,unit==='%'?1:0.5);minV-=pad;maxV+=pad;if(maxV===minV)maxV=minV+1;
+    const x=t=>pL+((t-minT)/(maxT-minT))*(W-pL-pR);
+    const y=v=>pT+(1-(v-minV)/(maxV-minV))*(H-pT-pB);
+    const path=arr=>arr.filter(z=>Number.isFinite(z.v)).map((z,i)=>`${i?'L':'M'} ${x(z.t).toFixed(1)} ${y(z.v).toFixed(1)}`).join(' ');
+    const ticks=[0,.25,.5,.75,1].map(f=>minV+(maxV-minV)*f);
+    const xTicks=[minT,minT+(maxT-minT)/2,maxT];
+    return `<svg class="gf68-main-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Progress projection chart">
+      ${ticks.map(v=>`<line x1="${pL}" y1="${y(v)}" x2="${W-pR}" y2="${y(v)}" stroke="rgba(255,255,255,.05)" stroke-width="1"/><text x="${pL-7}" y="${y(v)+3}" text-anchor="end" fill="#75849a" font-size="8">${round1(v)}${unit}</text>`).join('')}
+      ${xTicks.map(t=>`<text x="${x(t)}" y="${H-9}" text-anchor="middle" fill="#75849a" font-size="8">${dateLabel(new Date(t).toISOString().slice(0,10))}</text>`).join('')}
+      ${targetPoints.length?`<path d="${path(targetPoints)}" fill="none" stroke="#8d80ff" stroke-width="3" stroke-dasharray="7 6" stroke-linecap="round"/>`:''}
+      ${points.length?`<path d="${path(points)}" fill="none" stroke="#8fd4ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`:''}
+      ${points.map(z=>`<circle cx="${x(z.t)}" cy="${y(z.v)}" r="4" fill="#8fd4ff"/>`).join('')}
+      ${targetPoints.length?`<text x="${W-pR}" y="${pT+8}" text-anchor="end" fill="#a79cff" font-size="9">${targetLabel}</text>`:''}
+    </svg>`
+  }
+
+  function volumeSVG(){
+    const d=volumeProjection(),rows=d.rows,W=720,H=230,pL=48,pR=16,pT=20,pB=34;
+    const vals=rows.map(x=>x.value),min=Math.min(...vals,0),max=Math.max(...vals,1),pad=Math.max(4,(max-min)*.12);
+    const lo=Math.max(0,min-pad),hi=max+pad,x=i=>pL+(i/Math.max(1,rows.length-1))*(W-pL-pR),y=v=>pT+(1-(v-lo)/(hi-lo))*(H-pT-pB);
+    const path=rows.map((r,i)=>`${i?'L':'M'} ${x(i).toFixed(1)} ${y(r.value).toFixed(1)}`).join(' ');
+    const phaseBoundary=d.entryWeeks;
+    return `<svg class="gf68-volume-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Training volume progression">
+      <rect x="${pL}" y="${pT}" width="${Math.max(0,x(phaseBoundary)-pL)}" height="${H-pT-pB}" fill="rgba(83,157,245,.045)"/>
+      <rect x="${x(phaseBoundary)}" y="${pT}" width="${W-pR-x(phaseBoundary)}" height="${H-pT-pB}" fill="rgba(66,194,166,.035)"/>
+      ${[0,.25,.5,.75,1].map(f=>{const v=lo+(hi-lo)*f;return `<line x1="${pL}" y1="${y(v)}" x2="${W-pR}" y2="${y(v)}" stroke="rgba(255,255,255,.05)"/><text x="${pL-7}" y="${y(v)+3}" text-anchor="end" fill="#75849a" font-size="8">${Math.round(v)}</text>`}).join('')}
+      <path d="${path}" fill="none" stroke="#83cdfb" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      ${rows.map((r,i)=>`<circle cx="${x(i)}" cy="${y(r.value)}" r="4" fill="${r.phase==='P1'?'#82c9ff':'#79d5bd'}"/><text x="${x(i)}" y="${H-9}" text-anchor="middle" fill="#75849a" font-size="7">${i===0?'Now':r.label.replace('P1 ','').replace('P2 ','')}</text>`).join('')}
+      <line x1="${x(phaseBoundary)}" y1="${pT}" x2="${x(phaseBoundary)}" y2="${H-pB}" stroke="#b1c0d5" stroke-width="1.2" stroke-dasharray="4 5"/>
+      <text x="${(pL+x(phaseBoundary))/2}" y="${pT+11}" text-anchor="middle" fill="#91cfff" font-size="9">Progression 1</text>
+      <text x="${(x(phaseBoundary)+W-pR)/2}" y="${pT+11}" text-anchor="middle" fill="#9fe2d2" font-size="9">Progression 2</text>
+    </svg>`
+  }
+
+  function dailyCalories(){
+    const map={};
+    for(const x of progress?.nutritionLogs||[]){if(!x?.date)continue;map[x.date]=(map[x.date]||0)+(Number(x.calories)||0)}
+    return Object.entries(map).sort((a,b)=>a[0].localeCompare(b[0])).map(([date,v])=>({date,v}))
+  }
+  function bodyFatRows(){return (progress?.bodyCompositionLogs||[]).filter(x=>num(x.bodyFatPct,null)!=null).map(x=>({date:x.date||String(x.createdAt||'').slice(0,10),v:Number(x.bodyFatPct)})).filter(x=>x.date).sort((a,b)=>a.date.localeCompare(b.date))}
+  function tapeRows(key){return (progress?.bodyCompositionLogs||[]).map(x=>({date:x.date||String(x.createdAt||'').slice(0,10),v:num(x.measurementsCm?.[key],null)})).filter(x=>x.date&&x.v!=null).sort((a,b)=>a.date.localeCompare(b.date))}
+  function liftRows(target){
+    const key=String(target?.exerciseName||'').toLowerCase().trim();if(!key)return[];
+    const out=[];
+    for(const w of progress?.workoutLogs||[]){
+      const date=w.date||String(w.completedAt||w.startedAt||'').slice(0,10);if(!date)continue;
+      let best=null;
+      for(const s of w.setEntries||[]){
+        const n=String(s.exerciseName||'').toLowerCase();
+        if(!(n===key||n.includes(key)||key.includes(n)))continue;
+        const v=num(s.e1rmKg,e1rm(s.weightKg,s.reps,s.rir));if(v!=null)best=Math.max(best||0,v)
+      }
+      if(best)out.push({date,v:best})
+    }
+    return out.sort((a,b)=>a.date.localeCompare(b.date))
+  }
+  function projection(metricName){
+    const t=targets(),start=plan?.goal?.startDate||todayISO(),end=goalDate(),t0=dms(start),t1=Math.max(dms(end),t0+dayMs);
+    let actual=[],s=null,e=null,unit='',label='';
+    if(metricName==='mass'){
+      actual=(progress?.weighIns||[]).filter(x=>num(x.weightKg,null)!=null&&x.date).map(x=>({date:x.date,v:Number(x.weightKg)})).sort((a,b)=>a.date.localeCompare(b.date));
+      s=num(plan?.client?.startWeightKg,actual[0]?.v);e=num(t.targetMassKg,num(plan?.goal?.targetWeightKg,null));unit=' kg';label='Mass target';
+    }else if(metricName==='calories'){
+      actual=dailyCalories();s=num(t.startCalories,num(plan?.nutrition?.calories,actual[0]?.v));e=num(t.targetCalories,num(plan?.nutrition?.endGoalCalories,num(plan?.nutrition?.calories,null)));unit=' kcal';label='Calorie target';
+    }else if(metricName==='bodyfat'){
+      actual=bodyFatRows();s=num(t.startBodyFatPct,actual[0]?.v);e=num(t.targetBodyFatPct,num(plan?.goal?.targetBodyFatPct,null));unit='%';label='Body-fat target';
+    }else if(metricName==='lift'){
+      const lt=t.liftTargets[selectedLift]||t.liftTargets[0];actual=liftRows(lt);s=actual[0]?.v;
+      if(s==null){const b=(plan?.training?.startingLoadBaselines||[]).find(x=>String(x.exerciseName||'').toLowerCase()===String(lt?.exerciseName||'').toLowerCase());s=num(b?.e1rmKg,e1rm(b?.weightKg,b?.reps,b?.rir))}
+      e=e1rm(lt?.targetWeightKg,lt?.targetReps,lt?.targetRIR);unit=' kg';label='e1RM target';
+    }else{
+      const mt=t.measurementTargets.find(x=>x.key===selectedTape)||t.measurementTargets[0];if(mt)selectedTape=mt.key;
+      actual=tapeRows(selectedTape);s=actual[0]?.v;e=num(mt?.targetCm,null);unit=' cm';label=`${tapeLabel(selectedTape)} target`;
+    }
+    const points=actual.map(x=>({t:dms(x.date),v:x.v,date:x.date}));
+    const targetPoints=(s!=null&&e!=null)?[{t:t0,v:s},{t:t1,v:e}]:[];
+    const current=actual.at(-1)?.v??s;
+    let projected=null,diff=null;
+    if(s!=null&&e!=null){
+      const frac=Math.max(0,Math.min(1,(Date.now()-t0)/(t1-t0)));projected=lerp(s,e,frac);diff=current!=null?current-projected:null
+    }
+    return {actual,points,targetPoints,s,e,current,projected,diff,unit,label,start,end}
+  }
+
+  function analysisCards(){
+    const mass=projection('mass'),bf=projection('bodyfat'),cal=projection('calories');
+    const vol=volumeProjection(),readiness=vol.week1?clampPct((vol.baseline/vol.week1)*100):100;
+    const phrase=(p,lowerBetter=false)=>{
+      if(p.current==null||p.projected==null)return'Needs more logged data.';
+      const d=p.current-p.projected,thr=Math.max(Math.abs((p.e||p.current)-(p.s||p.current))*.04,.1);
+      if(Math.abs(d)<=thr)return'Close to the planned trajectory.';
+      if(lowerBetter)return d<0?'Ahead of the projected direction.':'Above the projected line.';
+      return d>0?'Ahead of the projected line.':'Below the projected line.';
+    };
+    return `<div class="gf68-analysis-grid">
+      <div class="gf68-analysis-item"><b>Progression 1 readiness · ${readiness}%</b><span>${vol.baseline} current working sets/week → ${vol.week1} Week-1 sets/week over ${vol.entryWeeks} ramp week${vol.entryWeeks===1?'':'s'}.</span></div>
+      <div class="gf68-analysis-item"><b>Target mass</b><span>${phrase(mass,false)} ${mass.current!=null?`${round1(mass.current)} kg current.`:''}</span></div>
+      <div class="gf68-analysis-item"><b>Body fat</b><span>${phrase(bf,true)} ${bf.current!=null?`${round1(bf.current)}% latest.`:'Add a body-composition check-in.'}</span></div>
+      <div class="gf68-analysis-item"><b>Calorie intake</b><span>${cal.actual.length?`${Math.round(cal.current||0)} kcal latest logged day versus ${cal.projected!=null?Math.round(cal.projected):'—'} projected.`:'Log nutrition to compare actual intake with the target curve.'}</span></div>
+    </div>`
+  }
+
+  function goalSummary(){
+    const t=targets(),lift=t.liftTargets[0],tape=t.measurementTargets[0];
+    return `<div class="gf68-goal-grid">
+      <div class="gf68-goal-kpi"><span>Target mass</span><b>${num(t.targetMassKg,null)!=null?round1(t.targetMassKg)+' kg':'Define'}</b></div>
+      <div class="gf68-goal-kpi"><span>Body fat</span><b>${num(t.targetBodyFatPct,null)!=null?round1(t.targetBodyFatPct)+'%':'Define'}</b></div>
+      <div class="gf68-goal-kpi"><span>Calories</span><b>${num(t.targetCalories,null)!=null?Math.round(t.targetCalories)+' kcal':'Define'}</b></div>
+      <div class="gf68-goal-kpi"><span>Lift goal</span><b>${lift?.exerciseName?esc(lift.exerciseName):'Define'}</b></div>
+      <div class="gf68-goal-kpi"><span>Tape goal</span><b>${tape?.key?`${esc(tapeLabel(tape.key))} ${tape.targetCm||'—'} cm`:'Define'}</b></div>
+    </div>`
+  }
+
+  function chartControls(){
+    const t=targets();
+    let extra='';
+    if(metric==='lift'&&t.liftTargets.length){
+      extra=`<select class="input" onchange="gf68SelectLift(this.value)">${t.liftTargets.map((x,i)=>`<option value="${i}" ${i===selectedLift?'selected':''}>${esc(x.exerciseName||'Lift '+(i+1))}</option>`).join('')}</select>`
+    }
+    if(metric==='tape'&&t.measurementTargets.length){
+      extra=`<select class="input" onchange="gf68SelectTape(this.value)">${t.measurementTargets.map(x=>`<option value="${esc(x.key)}" ${x.key===selectedTape?'selected':''}>${esc(tapeLabel(x.key))}</option>`).join('')}</select>`
+    }
+    return `<div class="gf68-chart-controls">${extra}</div>`
+  }
+
+  function renderChart(){
+    const el=document.getElementById('gf68ProjectionChart');if(!el)return;
+    const p=projection(metric);
+    el.innerHTML=chartControls()+svgLine(p.points,p.targetPoints,p.unit,p.label)+`<div class="gf68-chart-readout">
+      <div><span>Current</span><b>${p.current!=null?round1(p.current)+p.unit:'—'}</b></div>
+      <div><span>Projected now</span><b>${p.projected!=null?round1(p.projected)+p.unit:'—'}</b></div>
+      <div><span>End target</span><b>${p.e!=null?round1(p.e)+p.unit:'—'}</b></div>
+    </div>`
+  }
+  window.gf68SetMetric=function(v){metric=v;document.querySelectorAll('.gf68-chart-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.metric===v));renderChart()}
+  window.gf68SelectLift=function(v){selectedLift=Math.max(0,Number(v)||0);renderChart()}
+  window.gf68SelectTape=function(v){selectedTape=String(v||'chest');renderChart()}
+
+  function pageHTML(legacy){
+    const t=targets(),vol=volumeProjection();
+    return `<div class="gf68-page">
+      <div class="gf68-hero">
+        <div class="gf68-hero-top"><div><div class="eyebrow">Progression</div><h2>Goals, projections & current progress</h2><p>Every end-goal value and the path toward it lives here. Actual logs are compared against the projected curves as data accumulates.</p></div><button class="gf68-edit-goal" onclick="gf68OpenGoalEditor()">Edit end goal</button></div>
+        ${goalSummary()}
+      </div>
+
+      <div class="gf68-stage-card">
+        <div class="gf68-stage-head"><div><div class="eyebrow">Programme progression</div><h3>Current baseline → Week 1 → full programme</h3><p>Progression 1 bridges current capacity into Week 1. Progression 2 then follows the adjustable main-programme ramp.</p></div><span class="gf68-stage-badge">P1 ${vol.entryWeeks} wk · P2 ${(plan?.training?.volumeRamp?.rampWeeks||'—')} wk</span></div>
+        ${volumeSVG()}
+        <div class="gf68-phase-legend"><span><b>${vol.baseline}</b> current sets/wk</span><span><b>${vol.week1}</b> Week 1</span><span><b>${vol.full}</b> full programme</span><span>Progression 1 curve: <b>${esc(t.entryRampCurve||'even')}</b></span></div>
+        <button class="gf67-ramp-btn" onclick="gf68OpenGoalEditor('ramps')">Edit Progression 1 ramp</button>
+        <button class="gf67-ramp-btn" onclick="gf67OpenRampEditor()">Edit Progression 2 ramp</button>
+      </div>
+
+      <div class="gf68-chart-card">
+        <div class="gf68-section-head"><div><div class="eyebrow">Projection charts</div><h3>Actual vs target trajectory</h3><p>Select a goal metric. Solid line = logged progress; dashed line = defined projection.</p></div></div>
+        <div class="gf68-chart-tabs">
+          ${[['mass','Mass'],['lift','Lift capacity'],['calories','Calories'],['bodyfat','Body fat %'],['tape','Tape measure']].map(([k,l])=>`<button data-metric="${k}" class="${metric===k?'on':''}" onclick="gf68SetMetric('${k}')">${l}</button>`).join('')}
+        </div>
+        <div id="gf68ProjectionChart"></div>
+      </div>
+
+      <div class="gf68-analysis-card">
+        <div class="gf68-section-head"><div><div class="eyebrow">Current progress analysis</div><h3>Where the client is now</h3><p>Uses the latest training, weight, nutrition and body-composition records without pretending missing data exists.</p></div></div>
+        ${analysisCards()}
+      </div>
+
+      <details class="gf68-legacy">
+        <summary>Detailed training & physique analysis</summary>
+        <div class="gf68-legacy-body">${legacy}</div>
+      </details>
+    </div>`
+  }
+
+  // ------------------ End goal editor ------------------
+  function liftRow(x={}){
+    return `<div class="gf68-lift-row"><input class="input" data-role="exercise" placeholder="Exercise" value="${esc(x.exerciseName||'')}"><input class="input" data-role="kg" inputmode="decimal" placeholder="kg" value="${x.targetWeightKg??''}"><input class="input" data-role="reps" inputmode="numeric" placeholder="reps" value="${x.targetReps??8}"><input class="input" data-role="rir" inputmode="numeric" placeholder="RIR" value="${x.targetRIR??2}"><button class="gf68-remove" onclick="this.closest('.gf68-lift-row').remove()">×</button></div>`
+  }
+  function tapeRow(x={}){
+    const keys=['neck','shoulders','chest','waist','hips','left_upper_arm','right_upper_arm','left_forearm','right_forearm','left_thigh','right_thigh','left_calf','right_calf'];
+    return `<div class="gf68-tape-row"><select class="input" data-role="key">${keys.map(k=>`<option value="${k}" ${x.key===k?'selected':''}>${tapeLabel(k)}</option>`).join('')}</select><input class="input" data-role="cm" inputmode="decimal" placeholder="Target cm" value="${x.targetCm??''}"><button class="gf68-remove" onclick="this.closest('.gf68-tape-row').remove()">×</button></div>`
+  }
+  window.gf68AddLiftGoal=function(x={}){const l=document.getElementById('gf68LiftRows');if(!l)return;if(l.children.length>=8){toast('Up to 8 lift goals');return}l.insertAdjacentHTML('beforeend',liftRow(x))}
+  window.gf68AddTapeGoal=function(x={}){const l=document.getElementById('gf68TapeRows');if(!l)return;if(l.children.length>=10){toast('Up to 10 measurement goals');return}l.insertAdjacentHTML('beforeend',tapeRow(x))}
+
+  window.gf68OpenGoalEditor=function(){
+    const t=clone(targets()),sheet=document.getElementById('sessionSheet');if(!sheet)return;
+    sheet.classList.remove('workout-sheet','gf52-live-sheet');
+    sheet.innerHTML=`<button class="gf50-sheet-close" onclick="closeSession()" aria-label="Close">×</button>
+      <div class="eyebrow">Progression goal definition</div><h2 style="font-size:28px;margin:5px 0 3px">Define the end goal</h2>
+      <p class="muted" style="margin-top:0">These values drive the Progression projections. They remain editable after onboarding.</p>
+
+      <div class="gf68-goal-editor-grid">
+        <div class="gf68-field"><label>Target mass kg</label><input id="gf68TargetMass" class="input" inputmode="decimal" value="${t.targetMassKg??''}"></div>
+        <div class="gf68-field"><label>Target date</label><input id="gf68TargetDate" class="input" type="date" value="${t.targetDate||goalDate()}"></div>
+        <div class="gf68-field"><label>Target body fat %</label><input id="gf68TargetBF" class="input" inputmode="decimal" value="${t.targetBodyFatPct??''}"></div>
+        <div class="gf68-field"><label>End-goal calories / day</label><input id="gf68TargetCalories" class="input" inputmode="numeric" value="${t.targetCalories??''}"></div>
+        <div class="gf68-field"><label>Progression 1 ramp weeks</label><select id="gf68EntryWeeks" class="input">${[1,2,3,4,5,6].map(n=>`<option value="${n}" ${n===Number(t.entryRampWeeks)?'selected':''}>${n} week${n===1?'':'s'}</option>`).join('')}</select></div>
+        <div class="gf68-field"><label>Progression 1 ramp shape</label><select id="gf68EntryCurve" class="input"><option value="conservative" ${t.entryRampCurve==='conservative'?'selected':''}>Conservative</option><option value="even" ${t.entryRampCurve==='even'?'selected':''}>Even</option><option value="fast" ${t.entryRampCurve==='fast'?'selected':''}>Fast start</option></select></div>
+      </div>
+
+      <div class="gf68-subsection"><div class="gf68-subsection-head"><div><b>Lift-capacity goals</b><span>Target working load × reps @ RIR. Chart converts this to estimated 1RM.</span></div><button class="btn secondary" onclick="gf68AddLiftGoal()">＋ Lift</button></div><div id="gf68LiftRows" class="gf68-row-list"></div></div>
+
+      <div class="gf68-subsection"><div class="gf68-subsection-head"><div><b>Tape-measure goals</b><span>Define the muscles / measurements you specifically want to increase or control.</span></div><button class="btn secondary" onclick="gf68AddTapeGoal()">＋ Measurement</button></div><div id="gf68TapeRows" class="gf68-row-list"></div></div>
+
+      <div class="gf68-goal-completeness">A complete end goal contains: target mass, target body fat, calorie target, at least one lift-capacity target and at least one tape-measure target. Progress charts only claim progress where actual data exists.</div>
+      <div class="gf68-editor-actions"><button class="btn secondary" onclick="closeSession()">Cancel</button><button class="btn primary" onclick="gf68SaveGoalEditor()">Save end goal</button></div>`;
+    const lr=document.getElementById('gf68LiftRows');(t.liftTargets||[]).forEach(x=>lr.insertAdjacentHTML('beforeend',liftRow(x)));if(!lr.children.length)gf68AddLiftGoal();
+    const tr=document.getElementById('gf68TapeRows');(t.measurementTargets||[]).forEach(x=>tr.insertAdjacentHTML('beforeend',tapeRow(x)));if(!tr.children.length)gf68AddTapeGoal({key:'chest'});
+    document.getElementById('sessionModal')?.classList.add('open')
+  }
+
+  window.gf68SaveGoalEditor=function(){
+    const old=targets(),t=clone(old);
+    t.targetMassKg=num(document.getElementById('gf68TargetMass')?.value,null);
+    t.targetDate=String(document.getElementById('gf68TargetDate')?.value||'');
+    t.targetBodyFatPct=num(document.getElementById('gf68TargetBF')?.value,null);
+    t.targetCalories=num(document.getElementById('gf68TargetCalories')?.value,null);
+    t.entryRampWeeks=Math.max(1,Math.min(6,num(document.getElementById('gf68EntryWeeks')?.value,1)));
+    t.entryRampCurve=String(document.getElementById('gf68EntryCurve')?.value||'even');
+    t.liftTargets=[...document.querySelectorAll('#gf68LiftRows .gf68-lift-row')].map(r=>{
+      const exerciseName=String(r.querySelector('[data-role="exercise"]')?.value||'').trim(),kg=num(r.querySelector('[data-role="kg"]')?.value,null),reps=num(r.querySelector('[data-role="reps"]')?.value,null),rir=num(r.querySelector('[data-role="rir"]')?.value,2);
+      return exerciseName&&kg!=null&&reps!=null?{exerciseName,targetWeightKg:kg,targetReps:Math.round(reps),targetRIR:Math.max(0,Math.min(5,rir))}:null
+    }).filter(Boolean);
+    t.measurementTargets=[...document.querySelectorAll('#gf68TapeRows .gf68-tape-row')].map(r=>{
+      const key=String(r.querySelector('[data-role="key"]')?.value||''),cm=num(r.querySelector('[data-role="cm"]')?.value,null);
+      return key&&cm!=null?{key,targetCm:cm}:null
+    }).filter(Boolean);
+
+    if(t.targetMassKg==null||t.targetBodyFatPct==null||t.targetCalories==null){toast('Define mass, body-fat and calorie targets');return}
+    if(!t.liftTargets.length){toast('Add at least one lift-capacity target');return}
+    if(!t.measurementTargets.length){toast('Add at least one tape-measure target');return}
+    saveTargets(t);selectedLift=Math.min(selectedLift,t.liftTargets.length-1);selectedTape=t.measurementTargets[0]?.key||'chest';
+    closeSession();renderProgress();toast('End goal and projections updated')
+  }
+
+  // ------------------ Onboarding goal step enhancement ------------------
+  function injectOnboardingGoals(){
+    if(canonicalOnboardingStep!==4)return;
+    const card=document.querySelector('#onboardCard,#onboarding .tour-card,#onboarding .onboard-card')||document.querySelector('#onboarding');
+    const grid=card?.querySelector('.canon-grid');if(!grid||grid.querySelector('#gf68OnboardGoalExtras'))return;
+    canonicalOnboarding.goal.progressionTargets ||= {
+      targetBodyFatPct:'',
+      targetCalories:Number(canonicalOnboarding?.nutrition?.calories)||'',
+      targetDate:'',
+      entryRampWeeks:1,entryRampCurve:'even',
+      liftTargets:[],measurementTargets:[]
+    };
+    const t=canonicalOnboarding.goal.progressionTargets;
+    grid.insertAdjacentHTML('beforeend',`<div id="gf68OnboardGoalExtras" class="canon-field wide"><div class="gf68-goal-completeness"><b>Complete end-goal definition</b><br>Define body fat, calories, at least one lift target and at least one tape target. These become the Progression page projections.</div></div>
+      <div class="canon-field"><label>Target body fat %</label><input id="gf68ObBF" class="input" inputmode="decimal" value="${t.targetBodyFatPct??''}"></div>
+      <div class="canon-field"><label>End-goal calories/day</label><input id="gf68ObCalories" class="input" inputmode="numeric" value="${t.targetCalories??canonicalOnboarding.nutrition.calories??''}"></div>
+      <div class="canon-field"><label>Progression 1 ramp</label><select id="gf68ObRamp" class="input">${[1,2,3,4,5,6].map(n=>`<option value="${n}" ${n===Number(t.entryRampWeeks||1)?'selected':''}>${n} week${n===1?'':'s'}</option>`).join('')}</select></div>
+      <div class="canon-field"><label>Ramp shape</label><select id="gf68ObRampCurve" class="input"><option value="conservative">Conservative</option><option value="even" selected>Even</option><option value="fast">Fast start</option></select></div>
+      <div class="canon-field wide"><label>Primary lift goal</label><div class="gf68-lift-row"><input id="gf68ObLiftName" class="input" placeholder="e.g. Bench press"><input id="gf68ObLiftKg" class="input" inputmode="decimal" placeholder="kg"><input id="gf68ObLiftReps" class="input" inputmode="numeric" placeholder="reps" value="8"><input id="gf68ObLiftRIR" class="input" inputmode="numeric" placeholder="RIR" value="2"><span></span></div></div>
+      <div class="canon-field wide"><label>Primary tape-measure goal</label><div class="gf68-tape-row"><select id="gf68ObTapeKey" class="input"><option value="chest">Chest</option><option value="shoulders">Shoulders</option><option value="left_upper_arm">Upper arm</option><option value="waist">Waist</option><option value="left_thigh">Thigh</option><option value="left_calf">Calf</option></select><input id="gf68ObTapeCm" class="input" inputmode="decimal" placeholder="Target cm"><span></span></div></div>`)
+  }
+
+  const baseGoalSave=window.canonicalGoalSave;
+  if(typeof baseGoalSave==='function')window.canonicalGoalSave=function(){
+    const g=canonicalOnboarding.goal;
+    const bf=num(document.getElementById('gf68ObBF')?.value,null),cal=num(document.getElementById('gf68ObCalories')?.value,null);
+    const ln=String(document.getElementById('gf68ObLiftName')?.value||'').trim(),lkg=num(document.getElementById('gf68ObLiftKg')?.value,null),lr=num(document.getElementById('gf68ObLiftReps')?.value,null),lrir=num(document.getElementById('gf68ObLiftRIR')?.value,2);
+    const tk=String(document.getElementById('gf68ObTapeKey')?.value||''),tcm=num(document.getElementById('gf68ObTapeCm')?.value,null);
+    if(bf==null||cal==null||!ln||lkg==null||lr==null||!tk||tcm==null){toast('Complete body fat, calories, lift and tape targets');return}
+    g.progressionTargets={
+      ...(g.progressionTargets||{}),targetBodyFatPct:bf,targetCalories:cal,
+      entryRampWeeks:Number(document.getElementById('gf68ObRamp')?.value)||1,
+      entryRampCurve:String(document.getElementById('gf68ObRampCurve')?.value||'even'),
+      liftTargets:[{exerciseName:ln,targetWeightKg:lkg,targetReps:Math.round(lr),targetRIR:Math.max(0,Math.min(5,lrir))}],
+      measurementTargets:[{key:tk,targetCm:tcm}]
+    };
+    return baseGoalSave.apply(this,arguments)
+  };
+
+  const basePreview=window.canonicalPlanPreview;
+  if(typeof basePreview==='function')window.canonicalPlanPreview=function(){
+    const p=basePreview.apply(this,arguments),g=canonicalOnboarding?.goal||{};
+    const gt=clone(g.progressionTargets||{});
+    gt.targetMassKg=Number(g.targetWeightKg)||gt.targetMassKg;
+    gt.startCalories=Number(canonicalOnboarding?.nutrition?.calories)||gt.startCalories;
+    if(gt.targetBodyFatPct!=null)p.goal.targetBodyFatPct=gt.targetBodyFatPct;
+    p.goal.progressionTargets=gt;
+    return p
+  };
+
+  const baseOnboard=window.renderCanonicalOnboarding;
+  if(typeof baseOnboard==='function')window.renderCanonicalOnboarding=function(){
+    const r=baseOnboard.apply(this,arguments);setTimeout(injectOnboardingGoals,0);return r
+  };
+
+  // ------------------ Replace Analysis tab with Progression page ------------------
+  const previousRenderProgress=window.renderProgress;
+  window.renderProgress=function(){
+    const root=document.getElementById('progress');if(!root)return;
+    let legacy='';
+    try{
+      if(typeof previousRenderProgress==='function'){
+        previousRenderProgress.apply(this,arguments);
+        legacy=root.innerHTML||''
+      }
+    }catch(err){
+      legacy=`<div class="gf65-debug">Detailed analysis renderer: ${esc(err?.message||String(err))}</div>`
+    }
+    root.innerHTML=pageHTML(legacy);
+    document.getElementById('pageTitle').textContent='Progression';
+    setTimeout(renderChart,0)
+  };
+
+  // Guarantee nav copy even on an old cached DOM shell.
+  setTimeout(()=>{
+    const b=document.querySelector('.nav button[data-tab="progress"]');if(b)b.innerHTML='<b>▥</b>Progression';
+    try{saveTargets(targets())}catch{}
+  },100);
 })();
 </script>
 

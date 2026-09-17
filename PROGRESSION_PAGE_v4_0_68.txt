@@ -1,0 +1,38 @@
+GAIN FOCUS PWA v4.0.68 — PROGRESSION PAGE
+
+NAVIGATION
+[PASS] Analysis tab renamed Progression.
+[PASS] Progression is now the single home for goals, projections and current-progress analysis.
+
+DEFINED END GOAL
+[PASS] Target mass.
+[PASS] Target date.
+[PASS] Target body-fat percentage.
+[PASS] End-goal daily calorie intake.
+[PASS] One or more lift-capacity targets: exercise + target working kg + reps + RIR.
+[PASS] One or more tape-measure targets: named measurement + target cm.
+[PASS] All values remain editable after onboarding.
+[PASS] Goal onboarding now captures body fat, calories, primary lift and primary tape target.
+
+PROJECTION CHARTS
+[PASS] Mass: actual weigh-ins vs projected target trajectory.
+[PASS] Lift capacity: actual estimated 1RM from logged sets vs end-goal e1RM implied by target kg/reps/RIR.
+[PASS] Calories: logged daily calories vs calorie projection.
+[PASS] Body fat: body-composition logs vs target body-fat projection.
+[PASS] Tape measure: selected circumference logs vs selected target cm.
+[PASS] Missing actual data is shown as missing; no fake measurements are generated.
+
+TRAINING RAMPS
+[PASS] Dedicated programme-volume chart joins Progression 1 and Progression 2.
+[PASS] Progression 1 visibly ramps from current baseline weekly sets to Week-1 capacity.
+[PASS] Progression 1 ramp duration: 1–6 weeks.
+[PASS] Progression 1 curve: conservative / even / fast.
+[PASS] Progression 2 uses the existing adjustable full-programme ramp from v4.0.67.
+[PASS] Phase boundary is visible on the chart.
+
+CURRENT ANALYSIS
+[PASS] Progression-1 readiness.
+[PASS] Mass vs projected trajectory.
+[PASS] Body fat vs projected trajectory.
+[PASS] Actual calorie logging vs projected calories.
+[PASS] Detailed existing training/physique analysis is retained in a nested section.
