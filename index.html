@@ -1440,7 +1440,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.70';
+const APP_VERSION='4.0.71';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -4437,7 +4437,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.70', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.71', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
@@ -5243,7 +5243,7 @@ window.gf30OpenBodyCompForm=function(){gf30EnsureBodyComposition();const sheet=d
 function gf45DefaultNotificationPrefs(){return {enabled:false,workouts:true,meals:true,inactivity:true,social:true,challenges:true,workoutTime:'18:00',breakfastTime:'08:30',lunchTime:'13:00',dinnerTime:'19:00',inactivityDays:3,quietStart:'22:30',quietEnd:'07:30'}}
 window.ensureProgressExtras=function(){GF45_ORIGINAL.ensureProgressExtras?.();if(!progress)return;progress.settings||(progress.settings={});progress.settings.notificationPrefs={...gf45DefaultNotificationPrefs(),...(progress.settings.notificationPrefs||{})};if(!Array.isArray(progress.settings.availableWeekdays))progress.settings.availableWeekdays=[...(plan?.training?.availableWeekdays||progress.settings.trainingWeekdays||[])];if(!Array.isArray(progress.notificationFeed))progress.notificationFeed=[]};
 function gf45PushStatus(){if(!('Notification'in window))return 'Browser notifications are unavailable here.';if(location.protocol==='file:')return 'Open the hosted PWA to enable system notifications. Calendar reminders still work from this file.';return Notification.permission==='granted'?'System notifications enabled.':'Tap Enable notifications. iPhone web push requires the hosted app added to the Home Screen.'}
-async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.70')}catch(e){console.warn(e);return null}}
+async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.71')}catch(e){console.warn(e);return null}}
 async function gf45RequestNotifications(){if(!('Notification'in window)){toast('Notifications are not supported here');return}if(location.protocol==='file:'){toast('Host/install the PWA to enable push');return}const reg=await gf45RegisterSW(),permission=await Notification.requestPermission();ensureProgressExtras();progress.settings.notificationPrefs.enabled=permission==='granted';write();if(permission==='granted'&&reg){await reg.showNotification('Gain Focus notifications enabled',{body:'Hercules can now surface training, nutrition and social reminders.',tag:'gf-enabled'});toast('Notifications enabled')}else toast('Notification permission not granted');gfRenderSocialHub()}
 async function gf45TestNotification(){const reg=await gf45RegisterSW();if(('Notification' in window)&&Notification.permission==='granted'&&reg){await reg.showNotification('Hercules · Test',{body:'Notifications are connected. Keep the hosted PWA installed for background alerts.',tag:'gf-test'});return}toast('Enable notifications first')}
 function gf45SaveNotificationSettings(){ensureProgressExtras();const p=progress.settings.notificationPrefs;for(const k of ['workouts','meals','inactivity','social','challenges'])p[k]=!!document.getElementById('gf45n_'+k)?.checked;for(const k of ['workoutTime','breakfastTime','lunchTime','dinnerTime','quietStart','quietEnd']){const v=document.getElementById('gf45n_'+k)?.value;if(v)p[k]=v}p.inactivityDays=clamp(Number(document.getElementById('gf45n_inactivityDays')?.value)||3,1,14);write();toast('Notification preferences saved')}
@@ -11316,6 +11316,249 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
 
   // Re-render current views so old cached generic thumbnails are replaced immediately.
   setTimeout(()=>{try{renderTrain?.()}catch{}},100);
+})();
+</script>
+
+
+<style id="gf71-ramp-engine-style">
+.gf71-ramp-status{margin-top:9px;padding:10px;border-radius:14px;background:rgba(83,157,245,.045);border:1px solid rgba(104,181,255,.09)}
+.gf71-ramp-status b{display:block;font-size:9.5px}.gf71-ramp-status span{display:block;margin-top:3px;font-size:8px;line-height:1.4;color:var(--muted)}
+.gf71-target-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+</style>
+<script id="gf71-functional-ramp-engine">
+(function(){
+  const clone=x=>{try{return structuredClone(x)}catch{return JSON.parse(JSON.stringify(x))}};
+  const sets=s=>(s||[]).reduce((n,x)=>n+(x.exercises||[]).reduce((a,e)=>a+(Number(e.sets)||0),0),0);
+  const currentBaseline=()=>{
+    const c=plan?.training?.currentTrainingCapacity||plan?.client?.currentTrainingCapacity||progress?.settings?.currentTrainingCapacity||{};
+    return Math.max(1,(Number(c.workoutsPerWeek)||1)*(Number(c.exercisesPerWorkout)||1)*(Number(c.setsPerExercise)||1))
+  };
+  const isCompound=e=>/press|squat|deadlift|rdl|romanian|row|pulldown|pull-up|pull up|chin|leg press|dip/i.test(e?.name||'')&&!/fly|raise|curl|extension|pushdown|shrug/i.test(e?.name||'');
+  const curve=(x,c)=>c==='conservative'?Math.pow(x,1.55):c==='fast'?Math.pow(x,.68):x;
+  const today=()=>typeof todayISO==='function'?todayISO():new Date().toISOString().slice(0,10);
+  const dateAdd=(s,n)=>{const d=new Date(`${s}T12:00:00`);d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+  const days=(a,b)=>Math.floor((new Date(`${b}T12:00:00`)-new Date(`${a}T12:00:00`))/86400000);
+
+  function scaleTemplate(template,target){
+    const src=clone(template||[]),full=sets(src);
+    if(!full||target>=full)return src;
+    target=Math.max(1,Math.round(target));
+    const ratio=Math.max(.15,target/full);
+    src.forEach(s=>(s.exercises||[]).forEach(e=>{
+      const min=isCompound(e)?1:1;
+      e.sets=Math.max(min,Math.min(Number(e.sets)||1,Math.floor((Number(e.sets)||1)*ratio)))
+    }));
+    const total=()=>sets(src);
+    let guard=0;
+    while(total()<target&&guard++<1000){
+      let changed=false;
+      for(let si=0;si<src.length&&!changed;si++){
+        for(let ei=0;ei<(src[si].exercises||[]).length;ei++){
+          const e=src[si].exercises[ei],t=template[si]?.exercises?.[ei];
+          if(t&&Number(e.sets)<Number(t.sets)){e.sets++;changed=true;break}
+        }
+      }
+      if(!changed)break
+    }
+    guard=0;
+    while(total()>target&&guard++<1000){
+      let changed=false;
+      for(let si=src.length-1;si>=0&&!changed;si--){
+        for(let ei=(src[si].exercises||[]).length-1;ei>=0;ei--){
+          const e=src[si].exercises[ei];
+          if(Number(e.sets)>1){e.sets--;changed=true;break}
+        }
+      }
+      if(!changed)break
+    }
+    return src
+  }
+
+  function p1Target(){
+    const g=plan?.goal?.progressionTargets||{};
+    const baseline=currentBaseline(),full=sets(plan?.training?.targetPlan?.sessions||plan?.training?.sessions||[]);
+    let entry=Number(g.entryWeeklySets);
+    if(!entry){
+      entry=Number(plan?.training?.startingPlan?.weeklySets)||sets(plan?.training?.startingPlan?.sessions||[]);
+      // Old versions often made "Week 1" identical to baseline, which made P1 inert.
+      // Give old profiles a meaningful but conservative editable entry point.
+      if(entry<=baseline&&full>baseline)entry=Math.min(full,baseline+Math.max(1,Math.ceil((full-baseline)*.25)))
+    }
+    return Math.max(baseline,Math.min(full||entry,Math.round(entry)))
+  }
+
+  function phaseTargets(start,end,weeks,shape,includeStart=false){
+    weeks=Math.max(1,Number(weeks)||1);
+    const out=[];
+    for(let i=1;i<=weeks;i++){
+      const x=includeStart?(weeks===1?1:(i-1)/(weeks-1)):i/weeks;
+      out.push(Math.round(start+(end-start)*curve(x,shape)))
+    }
+    if(out.length)out[out.length-1]=Math.round(end);
+    for(let i=1;i<out.length;i++)out[i]=Math.max(out[i],out[i-1]);
+    return out
+  }
+
+  function engine(){
+    if(!plan?.training)return null;
+    const g=plan.goal?.progressionTargets||{},vr=plan.training.volumeRamp||{};
+    const baseline=currentBaseline(),entry=p1Target();
+    const full=Number(vr.targetWeeklySets)||sets(plan.training.targetPlan?.sessions||plan.training.sessions||[]);
+    const p1Weeks=Math.max(1,Number(g.entryRampWeeks)||1),p1Curve=g.entryRampCurve||'even';
+    const p2Weeks=Math.max(1,Number(vr.rampWeeks)||1),p2Curve=vr.curve||'even';
+    const start=plan.training.rampEngine?.startDate||vr.startDate||plan.goal?.startDate||today();
+    const p1=phaseTargets(baseline,entry,p1Weeks,p1Curve,false);
+    let p2;
+    if(p2Curve==='custom'&&Array.isArray(vr.weeklySetTargets)&&vr.weeklySetTargets.length===p2Weeks){
+      p2=vr.weeklySetTargets.map(Number);
+      p2[0]=Math.max(entry,p2[0]||entry);p2[p2.length-1]=full;
+    }else p2=phaseTargets(entry,full,p2Weeks,p2Curve,true);
+    return {start,baseline,entry,full,p1Weeks,p2Weeks,p1Curve,p2Curve,p1,p2,targets:[...p1,...p2]}
+  }
+
+  function applyTarget(target){
+    const template=plan?.training?.targetPlan?.sessions;
+    if(!template?.length)return false;
+    const next=scaleTemplate(template,target);
+    // Preserve session-level schedule/name/id from current plan where possible.
+    const currentMap=new Map((plan.training.sessions||[]).map(s=>[String(s.id),s]));
+    next.forEach(s=>{
+      const old=currentMap.get(String(s.id));
+      if(old){
+        ['weekday','date','primaryDay','flexDay'].forEach(k=>{if(old[k]!=null)s[k]=old[k]})
+      }
+    });
+    plan.training.sessions=next;
+    plan.training.sessionsPerWeek=next.length;
+    return true
+  }
+
+  window.gf71ApplyRamp=function(force=false){
+    const e=engine();if(!e)return false;
+    plan.training.rampEngine ||= {};
+    const re=plan.training.rampEngine;
+    re.startDate=e.start;
+    re.phase1={startSets:e.baseline,targetSets:e.entry,weeks:e.p1Weeks,curve:e.p1Curve,weeklySetTargets:e.p1};
+    re.phase2={startSets:e.entry,targetSets:e.full,weeks:e.p2Weeks,curve:e.p2Curve,weeklySetTargets:e.p2};
+    re.weeklySetTargets=e.targets;
+
+    const elapsed=Math.max(0,Math.floor(days(e.start,today())/7));
+    const idx=Math.min(e.targets.length-1,elapsed);
+    const target=Number(e.targets[idx])||e.entry;
+    if(!force&&re.lastAppliedDate===today()&&Number(re.currentTargetWeeklySets)===target)return false;
+    const changed=applyTarget(target);
+    re.currentWeek=idx+1;
+    re.currentPhase=idx<e.p1.length?'progression-1':'progression-2';
+    re.currentPhaseWeek=idx<e.p1.length?idx+1:idx-e.p1.length+1;
+    re.currentTargetWeeklySets=target;
+    re.actualPlannedWeeklySets=sets(plan.training.sessions||[]);
+    re.lastAppliedDate=today();
+    re.completed=idx===e.targets.length-1&&target>=e.full;
+    if(plan.training.volumeRamp){
+      plan.training.volumeRamp.currentTargetWeeklySets=target;
+      plan.training.volumeRamp.currentWeeklySets=e.baseline;
+    }
+    try{write()}catch{}
+    return changed
+  };
+
+  window.gf71RestartRampToday=function(){
+    if(!plan?.training)return;
+    plan.training.rampEngine ||= {};
+    plan.training.rampEngine.startDate=today();
+    if(plan.training.volumeRamp)plan.training.volumeRamp.startDate=today();
+    plan.training.rampEngine.lastAppliedDate='';
+    gf71ApplyRamp(true);
+    try{write();renderAll?.()}catch{}
+  };
+
+  // Fix Progression 2 save: old code saved values but retained the original start date,
+  // so an old profile could instantly clamp to the end of the ramp and appear unchanged.
+  const baseSaveP2=window.gf67SaveRamp;
+  if(typeof baseSaveP2==='function')window.gf67SaveRamp=function(){
+    const result=baseSaveP2.apply(this,arguments);
+    if(plan?.training){
+      plan.training.rampEngine ||= {};
+      plan.training.rampEngine.startDate=today();
+      if(plan.training.volumeRamp)plan.training.volumeRamp.startDate=today();
+      plan.training.rampEngine.lastAppliedDate='';
+      gf71ApplyRamp(true);
+      try{write();renderAll?.()}catch{}
+      toast('Ramp saved and applied to the live programme')
+    }
+    return result
+  };
+
+  // Fix end-goal/P1 save: make it a real programme ramp, not graph-only.
+  const baseGoalSave=window.gf68SaveGoalEditor;
+  if(typeof baseGoalSave==='function')window.gf68SaveGoalEditor=function(){
+    const entryInput=document.getElementById('gf71EntrySets');
+    const entry=Number(entryInput?.value);
+    if(entryInput&&(!entry||entry<currentBaseline())){toast(`Week 1 entry volume must be at least ${currentBaseline()} sets/week`);return}
+    if(entryInput){
+      plan.goal ||= {};plan.goal.progressionTargets ||= {};
+      plan.goal.progressionTargets.entryWeeklySets=Math.round(entry)
+    }
+    const result=baseGoalSave.apply(this,arguments);
+    if(plan?.training){
+      plan.training.rampEngine ||= {};
+      plan.training.rampEngine.startDate=today();
+      plan.training.rampEngine.lastAppliedDate='';
+      gf71ApplyRamp(true);
+      try{write();renderAll?.()}catch{}
+    }
+    return result
+  };
+
+  // Add the missing P1 target field to the editor.
+  const baseOpenGoal=window.gf68OpenGoalEditor;
+  if(typeof baseOpenGoal==='function')window.gf68OpenGoalEditor=function(){
+    const r=baseOpenGoal.apply(this,arguments);
+    setTimeout(()=>{
+      const weeks=document.getElementById('gf68EntryWeeks')?.closest('.gf68-field');
+      if(!weeks||document.getElementById('gf71EntrySets'))return;
+      const e=engine();
+      weeks.insertAdjacentHTML('beforebegin',`<div class="gf68-field"><label>Week 1 entry volume</label><input id="gf71EntrySets" class="input" type="number" min="${e?.baseline||1}" max="${e?.full||999}" value="${e?.entry||''}"><div class="muted" style="font-size:7.5px;margin-top:5px">Progression 1 now changes the actual programme from ${e?.baseline||'—'} current sets/week to this entry volume.</div></div>`)
+    },0);
+    return r
+  };
+
+  // Make v4.0.63 callers use the new sequential engine.
+  window.gf63ApplyVolumeRamp=function(){return gf71ApplyRamp(false)};
+
+  function statusHTML(){
+    const e=engine(),re=plan?.training?.rampEngine;if(!e)return'';
+    const phase=re?.currentPhase==='progression-2'?'Progression 2':'Progression 1';
+    return `<div class="gf71-ramp-status"><b>LIVE RAMP · ${phase} · week ${re?.currentPhaseWeek||1}</b><span>Actual programme now: <b>${sets(plan?.training?.sessions||[])}</b> sets/week · ramp target <b>${re?.currentTargetWeeklySets||e.targets[0]}</b>. P1: ${e.baseline} → ${e.entry}; P2: ${e.entry} → ${e.full}. Saving either ramp restarts it from today and applies it to the workout prescription.</span></div>`
+  }
+
+  const baseProgression=window.gf68RenderProgressionPage;
+  if(typeof baseProgression==='function')window.gf68RenderProgressionPage=function(){
+    gf71ApplyRamp(false);
+    const r=baseProgression.apply(this,arguments);
+    setTimeout(()=>{
+      const card=document.querySelector('#progression .gf68-stage-card');
+      if(card&&!card.querySelector('.gf71-ramp-status'))card.querySelector('.gf68-stage-head')?.insertAdjacentHTML('afterend',statusHTML())
+    },0);
+    return r
+  };
+
+  const baseTrain=window.renderTrain;
+  if(typeof baseTrain==='function')window.renderTrain=function(){
+    gf71ApplyRamp(false);
+    return baseTrain.apply(this,arguments)
+  };
+
+  // Existing clients: initialise the engine but do not erase history.
+  setTimeout(()=>{
+    try{
+      if(plan?.training){
+        plan.training.rampEngine ||= {startDate:today()};
+        gf71ApplyRamp(true);
+        write()
+      }
+    }catch{}
+  },150);
 })();
 </script>
 

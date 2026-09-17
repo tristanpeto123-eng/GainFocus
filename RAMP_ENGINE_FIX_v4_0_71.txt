@@ -1,0 +1,15 @@
+Gain Focus v4.0.71 — functional ramp fix
+
+ROOT CAUSES FIXED
+1. Progression 1 was only changing projection metadata/charting. It did not alter plan.training.sessions.
+2. Progression 2 retained the old ramp start date. On an established profile the date calculation could place the user at the end of the ramp immediately, making duration/curve edits appear to do nothing.
+3. The old interpolation changed per-exercise sets by fraction and could miss the requested weekly-set target because of rounding.
+
+NEW RAMP ENGINE
+- Sequential: current baseline -> P1 entry volume -> P2 full programme.
+- P1 now has an editable Week 1 entry-volume target (working sets/week).
+- Saving P1 or P2 restarts the edited ramp from today and immediately writes the current ramp prescription into plan.training.sessions.
+- Exact target allocator scales the actual exercise set prescription toward the requested weekly-set target.
+- Train applies the current ramp prescription before rendering/starting a workout.
+- Progression page shows LIVE RAMP, current phase/week, actual programme sets/week and ramp target.
+- Existing workout history is untouched.
