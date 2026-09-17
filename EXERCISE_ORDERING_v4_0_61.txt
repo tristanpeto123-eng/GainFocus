@@ -1,0 +1,16 @@
+GAIN FOCUS PWA v4.0.61 — EXERCISE ORDERING
+
+NEW
+[PASS] Exercises can be shifted up one position.
+[PASS] Exercises can be shifted down one position.
+[PASS] Exercises can also be reordered by pressing and dragging the ⠿ handle.
+[PASS] Touch drag uses Pointer Events and is limited to the drag handle, so normal page scrolling remains available elsewhere.
+[PASS] Dragging only reorders exercises inside the same workout day.
+[PASS] Move-to-another-day, Swap, Delete and set +/- controls remain unchanged.
+[PASS] Exercise order is part of the planner draft and is saved when "Apply schedule" is pressed.
+[PASS] Impact report automatically uses the reordered session because session timing is recalculated from the current exercise order / station transitions.
+
+ACCESSIBILITY
+[PASS] Up/down buttons provide a non-drag alternative.
+[PASS] First exercise disables ↑.
+[PASS] Last exercise disables ↓.

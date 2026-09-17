@@ -1,0 +1,28 @@
+GAIN FOCUS PWA v4.0.62 — TRAINING PARTNER TIMING
+
+NEW
+[PASS] Planner now distinguishes solo training from training with partner(s).
+[PASS] Select 1, 2, 3 or 4 people training together.
+[PASS] Select average swap / load-change time: 10–45 seconds.
+[PASS] Default partner behaviour is alternate / round-robin sets on the same exercise.
+[PASS] Partner sets fill part of prescribed rest instead of simply multiplying the entire workout duration.
+[PASS] Session estimates, weekly estimates, overflow logic and Impact Report all use the partner-adjusted wall-clock time.
+[PASS] Exercise reordering from v4.0.61 still recalculates timing after the new order.
+[PASS] Training setup is stored in both plan.training and progress.settings.
+
+TIME MODEL
+For solo:
+  exercise time = lifting + prescribed rest + station transition
+
+For 2+ people alternating:
+  - everyone performs each planned set
+  - the other person's lifting occupies part of your rest interval
+  - extra handoff/load-change time is included
+  - if partner rotation is shorter than the prescribed rest, the remaining rest is still retained
+
+This is intended to estimate real wall-clock session duration, not total person-minutes.
+
+EXAMPLE
+2 people · 4 sets · ~40 sec lifting · 120 sec prescribed rest · 20 sec handoff:
+partner rotation fills much of the 120 sec rest, so the workout grows moderately rather
+than being doubled.

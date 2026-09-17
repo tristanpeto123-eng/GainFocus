@@ -1,0 +1,31 @@
+GAIN FOCUS PWA v4.0.63 — CURRENT TRAINING CAPACITY ONBOARDING
+
+ONBOARDING
+[PASS] Captures current workouts per week.
+[PASS] Captures typical exercises per workout.
+[PASS] Captures working sets per exercise.
+[PASS] Captures current rep range.
+[PASS] Captures current RIR / effort.
+[PASS] Captures solo / partner training context and swap/load-change time.
+[PASS] Optional representative working loads can be entered for up to 8 exercises.
+
+PLAN BRIDGE
+[PASS] Current weekly working-set capacity is calculated.
+[PASS] Full generated programme weekly sets are calculated.
+[PASS] If generated volume is within current capacity, the plan starts directly.
+[PASS] If generated volume exceeds current capacity, Week 1 is capped near current capacity.
+[PASS] A 2–6 week volume ramp is generated according to the size of the increase.
+[PASS] Full target sessions are retained separately from Week-1 starting sessions.
+[PASS] Train/workout applies the next ramp level automatically by training week.
+[PASS] A manual plan edit/redistribution disables the automatic ramp so user edits win.
+
+LOADS
+[PASS] Representative onboarding loads calculate an estimated 1RM using reps + RIR.
+[PASS] Matching plan exercises receive a starting kg suggestion from that onboarding baseline.
+[PASS] Unmatched exercises still use first-session calibration.
+
+EXAMPLE — USER'S STATED CURRENT SESSION
+5 exercises × 4 sets × 8–10 reps @ 0 RIR = 20 working sets per workout.
+The user should enter their actual current workouts/week separately; Gain Focus then
+compares that weekly capacity to the generated programme rather than assuming the
+number of sessions.

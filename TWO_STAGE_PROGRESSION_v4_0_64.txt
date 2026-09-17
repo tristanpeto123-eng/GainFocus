@@ -1,0 +1,28 @@
+GAIN FOCUS PWA v4.0.64 — TWO-STAGE PROGRESSION GOALS
+
+PROGRESSION 1
+Now -> Week 1 capacity
+- Training-readiness goal, not a physique/weight goal.
+- Compares current weekly working sets with the Week-1 starting-plan target.
+- Compares current workout frequency with Week-1 frequency.
+- Shows current RIR against the Week-1 target effort.
+- Reaches 100% once every Week-1 session has been completed at least once.
+- Current onboarding readiness is used as the initial percentage.
+
+PROGRESSION 2
+Week 1 -> End goal
+- Starts from the Week-1 programme baseline.
+- Tracks Week-1 programme volume toward full target programme volume.
+- Tracks bodyweight toward the final target separately.
+- Existing v4.0.63 volume-ramp logic is explicitly assigned to this second progression.
+
+UI
+- Onboarding Build Programme step now shows two separate progression cards.
+- Train page now gets a collapsible Two-stage progression widget.
+- The two goals are saved into plan.training.progressionGoals.
+- Progress percentages are recorded under progress.phaseProgress after workouts.
+
+IMPORTANT
+The two phases are intentionally different:
+1. "Can I physically execute Week 1 as prescribed?"
+2. "From that proven starting point, am I progressing toward the full training and physique goal?"

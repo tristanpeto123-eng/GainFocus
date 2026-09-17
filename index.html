@@ -1438,7 +1438,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.60';
+const APP_VERSION='4.0.64';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -4435,7 +4435,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.60', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.64', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
@@ -5241,7 +5241,7 @@ window.gf30OpenBodyCompForm=function(){gf30EnsureBodyComposition();const sheet=d
 function gf45DefaultNotificationPrefs(){return {enabled:false,workouts:true,meals:true,inactivity:true,social:true,challenges:true,workoutTime:'18:00',breakfastTime:'08:30',lunchTime:'13:00',dinnerTime:'19:00',inactivityDays:3,quietStart:'22:30',quietEnd:'07:30'}}
 window.ensureProgressExtras=function(){GF45_ORIGINAL.ensureProgressExtras?.();if(!progress)return;progress.settings||(progress.settings={});progress.settings.notificationPrefs={...gf45DefaultNotificationPrefs(),...(progress.settings.notificationPrefs||{})};if(!Array.isArray(progress.settings.availableWeekdays))progress.settings.availableWeekdays=[...(plan?.training?.availableWeekdays||progress.settings.trainingWeekdays||[])];if(!Array.isArray(progress.notificationFeed))progress.notificationFeed=[]};
 function gf45PushStatus(){if(!('Notification'in window))return 'Browser notifications are unavailable here.';if(location.protocol==='file:')return 'Open the hosted PWA to enable system notifications. Calendar reminders still work from this file.';return Notification.permission==='granted'?'System notifications enabled.':'Tap Enable notifications. iPhone web push requires the hosted app added to the Home Screen.'}
-async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.60')}catch(e){console.warn(e);return null}}
+async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.64')}catch(e){console.warn(e);return null}}
 async function gf45RequestNotifications(){if(!('Notification'in window)){toast('Notifications are not supported here');return}if(location.protocol==='file:'){toast('Host/install the PWA to enable push');return}const reg=await gf45RegisterSW(),permission=await Notification.requestPermission();ensureProgressExtras();progress.settings.notificationPrefs.enabled=permission==='granted';write();if(permission==='granted'&&reg){await reg.showNotification('Gain Focus notifications enabled',{body:'Hercules can now surface training, nutrition and social reminders.',tag:'gf-enabled'});toast('Notifications enabled')}else toast('Notification permission not granted');gfRenderSocialHub()}
 async function gf45TestNotification(){const reg=await gf45RegisterSW();if(('Notification' in window)&&Notification.permission==='granted'&&reg){await reg.showNotification('Hercules · Test',{body:'Notifications are connected. Keep the hosted PWA installed for background alerts.',tag:'gf-test'});return}toast('Enable notifications first')}
 function gf45SaveNotificationSettings(){ensureProgressExtras();const p=progress.settings.notificationPrefs;for(const k of ['workouts','meals','inactivity','social','challenges'])p[k]=!!document.getElementById('gf45n_'+k)?.checked;for(const k of ['workoutTime','breakfastTime','lunchTime','dinnerTime','quietStart','quietEnd']){const v=document.getElementById('gf45n_'+k)?.value;if(v)p[k]=v}p.inactivityDays=clamp(Number(document.getElementById('gf45n_inactivityDays')?.value)||3,1,14);write();toast('Notification preferences saved')}
@@ -8553,9 +8553,24 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
   }
   function compound(e){return /press|squat|deadlift|rdl|romanian|row|pulldown|pull-up|pull up|chin|leg press|dip/i.test(e?.name||'')&&!/fly|raise|curl|extension|pushdown|shrug/i.test(e?.name||'')}
   function exMinutes(e,prev=''){
+    const q=S()||{};
     const sets=Math.max(1,Number(e?.sets)||1),reps=(Number(e?.repMin||8)+Number(e?.repMax||12))/2;
     const rest=Number(e?.restSeconds)||(compound(e)?135:80),st=station(e);
-    return sets*Math.max(24,Math.min(52,reps*3.1))/60+Math.max(0,sets-1)*rest/60+(!prev?1.2:st===prev?.7:1.8)
+    const liftSec=Math.max(24,Math.min(52,reps*3.1));
+    const groupSize=Math.max(1,Math.min(4,Number(q.trainingGroupSize)||1));
+    const handoffSec=groupSize>1?Math.max(5,Math.min(60,Number(q.partnerHandoffSeconds)||20)):0;
+    let workSec;
+    if(groupSize<=1){
+      workSec=sets*liftSec+Math.max(0,sets-1)*rest;
+    }else{
+      // Everyone completes the same exercise and rotates set-by-set.
+      // The partner's set fills part of your prescribed rest instead of being added on top of it.
+      const firstRoundSec=groupSize*liftSec+Math.max(0,groupSize-1)*handoffSec;
+      const repeatCycleSec=Math.max(liftSec+rest,groupSize*(liftSec+handoffSec));
+      workSec=firstRoundSec+Math.max(0,sets-1)*repeatCycleSec;
+    }
+    const stationChange=(!prev?1.2:st===prev?.7:1.8)+(groupSize>1?.15*(groupSize-1):0);
+    return workSec/60+stationChange
   }
   function sessionMinutes(s){let n=10,p='';for(const e of s?.exercises||[]){n+=exMinutes(e,p);p=station(e)}return round1(n)}
   function weeklySets(ss){return ss.reduce((n,s)=>n+(s.exercises||[]).reduce((a,e)=>a+(Number(e.sets)||0),0),0)}
@@ -8610,6 +8625,9 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
     window.gf59PlannerState={
       mode,step:0,
       minutes:Number(minutes)||Number(progress?.settings?.sessionDurationMinutes)||Number(plan?.training?.defaultSessionDurationMinutes)||90,
+      trainingGroupSize:Math.max(1,Math.min(4,Number(progress?.settings?.trainingGroupSize)||Number(plan?.training?.trainingGroupSize)||1)),
+      partnerHandoffSeconds:Math.max(5,Math.min(60,Number(progress?.settings?.partnerHandoffSeconds)||Number(plan?.training?.partnerHandoffSeconds)||20)),
+      partnerSetRotation:'alternate',
       baseline:clone(plan?.training?.sessions||[]),
       available:av.length?av:[1,2,4,6],
       workoutCount:Math.max(1,Math.min(Number(plan?.training?.normalSessionsPerWeek)||Number(plan?.training?.sessionsPerWeek)||pr.length||4,av.length||4)),
@@ -8725,6 +8743,20 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
         <div class="gf58-field"><label>Time available per workout</label><select class="input" onchange="gf59SetMinutes(this.value)">${[30,45,60,75,90,105,120,150].map(m=>`<option value="${m}" ${m===q.minutes?'selected':''}>${m===60?'1 hour':m===90?'1 hr 30':m===120?'2 hours':m+' min'}</option>`).join('')}</select></div>
         <div class="gf58-field"><label>Days available per week</label><select class="input" onchange="gf59SetAvailableCount(this.value)">${[1,2,3,4,5,6,7].map(n=>`<option value="${n}" ${n===q.available.length?'selected':''}>${n} day${n===1?'':'s'}</option>`).join('')}</select></div>
       </div>
+      <div class="gf62-partner-box">
+        <div class="gf62-partner-head"><div><b>Training setup</b><span>Account for time spent rotating between people on the same exercise.</span></div><span class="gf62-partner-badge">${q.trainingGroupSize===1?'Solo':q.trainingGroupSize+' people'}</span></div>
+        <div class="gf62-partner-grid">
+          <div><label>People training together</label><select class="input" onchange="gf62SetGroupSize(this.value)">
+            ${[1,2,3,4].map(n=>`<option value="${n}" ${n===q.trainingGroupSize?'selected':''}>${n===1?'Solo':n+' people total'}</option>`).join('')}
+          </select></div>
+          <div><label>Average swap / load-change time</label><select class="input" ${q.trainingGroupSize===1?'disabled':''} onchange="gf62SetHandoff(this.value)">
+            ${[10,15,20,30,45].map(n=>`<option value="${n}" ${n===q.partnerHandoffSeconds?'selected':''}>~${n} sec</option>`).join('')}
+          </select></div>
+        </div>
+        <div class="gf62-partner-note">${q.trainingGroupSize===1
+          ? 'Solo timing: lift time + prescribed rest.'
+          : `Alternate-set timing: each person's set fills part of the others' rest. The estimator counts ${q.trainingGroupSize} people rotating, not ${q.trainingGroupSize}× the full solo session.`}</div>
+      </div>
       <div class="gf58-field"><label>Which days are available?</label>${availableButtons()}</div>
       <div class="gf58-field"><label>Normal workouts per week</label><select class="input" ${q.strategy==='spread'?'disabled':''} onchange="gf59SetWorkoutCount(this.value)">${q.available.map((_,i)=>i+1).map(n=>`<option value="${n}" ${n===q.workoutCount?'selected':''}>${n} workout${n===1?'':'s'} / week</option>`).join('')}</select></div>
       <div class="gf59-primary-box">
@@ -8765,6 +8797,10 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
     plan.training.sessionsPerWeek=cleaned.length;
     plan.training.normalSessionsPerWeek=q.strategy==='spread'?q.available.length:q.workoutCount;
     plan.training.defaultSessionDurationMinutes=q.minutes;
+    plan.training.trainingGroupSize=q.trainingGroupSize;
+    plan.training.trainingPartners=Math.max(0,q.trainingGroupSize-1);
+    plan.training.partnerSetRotation='alternate';
+    plan.training.partnerHandoffSeconds=q.partnerHandoffSeconds;
     plan.training.availableWeekdays=[...q.available];
     plan.training.primaryWeekdays=q.strategy==='spread'?[...q.available]:[...q.primary];
     plan.training.selectedWeekdays=cleaned.map(s=>Number(s.weekdayIndex)).filter(Number.isFinite);
@@ -8772,9 +8808,13 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
     plan.training.overflowWeekday=q.strategy==='flex'&&q.overflowDay!=null?q.overflowDay:null;
     plan.training.clientPreferences=q.preferenceNote||'';
     plan.training.revisionHistory=Array.isArray(plan.training.revisionHistory)?plan.training.revisionHistory:[];
-    plan.training.revisionHistory.push({at:new Date().toISOString(),type:'primary-flex-schedule',strategy:q.strategy,minutesPerWorkout:q.minutes,availableWeekdays:[...q.available],primaryWeekdays:[...plan.training.primaryWeekdays],overflowWeekday:plan.training.overflowWeekday,sessionsPerWeek:cleaned.length});
+    plan.training.revisionHistory.push({at:new Date().toISOString(),type:'primary-flex-schedule',strategy:q.strategy,minutesPerWorkout:q.minutes,trainingGroupSize:q.trainingGroupSize,partnerHandoffSeconds:q.partnerHandoffSeconds,availableWeekdays:[...q.available],primaryWeekdays:[...plan.training.primaryWeekdays],overflowWeekday:plan.training.overflowWeekday,sessionsPerWeek:cleaned.length});
     ensureProgressExtras?.();progress.settings||(progress.settings={});
     progress.settings.sessionDurationMinutes=q.minutes;
+    progress.settings.trainingGroupSize=q.trainingGroupSize;
+    progress.settings.trainingPartners=Math.max(0,q.trainingGroupSize-1);
+    progress.settings.partnerSetRotation='alternate';
+    progress.settings.partnerHandoffSeconds=q.partnerHandoffSeconds;
     progress.settings.sessionDurationOverrides={};
     progress.settings.availableWeekdays=[...q.available];
     progress.settings.trainingWeekdays=[...plan.training.selectedWeekdays];
@@ -9090,6 +9130,892 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
     }
     return r
   };
+})();
+</script>
+
+
+<style id="gf61-exercise-order-style">
+/* v4.0.61 · exercise ordering in plan editor */
+.gf61-order-controls{display:flex;align-items:center;gap:5px}
+.gf61-order-btn,.gf61-drag-handle{
+  min-width:34px;height:34px;padding:0;border-radius:10px;
+  border:1px solid rgba(255,255,255,.075);
+  background:rgba(255,255,255,.035);color:var(--text);
+  font:inherit;font-size:14px;font-weight:900;display:grid;place-items:center
+}
+.gf61-order-btn:disabled{opacity:.28}
+.gf61-drag-handle{cursor:grab;touch-action:none;color:#9fcfff;font-size:17px;letter-spacing:-2px}
+.gf61-drag-handle:active{cursor:grabbing}
+.gf61-order-label{font-size:7px;color:var(--muted);margin-left:2px}
+.gf51-ex.gf61-drag-source{opacity:.55}
+.gf51-ex.gf61-drop-target{outline:1px solid rgba(112,190,255,.65);outline-offset:-2px;background:rgba(75,150,240,.08)}
+.gf61-order-note{margin:8px 0 2px;padding:9px 10px;border-radius:13px;background:rgba(86,155,243,.045);border:1px solid rgba(107,181,255,.09);font-size:8px;line-height:1.4;color:var(--muted)}
+@media(max-width:430px){
+  .gf61-order-btn,.gf61-drag-handle{min-width:32px;height:32px}
+  .gf61-order-label{display:none}
+}
+</style>
+
+<script id="gf61-exercise-order">
+(function(){
+  let dragState=null;
+
+  function q(){return window.gf59PlannerState||null}
+  function draft(){return q()?.draft||[]}
+
+  window.gf61ShiftExercise=function(si,ei,delta){
+    const s=draft()[Number(si)];
+    if(!s||!Array.isArray(s.exercises))return;
+    const from=Number(ei),to=from+Number(delta);
+    if(from<0||from>=s.exercises.length||to<0||to>=s.exercises.length)return;
+    const [item]=s.exercises.splice(from,1);
+    s.exercises.splice(to,0,item);
+    gf59RenderPlanner();
+  };
+
+  window.gf61MoveExerciseIndex=function(si,from,to){
+    const s=draft()[Number(si)];
+    from=Number(from);to=Number(to);
+    if(!s||!Array.isArray(s.exercises)||from===to)return;
+    if(from<0||to<0||from>=s.exercises.length||to>=s.exercises.length)return;
+    const [item]=s.exercises.splice(from,1);
+    s.exercises.splice(to,0,item);
+    gf59RenderPlanner();
+  };
+
+  function clearDragClasses(){
+    document.querySelectorAll('.gf61-drag-source,.gf61-drop-target').forEach(x=>x.classList.remove('gf61-drag-source','gf61-drop-target'));
+  }
+
+  function startDrag(ev,si,ei){
+    if(!q()||q().step!==1)return;
+    ev.preventDefault();
+    const handle=ev.currentTarget,row=handle.closest('.gf51-ex');
+    dragState={pointerId:ev.pointerId,si:Number(si),from:Number(ei),target:Number(ei),row};
+    row?.classList.add('gf61-drag-source');
+    try{handle.setPointerCapture(ev.pointerId)}catch{}
+  }
+
+  function moveDrag(ev){
+    if(!dragState||ev.pointerId!==dragState.pointerId)return;
+    ev.preventDefault();
+    const el=document.elementFromPoint(ev.clientX,ev.clientY);
+    const row=el?.closest?.('.gf51-ex[data-gf61-si]');
+    if(!row)return;
+    const si=Number(row.dataset.gf61Si),ei=Number(row.dataset.gf61Ei);
+    if(si!==dragState.si)return;
+    document.querySelectorAll(`.gf51-ex[data-gf61-si="${si}"]`).forEach(x=>x.classList.remove('gf61-drop-target'));
+    row.classList.add('gf61-drop-target');
+    dragState.target=ei;
+  }
+
+  function endDrag(ev){
+    if(!dragState||ev.pointerId!==dragState.pointerId)return;
+    const {si,from,target}=dragState;
+    dragState=null;
+    clearDragClasses();
+    if(from!==target)gf61MoveExerciseIndex(si,from,target);
+  }
+
+  function patchEditPlan(){
+    const state=q();
+    if(!state||state.step!==1)return;
+    const sessions=[...document.querySelectorAll('#sessionSheet .gf51-session')];
+    sessions.forEach((sessionEl,si)=>{
+      const rows=[...sessionEl.querySelectorAll('.gf51-ex')];
+      rows.forEach((row,ei)=>{
+        row.dataset.gf61Si=si;
+        row.dataset.gf61Ei=ei;
+        const actions=row.querySelector('.gf51-ex-actions');
+        if(!actions||actions.querySelector('.gf61-order-controls'))return;
+        const controls=document.createElement('div');
+        controls.className='gf61-order-controls';
+        controls.innerHTML=`
+          <button type="button" class="gf61-order-btn" ${ei===0?'disabled':''} aria-label="Move exercise up">↑</button>
+          <button type="button" class="gf61-order-btn" ${ei===rows.length-1?'disabled':''} aria-label="Move exercise down">↓</button>
+          <button type="button" class="gf61-drag-handle" aria-label="Press and drag to reorder" title="Press and drag to reorder">⠿</button>
+          <span class="gf61-order-label">Order</span>`;
+        const [up,down,handle]=controls.querySelectorAll('button');
+        up.addEventListener('click',()=>gf61ShiftExercise(si,ei,-1));
+        down.addEventListener('click',()=>gf61ShiftExercise(si,ei,1));
+        handle.addEventListener('pointerdown',ev=>startDrag(ev,si,ei));
+        handle.addEventListener('pointermove',moveDrag);
+        handle.addEventListener('pointerup',endDrag);
+        handle.addEventListener('pointercancel',endDrag);
+        actions.prepend(controls);
+      });
+      if(!sessionEl.querySelector('.gf61-order-note')){
+        const note=document.createElement('div');
+        note.className='gf61-order-note';
+        note.textContent='Reorder exercises with ↑ / ↓, or press and drag the ⠿ handle. Order is saved when you apply the schedule.';
+        sessionEl.querySelector('.gf51-session-head')?.insertAdjacentElement('afterend',note);
+      }
+    });
+  }
+
+  const baseRender=window.gf59RenderPlanner;
+  if(typeof baseRender==='function'){
+    window.gf59RenderPlanner=function(){
+      const result=baseRender.apply(this,arguments);
+      setTimeout(patchEditPlan,0);
+      return result;
+    };
+  }
+
+  // If Edit Plan was already visible when this patch loaded.
+  setTimeout(patchEditPlan,80);
+})();
+</script>
+
+
+<style id="gf62-training-partner-style">
+.gf62-partner-box{padding:12px;border-radius:17px;background:rgba(80,151,243,.045);border:1px solid rgba(104,182,255,.11)}
+.gf62-partner-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:9px}
+.gf62-partner-head b{display:block;font-size:10px}
+.gf62-partner-head span{display:block;margin-top:3px;font-size:8px;line-height:1.4;color:var(--muted)}
+.gf62-partner-badge{flex:0 0 auto!important;margin:0!important;padding:5px 8px;border-radius:999px;background:rgba(89,164,255,.10);border:1px solid rgba(106,182,255,.14);color:#cdeaff!important}
+.gf62-partner-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gf62-partner-grid label{display:block;font-size:8px;color:var(--muted);margin-bottom:6px}
+.gf62-partner-grid .input{margin:0}
+.gf62-partner-note{margin-top:8px;padding:8px 9px;border-radius:12px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);font-size:8px;line-height:1.42;color:var(--muted)}
+.gf62-settings-partner{margin-top:7px;font-size:8px;color:#9fcfff;line-height:1.4}
+@media(max-width:430px){.gf62-partner-grid{grid-template-columns:1fr}}
+</style>
+
+<script id="gf62-training-partner">
+(function(){
+  window.gf62SetGroupSize=function(v){
+    const q=window.gf59PlannerState;if(!q)return;
+    q.trainingGroupSize=Math.max(1,Math.min(4,Number(v)||1));
+    if(!Number.isFinite(Number(q.partnerHandoffSeconds)))q.partnerHandoffSeconds=20;
+    gf59RenderPlanner();
+  };
+  window.gf62SetHandoff=function(v){
+    const q=window.gf59PlannerState;if(!q)return;
+    q.partnerHandoffSeconds=Math.max(5,Math.min(60,Number(v)||20));
+    gf59RenderPlanner();
+  };
+
+  // Add partner context to the existing Settings availability summary.
+  function patchSettings(){
+    const root=document.getElementById('settingsSheet');
+    if(!root)return;
+    const card=root.querySelector('#gf58SettingsAvailability');
+    if(!card)return;
+    let row=card.querySelector('.gf62-settings-partner');
+    const n=Math.max(1,Math.min(4,Number(progress?.settings?.trainingGroupSize)||Number(plan?.training?.trainingGroupSize)||1));
+    const hand=Math.max(5,Math.min(60,Number(progress?.settings?.partnerHandoffSeconds)||Number(plan?.training?.partnerHandoffSeconds)||20));
+    if(!row){
+      row=document.createElement('div');
+      row.className='gf62-settings-partner';
+      card.querySelector('.gf58-settings-days')?.insertAdjacentElement('afterend',row);
+    }
+    row.textContent=n===1?'Training setup: Solo':`Training setup: ${n} people alternating sets · ~${hand}s swap/load change`;
+  }
+
+  const baseHub=window.gfRenderSocialHub;
+  if(typeof baseHub==='function'){
+    window.gfRenderSocialHub=function(){
+      const r=baseHub.apply(this,arguments);
+      setTimeout(patchSettings,0);
+      return r;
+    };
+  }
+  setTimeout(patchSettings,80);
+})();
+</script>
+
+
+<style id="gf63-current-capacity-style">
+/* v4.0.63 · onboarding current training capacity */
+.gf63-capacity-card{grid-column:1/-1;padding:13px;border-radius:19px;background:linear-gradient(180deg,rgba(11,25,47,.92),rgba(7,14,28,.96));border:1px solid rgba(109,183,255,.12);margin-top:4px}
+.gf63-capacity-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+.gf63-capacity-head b{display:block;font-size:11px}
+.gf63-capacity-head span{display:block;font-size:8px;line-height:1.45;color:var(--muted);margin-top:3px}
+.gf63-capacity-badge{flex:0 0 auto!important;margin:0!important;padding:5px 8px;border-radius:999px;background:rgba(91,166,255,.10);border:1px solid rgba(110,184,255,.14);color:#cdeaff!important}
+.gf63-cap-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.gf63-cap-field label{display:block;font-size:7.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:5px}
+.gf63-cap-field .input{margin:0}
+.gf63-rep-pair{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.gf63-cap-summary{margin-top:9px;padding:9px 10px;border-radius:13px;background:rgba(255,255,255,.027);border:1px solid rgba(255,255,255,.05);font-size:8.5px;line-height:1.45;color:#a9bdd3}
+.gf63-loads{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.055)}
+.gf63-load-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px}
+.gf63-load-head b{font-size:9px}
+.gf63-load-head span{font-size:7.5px;color:var(--muted)}
+.gf63-load-row{display:grid;grid-template-columns:minmax(0,1.7fr) .75fr .65fr 34px;gap:6px;margin-top:6px;align-items:center}
+.gf63-load-row input{min-width:0}
+.gf63-remove-load{height:42px;border-radius:11px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);color:#9aa8bd;font:inherit;font-size:16px}
+.gf63-add-load{width:100%;margin-top:7px}
+.gf63-ramp-card{padding:13px;border-radius:18px;background:linear-gradient(135deg,rgba(75,151,244,.075),rgba(69,205,184,.035));border:1px solid rgba(107,183,255,.11);margin:10px 0}
+.gf63-ramp-card h3{margin:4px 0 5px;font-size:17px}
+.gf63-ramp-card p{margin:0;font-size:9px;line-height:1.48;color:var(--muted)}
+.gf63-ramp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:10px}
+.gf63-ramp-grid>div{padding:9px;border-radius:13px;background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.052)}
+.gf63-ramp-grid span{display:block;font-size:7px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.gf63-ramp-grid b{display:block;font-size:11px;margin-top:3px}
+.gf63-ramp-weeks{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.gf63-ramp-weeks span{padding:5px 7px;border-radius:999px;background:rgba(89,164,255,.08);border:1px solid rgba(105,183,255,.11);font-size:7.5px;color:#bfe3ff}
+@media(max-width:560px){.gf63-cap-grid{grid-template-columns:1fr 1fr}.gf63-load-row{grid-template-columns:minmax(0,1.5fr) .7fr .7fr 34px}}
+@media(max-width:390px){.gf63-cap-grid{grid-template-columns:1fr}.gf63-ramp-grid{grid-template-columns:1fr 1fr 1fr}}
+</style>
+
+<script id="gf63-current-capacity">
+(function(){
+  const clone=x=>{try{return structuredClone(x)}catch{return JSON.parse(JSON.stringify(x))}};
+  const clampN=(v,a,b,f)=>{v=Number(v);return Number.isFinite(v)?Math.max(a,Math.min(b,v)):f};
+
+  function defaultCapacity(){
+    const existing=plan?.client?.currentTrainingCapacity||plan?.training?.currentTrainingCapacity||{};
+    const sessions=Number(existing.workoutsPerWeek)||Number(plan?.training?.normalSessionsPerWeek)||Number(plan?.training?.sessionsPerWeek)||3;
+    return {
+      workoutsPerWeek:clampN(existing.workoutsPerWeek,1,7,sessions),
+      exercisesPerWorkout:clampN(existing.exercisesPerWorkout,1,12,5),
+      setsPerExercise:clampN(existing.setsPerExercise,1,8,3),
+      repMin:clampN(existing.repMin,1,30,8),
+      repMax:clampN(existing.repMax,1,30,12),
+      rir:clampN(existing.rir,0,5,2),
+      trainingGroupSize:clampN(existing.trainingGroupSize||progress?.settings?.trainingGroupSize||plan?.training?.trainingGroupSize,1,4,1),
+      partnerHandoffSeconds:clampN(existing.partnerHandoffSeconds||progress?.settings?.partnerHandoffSeconds||plan?.training?.partnerHandoffSeconds,5,60,20),
+      representativeLifts:Array.isArray(existing.representativeLifts)?clone(existing.representativeLifts):[]
+    }
+  }
+
+  function ensureCapacity(){
+    canonicalOnboarding||(canonicalOnboarding=freshCanonicalOnboarding());
+    canonicalOnboarding.currentTrainingCapacity ||= defaultCapacity();
+    const c=canonicalOnboarding.currentTrainingCapacity;
+    c.representativeLifts ||= [];
+    return c
+  }
+
+  function weeklySets(c){return Math.max(1,Number(c.workoutsPerWeek)||1)*Math.max(1,Number(c.exercisesPerWorkout)||1)*Math.max(1,Number(c.setsPerExercise)||1)}
+  function targetSets(sessions){return (sessions||[]).reduce((n,s)=>n+(s.exercises||[]).reduce((a,e)=>a+(Number(e.sets)||0),0),0)}
+  function isCompound(e){return /press|squat|deadlift|rdl|romanian|row|pulldown|pull-up|pull up|chin|leg press|dip/i.test(e?.name||'')&&!/fly|raise|curl|extension|pushdown|shrug/i.test(e?.name||'')}
+  function norm(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
+  function e1rm(load,reps,rir){load=Number(load);reps=Number(reps);rir=Number(rir);return load>0&&reps>0?load*(1+(reps+Math.max(0,rir))/30):null}
+  function roundLoad(v,inc){inc=Math.max(.5,Number(inc)||2.5);return Math.round(v/inc)*inc}
+
+  function rampWeeks(current,target){
+    if(!current||target<=current*1.05)return 1;
+    const ratio=target/current;
+    if(ratio<=1.15)return 2;
+    if(ratio<=1.30)return 3;
+    if(ratio<=1.50)return 4;
+    return 6
+  }
+
+  function scaleStartSessions(targetSessions,startTarget){
+    const targetTotal=targetSets(targetSessions);
+    if(!targetTotal||startTarget>=targetTotal)return clone(targetSessions);
+    const ratio=Math.max(.35,startTarget/targetTotal);
+    const out=clone(targetSessions);
+    out.forEach(s=>(s.exercises||[]).forEach(e=>{
+      const min=isCompound(e)?2:1;
+      e.sets=Math.max(min,Math.min(Number(e.sets)||1,Math.round((Number(e.sets)||1)*ratio)));
+    }));
+    const total=()=>targetSets(out);
+    // Reduce lowest-fatigue-priority accessories first until close to current capacity.
+    let guard=0;
+    while(total()>startTarget&&guard++<300){
+      let changed=false;
+      for(let si=out.length-1;si>=0&&!changed;si--){
+        const es=out[si].exercises||[];
+        for(let ei=es.length-1;ei>=0;ei--){
+          const e=es[ei],min=isCompound(e)?2:1;
+          if(Number(e.sets)>min){e.sets--;changed=true;break}
+        }
+      }
+      if(!changed)break
+    }
+    // If rounding undershoots, add sets back where target plan has headroom.
+    guard=0;
+    while(total()<startTarget&&guard++<300){
+      let changed=false;
+      for(let si=0;si<out.length&&!changed;si++){
+        for(let ei=0;ei<(out[si].exercises||[]).length;ei++){
+          const e=out[si].exercises[ei],t=targetSessions[si]?.exercises?.[ei];
+          if(t&&Number(e.sets)<Number(t.sets)){e.sets++;changed=true;break}
+        }
+      }
+      if(!changed)break
+    }
+    return out
+  }
+
+  function buildBridge(targetSessions){
+    const c=ensureCapacity(),current=weeklySets(c),target=targetSets(targetSessions);
+    const weeks=rampWeeks(current,target),start=Math.min(current,target);
+    const startSessions=scaleStartSessions(targetSessions,start);
+    const actualStart=targetSets(startSessions);
+    const weekTargets=[];
+    for(let w=1;w<=weeks;w++){
+      const f=weeks===1?1:(w-1)/(weeks-1);
+      weekTargets.push(Math.round(actualStart+(target-actualStart)*f))
+    }
+    return {
+      currentWeeklySets:current,
+      currentSessionSets:Number(c.exercisesPerWorkout)*Number(c.setsPerExercise),
+      targetWeeklySets:target,
+      startWeeklySets:actualStart,
+      rampWeeks:weeks,
+      weeklySetTargets:weekTargets,
+      startSessions,
+      targetSessions:clone(targetSessions),
+      currentWorkoutsPerWeek:Number(c.workoutsPerWeek),
+      targetWorkoutsPerWeek:targetSessions.length,
+      currentRepRange:[Number(c.repMin),Number(c.repMax)],
+      currentRIR:Number(c.rir)
+    }
+  }
+
+  window.gf63SyncCapacity=function(){
+    if(!canonicalOnboarding)return;
+    const c=ensureCapacity();
+    const val=(id,f)=>clampN(document.getElementById(id)?.value,...f);
+    c.workoutsPerWeek=val('gf63CurrentWorkouts',[1,7,c.workoutsPerWeek]);
+    c.exercisesPerWorkout=val('gf63CurrentExercises',[1,12,c.exercisesPerWorkout]);
+    c.setsPerExercise=val('gf63CurrentSets',[1,8,c.setsPerExercise]);
+    c.repMin=val('gf63CurrentRepMin',[1,30,c.repMin]);
+    c.repMax=val('gf63CurrentRepMax',[1,30,c.repMax]);
+    if(c.repMax<c.repMin)c.repMax=c.repMin;
+    c.rir=val('gf63CurrentRIR',[0,5,c.rir]);
+    c.trainingGroupSize=val('gf63CurrentGroup',[1,4,c.trainingGroupSize]);
+    c.partnerHandoffSeconds=val('gf63CurrentHandoff',[5,60,c.partnerHandoffSeconds]);
+
+    const lifts=[...document.querySelectorAll('.gf63-load-row')].map(row=>{
+      const name=String(row.querySelector('[data-role="name"]')?.value||'').trim();
+      const weightKg=Number(row.querySelector('[data-role="weight"]')?.value);
+      const reps=Number(row.querySelector('[data-role="reps"]')?.value);
+      return name&&weightKg>0&&reps>0?{exerciseName:name,weightKg:Math.round(weightKg*100)/100,reps:Math.round(reps),rir:Number(c.rir)}:null
+    }).filter(Boolean);
+    c.representativeLifts=lifts;
+    gf63UpdateCapacitySummary()
+  };
+
+  window.gf63UpdateCapacitySummary=function(){
+    const c=canonicalOnboarding?.currentTrainingCapacity;if(!c)return;
+    const box=document.getElementById('gf63CapSummary');if(!box)return;
+    const weekly=weeklySets(c),people=Number(c.trainingGroupSize)||1;
+    box.innerHTML=`Current baseline: <b>${c.workoutsPerWeek} workout${c.workoutsPerWeek===1?'':'s'}/wk</b> · <b>${c.exercisesPerWorkout} exercises</b> × <b>${c.setsPerExercise} sets</b> = <b>${weekly} working sets/wk</b> · ${c.repMin}–${c.repMax} reps · <b>${c.rir} RIR</b>${people>1?` · ${people} people alternating sets`:''}.`
+  };
+
+  function loadRow(lift={}){
+    const row=document.createElement('div');row.className='gf63-load-row';
+    row.innerHTML=`<input class="input" data-role="name" placeholder="Exercise e.g. Bench press" value="${esc(lift.exerciseName||'')}" oninput="gf63SyncCapacity()"><input class="input" data-role="weight" inputmode="decimal" placeholder="kg" value="${lift.weightKg||''}" oninput="gf63SyncCapacity()"><input class="input" data-role="reps" inputmode="numeric" placeholder="reps" value="${lift.reps||''}" oninput="gf63SyncCapacity()"><button type="button" class="gf63-remove-load" onclick="this.closest('.gf63-load-row').remove();gf63SyncCapacity()">×</button>`;
+    return row
+  }
+  window.gf63AddLoadRow=function(lift={}){
+    const list=document.getElementById('gf63LoadRows');if(!list)return;
+    if(list.children.length>=8){toast('Up to 8 representative lifts');return}
+    list.appendChild(loadRow(lift))
+  };
+
+  function capacityCard(){
+    const c=ensureCapacity(),lifts=c.representativeLifts||[];
+    return `<div class="gf63-capacity-card" id="gf63CapacityCard">
+      <div class="gf63-capacity-head"><div><b>Current workout capacity</b><span>Tell Hercules what the client can actually complete now. The first training block starts from this workload instead of assuming full programme volume on day one.</span></div><span class="gf63-capacity-badge">Starting point</span></div>
+      <div class="gf63-cap-grid">
+        <div class="gf63-cap-field"><label>Current workouts / week</label><select id="gf63CurrentWorkouts" class="input" onchange="gf63SyncCapacity()">${[1,2,3,4,5,6,7].map(n=>`<option value="${n}" ${n===Number(c.workoutsPerWeek)?'selected':''}>${n}</option>`).join('')}</select></div>
+        <div class="gf63-cap-field"><label>Exercises / workout</label><select id="gf63CurrentExercises" class="input" onchange="gf63SyncCapacity()">${[2,3,4,5,6,7,8,9,10,11,12].map(n=>`<option value="${n}" ${n===Number(c.exercisesPerWorkout)?'selected':''}>${n}</option>`).join('')}</select></div>
+        <div class="gf63-cap-field"><label>Working sets / exercise</label><select id="gf63CurrentSets" class="input" onchange="gf63SyncCapacity()">${[1,2,3,4,5,6].map(n=>`<option value="${n}" ${n===Number(c.setsPerExercise)?'selected':''}>${n}</option>`).join('')}</select></div>
+        <div class="gf63-cap-field"><label>Typical rep range</label><div class="gf63-rep-pair"><input id="gf63CurrentRepMin" class="input" type="number" min="1" max="30" value="${c.repMin}" oninput="gf63SyncCapacity()"><input id="gf63CurrentRepMax" class="input" type="number" min="1" max="30" value="${c.repMax}" oninput="gf63SyncCapacity()"></div></div>
+        <div class="gf63-cap-field"><label>Typical effort / RIR</label><select id="gf63CurrentRIR" class="input" onchange="gf63SyncCapacity()">${[0,1,2,3,4,5].map(n=>`<option value="${n}" ${n===Number(c.rir)?'selected':''}>${n} RIR</option>`).join('')}</select></div>
+        <div class="gf63-cap-field"><label>People training together</label><select id="gf63CurrentGroup" class="input" onchange="gf63SyncCapacity()">${[1,2,3,4].map(n=>`<option value="${n}" ${n===Number(c.trainingGroupSize)?'selected':''}>${n===1?'Solo':n+' people'}</option>`).join('')}</select></div>
+        <div class="gf63-cap-field"><label>Partner swap / load change</label><select id="gf63CurrentHandoff" class="input" ${Number(c.trainingGroupSize)===1?'disabled':''} onchange="gf63SyncCapacity()">${[10,15,20,30,45].map(n=>`<option value="${n}" ${n===Number(c.partnerHandoffSeconds)?'selected':''}>~${n} sec</option>`).join('')}</select></div>
+      </div>
+      <div id="gf63CapSummary" class="gf63-cap-summary"></div>
+      <details class="gf63-loads">
+        <summary class="gf63-load-head"><div><b>Representative working loads</b><span>Optional — add the lifts you know. These seed starting kg suggestions.</span></div></summary>
+        <div id="gf63LoadRows"></div>
+        <button type="button" class="btn secondary gf63-add-load" onclick="gf63AddLoadRow()">＋ Add representative lift</button>
+      </details>
+    </div>`
+  }
+
+  function hydrateCapacityRows(){
+    const c=ensureCapacity(),list=document.getElementById('gf63LoadRows');if(!list)return;
+    list.innerHTML='';
+    const source=(c.representativeLifts||[]).length?c.representativeLifts:[{},{},{}];
+    source.forEach(x=>list.appendChild(loadRow(x)));
+    gf63UpdateCapacitySummary()
+  }
+
+  function rampCard(){
+    const sessions=canonicalSessions(),b=buildBridge(sessions),c=ensureCapacity();
+    const noRamp=b.rampWeeks===1;
+    return `<div class="gf63-ramp-card">
+      <div class="eyebrow">Current capacity → programme start</div>
+      <h3>${noRamp?'Start at planned volume':'Ramp into the full programme'}</h3>
+      <p>${noRamp
+        ? `The generated plan is within the client's current working-set capacity. Start the plan directly, but use its prescribed RIR instead of assuming every set must reach failure.`
+        : `The generated programme exceeds current working-set capacity. Week 1 is capped near the client's present workload, then volume rises progressively rather than jumping straight to the full prescription.`}</p>
+      <div class="gf63-ramp-grid">
+        <div><span>Current capacity</span><b>${b.currentWeeklySets} sets/wk</b></div>
+        <div><span>Week 1 plan</span><b>${b.startWeeklySets} sets/wk</b></div>
+        <div><span>Full plan</span><b>${b.targetWeeklySets} sets/wk</b></div>
+      </div>
+      <div class="gf63-ramp-weeks">${b.weeklySetTargets.map((x,i)=>`<span>W${i+1} · ${x} sets</span>`).join('')}</div>
+      <div class="gf63-cap-summary">Current pattern: ${c.workoutsPerWeek} workouts/wk · ${c.exercisesPerWorkout} exercises × ${c.setsPerExercise} sets · ${c.repMin}–${c.repMax} reps @ ${c.rir} RIR. ${c.representativeLifts?.length?`${c.representativeLifts.length} working-load baseline${c.representativeLifts.length===1?'':'s'} will seed starting kg.`:'Unmatched exercises will calibrate load from the first controlled working sets.'}</div>
+    </div>`
+  }
+
+  // Initialize the new onboarding state.
+  const baseFresh=window.freshCanonicalOnboarding;
+  window.freshCanonicalOnboarding=function(){
+    const o=baseFresh.apply(this,arguments);
+    o.currentTrainingCapacity ||= defaultCapacity();
+    return o
+  };
+
+  // Preserve capacity inputs when weekday buttons cause the onboarding card to rerender.
+  if(typeof window.gf45ToggleOnboardDay==='function'){
+    const baseDay=window.gf45ToggleOnboardDay;
+    window.gf45ToggleOnboardDay=function(){try{gf63SyncCapacity()}catch{};return baseDay.apply(this,arguments)}
+  }
+  if(typeof window.canonicalWeekdayToggle==='function'){
+    const baseDay2=window.canonicalWeekdayToggle;
+    window.canonicalWeekdayToggle=function(){try{gf63SyncCapacity()}catch{};return baseDay2.apply(this,arguments)}
+  }
+
+  // Add the capacity section to onboarding step 1 and the bridge summary to Build Programme.
+  const baseRender=window.renderCanonicalOnboarding;
+  window.renderCanonicalOnboarding=function(){
+    const r=baseRender.apply(this,arguments);
+    if(canonicalOnboardingStep===0){
+      const grid=document.querySelector('#tourCard .canon-grid');
+      if(grid&&!document.getElementById('gf63CapacityCard')){
+        grid.insertAdjacentHTML('beforeend',capacityCard());
+        hydrateCapacityRows()
+      }
+    }
+    if(canonicalOnboardingStep===5){
+      const card=document.getElementById('tourCard');
+      if(card&&!card.querySelector('.gf63-ramp-card')){
+        const anchor=card.querySelector('.gf51-onboard-review')||card.querySelector('.tour-actions');
+        anchor?.insertAdjacentHTML('beforebegin',rampCard())
+      }
+    }
+    return r
+  };
+
+  // Save current capacity BEFORE the base handler advances to the next onboarding step.
+  const baseSave=window.canonicalSaveProfile;
+  window.canonicalSaveProfile=function(){
+    try{gf63SyncCapacity()}catch{}
+    const c=ensureCapacity();
+    if(!c.workoutsPerWeek||!c.exercisesPerWorkout||!c.setsPerExercise||!c.repMin||!c.repMax){
+      toast('Complete the current workout capacity');return
+    }
+    return baseSave.apply(this,arguments)
+  };
+
+  // Final plan generator: start from current volume, preserve full target plan,
+  // and seed load suggestions with any representative working loads.
+  const basePreview=window.canonicalPlanPreview;
+  window.canonicalPlanPreview=function(){
+    const p=basePreview.apply(this,arguments),c=clone(ensureCapacity());
+    const targetSessions=clone(p.training.sessions||[]);
+    const bridge=buildBridge(targetSessions);
+    const loads=(c.representativeLifts||[]).map(x=>{
+      const rm=e1rm(x.weightKg,x.reps,x.rir);
+      return {...x,e1rmKg:rm?Math.round(rm*10)/10:null}
+    });
+    p.client.currentTrainingCapacity=clone(c);
+    p.onboarding.currentTrainingCapacity=clone(c);
+    p.training.currentTrainingCapacity=clone(c);
+    p.training.trainingGroupSize=Number(c.trainingGroupSize)||1;
+    p.training.trainingPartners=Math.max(0,(Number(c.trainingGroupSize)||1)-1);
+    p.training.partnerSetRotation='alternate';
+    p.training.partnerHandoffSeconds=Number(c.partnerHandoffSeconds)||20;
+    p.training.startingLoadBaselines=loads;
+    p.training.targetPlan={sessions:bridge.targetSessions,targetWeeklySets:bridge.targetWeeklySets};
+    p.training.startingPlan={sessions:bridge.startSessions,weeklySets:bridge.startWeeklySets};
+    p.training.volumeRamp={
+      enabled:bridge.rampWeeks>1,
+      source:'onboarding-current-capacity',
+      startDate:p.goal.startDate||todayISO(),
+      currentWeeklySets:bridge.currentWeeklySets,
+      startWeeklySets:bridge.startWeeklySets,
+      targetWeeklySets:bridge.targetWeeklySets,
+      rampWeeks:bridge.rampWeeks,
+      weeklySetTargets:bridge.weeklySetTargets,
+      currentRepRange:bridge.currentRepRange,
+      currentRIR:bridge.currentRIR,
+      targetRIR:2,
+      rule:'Start at or below demonstrated current working-set capacity. Increase planned sets toward the full programme over the ramp window; load still follows double progression.'
+    };
+    p.training.sessions=bridge.startSessions;
+    p.training.sessionsPerWeek=bridge.startSessions.length;
+    return p
+  };
+
+  // Persist capacity to progress as well.
+  const baseComplete=window.completeCanonicalOnboarding;
+  window.completeCanonicalOnboarding=async function(){
+    const c=clone(ensureCapacity());
+    const r=await baseComplete.apply(this,arguments);
+    try{
+      ensureProgressExtras?.();
+      progress.settings.currentTrainingCapacity=clone(c);
+      progress.settings.trainingGroupSize=Number(c.trainingGroupSize)||1;
+      progress.settings.trainingPartners=Math.max(0,(Number(c.trainingGroupSize)||1)-1);
+      progress.settings.partnerSetRotation='alternate';
+      progress.settings.partnerHandoffSeconds=Number(c.partnerHandoffSeconds)||20;
+      write()
+    }catch{}
+    return r
+  };
+
+  // Use onboarding working-load baselines before asking for a blank calibration set.
+  const basePrescription=window.gf45LoadPrescription;
+  if(typeof basePrescription==='function'){
+    window.gf45LoadPrescription=function(sessionId,e){
+      const result=basePrescription.apply(this,arguments);
+      if(result?.load!==''&&result?.load!=null)return result;
+      const rows=plan?.training?.startingLoadBaselines||[];
+      const en=norm(e?.name);
+      const match=rows.find(x=>{
+        const xn=norm(x.exerciseName);
+        return xn&&en&&(xn===en||en.includes(xn)||xn.includes(en))
+      });
+      if(!match?.e1rmKg)return result;
+      const reps=((Number(e.repMin)||8)+(Number(e.repMax)||12))/2,targetRir=2;
+      const raw=Number(match.e1rmKg)/(1+(reps+targetRir)/30);
+      const load=roundLoad(raw,Number(e.incrementKg)||2.5);
+      return {
+        ...result,
+        load,
+        targetRir,
+        message:`ONBOARDING BASELINE · ${match.weightKg} kg × ${match.reps} @ ${match.rir} RIR gave an estimated 1RM of ${match.e1rmKg} kg. Start around ${load} kg for this rep range at ~2 RIR, then refine from logged sets.`
+      }
+    };
+    window.suggestedLoadFor=function(sessionId,e){return window.gf45LoadPrescription(sessionId,e)}
+  }
+
+  // Automatically advance onboarding-generated set volume by week.
+  window.gf63ApplyVolumeRamp=function(){
+    const vr=plan?.training?.volumeRamp,tp=plan?.training?.targetPlan,sp=plan?.training?.startingPlan;
+    if(!vr?.enabled||!tp?.sessions?.length||!sp?.sessions?.length)return false;
+    const start=new Date(`${vr.startDate||todayISO()}T12:00:00`);
+    const now=new Date(`${todayISO()}T12:00:00`);
+    const week=Math.max(1,Math.min(Number(vr.rampWeeks)||1,Math.floor((now-start)/(7*86400000))+1));
+    if(Number(vr.lastAppliedWeek)===week)return false;
+    const frac=(Number(vr.rampWeeks)||1)<=1?1:(week-1)/(Number(vr.rampWeeks)-1);
+    const targetMap=new Map(tp.sessions.map(s=>[String(s.id),s]));
+    const startMap=new Map(sp.sessions.map(s=>[String(s.id),s]));
+    for(const s of plan.training.sessions||[]){
+      const ts=targetMap.get(String(s.id)),ss=startMap.get(String(s.id));
+      if(!ts||!ss)continue;
+      (s.exercises||[]).forEach((e,i)=>{
+        const startSets=Number(ss.exercises?.[i]?.sets)||Number(e.sets)||1;
+        const targetSetsN=Number(ts.exercises?.[i]?.sets)||startSets;
+        e.sets=Math.max(1,Math.min(targetSetsN,Math.round(startSets+(targetSetsN-startSets)*frac)))
+      })
+    }
+    vr.lastAppliedWeek=week;
+    vr.currentTargetWeeklySets=(vr.weeklySetTargets||[])[week-1]||vr.targetWeeklySets;
+    try{write()}catch{}
+    return true
+  };
+
+  // Any manual plan application takes precedence over the automatic onboarding ramp.
+  if(typeof window.gf59Apply==='function'){
+    const baseApply=window.gf59Apply;
+    window.gf59Apply=function(){
+      if(plan?.training?.volumeRamp?.enabled){
+        plan.training.volumeRamp.enabled=false;
+        plan.training.volumeRamp.disabledReason='Manual plan edit / redistribution applied'
+      }
+      return baseApply.apply(this,arguments)
+    }
+  }
+
+  // Apply ramp before Train renders and before a workout launches.
+  const baseTrain=window.renderTrain;
+  if(typeof baseTrain==='function')window.renderTrain=function(){try{gf63ApplyVolumeRamp()}catch{};return baseTrain.apply(this,arguments)};
+  const baseStart=window.startWorkout;
+  if(typeof baseStart==='function')window.startWorkout=function(id){try{gf63ApplyVolumeRamp()}catch{};return baseStart.call(this,id)};
+})();
+</script>
+
+
+<style id="gf64-two-stage-progress-style">
+.gf64-progressions{display:grid;gap:10px;margin:12px 0}
+.gf64-phase{padding:14px;border-radius:20px;background:linear-gradient(180deg,rgba(13,27,51,.94),rgba(7,14,29,.97));border:1px solid rgba(111,183,255,.11)}
+.gf64-phase.phase2{border-color:rgba(91,205,177,.12)}
+.gf64-phase-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.gf64-phase-head h3{font-size:17px;margin:2px 0 0}
+.gf64-phase-head p{font-size:8.5px;line-height:1.45;color:var(--muted);margin:4px 0 0}
+.gf64-badge{flex:0 0 auto;padding:6px 8px;border-radius:999px;background:rgba(88,162,248,.10);border:1px solid rgba(108,184,255,.14);font-size:8px;color:#d3edff}
+.gf64-phase2-badge{background:rgba(67,194,166,.075);border-color:rgba(82,211,180,.12);color:#b9ebdf}
+.gf64-track{height:7px;border-radius:999px;background:rgba(255,255,255,.055);overflow:hidden;margin:11px 0 5px}
+.gf64-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#70a9ff,#75d2ff)}
+.gf64-phase2 .gf64-track i{background:linear-gradient(90deg,#68baff,#69d5bb)}
+.gf64-track-copy{display:flex;justify-content:space-between;gap:8px;font-size:7.5px;color:var(--muted)}
+.gf64-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:10px}
+.gf64-metrics>div{padding:9px;border-radius:13px;background:rgba(255,255,255,.027);border:1px solid rgba(255,255,255,.05)}
+.gf64-metrics span{display:block;font-size:6.8px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.gf64-metrics b{display:block;margin-top:3px;font-size:10px}
+.gf64-note{margin-top:9px;padding:9px 10px;border-radius:13px;background:rgba(255,255,255,.023);border:1px solid rgba(255,255,255,.045);font-size:8px;line-height:1.45;color:#aab8cb}
+.gf64-arrow{text-align:center;font-size:18px;color:#72bfff;margin:-4px 0}
+.gf64-train-widget{margin:12px 0}
+.gf64-train-widget summary{list-style:none;cursor:pointer}
+.gf64-train-widget summary::-webkit-details-marker{display:none}
+.gf64-train-summary{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.gf64-train-summary b{font-size:12px}
+.gf64-train-summary span{font-size:8px;color:var(--muted)}
+@media(max-width:430px){.gf64-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.gf64-phase-head h3{font-size:15px}}
+</style>
+
+<script id="gf64-two-stage-progress">
+(function(){
+  const clone=x=>{try{return structuredClone(x)}catch{return JSON.parse(JSON.stringify(x))}};
+  const clampPct=n=>Math.max(0,Math.min(100,Math.round(Number(n)||0)));
+  const r1=n=>Math.round((Number(n)||0)*10)/10;
+
+  function weeklySets(sessions){
+    return (sessions||[]).reduce((n,s)=>n+(s.exercises||[]).reduce((a,e)=>a+(Number(e.sets)||0),0),0)
+  }
+  function latestWeight(){
+    const rows=progress?.weighIns||[];
+    return Number(rows.at?.(-1)?.weightKg)||Number(progress?.latestWeightKg)||Number(plan?.client?.startWeightKg)||0
+  }
+  function goalDate(p=plan){
+    try{return typeof gfGoalDateISO==='function'&&p===plan?gfGoalDateISO():(p?.goal?.targetDate||'')}catch{return p?.goal?.targetDate||''}
+  }
+  function dateAdd(dateStr,days){
+    const d=new Date(`${dateStr||todayISO()}T12:00:00`);
+    d.setDate(d.getDate()+Number(days||0));
+    return d.toISOString().slice(0,10)
+  }
+
+  function buildGoals(p){
+    const t=p?.training||{}, c=t.currentTrainingCapacity||p?.client?.currentTrainingCapacity||{};
+    const week1Sessions=clone(t.startingPlan?.sessions||t.sessions||[]);
+    const targetSessions=clone(t.targetPlan?.sessions||t.sessions||[]);
+    const currentSets=Math.max(0,Number(t.volumeRamp?.currentWeeklySets)||(
+      Number(c.workoutsPerWeek||0)*Number(c.exercisesPerWorkout||0)*Number(c.setsPerExercise||0)
+    ));
+    const week1Sets=Math.max(0,Number(t.volumeRamp?.startWeeklySets)||weeklySets(week1Sessions));
+    const fullSets=Math.max(0,Number(t.volumeRamp?.targetWeeklySets)||weeklySets(targetSessions));
+    const currentWorkouts=Math.max(1,Number(c.workoutsPerWeek)||Number(t.sessionsPerWeek)||1);
+    const week1Workouts=Math.max(1,week1Sessions.length||Number(t.sessionsPerWeek)||1);
+
+    const volumeReady=week1Sets>0?Math.min(1,currentSets/week1Sets):1;
+    const frequencyReady=Math.min(1,currentWorkouts/week1Workouts);
+    const readiness=Math.round(Math.min(volumeReady,frequencyReady)*100);
+
+    const startDate=p?.goal?.startDate||todayISO();
+    const week1Date=dateAdd(startDate,7);
+    const startWeight=Number(p?.client?.startWeightKg)||0;
+    const targetWeight=Number(p?.goal?.targetWeightKg)||startWeight;
+
+    return {
+      schema:'gain-focus-progression-goals/v1',
+      phase1:{
+        id:'now-to-week1-capacity',
+        label:'Now → Week 1 capacity',
+        type:'training-capacity',
+        startDate,
+        targetDate:week1Date,
+        current:{
+          workoutsPerWeek:currentWorkouts,
+          weeklySets:currentSets,
+          exercisesPerWorkout:Number(c.exercisesPerWorkout)||null,
+          setsPerExercise:Number(c.setsPerExercise)||null,
+          repRange:[Number(c.repMin)||null,Number(c.repMax)||null],
+          rir:Number.isFinite(Number(c.rir))?Number(c.rir):null
+        },
+        target:{
+          workoutsPerWeek:week1Workouts,
+          weeklySets:week1Sets,
+          targetRIR:2,
+          sessions:week1Sessions
+        },
+        readinessPct:readiness,
+        criteria:[
+          'Can complete the Week 1 session structure inside the selected time limit.',
+          'Can complete the Week 1 working-set target without exceeding prescribed effort.',
+          'Has usable starting-load data for the main lifts.'
+        ]
+      },
+      phase2:{
+        id:'week1-to-end-goal',
+        label:'Week 1 → End goal',
+        type:'programme-and-physique',
+        startDate:week1Date,
+        targetDate:goalDate(p),
+        start:{
+          workoutsPerWeek:week1Workouts,
+          weeklySets:week1Sets,
+          weightKg:startWeight,
+          targetRIR:2
+        },
+        target:{
+          workoutsPerWeek:targetSessions.length||week1Workouts,
+          weeklySets:fullSets,
+          weightKg:targetWeight,
+          focus:clone(p?.goal?.focus||[]),
+          sessions:targetSessions
+        }
+      }
+    }
+  }
+
+  function ensureGoals(){
+    if(!plan?.training)return null;
+    const g=buildGoals(plan);
+    plan.training.progressionGoals=g;
+    return g
+  }
+
+  function completedWeek1Sessions(g){
+    const ids=new Set((g?.phase1?.target?.sessions||[]).map(s=>String(s.id)));
+    if(!ids.size)return 0;
+    const done=new Set((progress?.workoutLogs||[])
+      .filter(w=>w.completed!==false&&ids.has(String(w.sessionId)))
+      .map(w=>String(w.sessionId)));
+    return Math.min(ids.size,done.size)
+  }
+
+  function phase1Progress(g){
+    const ids=(g?.phase1?.target?.sessions||[]).length;
+    const completed=completedWeek1Sessions(g);
+    if(ids&&completed>=ids)return 100;
+    const exposurePct=ids?Math.round((completed/ids)*100):0;
+    return clampPct(Math.max(Number(g?.phase1?.readinessPct)||0, exposurePct))
+  }
+
+  function phase2WeightProgress(g,p=plan){
+    const sw=Number(g?.phase2?.start?.weightKg)||Number(p?.client?.startWeightKg)||0;
+    const tw=Number(g?.phase2?.target?.weightKg)||sw;
+    const cw=p===plan?latestWeight():sw;
+    if(!sw||!tw||tw===sw)return 0;
+    return clampPct(((cw-sw)/(tw-sw))*100)
+  }
+
+  function activeTargetSets(p=plan){
+    return Number(p?.training?.volumeRamp?.currentTargetWeeklySets)||weeklySets(p?.training?.sessions||[])
+  }
+
+  function renderCards(p=plan,compact=false){
+    const g=buildGoals(p),p1=p===plan?phase1Progress(g):clampPct(g.phase1.readinessPct),p2=phase2WeightProgress(g,p);
+    const currentSets=Number(g.phase1.current.weeklySets)||0;
+    const week1Sets=Number(g.phase1.target.weeklySets)||0;
+    const fullSets=Number(g.phase2.target.weeklySets)||0;
+    const cw=p===plan?latestWeight():Number(p?.client?.startWeightKg)||0;
+    const tw=Number(g.phase2.target.weightKg)||0;
+    const currentRIR=g.phase1.current.rir;
+    return `<div class="gf64-progressions">
+      <div class="gf64-phase">
+        <div class="gf64-phase-head"><div><div class="eyebrow">Progression 1</div><h3>Now → Week 1 capacity</h3><p>First goal: reach the training capacity needed to begin Week 1 properly.</p></div><span class="gf64-badge">${p1>=100?'Ready':p1+'% ready'}</span></div>
+        <div class="gf64-track"><i style="width:${p1}%"></i></div>
+        <div class="gf64-track-copy"><span>Current capacity</span><span>Week 1 entry standard</span></div>
+        <div class="gf64-metrics">
+          <div><span>Weekly sets</span><b>${currentSets} → ${week1Sets}</b></div>
+          <div><span>Workouts</span><b>${g.phase1.current.workoutsPerWeek} → ${g.phase1.target.workoutsPerWeek}/wk</b></div>
+          <div><span>Effort</span><b>${currentRIR??'—'} → 2 RIR</b></div>
+        </div>
+        ${compact?'':`<div class="gf64-note">${g.phase1.criteria.map(x=>`✓ ${esc(x)}`).join('<br>')}</div>`}
+      </div>
+      <div class="gf64-arrow">↓</div>
+      <div class="gf64-phase phase2">
+        <div class="gf64-phase-head"><div><div class="eyebrow">Progression 2</div><h3>Week 1 → End goal</h3><p>Second goal: progress from the Week 1 training baseline to full programme volume and the physique target.</p></div><span class="gf64-badge gf64-phase2-badge">${p2}% physique</span></div>
+        <div class="gf64-track"><i style="width:${p2}%"></i></div>
+        <div class="gf64-track-copy"><span>Week 1 baseline</span><span>End goal</span></div>
+        <div class="gf64-metrics">
+          <div><span>Programme volume</span><b>${week1Sets} → ${fullSets} sets/wk</b></div>
+          <div><span>Current target</span><b>${activeTargetSets(p)} sets/wk</b></div>
+          <div><span>Bodyweight</span><b>${cw?r1(cw):'—'} → ${tw?r1(tw):'—'} kg</b></div>
+        </div>
+        ${compact?'':`<div class="gf64-note">Training progression and physique progression are tracked separately. Weight alone does not mark the end goal complete.</div>`}
+      </div>
+    </div>`
+  }
+
+  // Newly generated plans persist both goals.
+  const basePreview=window.canonicalPlanPreview;
+  if(typeof basePreview==='function'){
+    window.canonicalPlanPreview=function(){
+      const p=basePreview.apply(this,arguments);
+      p.training.progressionGoals=buildGoals(p);
+      if(p.training.volumeRamp){
+        p.training.volumeRamp.phase='week1-to-end-goal';
+        p.training.volumeRamp.entryGoalId='now-to-week1-capacity';
+        p.training.volumeRamp.endGoalId='week1-to-end-goal';
+      }
+      return p
+    }
+  }
+
+  // Replace the old single-ramp onboarding card with the two explicit goals.
+  const baseOnboard=window.renderCanonicalOnboarding;
+  if(typeof baseOnboard==='function'){
+    window.renderCanonicalOnboarding=function(){
+      const r=baseOnboard.apply(this,arguments);
+      if(canonicalOnboardingStep===5){
+        const old=document.querySelector('#tourCard .gf63-ramp-card');
+        if(old){
+          try{
+            const preview=canonicalPlanPreview();
+            old.outerHTML=renderCards(preview,false)
+          }catch(err){console.warn('Two-stage progression preview failed',err)}
+        }
+      }
+      return r
+    }
+  }
+
+  // Existing/imported accounts also receive the schema.
+  const baseExtras=window.ensureProgressExtras;
+  if(typeof baseExtras==='function'){
+    window.ensureProgressExtras=function(){
+      const r=baseExtras.apply(this,arguments);
+      try{if(plan?.training)ensureGoals()}catch{}
+      return r
+    }
+  }
+
+  function injectTrainWidget(){
+    const root=document.getElementById('train');
+    if(!root||root.querySelector('.gf64-train-widget')||!plan?.training)return;
+    const details=document.createElement('details');
+    details.className='gf26-accordion gf64-train-widget';
+    details.open=true;
+    details.innerHTML=`<summary><div class="gf64-train-summary"><div><b>Two-stage progression</b><span>Current capacity → Week 1 → end goal</span></div><span>＋</span></div></summary><div class="gf26-accordion-body">${renderCards(plan,true)}</div>`;
+    const launch=root.querySelector('.training-launch');
+    if(launch)launch.insertAdjacentElement('afterend',details); else root.prepend(details)
+  }
+
+  const baseTrain=window.renderTrain;
+  if(typeof baseTrain==='function'){
+    window.renderTrain=function(){
+      const r=baseTrain.apply(this,arguments);
+      setTimeout(injectTrainWidget,0);
+      return r
+    }
+  }
+
+  // Track the two phases in progress after completed workouts.
+  const baseFinish=window.finishCanonicalWorkout;
+  if(typeof baseFinish==='function'){
+    window.finishCanonicalWorkout=function(){
+      const r=baseFinish.apply(this,arguments);
+      setTimeout(()=>{
+        try{
+          const g=ensureGoals();
+          progress.phaseProgress ||= {};
+          progress.phaseProgress.nowToWeek1CapacityPct=phase1Progress(g);
+          progress.phaseProgress.week1ToEndGoalPct=phase2WeightProgress(g);
+          progress.phaseProgress.updatedAt=new Date().toISOString();
+          write()
+        }catch{}
+      },80);
+      return r
+    }
+  }
+
+  setTimeout(()=>{try{ensureGoals()}catch{}},100);
 })();
 </script>
 
