@@ -1,0 +1,5 @@
+Gain Focus v4.0.65
+- Train tab now normalises missing session/exercise render fields.
+- If the historical Train render chain still throws, a fully functional safe Train renderer takes over.
+- Current plan/history are preserved.
+- PWA manifest and service worker restored; cache bumped to v4.0.65.

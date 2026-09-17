@@ -1438,7 +1438,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.64';
+const APP_VERSION='4.0.65';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -4435,7 +4435,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.64', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.65', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
@@ -5241,7 +5241,7 @@ window.gf30OpenBodyCompForm=function(){gf30EnsureBodyComposition();const sheet=d
 function gf45DefaultNotificationPrefs(){return {enabled:false,workouts:true,meals:true,inactivity:true,social:true,challenges:true,workoutTime:'18:00',breakfastTime:'08:30',lunchTime:'13:00',dinnerTime:'19:00',inactivityDays:3,quietStart:'22:30',quietEnd:'07:30'}}
 window.ensureProgressExtras=function(){GF45_ORIGINAL.ensureProgressExtras?.();if(!progress)return;progress.settings||(progress.settings={});progress.settings.notificationPrefs={...gf45DefaultNotificationPrefs(),...(progress.settings.notificationPrefs||{})};if(!Array.isArray(progress.settings.availableWeekdays))progress.settings.availableWeekdays=[...(plan?.training?.availableWeekdays||progress.settings.trainingWeekdays||[])];if(!Array.isArray(progress.notificationFeed))progress.notificationFeed=[]};
 function gf45PushStatus(){if(!('Notification'in window))return 'Browser notifications are unavailable here.';if(location.protocol==='file:')return 'Open the hosted PWA to enable system notifications. Calendar reminders still work from this file.';return Notification.permission==='granted'?'System notifications enabled.':'Tap Enable notifications. iPhone web push requires the hosted app added to the Home Screen.'}
-async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.64')}catch(e){console.warn(e);return null}}
+async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.65')}catch(e){console.warn(e);return null}}
 async function gf45RequestNotifications(){if(!('Notification'in window)){toast('Notifications are not supported here');return}if(location.protocol==='file:'){toast('Host/install the PWA to enable push');return}const reg=await gf45RegisterSW(),permission=await Notification.requestPermission();ensureProgressExtras();progress.settings.notificationPrefs.enabled=permission==='granted';write();if(permission==='granted'&&reg){await reg.showNotification('Gain Focus notifications enabled',{body:'Hercules can now surface training, nutrition and social reminders.',tag:'gf-enabled'});toast('Notifications enabled')}else toast('Notification permission not granted');gfRenderSocialHub()}
 async function gf45TestNotification(){const reg=await gf45RegisterSW();if(('Notification' in window)&&Notification.permission==='granted'&&reg){await reg.showNotification('Hercules · Test',{body:'Notifications are connected. Keep the hosted PWA installed for background alerts.',tag:'gf-test'});return}toast('Enable notifications first')}
 function gf45SaveNotificationSettings(){ensureProgressExtras();const p=progress.settings.notificationPrefs;for(const k of ['workouts','meals','inactivity','social','challenges'])p[k]=!!document.getElementById('gf45n_'+k)?.checked;for(const k of ['workoutTime','breakfastTime','lunchTime','dinnerTime','quietStart','quietEnd']){const v=document.getElementById('gf45n_'+k)?.value;if(v)p[k]=v}p.inactivityDays=clamp(Number(document.getElementById('gf45n_inactivityDays')?.value)||3,1,14);write();toast('Notification preferences saved')}
@@ -10016,6 +10016,106 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
   }
 
   setTimeout(()=>{try{ensureGoals()}catch{}},100);
+})();
+</script>
+
+
+<style id="gf65-train-recovery-style">
+.gf65-train-fallback{display:grid;gap:12px}
+.gf65-train-hero{padding:18px;border-radius:24px;background:linear-gradient(135deg,rgba(35,73,130,.28),rgba(11,20,39,.96));border:1px solid rgba(115,184,255,.13)}
+.gf65-train-hero h2{font-size:28px;margin:0 0 5px}.gf65-train-hero p,.gf65-card p{margin:0;color:var(--muted);font-size:9px;line-height:1.45}
+.gf65-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.gf65-card{padding:14px;border-radius:20px;background:rgba(10,18,35,.94);border:1px solid rgba(255,255,255,.065)}
+.gf65-card h3{font-size:15px;margin:0 0 4px}.gf65-session-list{display:grid;gap:8px;margin-top:10px}
+.gf65-session-btn{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025);color:inherit}
+.gf65-session-btn b{display:block;font-size:11px}.gf65-session-btn span{display:block;margin-top:3px;font-size:8px;color:var(--muted)}.gf65-session-btn i{font-style:normal;font-size:19px;color:#9fd4ff}
+.gf65-debug{margin-top:8px;padding:9px 10px;border-radius:13px;background:rgba(255,95,112,.055);border:1px solid rgba(255,110,125,.10);font-size:8px;line-height:1.4;color:#ffc9d0}
+@media(max-width:430px){.gf65-actions{grid-template-columns:1fr}}
+</style>
+
+<script id="gf65-train-recovery">
+(function(){
+  function n(v,f=0){v=Number(v);return Number.isFinite(v)?v:f}
+  function normalizeTraining(){
+    if(!plan?.training)return [];
+    if(!Array.isArray(plan.training.sessions))plan.training.sessions=[];
+    let changed=false;
+    plan.training.sessions=plan.training.sessions.filter(Boolean).map((s,si)=>{
+      if(!s.id){s.id=`session-${si+1}`;changed=true}
+      if(!s.name){s.name=`Workout ${si+1}`;changed=true}
+      if(!Array.isArray(s.exercises)){s.exercises=[];changed=true}
+      s.exercises=s.exercises.filter(Boolean).map((e,ei)=>{
+        if(!e.id){e.id=`${s.id}-exercise-${ei+1}`;changed=true}
+        if(!e.name){e.name=`Exercise ${ei+1}`;changed=true}
+        if(!Number.isFinite(Number(e.sets))||Number(e.sets)<1){e.sets=1;changed=true}
+        if(!Number.isFinite(Number(e.repMin))||Number(e.repMin)<1){e.repMin=8;changed=true}
+        if(!Number.isFinite(Number(e.repMax))||Number(e.repMax)<Number(e.repMin)){e.repMax=Math.max(Number(e.repMin)||8,12);changed=true}
+        if(!e.focus)e.focus='General';
+        return e
+      });
+      return s
+    });
+    if(changed){try{write()}catch{}}
+    return plan.training.sessions
+  }
+  function activeWorkout(){return (Array.isArray(progress?.workoutLogs)?progress.workoutLogs:[]).find(w=>w&&w.completed===false)||null}
+  function todaySession(sessions){
+    try{const x=typeof gfTodayWorkout==='function'?gfTodayWorkout():null;if(x)return x}catch{}
+    const days=Array.isArray(progress?.settings?.trainingWeekdays)?progress.settings.trainingWeekdays:[];
+    const idx=days.indexOf(new Date().getDay());
+    return idx>=0?sessions[idx%sessions.length]||null:null
+  }
+  function estimate(s){
+    try{if(typeof gfWorkoutEstimate==='function')return gfWorkoutEstimate(s)}catch{}
+    const sets=(s?.exercises||[]).reduce((a,e)=>a+n(e.sets),0);
+    return {sets,mins:Math.max(20,Math.round(sets*2.3+(s?.exercises?.length||0)*2))}
+  }
+  function fallback(error){
+    const sessions=normalizeTraining(),active=activeWorkout();
+    const today=active?sessions.find(s=>String(s.id)===String(active.sessionId)):todaySession(sessions);
+    const mins=n(progress?.settings?.sessionDurationMinutes,n(plan?.training?.defaultSessionDurationMinutes,90));
+    const recent=(Array.isArray(progress?.workoutLogs)?progress.workoutLogs:[]).filter(w=>w&&w.completed!==false).slice(-3).reverse();
+    const pg=plan?.training?.progressionGoals;
+    return `<div class="gf65-train-fallback">
+      <div class="gf65-train-hero">
+        <div class="eyebrow">${active?'Workout in progress':today?'Today’s workout':'Recovery day'}</div>
+        <h2>${esc(active?.sessionName||today?.name||'No workout scheduled today')}</h2>
+        <p>${today?`${(today.exercises||[]).length} exercises · ~${estimate(today).mins} min · ${mins} min availability`:'Choose any programme session or review your training schedule.'}</p>
+        <div class="gf65-actions">
+          ${active?`<button class="btn primary" onclick="resumeWorkout('${esc(String(active.id))}')">Resume workout</button>`:today?`<button class="btn primary" onclick="openSession('${esc(String(today.id))}')">Open workout</button>`:`<button class="btn primary" onclick="gf57ChooseAnotherWorkout?.()">Choose another workout</button>`}
+          <button class="btn secondary" onclick="gf59OpenPlanBuilder?.('live')">Review training plan</button>
+        </div>
+      </div>
+      ${pg?`<div class="gf65-card"><h3>Two-stage progression</h3><p>${esc(pg.phase1?.label||'Now → Week 1 capacity')} · ${esc(pg.phase2?.label||'Week 1 → End goal')}</p></div>`:''}
+      <div class="gf65-card"><h3>Training availability</h3><p>${mins} min/session · ${plan?.training?.sessionsPerWeek||sessions.length||0} workouts/week</p><button class="btn secondary" style="width:100%;margin-top:10px" onclick="gf59OpenPlanBuilder?.('live',${mins})">Edit availability & distribution</button></div>
+      <div class="gf65-card"><h3>Recent workouts</h3>${recent.length?`<div class="gf65-session-list">${recent.map(w=>`<div class="gf65-session-btn"><span><b>${esc(w.sessionName||'Workout')}</b><span>${esc(w.date||'')} · completed</span></span><i>✓</i></div>`).join('')}</div>`:'<p>No completed workout history yet.</p>'}</div>
+      <div class="gf65-card"><h3>Your programme</h3><div class="gf65-session-list">${sessions.map(s=>{const e=estimate(s);return `<button class="gf65-session-btn" onclick="openSession('${esc(String(s.id))}')"><span><b>${esc(s.name)}</b><span>${(s.exercises||[]).length} exercises · ${e.sets} sets · ~${e.mins} min</span></span><i>›</i></button>`}).join('')||'<p>No sessions are stored.</p>'}</div></div>
+      ${error?`<div class="gf65-debug"><b>Recovered from Train renderer:</b> ${esc(error.message||String(error))}</div>`:''}
+    </div>`
+  }
+
+  const previous=window.renderTrain;
+  window.renderTrain=function(){
+    const root=document.getElementById('train');
+    try{
+      normalizeTraining();
+      if(typeof previous==='function')return previous.apply(this,arguments)
+    }catch(err){
+      console.error('Gain Focus Train renderer recovered',err);
+      if(root)root.innerHTML=fallback(err);
+      return false
+    }
+    if(root)root.innerHTML=fallback(null);
+    return true
+  };
+
+  // Patch the exact function reference used by renderAll as well.
+  try{renderTrain=window.renderTrain}catch{}
+
+  window.gf65RepairTrainingData=function(){
+    normalizeTraining();try{ensureProgressExtras?.();write()}catch{}
+    renderTrain();toast('Training section checked')
+  };
 })();
 </script>
 
