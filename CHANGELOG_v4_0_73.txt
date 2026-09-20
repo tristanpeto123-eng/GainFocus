@@ -1,0 +1,12 @@
+GAIN FOCUS v4.0.73
+
+Base: Gain_Focus_PWA_v4_0_72.zip
+Integrated: gain_focus_credit_free_ux_patch_v1.zip
+
+QA goals:
+- index loads ux-credit-free-patch.js directly
+- manifest is present and valid JSON
+- service worker cache = gain-focus-v4.0.73
+- app version = 4.0.73
+- intro retains Tap to open control
+- all cached shell files exist in package

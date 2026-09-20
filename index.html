@@ -1389,7 +1389,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
   </div>
   <div class="portal"></div>
   <div class="splash-ui">
-    <button class="enter-card" onclick="openSplash()" aria-label="Open Gain Focus">
+    <button class="enter-card" type="button" onclick="openSplash()" aria-label="Open Gain Focus">
       <span class="enter-pill">Tap to open</span>
     </button>
   </div>
@@ -1440,7 +1440,7 @@ body.coach-home-active > .gf-setup-alert{display:none!important}
 <div id="toast" class="toast"></div>
 
 <script>
-const APP_VERSION='4.0.71';
+const APP_VERSION='4.0.73';
 const PLAN_KEY='gainFocusPlanV31';
 const PROGRESS_KEY='gainFocusProgressV31';
 const CLIENT_NAME_KEY='gainFocusClientNameV1';
@@ -4437,7 +4437,7 @@ setTimeout(()=>{try{if(plan&&progress){renderAll();gfMountSetupAlertForCurrentTa
 (function(){
   if(!('serviceWorker' in navigator)) return;
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./service-worker.js?v=4.0.71', {scope:'./'}).catch(function(err){
+    navigator.serviceWorker.register('./service-worker.js?v=4.0.73', {scope:'./'}).catch(function(err){
       console.warn('Gain Focus service worker registration failed:', err);
     });
   });
@@ -5243,7 +5243,7 @@ window.gf30OpenBodyCompForm=function(){gf30EnsureBodyComposition();const sheet=d
 function gf45DefaultNotificationPrefs(){return {enabled:false,workouts:true,meals:true,inactivity:true,social:true,challenges:true,workoutTime:'18:00',breakfastTime:'08:30',lunchTime:'13:00',dinnerTime:'19:00',inactivityDays:3,quietStart:'22:30',quietEnd:'07:30'}}
 window.ensureProgressExtras=function(){GF45_ORIGINAL.ensureProgressExtras?.();if(!progress)return;progress.settings||(progress.settings={});progress.settings.notificationPrefs={...gf45DefaultNotificationPrefs(),...(progress.settings.notificationPrefs||{})};if(!Array.isArray(progress.settings.availableWeekdays))progress.settings.availableWeekdays=[...(plan?.training?.availableWeekdays||progress.settings.trainingWeekdays||[])];if(!Array.isArray(progress.notificationFeed))progress.notificationFeed=[]};
 function gf45PushStatus(){if(!('Notification'in window))return 'Browser notifications are unavailable here.';if(location.protocol==='file:')return 'Open the hosted PWA to enable system notifications. Calendar reminders still work from this file.';return Notification.permission==='granted'?'System notifications enabled.':'Tap Enable notifications. iPhone web push requires the hosted app added to the Home Screen.'}
-async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.71')}catch(e){console.warn(e);return null}}
+async function gf45RegisterSW(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return null;try{return await navigator.serviceWorker.register('./service-worker.js?v=4.0.73')}catch(e){console.warn(e);return null}}
 async function gf45RequestNotifications(){if(!('Notification'in window)){toast('Notifications are not supported here');return}if(location.protocol==='file:'){toast('Host/install the PWA to enable push');return}const reg=await gf45RegisterSW(),permission=await Notification.requestPermission();ensureProgressExtras();progress.settings.notificationPrefs.enabled=permission==='granted';write();if(permission==='granted'&&reg){await reg.showNotification('Gain Focus notifications enabled',{body:'Hercules can now surface training, nutrition and social reminders.',tag:'gf-enabled'});toast('Notifications enabled')}else toast('Notification permission not granted');gfRenderSocialHub()}
 async function gf45TestNotification(){const reg=await gf45RegisterSW();if(('Notification' in window)&&Notification.permission==='granted'&&reg){await reg.showNotification('Hercules · Test',{body:'Notifications are connected. Keep the hosted PWA installed for background alerts.',tag:'gf-test'});return}toast('Enable notifications first')}
 function gf45SaveNotificationSettings(){ensureProgressExtras();const p=progress.settings.notificationPrefs;for(const k of ['workouts','meals','inactivity','social','challenges'])p[k]=!!document.getElementById('gf45n_'+k)?.checked;for(const k of ['workoutTime','breakfastTime','lunchTime','dinnerTime','quietStart','quietEnd']){const v=document.getElementById('gf45n_'+k)?.value;if(v)p[k]=v}p.inactivityDays=clamp(Number(document.getElementById('gf45n_inactivityDays')?.value)||3,1,14);write();toast('Notification preferences saved')}
@@ -10741,23 +10741,58 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
     return (Number(c.workoutsPerWeek)||0)*(Number(c.exercisesPerWorkout)||0)*(Number(c.setsPerExercise)||0)
   }
   function volumeProjection(){
-    const t=targets(),start=plan?.goal?.startDate||todayISO();
+    const t=targets(),start=plan?.training?.rampEngine?.startDate||plan?.training?.volumeRamp?.startDate||plan?.goal?.startDate||todayISO();
     const baseline=currentCapacitySets();
-    const week1=Number(plan?.training?.volumeRamp?.startWeeklySets)||weeklySets(plan?.training?.startingPlan?.sessions||plan?.training?.sessions||[]);
-    const full=Number(plan?.training?.volumeRamp?.targetWeeklySets)||weeklySets(plan?.training?.targetPlan?.sessions||plan?.training?.sessions||[]);
-    const entryWeeks=Math.max(1,Number(t.entryRampWeeks)||1);
-    const p2=Array.isArray(plan?.training?.volumeRamp?.weeklySetTargets)&&plan.training.volumeRamp.weeklySetTargets.length
-      ? plan.training.volumeRamp.weeklySetTargets.map(Number)
-      : [week1,full];
-    const rows=[{label:'Now',value:baseline,phase:'P1'}];
+    const re=plan?.training?.rampEngine||{},vr=plan?.training?.volumeRamp||{};
+    const week1=Number(re.phase1?.targetSets)||Number(t.entryWeeklySets)||Number(vr.startWeeklySets)||weeklySets(plan?.training?.startingPlan?.sessions||plan?.training?.sessions||[]);
+    const full=Number(re.phase2?.targetSets)||Number(vr.targetWeeklySets)||weeklySets(plan?.training?.targetPlan?.sessions||plan?.training?.sessions||[]);
+    const entryWeeks=Math.max(1,Number(t.entryRampWeeks)||Number(re.phase1?.weeks)||1);
+    const entryCurve=String(t.entryRampCurve||re.phase1?.curve||'even');
+    const p2Weeks=Math.max(1,Number(vr.rampWeeks)||Number(re.phase2?.weeks)||1);
+    const p2Curve=String(vr.curve||re.phase2?.curve||'even');
+    const curveF=(x,c)=>c==='conservative'?Math.pow(x,1.55):c==='fast'?Math.pow(x,.68):x;
+
+    // Main chart samples the mathematical curve, rather than connecting only
+    // weekly endpoints. This makes conservative/even/fast visibly different.
+    const plotRows=[];
+    const samplesPerWeek=12;
+    const add=(week,value,phase)=>plotRows.push({week,value,phase});
+    for(let i=0;i<=entryWeeks*samplesPerWeek;i++){
+      const elapsed=i/samplesPerWeek,x=Math.min(1,elapsed/entryWeeks);
+      add(elapsed,lerp(baseline,week1,curveF(x,entryCurve)),'P1')
+    }
+
+    if(p2Curve==='custom'&&Array.isArray(vr.weeklySetTargets)&&vr.weeklySetTargets.length){
+      const vals=vr.weeklySetTargets.map(Number).filter(Number.isFinite);
+      const knots=[week1,...vals];
+      for(let i=1;i<knots.length;i++){
+        const a=knots[i-1],b=knots[i];
+        for(let j=1;j<=samplesPerWeek;j++){
+          add(entryWeeks+(i-1)+j/samplesPerWeek,lerp(a,b,j/samplesPerWeek),'P2')
+        }
+      }
+    }else{
+      for(let i=1;i<=p2Weeks*samplesPerWeek;i++){
+        const elapsed=i/samplesPerWeek,x=Math.min(1,elapsed/p2Weeks);
+        add(entryWeeks+elapsed,lerp(week1,full,curveF(x,p2Curve)),'P2')
+      }
+    }
+    if(plotRows.length)plotRows[plotRows.length-1].value=full;
+
+    // Keep discrete weekly rows for labels/readouts.
+    const rows=[{label:'Now',value:baseline,phase:'P1',week:0}];
     for(let i=1;i<=entryWeeks;i++){
       const x=i/entryWeeks;
-      const f=t.entryRampCurve==='conservative'?x*x:t.entryRampCurve==='fast'?Math.sqrt(x):x;
-      rows.push({label:`P1 W${i}`,value:Math.round(lerp(baseline,week1,f)),phase:'P1'})
+      rows.push({label:`P1 W${i}`,value:Math.round(lerp(baseline,week1,curveF(x,entryCurve))),phase:'P1',week:i})
     }
-    p2.forEach((v,i)=>rows.push({label:`P2 W${i+1}`,value:Number(v)||week1,phase:'P2'}));
-    if(rows.at(-1)?.value!==full)rows.push({label:'Full',value:full,phase:'P2'});
-    return {rows,baseline,week1,full,entryWeeks,start}
+    if(p2Curve==='custom'&&Array.isArray(vr.weeklySetTargets)&&vr.weeklySetTargets.length){
+      vr.weeklySetTargets.forEach((v,i)=>rows.push({label:`P2 W${i+1}`,value:Number(v)||week1,phase:'P2',week:entryWeeks+i+1}))
+    }else{
+      for(let i=1;i<=p2Weeks;i++){
+        rows.push({label:`P2 W${i}`,value:Math.round(lerp(week1,full,curveF(i/p2Weeks,p2Curve))),phase:'P2',week:entryWeeks+i})
+      }
+    }
+    return {rows,plotRows,baseline,week1,full,entryWeeks,p2Weeks,entryCurve,p2Curve,start,totalWeeks:entryWeeks+p2Weeks}
   }
 
   function svgLine(points, targetPoints, unit='', targetLabel='Target'){
@@ -10783,20 +10818,24 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
   }
 
   function volumeSVG(){
-    const d=volumeProjection(),rows=d.rows,W=720,H=230,pL=48,pR=16,pT=20,pB=34;
-    const vals=rows.map(x=>x.value),min=Math.min(...vals,0),max=Math.max(...vals,1),pad=Math.max(4,(max-min)*.12);
-    const lo=Math.max(0,min-pad),hi=max+pad,x=i=>pL+(i/Math.max(1,rows.length-1))*(W-pL-pR),y=v=>pT+(1-(v-lo)/(hi-lo))*(H-pT-pB);
-    const path=rows.map((r,i)=>`${i?'L':'M'} ${x(i).toFixed(1)} ${y(r.value).toFixed(1)}`).join(' ');
+    const d=volumeProjection(),rows=d.rows,plot=d.plotRows||rows,W=720,H=230,pL=48,pR=16,pT=20,pB=34;
+    const vals=plot.map(x=>Number(x.value)).filter(Number.isFinite),min=Math.min(...vals,0),max=Math.max(...vals,1),pad=Math.max(4,(max-min)*.12);
+    const lo=Math.max(0,min-pad),hi=max+pad,total=Math.max(1,d.totalWeeks||1);
+    const x=w=>pL+(Number(w)/total)*(W-pL-pR),y=v=>pT+(1-(v-lo)/(hi-lo))*(H-pT-pB);
+    const path=plot.map((r,i)=>`${i?'L':'M'} ${x(r.week??i).toFixed(1)} ${y(r.value).toFixed(1)}`).join(' ');
     const phaseBoundary=d.entryWeeks;
+    const tickEvery=total>10?2:1;
+    const ticks=Array.from({length:Math.floor(total)+1},(_,i)=>i).filter(i=>i===0||i===Math.floor(total)||i%tickEvery===0);
     return `<svg class="gf68-volume-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Training volume progression">
       <rect x="${pL}" y="${pT}" width="${Math.max(0,x(phaseBoundary)-pL)}" height="${H-pT-pB}" fill="rgba(83,157,245,.045)"/>
-      <rect x="${x(phaseBoundary)}" y="${pT}" width="${W-pR-x(phaseBoundary)}" height="${H-pT-pB}" fill="rgba(66,194,166,.035)"/>
+      <rect x="${x(phaseBoundary)}" y="${pT}" width="${Math.max(0,W-pR-x(phaseBoundary))}" height="${H-pT-pB}" fill="rgba(66,194,166,.035)"/>
       ${[0,.25,.5,.75,1].map(f=>{const v=lo+(hi-lo)*f;return `<line x1="${pL}" y1="${y(v)}" x2="${W-pR}" y2="${y(v)}" stroke="rgba(255,255,255,.05)"/><text x="${pL-7}" y="${y(v)+3}" text-anchor="end" fill="#75849a" font-size="8">${Math.round(v)}</text>`}).join('')}
+      ${ticks.map(w=>`<line x1="${x(w)}" y1="${pT}" x2="${x(w)}" y2="${H-pB}" stroke="rgba(255,255,255,.025)"/><text x="${x(w)}" y="${H-9}" text-anchor="middle" fill="#75849a" font-size="7">${w===0?'Now':'W'+w}</text>`).join('')}
       <path d="${path}" fill="none" stroke="#83cdfb" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-      ${rows.map((r,i)=>`<circle cx="${x(i)}" cy="${y(r.value)}" r="4" fill="${r.phase==='P1'?'#82c9ff':'#79d5bd'}"/><text x="${x(i)}" y="${H-9}" text-anchor="middle" fill="#75849a" font-size="7">${i===0?'Now':r.label.replace('P1 ','').replace('P2 ','')}</text>`).join('')}
+      ${rows.map(r=>`<circle cx="${x(r.week||0)}" cy="${y(r.value)}" r="3.6" fill="${r.phase==='P1'?'#82c9ff':'#79d5bd'}"/>`).join('')}
       <line x1="${x(phaseBoundary)}" y1="${pT}" x2="${x(phaseBoundary)}" y2="${H-pB}" stroke="#b1c0d5" stroke-width="1.2" stroke-dasharray="4 5"/>
-      <text x="${(pL+x(phaseBoundary))/2}" y="${pT+11}" text-anchor="middle" fill="#91cfff" font-size="9">Progression 1</text>
-      <text x="${(x(phaseBoundary)+W-pR)/2}" y="${pT+11}" text-anchor="middle" fill="#9fe2d2" font-size="9">Progression 2</text>
+      <text x="${(pL+x(phaseBoundary))/2}" y="${pT+11}" text-anchor="middle" fill="#91cfff" font-size="9">P1 · ${esc(d.entryCurve)}</text>
+      <text x="${(x(phaseBoundary)+W-pR)/2}" y="${pT+11}" text-anchor="middle" fill="#9fe2d2" font-size="9">P2 · ${esc(d.p2Curve)}</text>
     </svg>`
   }
 
@@ -11562,5 +11601,100 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
 })();
 </script>
 
+
+<style id="gf72-ramp-curve-preview-style">
+.gf72-curve-preview{margin:10px 0 12px;padding:9px 8px 5px;border:1px solid rgba(112,184,255,.10);border-radius:14px;background:rgba(6,14,28,.52)}
+.gf72-curve-preview svg{display:block;width:100%;height:auto}
+.gf72-curve-caption{display:flex;justify-content:space-between;gap:8px;margin-top:3px;font-size:7.5px;color:var(--muted)}
+</style>
+<script id="gf72-ramp-curve-preview">
+(function(){
+  const ws=s=>(s||[]).reduce((n,x)=>n+(x.exercises||[]).reduce((a,e)=>a+(Number(e.sets)||0),0),0);
+  const baseline=()=>{
+    const c=plan?.training?.currentTrainingCapacity||plan?.client?.currentTrainingCapacity||progress?.settings?.currentTrainingCapacity||{};
+    return Math.max(0,(Number(c.workoutsPerWeek)||0)*(Number(c.exercisesPerWorkout)||0)*(Number(c.setsPerExercise)||0))
+  };
+  const cf=(x,c)=>c==='conservative'?Math.pow(x,1.55):c==='fast'?Math.pow(x,.68):x;
+  function mini(start,end,weeks,curve,custom=[]){
+    const W=520,H=128,L=30,R=10,T=10,B=22,pts=[],N=Math.max(1,weeks)*20;
+    if(curve==='custom'&&custom.length){
+      const knots=[start,...custom.map(Number)];
+      for(let i=0;i<knots.length-1;i++)for(let j=0;j<=20;j++){
+        if(i&&j===0)continue;
+        pts.push({x:i+j/20,y:knots[i]+(knots[i+1]-knots[i])*(j/20)})
+      }
+      weeks=Math.max(1,knots.length-1)
+    }else{
+      for(let i=0;i<=N;i++){const x=i/N;pts.push({x:x*weeks,y:start+(end-start)*cf(x,curve)})}
+    }
+    const lo=Math.min(start,end,...pts.map(p=>p.y))-2,hi=Math.max(start,end,...pts.map(p=>p.y))+2;
+    const X=x=>L+(x/Math.max(1,weeks))*(W-L-R),Y=y=>T+(1-(y-lo)/Math.max(1,hi-lo))*(H-T-B);
+    const path=pts.map((p,i)=>`${i?'L':'M'} ${X(p.x).toFixed(1)} ${Y(p.y).toFixed(1)}`).join(' ');
+    return `<div class="gf72-curve-preview"><svg viewBox="0 0 ${W} ${H}" aria-label="Ramp slope preview">
+      ${[0,.5,1].map(f=>`<line x1="${L}" y1="${T+f*(H-T-B)}" x2="${W-R}" y2="${T+f*(H-T-B)}" stroke="rgba(255,255,255,.05)"/>`).join('')}
+      <path d="${path}" fill="none" stroke="#83cdfb" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="${X(0)}" cy="${Y(start)}" r="4" fill="#82c9ff"/><circle cx="${X(weeks)}" cy="${Y(end)}" r="4" fill="#79d5bd"/>
+      <text x="${L}" y="${H-5}" fill="#75849a" font-size="8">Start</text><text x="${W-R}" y="${H-5}" text-anchor="end" fill="#75849a" font-size="8">Week ${weeks}</text>
+    </svg><div class="gf72-curve-caption"><span>${Math.round(start)} → ${Math.round(end)} sets/week</span><span>${curve==='conservative'?'Slower early':curve==='fast'?'Faster early':curve==='custom'?'Custom':'Linear'}</span></div></div>`
+  }
+
+  window.gf72RefreshP1Preview=function(){
+    const host=document.getElementById('gf72P1Preview');if(!host)return;
+    const t=plan?.goal?.progressionTargets||{},start=baseline();
+    const fallback=Number(plan?.training?.rampEngine?.phase1?.targetSets)||Number(t.entryWeeklySets)||Number(plan?.training?.volumeRamp?.startWeeklySets)||start;
+    const end=Number(document.getElementById('gf71EntrySets')?.value)||fallback;
+    const weeks=Math.max(1,Number(document.getElementById('gf68EntryWeeks')?.value)||1);
+    const curve=String(document.getElementById('gf68EntryCurve')?.value||'even');
+    host.innerHTML=mini(start,end,weeks,curve)
+  };
+
+  const oldGoalOpen=window.gf68OpenGoalEditor;
+  if(typeof oldGoalOpen==='function')window.gf68OpenGoalEditor=function(){
+    const r=oldGoalOpen.apply(this,arguments);
+    setTimeout(()=>{
+      const curve=document.getElementById('gf68EntryCurve'),weeks=document.getElementById('gf68EntryWeeks');
+      if(!curve||document.getElementById('gf72P1Preview'))return;
+      const anchor=curve.closest('.gf68-field')?.parentElement;
+      if(anchor){
+        anchor.insertAdjacentHTML('afterend','<div id="gf72P1Preview"></div>');
+        curve.addEventListener('change',gf72RefreshP1Preview);
+        weeks?.addEventListener('change',gf72RefreshP1Preview);
+        document.getElementById('gf71EntrySets')?.addEventListener('input',gf72RefreshP1Preview);
+        gf72RefreshP1Preview()
+      }
+    },25);
+    return r
+  };
+
+  const oldP2Refresh=window.gf67RefreshRampPreview;
+  if(typeof oldP2Refresh==='function')window.gf67RefreshRampPreview=function(){
+    const r=oldP2Refresh.apply(this,arguments);
+    const box=document.getElementById('gf67Preview');if(!box)return r;
+    const vr=plan?.training?.volumeRamp||{},re=plan?.training?.rampEngine||{};
+    const start=Number(re.phase2?.startSets)||Number(vr.startWeeklySets)||ws(plan?.training?.startingPlan?.sessions||[]);
+    const end=Number(re.phase2?.targetSets)||Number(vr.targetWeeklySets)||ws(plan?.training?.targetPlan?.sessions||[]);
+    const weeks=Math.max(1,Number(document.getElementById('gf67Weeks')?.value)||Number(vr.rampWeeks)||1);
+    const curve=String(document.getElementById('gf67Curve')?.value||vr.curve||'even');
+    let custom=[];
+    if(curve==='custom')for(let i=0;i<weeks;i++)custom.push(Number(document.getElementById(`gf67Custom${i}`)?.value)||start);
+    box.insertAdjacentHTML('afterbegin',mini(start,end,weeks,curve,custom));
+    if(curve==='custom')box.querySelectorAll('[id^="gf67Custom"]').forEach(x=>x.addEventListener('input',()=>window.gf67RefreshRampPreview()));
+    return r
+  };
+
+  // Re-render Progression after a ramp save so the large graph immediately
+  // reflects the new mathematical curve.
+  const oldP2Save=window.gf67SaveRamp;
+  if(typeof oldP2Save==='function')window.gf67SaveRamp=function(){
+    const r=oldP2Save.apply(this,arguments);
+    setTimeout(()=>{try{window.gf68RenderProgressionPage?.()}catch{}},20);
+    return r
+  };
+})();
+</script>
+
+
+<!-- v4.0.73 · mobile UX integration -->
+<script src="./ux-credit-free-patch.js?v=1"></script>
 </body>
 </html>
