@@ -132,3 +132,17 @@
 
   installStyles();installCoachButton();wrap();setTimeout(afterRender,0);
 })();
+
+
+// GainFocus owner-approved v2 photographic workout assets (GF-PHOTO-001).
+// This non-invasive integration uses the existing v4.0.73 UX script entrypoint
+// because the legacy bundled index.html is too large for GitHub contents-API writes.
+(function(){
+  if(window.GFExerciseThumbsV2||document.getElementById('gf-approved-photo-v2-loader'))return;
+  var photoScript=document.createElement('script');
+  photoScript.id='gf-approved-photo-v2-loader';
+  photoScript.src='./exercise-photo-thumbnails-v2.js?v=2';
+  photoScript.async=false;
+  photoScript.onerror=function(){console.warn('GainFocus approved exercise photo library failed to load.');};
+  document.head.appendChild(photoScript);
+})();
