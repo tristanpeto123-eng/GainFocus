@@ -21,7 +21,7 @@ with sync_playwright() as p:
   page.goto(base+"/index.html",wait_until="domcontentloaded",timeout=90000)
   assert page.evaluate("!!document.getElementById('gfPhotoBootCSS')"),'Missing first paint CSS'
   assert page.evaluate("!!window.GFNutritionOCR && !!window.GFNutritionBarcode && !!window.GFNutritionPortions"),'Enhancement modules missing'
-  assert page.evaluate("window.GainFocusPhotoReadiness.version")==='gf-photo-gate-v1.1'
+  assert page.evaluate("window.GainFocusPhotoReadiness.version")=='gf-photo-gate-v1.1'
   assert page.evaluate("!!document.querySelector('#gfPhotoGate')"),'No startup loading layer'
   initial=page.locator('#gfPhotoGate h2').inner_text()
   assert initial in ['Loading content','Warming up','Getting ready','Preparing your workouts','Almost there'],initial
