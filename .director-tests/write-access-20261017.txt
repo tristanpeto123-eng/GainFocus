@@ -1,0 +1,4 @@
+GainFocus GitHub write-access verification
+Date: 2026-10-17
+Purpose: Verify GitHub connector can create files on an isolated branch.
+Safety: No modification to main or live deployment.
