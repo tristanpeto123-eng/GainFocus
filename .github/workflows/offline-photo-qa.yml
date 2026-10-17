@@ -5,6 +5,7 @@ on:
     paths:
       - .github/workflows/offline-photo-qa.yml
       - tests/test_offline_photo_loading.py
+      - tests/check_photo_assets.js
       - exercise-photo-readiness.js
       - exercise-photo-thumbnails-v2.js
       - service-worker.js
