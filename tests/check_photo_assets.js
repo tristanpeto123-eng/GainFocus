@@ -1,0 +1,36 @@
+'use strict';
+const fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
+const root=path.resolve(__dirname,'..');
+const rows=JSON.parse(fs.readFileSync(path.join(root,'exercise-photo-index-v2.json'),'utf8'));
+const report=JSON.parse(fs.readFileSync(path.join(root,'PHOTO_THUMBNAIL_VERIFICATION.json'),'utf8'));
+const src=fs.readFileSync(path.join(root,'exercise-photo-thumbnails-v2.js'),'utf8');
+const sw=fs.readFileSync(path.join(root,'service-worker.js'),'utf8');
+const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const expectedMissing=['Kettlebell Halo','Kettlebell Halo with Overhead Extension','Kettlebell Overhead Triceps Extension'];
+assert.equal(rows.length,873);assert.equal(report.images_verified,873);assert.equal(report.failed.length,0);
+assert.deepEqual([...report.no_photo_entries].sort(),expectedMissing.sort());
+assert.equal(new Set(rows.map(x=>x[0].toLowerCase())).size,873);
+assert.equal(new Set(rows.map(x=>x[1])).size,873);
+assert.equal(html.split('src="./exercise-photo-thumbnails-v2.js?v=2"').length-1,1);
+assert.match(src,/const CATALOGUE = '\.\/exercise-photo-index-v2\.json'/);
+assert.match(src,/const REMOTE = '\.\/exercise-photos\/'/);
+assert.match(sw,/exercise-photo-index-v2\.json/);
+assert.match(sw,/cache\.put\(e\.request,copy\)/);
+const paths=new Set(rows.map(x=>x[1]));
+const bank=src.split('const EXACT={')[1].split('};')[0];
+const mappings=[...bank.matchAll(/'([^']+)':'([^']+)'/g)];
+assert.ok(mappings.length>=70);
+for(const match of mappings)assert.ok(paths.has(match[2]),'Missing image for explicit alias '+match[1]+' => '+match[2]);
+let totalBytes=0;let seen=0;
+for(const [name,rel] of rows){
+  assert.match(rel,/^[A-Za-z0-9_()\-]+\/\d+\.(?:jpg|jpeg|png|webp)$/);
+  const filepath=path.join(root,'exercise-photos',rel);
+  const data=fs.readFileSync(filepath);
+  assert.ok(data.length>512,'Empty image '+name);
+  assert.ok(data.subarray(0,3).equals(Buffer.from([0xff,0xd8,0xff])),'Invalid JPEG header: '+rel);
+  assert.ok(data.subarray(-2).equals(Buffer.from([0xff,0xd9])),'Incomplete JPEG: '+rel);
+  totalBytes+=data.length;seen++;
+}
+assert.equal(totalBytes,report.bytes_total);assert.equal(seen,873);
+assert.ok(paths.has('Dumbbell_Bench_Press/0.jpg'),'Flat Dumbbell Press must have a correct local JPG');
+console.log('PASS: 873/873 local photos, verified bytes, all explicit aliases, 3 accurate exceptions, offline manifest/cache, and Flat Dumbbell Press photo. Total bytes:',totalBytes);

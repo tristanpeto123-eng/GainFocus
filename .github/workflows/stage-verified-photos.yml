@@ -1,0 +1,29 @@
+name: Stage verified exercise photographs
+on:
+  push:
+    branches:
+      - fix/audit-all-photo-thumbnails-20261017
+    paths:
+      - .github/workflows/stage-verified-photos.yml
+      - scripts/verified_photo_mirror.py
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Mirror and verify each source photograph
+        run: python3 scripts/verified_photo_mirror.py
+      - name: Commit only audit outputs to feature branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add exercise-photos/ exercise-photo-index-v2.json PHOTO_THUMBNAIL_VERIFICATION.json
+          git diff --cached --quiet && exit 0
+          git commit -m "test: verify and stage all 873 approved photographic thumbnails"
+          git push origin HEAD:fix/audit-all-photo-thumbnails-20261017

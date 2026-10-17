@@ -1,0 +1,38 @@
+name: Verify all GainFocus photographic thumbnails
+on:
+  push:
+    branches: [fix/audit-all-photo-thumbnails-20261017]
+    paths:
+      - .github/workflows/verify-all-photos.yml
+      - tests/check_photo_assets.js
+      - tests/verify_photo_browser.py
+      - exercise-photo-thumbnails-v2.js
+      - service-worker.js
+      - exercise-photo-index-v2.json
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check JS syntax and all verified mappings
+        run: |
+          node --check exercise-photo-thumbnails-v2.js
+          node test_photo_fix_v2.js
+          node tests/check_photo_assets.js
+      - name: Prepare headless Chromium
+        run: |
+          python3 -m pip install --break-system-packages --quiet playwright
+          python3 -m playwright install --with-deps chromium
+      - name: Decode all 873 JPG files and screenshot real app
+        run: python3 tests/verify_photo_browser.py
+      - name: Upload local browser screenshot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gainfocus-photo-v2-1-browser-qa
+          path: qa-screenshots/*.png
+          if-no-files-found: warn
