@@ -43,6 +43,16 @@ with sync_playwright() as p:
     enterApp();showTab('nutrition');renderNutrition();
   }""")
   page.wait_for_timeout(400)
+  # The app intentionally opens a first-run Hercules briefing above the diary.
+  # Complete the briefing as a user would before testing visible nutrition controls.
+  page.evaluate("""() => {
+    const modal=document.getElementById('gfEntrySummaryModal');
+    if(modal?.classList.contains('open')){
+      const accept=[...modal.querySelectorAll('button')].find(b=>/got it|continue|close|done/i.test(b.textContent));
+      if(accept)accept.click();
+      else modal.classList.remove('open');
+    }
+  }""")
   page.evaluate("document.querySelector('.gf-food-tabs button[data-mode=diary]')?.click()")
   page.wait_for_timeout(180)
   assert page.locator('#nutrition').is_visible(),"Nutrition screen not visible"
