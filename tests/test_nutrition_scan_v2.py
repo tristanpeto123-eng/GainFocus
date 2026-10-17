@@ -48,6 +48,11 @@ with sync_playwright() as p:
   assert page.locator('#nutrition').is_visible(),"Nutrition screen not visible"
   assert page.locator('#gfBarcodeButton').count()==1,"Barcode button absent from nutrition photo mode"
   page.evaluate("setNutritionEntryMode('manual')")
+  for _ in range(4):
+    got=page.get_by_text('Got it',exact=True)
+    if got.count() and got.first.is_visible():
+      got.first.click(timeout=4000);page.wait_for_timeout(150)
+    else:break
   page.locator('#nutrition .gf-food-tabs button[data-mode="diary"]').click()
   page.wait_for_timeout(150)
   print('DIARY_STATE',page.evaluate("""() => {
