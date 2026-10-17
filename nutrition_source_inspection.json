@@ -1,0 +1,449 @@
+{
+  "chars": 10531791,
+  "line_count": 12062,
+  "matches": {
+    "(?i)tesseract": [
+      {
+        "line": 1848,
+        "pos": 8281650,
+        "context": "ritionOCR(){nutritionFavouritePrefill=null;nutritionOCR={status:'idle',progress:0,result:null,error:'',rawText:'',message:''}}\nfunction setNutritionEntryMode(mode){nutritionEntryMode=mode;pendingFoodPhoto='';resetNutritionOCR();renderNutrition()}\nfunction loadTesseract(){\n  if(window.Tesseract)return Promise.resolve(window.Tesseract);\n  if(window.__gfTesseractPromise)return window.__gfTesseractPromise;\n  window.__gfTesseractPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.async=true;s.onload=()=>window.Tesseract?resolve(window.Tesseract):reject(new Error('OCR library did not initialise'));s.onerror=()=>reject(new Error('Could not load label reader'));document.head.appendChild(s)});\n  return window.__gfTesseractPromise;\n}\nfunction prepareNutrit"
+      },
+      {
+        "line": 1849,
+        "pos": 8281675,
+        "context": "uritePrefill=null;nutritionOCR={status:'idle',progress:0,result:null,error:'',rawText:'',message:''}}\nfunction setNutritionEntryMode(mode){nutritionEntryMode=mode;pendingFoodPhoto='';resetNutritionOCR();renderNutrition()}\nfunction loadTesseract(){\n  if(window.Tesseract)return Promise.resolve(window.Tesseract);\n  if(window.__gfTesseractPromise)return window.__gfTesseractPromise;\n  window.__gfTesseractPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.async=true;s.onload=()=>window.Tesseract?resolve(window.Tesseract):reject(new Error('OCR library did not initialise'));s.onerror=()=>reject(new Error('Could not load label reader'));document.head.appendChild(s)});\n  return window.__gfTesseractPromise;\n}\nfunction prepareNutritionOCRImage(file){return "
+      },
+      {
+        "line": 1849,
+        "pos": 8281715,
+        "context": "idle',progress:0,result:null,error:'',rawText:'',message:''}}\nfunction setNutritionEntryMode(mode){nutritionEntryMode=mode;pendingFoodPhoto='';resetNutritionOCR();renderNutrition()}\nfunction loadTesseract(){\n  if(window.Tesseract)return Promise.resolve(window.Tesseract);\n  if(window.__gfTesseractPromise)return window.__gfTesseractPromise;\n  window.__gfTesseractPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.async=true;s.onload=()=>window.Tesseract?resolve(window.Tesseract):reject(new Error('OCR library did not initialise'));s.onerror=()=>reject(new Error('Could not load label reader'));document.head.appendChild(s)});\n  return window.__gfTesseractPromise;\n}\nfunction prepareNutritionOCRImage(file){return new Promise((resolve,reject)=>{const r=n"
+      },
+      {
+        "line": 1850,
+        "pos": 8281743,
+        "context": ",error:'',rawText:'',message:''}}\nfunction setNutritionEntryMode(mode){nutritionEntryMode=mode;pendingFoodPhoto='';resetNutritionOCR();renderNutrition()}\nfunction loadTesseract(){\n  if(window.Tesseract)return Promise.resolve(window.Tesseract);\n  if(window.__gfTesseractPromise)return window.__gfTesseractPromise;\n  window.__gfTesseractPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.async=true;s.onload=()=>window.Tesseract?resolve(window.Tesseract):reject(new Error('OCR library did not initialise'));s.onerror=()=>reject(new Error('Could not load label reader'));document.head.appendChild(s)});\n  return window.__gfTesseractPromise;\n}\nfunction prepareNutritionOCRImage(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onerror=re"
+      },
+      {
+        "line": 1850,
+        "pos": 8281778,
+        "context": "unction setNutritionEntryMode(mode){nutritionEntryMode=mode;pendingFoodPhoto='';resetNutritionOCR();renderNutrition()}\nfunction loadTesseract(){\n  if(window.Tesseract)return Promise.resolve(window.Tesseract);\n  if(window.__gfTesseractPromise)return window.__gfTesseractPromise;\n  window.__gfTesseractPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.async=true;s.onload=()=>window.Tesseract?resolve(window.Tesseract):reject(new Error('OCR library did not initialise'));s.onerror=()=>reject(new Error('Could not load label reader'));document.head.appendChild(s)});\n  return window.__gfTesseractPromise;\n}\nfunction prepareNutritionOCRImage(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onerror=reject;r.onload=()=>{const img=new Im"
+      },
+      {
+        "line": 1851,
+        "pos": 8281809,
+        "context": "ode){nutritionEntryMode=mode;pendingFoodPhoto='';resetNutritionOCR();renderNutrition()}\nfunction loadTesseract(){\n  if(window.Tesseract)return Promise.resolve(window.Tesseract);\n  if(window.__gfTesseractPromise)return window.__gfTesseractPromise;\n  window.__gfTesseractPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.async=true;s.onload=()=>window.Tesseract?resolve(window.Tesseract):reject(new Error('OCR library did not initialise'));s.onerror=()=>reject(new Error('Could not load label reader'));document.head.appendChild(s)});\n  return window.__gfTesseractPromise;\n}\nfunction prepareNutritionOCRImage(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onerror=reject;r.onload=()=>{const img=new Image();img.onload=()=>{const max"
+      },
+      {
+        "line": 1851,
+        "pos": 8281934,
+        "context": ".Tesseract)return Promise.resolve(window.Tesseract);\n  if(window.__gfTesseractPromise)return window.__gfTesseractPromise;\n  window.__gfTesseractPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.async=true;s.onload=()=>window.Tesseract?resolve(window.Tesseract):reject(new Error('OCR library did not initialise'));s.onerror=()=>reject(new Error('Could not load label reader'));document.head.appendChild(s)});\n  return window.__gfTesseractPromise;\n}\nfunction prepareNutritionOCRImage(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onerror=reject;r.onload=()=>{const img=new Image();img.onload=()=>{const max=1650,scale=Math.min(1,max/Math.max(img.width,img.height)),w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round("
+      },
+      {
+        "line": 1851,
+        "pos": 8281954,
+        "context": "omise.resolve(window.Tesseract);\n  if(window.__gfTesseractPromise)return window.__gfTesseractPromise;\n  window.__gfTesseractPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.async=true;s.onload=()=>window.Tesseract?resolve(window.Tesseract):reject(new Error('OCR library did not initialise'));s.onerror=()=>reject(new Error('Could not load label reader'));document.head.appendChild(s)});\n  return window.__gfTesseractPromise;\n}\nfunction prepareNutritionOCRImage(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onerror=reject;r.onload=()=>{const img=new Image();img.onload=()=>{const max=1650,scale=Math.min(1,max/Math.max(img.width,img.height)),w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale)),c"
+      },
+      {
+        "line": 1851,
+        "pos": 8282005,
+        "context": "sseractPromise)return window.__gfTesseractPromise;\n  window.__gfTesseractPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.async=true;s.onload=()=>window.Tesseract?resolve(window.Tesseract):reject(new Error('OCR library did not initialise'));s.onerror=()=>reject(new Error('Could not load label reader'));document.head.appendChild(s)});\n  return window.__gfTesseractPromise;\n}\nfunction prepareNutritionOCRImage(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onerror=reject;r.onload=()=>{const img=new Image();img.onload=()=>{const max=1650,scale=Math.min(1,max/Math.max(img.width,img.height)),w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale)),c=document.createElement('canvas');c.width=w;c.heigh"
+      },
+      {
+        "line": 1851,
+        "pos": 8282030,
+        "context": "dow.__gfTesseractPromise;\n  window.__gfTesseractPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.async=true;s.onload=()=>window.Tesseract?resolve(window.Tesseract):reject(new Error('OCR library did not initialise'));s.onerror=()=>reject(new Error('Could not load label reader'));document.head.appendChild(s)});\n  return window.__gfTesseractPromise;\n}\nfunction prepareNutritionOCRImage(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onerror=reject;r.onload=()=>{const img=new Image();img.onload=()=>{const max=1650,scale=Math.min(1,max/Math.max(img.width,img.height)),w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale)),c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContex"
+      },
+      {
+        "line": 1852,
+        "pos": 8282208,
+        "context": "/dist/tesseract.min.js';s.async=true;s.onload=()=>window.Tesseract?resolve(window.Tesseract):reject(new Error('OCR library did not initialise'));s.onerror=()=>reject(new Error('Could not load label reader'));document.head.appendChild(s)});\n  return window.__gfTesseractPromise;\n}\nfunction prepareNutritionOCRImage(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onerror=reject;r.onload=()=>{const img=new Image();img.onload=()=>{const max=1650,scale=Math.min(1,max/Math.max(img.width,img.height)),w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale)),c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0,w,h);const d=ctx.getImageData(0,0,w,h),a=d.data;for(let i=0;i<a.length;i+=4){const y=.299*a[i]+.587*a[i+1]+.114*a[i+2];con"
+      },
+      {
+        "line": 1886,
+        "pos": 8287105,
+        "context": "tritionPhoto(input){\n  const file=input.files?.[0];if(!file)return;\n  try{\n    pendingFoodPhoto=await compressFoodPhoto(file);nutritionOCR={status:'working',progress:.05,result:null,error:'',rawText:'',message:'Preparing image…'};renderNutrition();\n    const [Tesseract,ocrImage]=await Promise.all([loadTesseract(),prepareNutritionOCRImage(file)]);\n    nutritionOCR.message='Reading printed values…';nutritionOCR.progress=.12;renderNutrition();\n    const out=await Tesseract.recognize(ocrImage,'eng',{logger:m=>{if(m?.status){nutritionOCR.status='working';nutritionOCR.message=m.status.replace(/_/g,' ');if(Number.isFinite(m.progress))nutritionOCR.progress=Math.max(.12,m.progress);const b=document.querySelector('.ocr-progress i');if(b)b.style.width=Math.round(clamp(nutritionOCR.progress,0,1)*100)+'%';const c=document.querySelector('.ocr-copy span');if(c)c."
+      },
+      {
+        "line": 1886,
+        "pos": 8287148,
+        "context": "es?.[0];if(!file)return;\n  try{\n    pendingFoodPhoto=await compressFoodPhoto(file);nutritionOCR={status:'working',progress:.05,result:null,error:'',rawText:'',message:'Preparing image…'};renderNutrition();\n    const [Tesseract,ocrImage]=await Promise.all([loadTesseract(),prepareNutritionOCRImage(file)]);\n    nutritionOCR.message='Reading printed values…';nutritionOCR.progress=.12;renderNutrition();\n    const out=await Tesseract.recognize(ocrImage,'eng',{logger:m=>{if(m?.status){nutritionOCR.status='working';nutritionOCR.message=m.status.replace(/_/g,' ');if(Number.isFinite(m.progress))nutritionOCR.progress=Math.max(.12,m.progress);const b=document.querySelector('.ocr-progress i');if(b)b.style.width=Math.round(clamp(nutritionOCR.progress,0,1)*100)+'%';const c=document.querySelector('.ocr-copy span');if(c)c.textContent=nutritionOCR.message}}});\n    c"
+      },
+      {
+        "line": 1888,
+        "pos": 8287310,
+        "context": "sage:'Preparing image…'};renderNutrition();\n    const [Tesseract,ocrImage]=await Promise.all([loadTesseract(),prepareNutritionOCRImage(file)]);\n    nutritionOCR.message='Reading printed values…';nutritionOCR.progress=.12;renderNutrition();\n    const out=await Tesseract.recognize(ocrImage,'eng',{logger:m=>{if(m?.status){nutritionOCR.status='working';nutritionOCR.message=m.status.replace(/_/g,' ');if(Number.isFinite(m.progress))nutritionOCR.progress=Math.max(.12,m.progress);const b=document.querySelector('.ocr-progress i');if(b)b.style.width=Math.round(clamp(nutritionOCR.progress,0,1)*100)+'%';const c=document.querySelector('.ocr-copy span');if(c)c.textContent=nutritionOCR.message}}});\n    const raw=out?.data?.text||'',confidence=out?.data?.confidence||0,result=parseNutritionLabel(raw,confidence);nutritionOCR.rawText=raw;\n    if(!result)throw new Err"
+      }
+    ],
+    "(?i)ocr": [
+      {
+        "line": 12,
+        "pos": 42204,
+        "context": "AahAMRZUQAC112GPtJ6JYfuvW8dZghBBE4swAv+65ULOhrZlOIwIucWlsT63a4oZSy4DU2kZj0MzwsnojPc+txQbdB2svtcbCbvfSwEihhDMPcJfFo53dkcoIoQh6dhr7jiN5QzcR7Dn1oLlSh22Qx4GmB7vAUBzo0v61HhKk3jGxY0wdJ54JgZmo8gBAJkTvMxPZzuMt22UsxSRqKBiAABOfgkxCMfD9w52Ns8gUiQK6vCwN1ABUZSrC1jCddCBZhS6ocrZB2QHVEiACZyHfsXIHwZPvW9g1JM7HNNzEWZJz5TQEamBaiVLNCDAFYJzxasUgmiWMCeqZB7HTx+MTyEMAjRoFVKc6N5tLErTNEayPUbCthVuSO7e9qmc29i0P/caXtaX8WLNwqY4Zm/sTVnXcQom5cHha4o3NthCzwxvdu9/5QCoqebzmhB6d4LDEB5zP9zoMXSg9GoF0nZrK8YltJCoSx0UxDPFkiYMS8iDDMjisjE1DL0szTxlDx2OSrWXdA4yWYWRUz8hEUFG+TCUGK0swBQMySJkzGHdTrzrdOcmnCiCUaBVDrFpZvaoE1WgAQAmmPfKenMekCyaoJSKgBtQCraA4SpwziF3bZQOieaYzI1XJkwwaDR2ynw7jiAiFyQiRELsU73Yu7tvvfnCsyMtcYyEa1OKsSZl5Sy4C/xbsYqiN4g1WZuRY3aC07QY0T5xfhtdaVYc1m9c6sRQWUS22qjS2xe6yKHiRiBPnOqSPvPyua44feJfstDX41rG4NVISufcZUCpuBz1vI2Zs+1O9bhcHpY7zWEaNCnlRFmXIlU4UmOcTkVAWY7CwkdmdN3SNywQl817BkcmaKwDBTNg"
+      },
+      {
+        "line": 13,
+        "pos": 62272,
+        "context": "wsZkjUVvedoLH+eutsD2H7Xa+VzHaTWXSiwfZqXg8V3dt1m2Lgxpi6YapjOjsgHGInbd+JtW77hrtgle1mQ1cBvSuQ0m7kbI0Fofu12pi1KgivF1649b+IXW+FCG2iA8TOFcEReQDaG/BB3w2HGSBnYPsF7o9773/3jVuH/tnPP/7lxz+9d3/4//435//yF/NpSWioRsR5xIGIiJoZqUZAMDdMxqoNmKBJRvTt7//gpz/8V8/mQSXG5QtEz5CQtBFocxoCrEUt1kRAXIiCWW26ACQg74pbhi6WZbZ/14rR+PU9NZm/+BI8SAQCUBXAdb7cApgdpLUFkdb1fjei2drN7CB7sHMSuItKbq6j7WAmbXza3OCbaHMt5G0CHq7LR+wkw+0TmFyxg8WtH4GIu5Z/1Z8h4tUybYUYdW+jnaKzdWiIu18fAIC6Ic5wnViurIcRuFeEYZElDcNB/sbt/LDvm5rLkqxOEOXWuHfsm7EuqsvZf/37H59X/l/8yeRf/2x6VpoC18kAfIIQ4zI2iyiNqKhJW2wDZaucEp1I+vCTL85nFclMTJGCpKUa6RbUxSgGamZq6A2dSlJNmhoHDYE1yuQylw9SE8evv3fre9+DPF8++WJdeFnXwW+DyApr61QLiLibvyLaX4927FoS7kSc62mR2VdEOuzUTzuGuT6XHcSB0RVt6LLt8bf5Gl6ts3Abf9cOA3fSny0kgXYtcd8xuG1Khq314PYzUhs6DRGJkAiQh/0QONQafvCN/V97XLw6iS/PzJKlCE2tZDSZyJOniy+ezeJ0frJwP/o8nixRmZLiPKEaGAATiVgTZyKxRWuIe5zdNvCI4LMhAhkGTZXV5ynOYY"
+      },
+      {
+        "line": 13,
+        "pos": 79410,
+        "context": "XQJT531uEMXyXMcDTQl7PcwC9I4dTCOusbzFQqvo6ogIyN6T6unFxfPL6uxy9umTly8v6vPpclZDBO+0LDiCYRRLkkQBOLLI5OT52ZPlxx/+eDQaPHrw4PDoTlNZE0HEoFrm97+TLp8agOoyxaWpmJov9uvlhaW038/V6llZJgDR1GHxERioKhC50FdNkmowUIBKNDBTPXvxsz9IVcmZw5CXp8+0kd5wX30f8rEtTi5OPq/ynjYzQUCLLZANxKCrcGOAoCrgCPMsUA2lSHN22uQ5L2qnmmwbyDpJ8RXNwm2LzLoND8MbtpQbgOsKb3Q4Zeu8ebOkal3abSWfrWOh6yIf8asWWiEAEIFHPZ20XXeKhk0kRgisHvjNkXz31+6Pf+Pt6e//OFJ2OUWzpmfG0eJURNFUVJhUD8Y6HGBdYV6QiMrlHKIRew9a1cBEYNZoenHZ/MWnFx98cf7R09nLqczKKtaVZ2OwaBBQEITA1HzdtPxiYmya+UszAHR1I89PpicXp/fu3L/34K2Q31omUjEUyI7fqp7+3JYXJmqa0BIg+/5RrJdq6WAw7of4cj5btcINzRQsIjFoQi4o9EFV271BgAakgKaxnnwhhq5BSw37vkmalTPf97FaMLO3WCsaeJPKpAZtGB1ItJQAcgRylClohhEpSHIEyShCBM+UeR9j3Vn7vdu06IDR3RXxnQ1gXUjRNnJRCO2yzysM2I3y885ii3W1ZTvMfeusxLC1ceFVotKK6uEZETmKGVoE3AtQJ0xqhaPC5Le/c/za7/1HOvlMaknJxxpEjL3mILHRFDEmjMmapu4dZy4BgoWxu3jewKICZkMoeg5MPv9y+fs/X/zhB5OP"
+      },
+      {
+        "line": 13,
+        "pos": 99668,
+        "context": "VWB/qJDkt44KFhQJd5R6AE1nUQjCoJfurQgAfRHnp899HHdzH1xzc7x45tZgSndy+cz+OBUBBFFWQPWEokdJ6cC6H4xGMXt3rdk710f2QBqPIXZ2b2XSsPAJAghDJXA+cSVcknh5XBuCoCOrDgkh6AAgJQYuRdd9sjAlMYnPeZJsdu3r33o9nOFSI+Hj042n+EEVPnmMgTiaFIyUjoMwM0ndriTd25iAC5WqMmQpwBAGtlbozr3jY33GfvO7z3wUMkZ9OcRJu7+NYNM+Yan2ZiT1vsvKAmmiG0qWKGVrm0tl1aoMnwafgB1ex8G0to9pl5H4dLEYZz33FoFtFEzjnH5G+/ZecpGyAS4/mLb/vo4GJJF3MYBtjsuFc/1d/9uGSeOh4yJibdzGC7a6VAEWMI8sgR3LMrZ8cyDHAwKXZHeR5ZVMah3Jvo3tHw4uEwj7KVOSLvEBUtAE4NUzWoKbBXlUkJR0G30kQBxKg0joZGqe/uWMzJgteRlUfMLhqpIZoyMaJHSsBQNRI7JgQrwVClUBHyHbCQrffLSTg8t6+ji0Ce4kQn+zDZ985lbJ6ICTyzZwfkAEnNhkUhi9Q3BCTX2TQ1NEF2SCloTkyeyTvaSvWpW6NnP/+qEO2J0wfDUkTKMAUxbOqQuCihZwIva2SSzoFRrFk/YTN9t05ZdC2Sa4MKPVt2tYgesIVtQnt8OK2zrLZJ4nLywlJ1X2X5IBHx8a3uQ+eHl10896f3xovWG4YYVGK0W7bd7hgHpV2W6EGOnz2MR6X1vG4nUkL22FH0GG86tfWSk2s7Ga2vrw0muD+x/ZIPB8MLg8FRCTGUu6PRxdI48YehzMiO9zPNgwAFDYQI7E"
+      },
+      {
+        "line": 14,
+        "pos": 241776,
+        "context": "wsMFxFdRIDZ3QF1EEzEUKsgazvxeOVrH3k5ABDJQ3dHbRg9bRjzdM2Z+eB91CqdwEpM8tpXQUhCWMDEopBHKiC/+LT7s5/dvHiR1S3Tk9CEUluPJoqUMxA+n55j5fKZZ4mx2EeWO8BoZV7aU/mOoecdtND6jsA4ARpMnQPLVGHe+lcwzeBsMV3b2CfQ0JiJXYGj1xT9WZsJQCWdL2UnsbD5lyzUGk10WgS2ehpcmWewoJQW8Wblc51cS2vk2vqYP0lcnOcRWMxuMzBmlc1eb6PEajAzfwKm9uVJ21kuZSdjZE7j20V54zyFo4DYNRSmX72O3//B5cVGrIsNPRO7FJfJO2cfArJzPxr3BW9LPBRHRKXpEjIESMlEoiTFH7zI75/rNkvWesilIApw1sjf/NHVZtO+uvevb7xAHz9qPv5w+9572/PLnDI9MAxOirneP4xS8FCkLxrQyrAYK0fqTZ0QWhK0rWgKd/dgMQYlRjq0UGszNzzQZn98blZCySZDqhBCpqpMSGUSQIVJIUJBJGU/wEZ4lJijBD3EwaFIV2ChBTL2H8XiP0syyojC8OoPoW8b37WRM0TUQwHdbemRSjSiEpSAQHJIQsqmGdp62u11m58lZgx72NHKcfBi4R5lGLquvguP+64GzfqhH8pQj2VluokGRCDugG5CUrhREqiTxCgQhSiQIijNTlLrlnYff/TH/4Nv/erHRzBTRby0200MZbvdHfdvDw93m/Nrs+JmY41yOBgUnQTRqMIQYjYpzSrnpEXW0bMkG4fG9dq1XIJFFIhwA6Gax6q+cI/ibvOnRqrFsu/KcByGYz8cj8Nxf9gLYrPZUTbFBZpKKQGkzUXdUSqZe"
+      },
+      {
+        "line": 14,
+        "pos": 245278,
+        "context": "9Fda15x9K3kne0l13jyMC1oOKICGUDERqz0VSbM5L99aOd93xQSRrc+bFx91LN835ewEc3n4dkqS5cAcliyphEQXaaL5MeQsw3K10ObdvX75+uN9fPnt699XPozyINu493cILEJSNl33U/RtBn+WVmAGuY5i3lh8Eh5j1bQ7Br+5QXP/uv/N8e9n+5tOOrF6gSumI2nr0TjHsukFwpaHP6gbn+sGTCtpFKp+ZF1P913w+HvWaNfJm8W1yVU+yoirUlTJOCr5WSP93HUKnYspaBEmn9qW5aWZFsCPezTcvpIr1cHsChcaiAcWqnYCrRnmMJKN1k+I6ebzmPC9J/Fjl22IBOGDBUMxuqljVYHLVnTxPcriaCq+re+bB8YlQtPbHEnSlPrvK2+3mH//Zm+8+Tj99dSQ2A5KIJ8rRxh/YKsB42+POMBrnx1x8CF3C/sb3Lp+/t/uvP7nfbZSIocT1pX7rw4uri+1mpxfn+eJc28vEjbJBCOFVViMa1U17/OpoTlGWAkrkhG4YGwEqz1mCFAogtSZbkBKE8Mo98fEEiKDKyFR8dG5Njn6AaqREFQxdUChRgTXIRGoEjK5n34UqzQUhw6RlFocZhmAxdAWDydTlAZWZ5zBi/3Zbb6TsmmgbQDkMtesG/YCkkjIIJESOYZvjauM394dPXt28fei+fus3D3Zzb69vh5e3h9d33f5YhiJl4J/8JzBJF+89/6O//bd+71/74WV7ls7PwiLK0D90qFanwWsFVts05iWJJGUJV9Gx6QwCQiSHD+jvtx/96PjVL23/RshAgRWKat7ACxDhLsJyvIckuO2/+jTsWFNldcdstpeluzMfckpPzs936XDz8HA"
+      },
+      {
+        "line": 14,
+        "pos": 285751,
+        "context": "OKcOuaUQKS69v4ENNS9FNnCQ5Z44Im2Rb1m4ePhKHdCqjufr1cXpxXp5UlfNYrEOMcJ6b6+hbawWq9X64stf/9ov/vnLm5d/8M//6cfff95ccHXvjer8nlvfx4b6LYias/ub56/cMxE5zLx3T9rtJTQslaU0erWhmm92vZOqtgM62zPAFAJZ8NyP1ksnkIiYWpm2VDxkqW/3gCDIwYkzVKmMC9PEZPC5wX6+Sfhs3uHDGXNk4IwJXjqukRmmD3ToZaefoCrcGXCQzyfdx9XAx7/xQEimO4se3IcbwLjFwHm4V8zuA+Ow5+CjHOf9h/DudKCfGsRGKJDP8TojbL0YS2AD19AOWCPyO+htnxFkjtkXIzHVDn1jB6V8ADD5ofRwfB023hfKqnin922imY3QS3InhgECN7XEFNWFvK7w6rN+22Of8XzLFfla9LSiTSaARIiIm9Xyd377k08+ujp5eL6/veIgnLNm22fbJ9x0CY7vvWpvbvq/82tP/+1/92euPnz5T/7Jix9f5RdXXe66itNZY+e6/3J3s3l9+/pq38dwtdlfbvJta72SiKwXy/WqqnpaRFRsn96kSgSmP/OLT0O/JzVu2I3L7HO80AzeLldtarnZhn2nbdfv+jReuApUYHBEsQ/hXgZVwSsidoQKO0WrUGa4hBDIetbeORcQAQPLwKuKVo2cLfj+Cm+c++99nP7weVpVFXNg0oulV4HUyR2m6DrbbPrVNoeYY6SuBm16CRsyx7JFvPSgkA72EXKL/c5vtn61t9vu9rq/udX9zrd72rbcddi3frn1q42lLi8qenJvcdZIn/Dxlf342q46EFyYiCNLxRwQKtCKebWI/uh8lbo+"
+      },
+      {
+        "line": 14,
+        "pos": 400225,
+        "context": "D56ELjK6doBByhgEoUikLuelCsMfYUgfTuvZdNI1CYQRRBCaI4PbBKcsiSnYxQlT48gk8v2rOVu/qbF/7uI80FZ4m7Ige37QoB6QtF4tmGb/YpKdcJh0JCWtNQdIVQVBalStweS3aq5M2q7fKxbfVffPbmp9/c/ua3Hl9s0mbVQhSaUqOrll6iuJZSIcdYpXbVNDDk7PvOD53Tw0kzBRnOZBrBvkQyCmkqEfGDr15c3t9v2zYXF9joCqhsjJAAVWsueQOcr4KQEhSguA+XezUy3PNw7bUUVBVhFBExa8N9szkHdbe7rYA6MlD3yUuXpQ75Y1CxZC6qyejCICCsYclQtZYR9FIiQqxtsTsMtEVNSSDhRQDRBtaotalpI0Qopd8x9tVU7J4rC3NwGivFu5ruCC/S6M03X2D7PLobeqepEZHIe/ZHNGeUYDnq8Xr/6eX/8v/wZPfqtlz1Hl5lmN3NNb1TaBETD2mqFJXVDS11ncJgEKmpjMg66jGzi3S87aUwASpaN69TIJLJwJLOADaNeleE9Ztb7aHVVkpXMDtm4N7MDYq5/x3H4WPNFDCkZFMZ8x8hIq4Noqiw0VipK9gxIPCItZWbLMVDGA18V0Zl5bB05NwsnrqlFhFgXIaHcxERu2QGTYr5SeO5UAjK6VKZJ7mFY+HFgho3Fa3FbuAkTn2OEZ4H5TzRspwmC3DUa/AkeFhmGBwHsiOX03mZTyBOObdY0pSn5w0nRxAWtoipbGImacy+qVMg6pzLiCmvhie8BVnU/FEGu5BbvXW7On1dBxboGJs5RxdP96ITleqDGMjhRZ4hS4t4NryVmDlTUxdjPkZEa81Xl/5Xf/PJxbN3nzx/8y"
+      },
+      {
+        "line": 14,
+        "pos": 451371,
+        "context": "dZ/ZyP84pyYsUFS+Yqwgtd3vzGQ5ux6bFuPCY4oWzID22L7iSKFFI14LMOeeprKpLbcLLiUL5Y9bVP7lXeDSrSOzq1cEbSKAtQg8qKtww5Xpinnw2LyNzfNVR/B1aqnz30FJKS3x7/8fX+8db9tVlX+PMeZca++zzzn33JJeCTWhQ+g1hBqSEBKCoQpIVwRBKaIiKNIV+YkgqFjogkiTXgPSSyiBUFIICam3nbLLWnOO8f4x25jrXF7kgyHc3LvP3nvNOcrzfJ/MGpMC4ENAEYqp41BscxmeFHU2nEntrcHpws0ZdyxTa6RB6Z2sOwLg3W1PwoRiisVBOpZdpt+BLAzTnucODUnIbEIUS7i/Hy23dsmKE2/R7x4BSXgT4iBCRAxRfJMVEwqAEZFMkyZbKAg9iyUYETfolg2jCKIxFMSZUhAJtkU0KfERiOzyynKwt3l2EB0FAMJEYkgQhQyCsLADTu+GICIut3Zt3FrEheMDs7ikTeIIJhBEVp9d/LoKWU5VYSzv2JO1aCxIpMwDcFAzxYcShbLICRGaZRivyWID3CyZaQUlUjyI0BAW3yFilIuGcjUS6JCC/yK+hnBBEAIBjcGMMYRZHnY8ssjeq7Bp0Xskaya7qV0i31G/CdyBbQSNsBfwIbM4cm9EAHxUjamcb7It2QbEi3dxkIXIISEHIcYQGWpHS4HpiqNlAGDnQYDZMTtElL4PVgEIEyokmKx4oaicpobDTQ3BPMEIhE0ribYXqI3IDNwjeAQv4BG4QR5hJ+AAHIBnYRRP2B/Y7FkcALuk8wl858D3F4l235SjylnOh3kZwFmtnEUd5UlMLkoYqM4Rs4wwxmSLmq8ktqBSfxTR"
+      },
+      {
+        "line": 14,
+        "pos": 511973,
+        "context": "QEXgCXcX08KTbKcBYQ0eQLULhCNDhQkyJBw5WQL8aNUJWedogFJRX3qek5ijLIPfeasvQ7denQ7qLU3s6MkZ6cUP8OHdGVnpY1toz0yp95Y4RdeMmgzU55JIMCaoM8uQ6r1FNZi4yVNNsOo3s44SJgOSHssLimhN2/66QEbosmMOfkjjpONkunFImAUL20XRfh3BslmI0Ki+tQRBaqc9PU3hXnsfWGrEa7AeLTy4vpbJTTrnrQEGWpYF08IYLX9CzlM/Ocr/yl7JPqWA3PrZ3fRrA+/zNW4QzhcLRZnRyRjpZqaCoaT+UEl0SumoaisxyEZSrGohgxZLxmTEvIgkQ1PlrbZVcqVY3WEuyQfg2kFA0uxRYqAHF3h/KTwauHMJcRmQTQ0PGWNw8voCbvFVgMMnxkKRg2TIua8+cSJkgFLWh0HqzWWeiFfNBAzRMPhafXfi+cp37EmEO7OWuiBq2Vr265J5aTDsTVYkLjeRkmjxR7MHcIHbvwU7MZEL0/UjCdpw0mKJnKODCKRgsXvOngMoVauf+JutuSF4I2GsIQGKJUcPNOPuPLHK9piLYJKymzsMfqp9hEAvlXJzl2khkONk6TS6fxPISuhb7xZ/0ecC5IUZdVu00KIa92GQ0RcS7x0ffAmfp2xGoi6G7Jt7MMCojV+TvcRGjpBfRWYxsxm7W7jbt0OmokgQq9mhE7RQtCRKHZCShNM4jmFyFtELxBrKt4+OYMboCeFiwyWp0LFaWa/heybIfqRGQFsutoiuZGHcGYmFgvmJr6abp3TeN3We+MqK2Nrj5rJRowohqSBoKMr+LZzQE5BL2lpdprosmXs84TB0qo+LSgqvn8EcXomD3VrC"
+      },
+      {
+        "line": 14,
+        "pos": 522195,
+        "context": "KdBsieX3CpFYx5UQNjkayw5uDohQm5GZfgoF0itB2pz3NQZdtqJW/Dhj/qNV+TYILzVd+Glb7yEKzW9TPuhKlrDYBWrPEXXRt6bs0SLWWeZ4kxLQDtz21R0d1kRoaQcd5l4CME9OcK15xWGV3ZrCUoYaHu8/kGq7zUzYmOX/IIwEvZP+ETZLCY2U66qiRJI0WFF0uTlN+SZoj2UhLKiRzG/ak+f6mlSEZXB/sx+uAbdi5mFryf2eNNi6UA7MTEOb+ZWROcrLqXpPSDK88Vn1kJWRu92ADYGCThE6tq5BfhWqYXsWrVzbMuTz+A56uBZv0GkRmpEeVYZpuKS75mCNOjCTgDl0vephrQ5Adt9Sz5DdM6W8Wms4I3fUQd3Y59Bb4VxlPjOB1mpyUzjpZMfu26yBlWKAwW+iX/LMEhGMaJZ3mIcnYwwwLMPIyWGs9NnowRPOGQGKH1s2NGEOCCFJ2nS2vUHvyuHrNI0+JGSRwWtQyU6H7/SDjkZh/ZQ9pD6omVrCLCxHVZ9h1PklspTKGFoQ7dy5m83aTSsL8x69Z/S6QhwhxuCLlefKr+qzKE1/kvUwG+TBXcZYs83GQNbuelUpi/LgZG6r32r5cw0uUXdleWHp5qTDNPNdFdJwhu5KXlwYN82kKTCqHtn0tclKKF5b8nGoMWUKgqoCVvlnisvoPIJ0jI42YKSeKxk9IhDTmNjA7OVOHzCspRc8kTK5VlOxOrEW0WvHF+oco0Krwjhf5unV83EOwaYVcQmM53seK9lb8JAdP53KqhI5JUGNjShl2U+rIugIIjFlVBifqS63NGE0uUYiYZT8Mo2EKJQCZCOZ2MHBMJ8g0riEk8cm/GH6jjwk"
+      },
+      {
+        "line": 44,
+        "pos": 653013,
+        "context": "iyolmXp0unz26GD4eksMpWho0pO364vrqkcg0jiM8iSDnpHlnvnfLQRiehmHbL3rKnPIUFx2AYTeydCEs9kNiIAQxJaaw6HqhTjysnz8ctxeaNMaQfTJV8+xuDnVNZuqaTM2JHZdXn1z8wX/7fdPRd5fEnic3y4C752JlbZaZhQBTYxYuTIsZiGLsc94zMflkTk7bzWZNHELomWLOJlFczbJHFjaKnTBHV1NUUpmIU05uSmLk7qqOEHqRgDRupjy4AXROcrvz0zeXd//8r5///K+dp17+yz/8w014mklJZZyuzXYguCooMiOrCzMLo5BEheNxuAtTB3cRymnHHEDmnoGSxnoYLx7lbeagvIBPaf3jb5FE5IE6soFCz54IusXVe+/+7iiRycG8sJv1/uYZLj/W/XP2sUQzd0Fkh3MkAnTMjGKoysRUTCLc4Tm5o3QSFB8WNyseOiAq5jquk20GdWZ26pxgpgYOvDpxc08JTBQIZUqtwHWcrp7Aci2BE8HdpiGPRsw1GFWFYuV7qgl+G5ML4rnPHUTSr5zcxj1Ua6wsGikQOFS1EIikd0Xa3FieqI4tVbepRMlDUYoalVR6ieaDveiSvdwmBZoODHOwdmIqiqCKt6iVkg/gpPFJNeCae2rUQmOaKjFWAXnjUdqbVK6r/CUQWbESJHZQMnuan/+rm80748v/wdmbf+mlX/rfXH/8h+t3/yV275EMjehlp+Ll3EbBlalNefA8wR0SqAwmLfGXnWy6+fgt7k+FyaOk3e7RD76l00DMdeixm0gwo/b42mk2ZykV4wWKS3DEOITAadx/8df+4//b//Xv/4u3nvzn/4f/oz36txwXRFpd4M0oRAJ"
+      },
+      {
+        "line": 44,
+        "pos": 675781,
+        "context": "VbKHWTBIIJKF+lcI4EkChPEfPkxU76nn+HLXk0IpHhTgCTEG5joWDw7VS9R6wOJPzV3TYeBpRcJgrhMEEUviI6RrTFiLw6EQ6oM50rHoPp2zwjCIU8QwhkMH3ND12c/QPEHsiQQhOEQqQgqUS6iiF39Y9ZtXr4yjucTGaddXyX3C0zlc/xFLATbtbLy2XZ+unH9rsyYCSnDpAHIJZ3SiNziQcrfo5RHs2B+pFgtwt7dblDZvVNdVmdRY4uwNszSXw8HYocryUDocO1S96JD4rWJ8gAcUIEjxfT0t7HCLUheIv2QY3TV7HDM1hyxFCOLmtwwbTvn47dxxKY4co13ZLLUAW3qmqorNBioAYpVWqhAPnco+c4KapyBGIyCEgcc8c2ExABBKiZGlz+XhNIXIMlpNXMG3ubmYsQZjNjGFmecweukVSkCXiKIsFNDERU6QYu/5219/uF2dqOU1jR3GxuhPk1sXVw5s0MRXUnk0TkE0TEUvXp2HHbKFn8zxNe5LONDMWq7PTjO3lJruMxNnUpim7jzmP5gmcjWCaRNzN8mSgsOgC57js7n7hc1/+C7/8Ky+e3nz7Oz+6GvercxnXKW23ZrsQc05pckQJIiFQFOmgLIs+J2dyL/FHeNEtFrELoU/Z4AhRIGGa9Dt/9Ltu5KZdL2CQhK4/72M44bzb3Uy7jdtoOQfpu+VCMxPFftl55ynTya17Z7dOb6542m11mtIwulrfr5ic2JgzEwsLRTHpiB0+sjjcOIhQt1iekvMwTU7lUFUmlF2ueZigU9poTlxuihkLxbgg4UTJNKnuYJrdzY0DLVbL7f5mfJqFY9cv4TC1MthIQoeYx2RuTkUMSK5qTPG"
+      },
+      {
+        "line": 44,
+        "pos": 679139,
+        "context": "ozLyyvK1zTu3Iw0eb967fNfe/bxT9KwBjhPZcp0mN//cNfnp3GMidvLGoAv+YlTCHG5dLU07o5WVI0Ubcmh/Bfg0i2WJ+fr5w/BJUtsNPOnLNgc7jBXVUCwZGYUxqgBSXKrZm7zfSsULzlqI45Z1WlSOWUGVi7EG5W+MSq/0pyeqepYKgvcFphT2TtExBTIdaq3vdCl3hK3GQYdUgYiDqFfpWnrua49+KHHviBOwCGSNjfuxcUPbsohioipIVuDFIX8VocRiTuD4bD6PNzgDInL87tMst9uXXOr1jMEDq5T4oorgmmzxA4kjGL6C6tO1qDaCcoODlV57HBqk8sK9X6gUQmE4ibRndxN08Ynh3jTuhR9JgGKvPP1AICYHOL92fLBl3d50pvHAIO1VdIylGETQvT2TAGm6txIJFzoSWKps28MWN47/5lf4ftvPP9m9MFoKF2YqQUQAIIQQIo0AgrSefYKvKWS5VkSoXRTH1LNYjBcIgeRSFpf5d2lV5a/MOIHDG2a4U4xQub2tRJ9UMMXaoOndNEdlhqUrDGhuU84gaponZhdOs8ZEkEZRUTXYPDs3kMixXihNiUW+K6K5vnu5X5VRNsGOZXEgBwEH/dTTlUHMv8GBXCoK6fuWbNphxoOCxLwtqqPwoCXxKkk9ASAVIvokIXDYqXTlMahWIg2V+9ywQKqFJCrE/HJ3ZckLK9ffCJB3Dz0zEQ5ZzODhFIcKd39DKhORkzEhGBgkQ4sij6cvHrnjV/YXD9P4558JO7chTmaEPOq6291XTcM1+N2rXFx5+6D1SrcOjm5e3br9ulZiGGchqLmdgxTIhnAZIS+PzmN0llK2dKw34O3CP128sfPJ"
+      },
+      {
+        "line": 44,
+        "pos": 724882,
+        "context": "5EBkROKkhOrdKxjXFAUH9cXvDBJzLr/3a39rmm7AJ0vxQI3r5Uhx8DI3EgjuqPZSy5AQCMcX3UggghkPZ//B//Y//cpXvvgbf/u/rpYWLXSq9eBvbzBitpTQ7k1uNxkxS2ySZT9yrQsIOJLEjbZtrVbHwumiNjVruiwdMUfDxLXTwQFUk+2OOBiNIyW6/ZAmvDh+w0cpMKON7voHqWY0t072ksyt2l2Dye1glKAH2N7Awj2YSNi0VNbKWc2NTUk6akpHocrTujtug98cVazL/empl7kc9sw1HVFYhAKZqZnC1dWozkaCqpOoux4Lg0oqVlWGM0OdhBYKnFiIyF0LNVuuinUq32ZUna2WaUtXBQdQR4iNkV04y0ZYQ6TbrM/ug8eb8+euCaiyt2VTLzIMArwmFJmTDIiDT1uQIh/cgUDN8KEO/DVXtdboQotOLzX9FXmvJXG/goTGnRsQehnvh/V9os7LARxJi1udpTOyyczWH/puGe/ePH4Lu+dUsu1n7kY+e8E0w29gHWRYUmBQ3YJr9ebWezyVsKL5Gs5QOLhZa1u19PiAT0ttKdjS5mjLjr2y6dXq2AGJiL2bIS8+vn6M6ANRNaxmGc66zd20Pdf9FQk5i5sTHFIbgUtUOJjiyKEzkKcZxPtnT/bPb3gVEXuU5MQgqbSoH2bV55ATrHpYbp20o7cdt9lnIoOQF1uESLX4rPvOKA5eB8oJeti2qowAswrU2xZ2kHClqZeZ10rUHtdkMzKynGqP0Y+dnFYn1yvS4eaqaJWAmZWzF1799Pf/4ceP3phvHkvXXz58/WsX75Zpj9B9gAymepU6uZuROThUM97qjRBC4K5vDoGWzaK7hyBm"
+      },
+      {
+        "line": 44,
+        "pos": 733594,
+        "context": "izkpwYgjM4tTlCGmfTIXJiGBW1ZNQyT2lNPWM0+zuZZxtSl5Z+UAzDDrApOZQAMjiKALsYteMpNFcZRZc5aYtSQ1FDfNxQPP2wSWOPTzTG4KLa65HPbwxIR0fd0FGftuPxdmiuKeD0YWYzw9vTeuTuHUxUAhuCJ0MQ6DGefZmTEOES7z7MKx0umr1ZjKuLu5LqoiYjpPk8c4MgmcxtVI7nk6aHEzddVUCnEYz077zT3q9jrvHz27KHZQ6dRxc34Tu71mOCR2rECeJ0XmABCxCgu5Vkip0O3u6h2iuLrzYQ7SjVBXt7nv7q2Gs/3Nyf7qWeiy6mGeLufD1sxiH80spfiFH/xDH3r55d/5zX/6+NlbcRhcAosGHsiDucI5SG8uRACUQmDrYHR+8eyQEodoKCwRVTdJHELQtlQLudcJe5C5UXBVCszkpgpyqOpUiCK8cOxszk7Mg+jN1W57rRfvUk7UreCm+wsQ87CuVJepA8ohgOBa1N05rO+c9h2m64uSC7nEjtlL3u27Lnz0k5/spbxz8bAc3NRcM7lWt6M8X++uh9OX7oW4YYnolYnmae47YrJxtdrv99N2SyDpe6ALYQXv4EGd3ItN89uvfTX0vSVlEcC1ZAKFYQTITFnU3a1kwJpxcG3qN2qHY4jb86fXTx9DSLreVJ2Z2BkqsVhKU35m8yRBjMy1uq05SvIafe4Oa+F4MKUlP8LVIQ1OtiY1B6oRgVU3RoFFag4BpE7yGRFarKUMFIJPNT6Dq/BikUIs6WUNNDiq2ycAB3cDcdR570v43MIQ1kvkyCu0A7A15hbi+BbKtwupYk1qUlT3WzDUvsy9ygD8eJNVvXICdw3itP+EhorZ"
+      },
+      {
+        "line": 44,
+        "pos": 743995,
+        "context": "nNnyjAFQQLrPKsn90KmLCAJrsaBvZipg4mIzKAuH/n0919fPX3n974oMNf9dHXgOHarOG8Lc+i7Lue9TtuuA0KnBaFnJt9ePVObhQiqLCxqwzCuTu5NNzdWMpEjRDL16sruSsIURvI6j0hwQBilENXemlWNch2Nuo0Zq2dSAwR8nHxyNy9Kvsjd6inmejTH8SNw4Yp+btEtfQC/2uG60QtHwmw55m7B5m1bmRoCbpinNXYX+9H6Hyt04EZv1AgoclcFboCRrHM3ktDEA1SHr/izP/onz5+89/SN3wMPEEGlVW7p0qVFehyR8eOnVhZyCwwuHWQ1PXv05m/93e3lOWLR3QOUPZAgCi9wd9ea5QdPXi5Ygz79ja/90/nBg//RG2981//sz6z/rZ/ofvRzH/mLn7vzC3//0cNvvhfDy/Glz5YHEzC596aFKUAUDjeFGcy9BYDBmZGdQiCU2zYiN5xKVh9a5bHqDcGgRqXWQR/Cok1C0CnBM9BxZ606rZRPa48utHp7kssro+WtuXueq2yxDbJUXBkH4OjBTLdf/EFSmY436xGCL8XY8r/ugIh0o6Xkmo6V0mJPAXhBXe1wuOvhwmxuddfC77ZPaDAFbdovcJteJ66LmRhw81KIahN8gbuNM61OhVL3zlI1ONhhWsENCHCmbuTQ6+4ShYAqo/GqlXB3kLMwYYk7bpsRFSgcqwBUje+xLGlKofoj1MGM3s3qcBVxR6041FsQ0Yy2F28KEuJYcfuRCCdhjtEzrOR8uDGtYxfS9PhEHHrueitcyqLyN4IwFLVrQsJwdgChgyqEYTW5jUEKd5iiYOlceat/hFAcMGokvcPB3RD60zzv6+iH2UyHC"
+      }
+    ],
+    "(?i)barcode": [],
+    "(?i)nutrition label": [
+      {
+        "line": 460,
+        "pos": 8098147,
+        "context": "-width:0}.food-log b{font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.food-log span{font-size:10px;color:var(--muted)}.food-del{border:0;background:transparent;color:rgba(255,255,255,.32);font-size:18px;padding:6px}\n\n\n/* Nutrition label OCR */\n.ocr-stage{margin-top:11px;border-radius:18px;padding:13px 14px;background:rgba(75,137,255,.055);border:1px solid rgba(112,184,255,.11)}\n.ocr-stage.idle{display:none}.ocr-stage.working{display:block}.ocr-stage.error{display:block;border-color:rgba(255,116,116,.18);background:rgba(255,116,116,.045)}\n.ocr-row{display:flex;align-items:center;gap:10px}.ocr-spinner{width:20px;height:20px;border-radius:50%;border:2px solid rgba(128,198,255,.17);border-top-color:#86d0ff;box-shadow:0 0 14px rgba(83,165,255,.18);animation:ocrSpin .9s linear infinite;flex:0 0 auto}.ocr-stage.error"
+      },
+      {
+        "line": 1808,
+        "pos": 8268913,
+        "context": "asis: ${basis}. Enter the amount actually consumed.`}\n}\nfunction nutritionOCRStageHTML(){\n  const o=nutritionOCR;\n  if(o.status==='working')return `<div class=\"ocr-stage working\"><div class=\"ocr-row\"><i class=\"ocr-spinner\"></i><div class=\"ocr-copy\"><b>Reading nutrition label…</b><span>${esc(o.message||'Finding calories and macros from the photo')}</span></div></div><div class=\"ocr-progress\"><i style=\"width:${Math.round(clamp(o.progress||0,0,1)*100)}%\"></i></div></div>`;\n  if(o.status==='error')return `<div class=\"ocr-stage error\"><div class=\"ocr-row\"><i class=\"ocr-spinner\"></i><div class=\"ocr-copy\"><b>Couldn’t read this label</b><span>${esc(o.error||'Try a clearer, straight-on nutrition-panel photo.')}</span></div></div><div class=\"ocr-actions single\"><label class=\"btn secondary ocr-add\" for=\"foodNutritionPhoto\">Choose another photo</label></div></"
+      },
+      {
+        "line": 1841,
+        "pos": 8276462,
+        "context": "\n  const photoMode=nutritionEntryMode==='photo';\n  const entryHTML=photoMode?`<label class=\"food-photo-box ${nutritionOCR.status==='working'?'is-processing':''}\" for=\"foodNutritionPhoto\"><strong>${nutritionOCR.status==='idle'?'Upload a nutrition-label photo':'Nutrition label photo'}</strong><span>${nutritionOCR.status==='idle'?'Choose an existing picture from Photos or Files. Hercules will read calories, protein, carbs and fat.':'Tap to choose a different picture.'}</span><div class=\"photo-upload-pill\">＋ Choose photo</div><img id=\"foodPhotoPreview\" class=\"food-photo-preview\" alt=\"Nutrition label preview\"></label><input id=\"foodNutritionPhoto\" class=\"hidden\" type=\"file\" accept=\"image/*,.heic,.heif\" onchange=\"handleFoodNutritionPhoto(this)\">${nutritionOCRStageHTML()}`:`<div class=\"nut-fields\"><div class=\"wide\"><label>Meal / food</label><input id=\"foo"
+      },
+      {
+        "line": 1841,
+        "pos": 8276789,
+        "context": "'?'Choose an existing picture from Photos or Files. Hercules will read calories, protein, carbs and fat.':'Tap to choose a different picture.'}</span><div class=\"photo-upload-pill\">＋ Choose photo</div><img id=\"foodPhotoPreview\" class=\"food-photo-preview\" alt=\"Nutrition label preview\"></label><input id=\"foodNutritionPhoto\" class=\"hidden\" type=\"file\" accept=\"image/*,.heic,.heif\" onchange=\"handleFoodNutritionPhoto(this)\">${nutritionOCRStageHTML()}`:`<div class=\"nut-fields\"><div class=\"wide\"><label>Meal / food</label><input id=\"foodName\" class=\"input\" placeholder=\"e.g. Chicken pasta\"></div><div><label>Calories</label><input id=\"foodCalories\" class=\"input\" inputmode=\"decimal\" placeholder=\"kcal\"></div><div><label>Protein</label><input id=\"foodProtein\" class=\"input\" inputmode=\"decimal\" placeholder=\"g\"></div><div><label>Carbs</label><input id=\"foodCarbs\" c"
+      },
+      {
+        "line": 1842,
+        "pos": 8279593,
+        "context": "ritionFavouritesHTML()}<div class=\"card glass\"><div class=\"section\" style=\"margin:0 0 10px\"><h3>Log food</h3><span class=\"small\">Daily tracking</span></div><div class=\"log-mode\"><button class=\"${photoMode?'active':''}\" onclick=\"setNutritionEntryMode('photo')\">Nutrition label photo</button><button class=\"${!photoMode?'active':''}\" onclick=\"setNutritionEntryMode('manual')\">Manual entry</button></div>${entryHTML}</div><div class=\"section\"><h3>Today’s food</h3><span class=\"small\">${logs.length} ${logs.length===1?'entry':'entries'}</span></div><div class=\"food-log-list\">${logs.length?logs.slice().reverse().map(x=>`<div class=\"food-log\">${x.photo?`<img class=\"food-thumb\" src=\"${x.photo}\" alt=\"\">`:`<div class=\"food-thumb manual\">${x.source==='manual'?'⌁':'◫'}</div>`}<div class=\"grow\"><b>${esc(x.name||'Food')}</b><span>${x.quantity?`${round(x.quantity,1)} "
+      },
+      {
+        "line": 4398,
+        "pos": 9080222,
+        "context": "inish Workout to save it and open Hercules’ post-workout debrief.']},\n  nutrition:{title:'Log nutrition',intro:'Use label scanning for packaged food or manual entry for anything else.',steps:['Open Nutrition and review today’s remaining calories/macros.','Use Nutrition label photo or Manual entry.','Save repeat foods as favourites for faster logging later.','Open Nutrition analysis at the bottom to inspect macro adherence over time.']},\n  checkin:{title:'Complete a check-in',intro:'Check-in is the only place for current physique-review analysis.',steps:['Enter current bodyweight and choose a progress video.','Set leg visibility if trousers or framing obscure the lower body.','Run Analyse video before saving so Hercules can compare the review.','After the main check-in form, open the summary, latest analysis or check-in history sections.']},\n  analy"
+      }
+    ],
+    "(?i)food scanner": [],
+    "(?i)scan label": [],
+    "(?i)upload label": [],
+    "(?i)nutrition scanner": [],
+    "(?i)food diary": [
+      {
+        "line": 1379,
+        "pos": 8229550,
+        "context": "separate diet brand.\n## Typography\nSystem sans for controls and body. Wordmark uses the intro's GAIN heavy / FOCUS light treatment. Meal names are 15px; macros 12px.\n## Layout\nExisting five-tab navigation remains canonical. Nutrition contains Meal planner and Food diary. Two-column mobile meal cards, three columns when space permits. Bottom safe area comes from the app shell.\n## Elevation & Depth\nDark translucent panels and subtle borders. The intro alone carries large constellation atmosphere.\n## Shapes\n16–20px panels. Existing native input controls retained.\n## Components\nCanonical logo derives directly from intro SVG coordinates. Diary renderer owns food entries. Shadow root scopes legacy meal selectors; it is not an iframe or separate app. Profile/progress remain authoritative stores. Work Fuel preferences are included in progress export.\n## Do"
+      },
+      {
+        "line": 12051,
+        "pos": 10530400,
+        "context": "mealId;const entry={...r,id,date,createdAt:new Date().toISOString(),source:'work-fuel'};const i=progress.nutritionLogs.findIndex(x=>x.id===id);if(i<0)progress.nutritionLogs.push(entry);else progress.nutritionLogs[i]=entry}write();toast('Meals saved to today’s food diary');return 'Saved to today’s diary. Logging again updates these entries.'}\n};\nrenderNutrition=function(){if(!plan||!progress)return;original();const section=document.getElementById('nutrition');const diary=document.createElement('div');diary.id='gf-food-diary';while(section.firstChild)diary.append(section.firstChild);section.append(diary);const tabs=document.createElement('div');tabs.className='gf-food-tabs';tabs.innerHTML='<button type=\"button\" data-mode=\"planner\">Meal planner</button><button type=\"button\" data-mode=\"diary\">Food diary</button>';section.prepend(tabs);\nconst key=plan.c"
+      },
+      {
+        "line": 12053,
+        "pos": 10530940,
+        "context": "ion.firstChild)diary.append(section.firstChild);section.append(diary);const tabs=document.createElement('div');tabs.className='gf-food-tabs';tabs.innerHTML='<button type=\"button\" data-mode=\"planner\">Meal planner</button><button type=\"button\" data-mode=\"diary\">Food diary</button>';section.prepend(tabs);\nconst key=plan.client.id;if(!host||owner!==key){owner=key;host=document.createElement('div');host.id='gf-workfuel';const root=host.attachShadow({mode:'open'});root.innerHTML=WORKFUEL_HTML;fuel=initWorkFuel(root,bridge)}else{fuel.refresh()}section.append(host);\nfunction select(m){mode=m;host.hidden=m!=='planner';diary.hidden=m!=='diary';tabs.querySelectorAll('button').forEach(b=>{b.classList.toggle('active',b.dataset.mode===m);b.setAttribute('aria-pressed',b.dataset.mode===m)});}\ntabs.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(b.dataset.m"
+      }
+    ],
+    "(?i)portion": [
+      {
+        "line": 1862,
+        "pos": 8284239,
+        "context": "=reUnit.exec(line)))vals.push(nutritionNumber(m[1]));if(vals.length)return vals.filter(v=>v!=null)}\n  return [];\n}\nfunction inferNutritionName(lines){const banned=/nutrition|energy|kcal|kilojoule|fat|saturat|carbo|sugar|fibre|fiber|protein|salt|sodium|serving|portion|typical|reference intake|per 100|ingredients|allergy/i;for(const raw of lines.slice(0,12)){const s=raw.replace(/[^A-Za-z0-9&'()\\- ]+/g,' ').replace(/\\s+/g,' ').trim();if(s.length>=4&&s.length<=52&&!banned.test(s)&&/[A-Za-z]{3}/.test(s)&&!/^\\d/.test(s))return s}return 'Labelled food'}\nfunction parseNutritionLabel(text,confidence=0){\n  const cleaned=String(text||'').replace(/[|]/g,' ').replace(/\\u00a0/g,' '),lines=cleaned.split(/\\r?\\n/).map(x=>x.replace(/\\s+/g,' ').trim()).filter(Boolean);\n  const servingHint=/per\\s*(serving|portion|pack)|serving\\s*contains|portion\\s*contains|each\\s*(ser"
+      },
+      {
+        "line": 1865,
+        "pos": 8284776,
+        "context": "Labelled food'}\nfunction parseNutritionLabel(text,confidence=0){\n  const cleaned=String(text||'').replace(/[|]/g,' ').replace(/\\u00a0/g,' '),lines=cleaned.split(/\\r?\\n/).map(x=>x.replace(/\\s+/g,' ').trim()).filter(Boolean);\n  const servingHint=/per\\s*(serving|portion|pack)|serving\\s*contains|portion\\s*contains|each\\s*(serving|portion|pack)/i.test(cleaned);\n  const servingSizeMatch=cleaned.match(/(?:per\\s*(?:serving|portion)|(?:serving|portion)\\s*(?:size)?\\s*[:\\-]?)\\s*(\\d+(?:[.,]\\d+)?)\\s*(ml|g)\\b/i);\n  const servingSize=servingSizeMatch?nutritionNumber(servingSizeMatch[1]):null,servingUnit=servingSizeMatch?servingSizeMatch[2].toLowerCase():'';\n  const per100Match=cleaned.match(/(?:per\\s*100\\s*(g|ml)|100\\s*(g|ml)\\s*contains|typical\\s*values\\s*per\\s*100\\s*(g|ml)?)/i);\n  const per100=!!per100Match,per100Unit=((per100Match?.[1]||per100Match?.[2]||per100"
+      },
+      {
+        "line": 1865,
+        "pos": 8284809,
+        "context": "ritionLabel(text,confidence=0){\n  const cleaned=String(text||'').replace(/[|]/g,' ').replace(/\\u00a0/g,' '),lines=cleaned.split(/\\r?\\n/).map(x=>x.replace(/\\s+/g,' ').trim()).filter(Boolean);\n  const servingHint=/per\\s*(serving|portion|pack)|serving\\s*contains|portion\\s*contains|each\\s*(serving|portion|pack)/i.test(cleaned);\n  const servingSizeMatch=cleaned.match(/(?:per\\s*(?:serving|portion)|(?:serving|portion)\\s*(?:size)?\\s*[:\\-]?)\\s*(\\d+(?:[.,]\\d+)?)\\s*(ml|g)\\b/i);\n  const servingSize=servingSizeMatch?nutritionNumber(servingSizeMatch[1]):null,servingUnit=servingSizeMatch?servingSizeMatch[2].toLowerCase():'';\n  const per100Match=cleaned.match(/(?:per\\s*100\\s*(g|ml)|100\\s*(g|ml)\\s*contains|typical\\s*values\\s*per\\s*100\\s*(g|ml)?)/i);\n  const per100=!!per100Match,per100Unit=((per100Match?.[1]||per100Match?.[2]||per100Match?.[3]||'')+'').toLowerCase()"
+      },
+      {
+        "line": 1865,
+        "pos": 8284844,
+        "context": "onst cleaned=String(text||'').replace(/[|]/g,' ').replace(/\\u00a0/g,' '),lines=cleaned.split(/\\r?\\n/).map(x=>x.replace(/\\s+/g,' ').trim()).filter(Boolean);\n  const servingHint=/per\\s*(serving|portion|pack)|serving\\s*contains|portion\\s*contains|each\\s*(serving|portion|pack)/i.test(cleaned);\n  const servingSizeMatch=cleaned.match(/(?:per\\s*(?:serving|portion)|(?:serving|portion)\\s*(?:size)?\\s*[:\\-]?)\\s*(\\d+(?:[.,]\\d+)?)\\s*(ml|g)\\b/i);\n  const servingSize=servingSizeMatch?nutritionNumber(servingSizeMatch[1]):null,servingUnit=servingSizeMatch?servingSizeMatch[2].toLowerCase():'';\n  const per100Match=cleaned.match(/(?:per\\s*100\\s*(g|ml)|100\\s*(g|ml)\\s*contains|typical\\s*values\\s*per\\s*100\\s*(g|ml)?)/i);\n  const per100=!!per100Match,per100Unit=((per100Match?.[1]||per100Match?.[2]||per100Match?.[3]||'')+'').toLowerCase();\n  const choose=vals=>!vals.length"
+      },
+      {
+        "line": 1866,
+        "pos": 8284935,
+        "context": "t(/\\r?\\n/).map(x=>x.replace(/\\s+/g,' ').trim()).filter(Boolean);\n  const servingHint=/per\\s*(serving|portion|pack)|serving\\s*contains|portion\\s*contains|each\\s*(serving|portion|pack)/i.test(cleaned);\n  const servingSizeMatch=cleaned.match(/(?:per\\s*(?:serving|portion)|(?:serving|portion)\\s*(?:size)?\\s*[:\\-]?)\\s*(\\d+(?:[.,]\\d+)?)\\s*(ml|g)\\b/i);\n  const servingSize=servingSizeMatch?nutritionNumber(servingSizeMatch[1]):null,servingUnit=servingSizeMatch?servingSizeMatch[2].toLowerCase():'';\n  const per100Match=cleaned.match(/(?:per\\s*100\\s*(g|ml)|100\\s*(g|ml)\\s*contains|typical\\s*values\\s*per\\s*100\\s*(g|ml)?)/i);\n  const per100=!!per100Match,per100Unit=((per100Match?.[1]||per100Match?.[2]||per100Match?.[3]||'')+'').toLowerCase();\n  const choose=vals=>!vals.length?0:(servingHint&&vals.length>1?vals[vals.length-1]:vals[0]);\n  let kcals=[];for(const line "
+      },
+      {
+        "line": 1866,
+        "pos": 8284955,
+        "context": "replace(/\\s+/g,' ').trim()).filter(Boolean);\n  const servingHint=/per\\s*(serving|portion|pack)|serving\\s*contains|portion\\s*contains|each\\s*(serving|portion|pack)/i.test(cleaned);\n  const servingSizeMatch=cleaned.match(/(?:per\\s*(?:serving|portion)|(?:serving|portion)\\s*(?:size)?\\s*[:\\-]?)\\s*(\\d+(?:[.,]\\d+)?)\\s*(ml|g)\\b/i);\n  const servingSize=servingSizeMatch?nutritionNumber(servingSizeMatch[1]):null,servingUnit=servingSizeMatch?servingSizeMatch[2].toLowerCase():'';\n  const per100Match=cleaned.match(/(?:per\\s*100\\s*(g|ml)|100\\s*(g|ml)\\s*contains|typical\\s*values\\s*per\\s*100\\s*(g|ml)?)/i);\n  const per100=!!per100Match,per100Unit=((per100Match?.[1]||per100Match?.[2]||per100Match?.[3]||'')+'').toLowerCase();\n  const choose=vals=>!vals.length?0:(servingHint&&vals.length>1?vals[vals.length-1]:vals[0]);\n  let kcals=[];for(const line of lines){if(/energy"
+      },
+      {
+        "line": 2666,
+        "pos": 8752714,
+        "context": ".status==='idle')return `<div class=\"physique-ai\"><div class=\"physique-ai-head\"><b>Visual progress analysis</b><span>On-device silhouette comparison</span></div><p class=\"physique-ai-copy\">Hercules samples the video locally, estimates repeatable silhouette proportions across several frames, compares them with your previous check-in and identifies what appears to be developing versus what should be prioritised next. No external vision model is required.</p><button class=\"physique-ai-btn\" onclick=\"analyseProgressVideo()\">Analyse progress video</button></div>`;if(s.status==='working')return `<div class=\"physique-ai\"><div class=\"physique-ai-head\"><b>Analysing physique…</b><span>${Math.round(s.progress||0)}%</span></div><div class=\"physique-ai-progress\"><i style=\"width:${s.progress||0}%\"></i></div><div class=\"physique-ai-status\">${esc(s.message||'Prepar"
+      },
+      {
+        "line": 2765,
+        "pos": 8767054,
+        "context": "overed';if(agg.used<2)mode='provisional';\n    if(mode==='recovered')agg.quality=Math.min(agg.quality,72);if(mode==='provisional')agg.quality=Math.min(agg.quality,48);\n    onProgress?.({stage:'done',progress:92,message:mode==='robust'?'Comparing stable body proportions…':mode==='recovered'?'Recovered enough body frames — comparing with reduced confidence…':'Only one usable body frame found — creating a provisional review…'});\n    return {...agg,mode,firstPass,total:fractions.length,thumbs,methods:metrics.reduce((a,m)=>(a[m.method||'colour']=(a[m.method||'colour']||0)+1,a),{})}\n  }finally{if(url)URL.revokeObjectURL(url)}\n}\nfunction localSilhouetteMetrics(canvas){\n  const ctx=canvas.getContext('2d',{willReadFrequently:true}),w=canvas.width,h=canvas.height,img=ctx.getImageData(0,0,w,h).data,{palette,spread,threshold}=adaptiveBackgroundPalette(img,w,h),"
+      },
+      {
+        "line": 2947,
+        "pos": 8803547,
+        "context": "first relative physique profile.',a?`<div class=\"canon-analysis\"><h3>Baseline ready</h3><p>${esc(a.summary)}</p></div>`:`<div class=\"canon-analysis\"><h3>Local physique analysis</h3><p>No cloud vision dependency. The prototype extracts repeatable silhouette proportions from the uploaded clips and uses them as a baseline for future comparisons.</p></div>`,`<div class=\"tour-actions\"><button id=\"canonAnalyseBtn\" class=\"btn primary\" onclick=\"analyseCanonicalBaseline()\">Analyse baseline videos</button></div>`)}\n  else if(canonicalOnboardingStep===3){const sc=a?.scores||{};body=canonicalOnboardingShell('Turn the scan into direction.','The first review separates relative strengths from the areas that deserve more training emphasis.',`<div class=\"canon-analysis\"><div class=\"eyebrow\">Hercules feedback</div><h3>${esc(a?.summary||'Baseline review')}</h3><div c"
+      },
+      {
+        "line": 3623,
+        "pos": 8913248,
+        "context": "<br>${Math.abs(d)<1.2?'Upper-body silhouette is broadly stable':d>0?`Upper-body fullness is up ${gfFmtDelta(d,' pts')} versus the previous check-in`:`Upper-body fullness is down ${Math.abs(d).toFixed(1)} pts versus the previous check-in`}. This is a visual proportion signal, not a direct muscle-mass measurement.</div>`)}\n  const def=gfAnalysisDefinition(a),pdef=gfAnalysisDefinition(prev);if(Number.isFinite(def)){let text=`Definition signal ${Math.round(def)}/100`;if(Number.isFinite(pdef)){const d=def-pdef;text+=Math.abs(d)<3?' · broadly unchanged':d>0?` · clearer by ${Math.round(d)} points`:` · softer by ${Math.round(Math.abs(d))} points`}out.push(`<div class=\"analysis-observation\"><b>Definition</b><br>${text}. Lighting, distance and pump can affect this, so Hercules only treats repeated changes as meaningful.</div>`)}\n  const vis=gfAnalysisVisibil"
+      },
+      {
+        "line": 3932,
+        "pos": 8979849,
+        "context": "ton,0);\n\n\n// ============================================================================\n// v4.0.24 · GOAL-AWARE ANALYSIS + DEVELOPMENT MUSCLE MAP\n// Conditioning = reps/sets change, Strength = average estimated 1RM change,\n// Visual mass = camera-derived proportion index. This is not body composition.\n// ============================================================================\nconst GF_DEV_KEYS=['chest','shoulders','biceps','triceps','forearms','traps','lats','midBack','rearDelts','abs','quads','hamstrings','glutes','calves','adductors','lowerBack','erectors'];\nlet gfDevelopmentMode='conditioning',gfDevelopmentSelected='chest';\nfunction gfDevLabel(k){return ({chest:'Chest',shoulders:'Shoulders',biceps:'Biceps',triceps:'Triceps',forearms:'Forearms',traps:'Traps',lats:'Lats',midBack:'Mid-back',rearDelts:'Rear delts',abs:'Abs / core',quads:'Quads"
+      },
+      {
+        "line": 3963,
+        "pos": 8984294,
+        "context": "f-mass-distribution-head\"><b>Visual mass distribution</b><span>${refWeight?`${round(refWeight,1)} kg = 100% reference`:'100% visual reference'}</span></div>${compact?'':`<div class=\"gf-mass-grid\">${rows}</div>`}<p class=\"gf-mass-note\">Camera-derived visual proportion index, normalised against the entered bodyweight. It is useful for comparing the same client over time, but it is not a measurement of actual muscle tissue weight.${d.complete?'':` Lower-body regions are N/A because visibility was insufficient.`}</p></div>`\n}\n\n// Save a distribution with every new visual analysis without pretending it is literal tissue mass.\nconst gfAnalyseProgressVideoV4024Base=analyseProgressVideo;\nanalyseProgressVideo=async function(){await gfAnalyseProgressVideoV4024Base.apply(this,arguments);if(pendingPhysiqueAnalysis){pendingPhysiqueAnalysis.massDistribution=gfMa"
+      },
+      {
+        "line": 4210,
+        "pos": 9044393,
+        "context": "mbined development signal. `:''}${lag?`${lag.label} is the main focus candidate. `:''}${d.recommendations[0]||''}`}\n  if(/(mass distribution|weight distribution|muscle distribution|where.*weight)/.test(q))return `The visual distribution is a camera-derived proportion estimate using your entered bodyweight as the 100% reference. I use it to compare the same client over time, not as a literal measurement of how many kilograms each muscle weighs. Current visual-analysis confidence is ${d.visual.a?d.visual.confidence.score+'%':'not established yet'}.`;\n  if(/(definition|looking softer|looking leaner|more defined)/.test(q)){if(!d.visual.a)return 'I need at least one analysed check-in before I can comment on definition.';if(!Number.isFinite(d.visual.definitionDelta))return `Your current definition signal is ${Number.isFinite(d.visual.definition)?Math.rou"
+      },
+      {
+        "line": 6897,
+        "pos": 9471695,
+        "context": "n} weeks for the same composition target`}\n    else{extension=Math.max(3,Math.ceil(baseWeeks*.20));composition='The fitted plan is substantially below the original training dose. Reaching the scale weight on time would not imply the same expected lean-mass proportion.';status=`Composition target likely needs +${extension} weeks or more`}\n    const physiqueDate=gf51DateAdd(scaleDate,extension*7);\n    const requiredSessions=Math.max(1,Math.ceil(baseMins/Math.max(1,p.minutes)));\n    return {baseSets,draftSets,baseMins,draftMins,cap,volume,priority,scaleDate,physiqueDate,extension,composition,status,requiredSessions};\n  }\n\n  function gf51Context(mode){\n    if(mode==='onboarding'){\n      const sessions=(canonicalOnboarding?.trainingDraft?.length?canonicalOnboarding.trainingDraft:(typeof gf51BaseCanonicalSessions==='function'?gf51BaseCanonicalSessions():"
+      },
+      {
+        "line": 11965,
+        "pos": 10242781,
+        "context": "df;border-radius:10px;padding:8px;margin-bottom:5px}\\n.ing.off{opacity:.45}\\n.ing b{font-size:9px}\\n.ing span{font-size:8px;color:#8f776a}\\n.ing button{width:32px;height:32px;border:1px solid var(--line);background:#fffaf0;border-radius:9px;font-weight:900}\\n.portion{display:flex;align-items:center;justify-content:space-between;background:#f3ecdf;padding:9px;border-radius:10px}\\n.step{display:flex;align-items:center;gap:6px}\\n.step button{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:#fffaf0;font-weight:900}\\n.step b{font-size:10px;min-width:44px;text-align:center}\\n.recipe{font-size:9px;line-height:1.5;color:#71564a}\\n.save{width:100%;min-height:48px;border:0;border-radius:14px;background:var(--orange);color:#fff;font-weight:900;margin-top:12px}\\n.checkoutRow{display:flex;justify-content:space-between;gap:8px;ali"
+      },
+      {
+        "line": 11965,
+        "pos": 10245469,
+        "context": "#logStatus{font-size:13px;line-height:1.5;color:var(--blue)}.macro b,.ing b,.checkoutRow b{color:var(--text)}.macro span{font-size:10px}.macro b{font-size:12px}.mealTop h3{font-size:15px;line-height:1.25;min-height:38px}.mealBody{padding:12px}.info,.add,.ing,.portion,.checkoutRow,.checkoutRow button,.ing button{background:var(--surface2);color:var(--text);border-color:var(--line)}.add,.filter{font-size:11px}.macro{border-color:var(--line)}.photo{height:140px}.cartText b{font-size:13px}.cartText span{font-size:11px}.review{flex:1}.ing b,.ing span,.recipe,.checkoutRow b,.checkoutRow span{font-size:13px}.sheetMacro span,.planStat span{font-size:11px}.sheetMacro b,.planStat b{font-size:15px}.railBtn b{font-size:12px}\\n\\n:host{font-family:inherit} .shell{padding:0;min-height:0}.device{max-width:none;min-height:0;border:0;border-radius:0;box-shadow:none;"
+      },
+      {
+        "line": 11965,
+        "pos": 10268468,
+        "context": "v class=\\\"sheet\\\">\\n  <div class=\\\"handle\\\"><\\/div>\\n  <div class=\\\"sheetHead\\\"><h2 id=\\\"sheetName\\\"><\\/h2><button id=\\\"mealClose\\\" class=\\\"close\\\">\\u00d7<\\/button><\\/div>\\n  <div id=\\\"sheetMacros\\\" class=\\\"sheetMacros\\\"><\\/div>\\n  <div class=\\\"sectionTitle\\\">PORTION SIZE<\\/div>\\n  <div class=\\\"portion\\\"><span style=\\\"font-size:9px;color:#715548\\\">Scale the full meal<\\/span><div class=\\\"step\\\"><button id=\\\"minusBtn\\\">\\u2212<\\/button><b id=\\\"portionVal\\\">1.00\\u00d7<\\/b><button id=\\\"plusBtn\\\">\\uff0b<\\/button><\\/div><\\/div>\\n  <div class=\\\"sectionTitle\\\">INGREDIENTS<\\/div><div id=\\\"ingredientList\\\"><\\/div>\\n  <div class=\\\"sectionTitle\\\">RECIPE / PREP<\\/div><div id=\\\"recipe\\\" class=\\\"recipe\\\"><\\/div>\\n  <button id=\\\"saveMealBtn\\\" class=\\\"save\\\">SAVE TO CHECKOUT<\\/button>\\n <\\/div>\\n<\\/div>\\n\\n<div id=\\\"reviewBackdrop\\\" class=\\\"sheetBackdrop hidden\\\">\\n"
+      }
+    ],
+    "(?i)camera": [
+      {
+        "line": 1890,
+        "pos": 8288035,
+        "context": "',confidence=out?.data?.confidence||0,result=parseNutritionLabel(raw,confidence);nutritionOCR.rawText=raw;\n    if(!result)throw new Error('I could not reliably identify calories, protein, carbs and fat. Retake the label closer and keep the panel square to the camera.');\n    nutritionOCR={status:'done',progress:1,result,error:'',rawText:raw,message:''};renderNutrition();toast('Nutrition values extracted');\n  }catch(err){nutritionOCR={status:'error',progress:0,result:null,error:String(err?.message||err||'Could not read the label'),rawText:nutritionOCR.rawText||'',message:''};renderNutrition()}\n  finally{input.value=''}\n}\nfunction saveExtractedNutritionEntry(){\n  ensureProgressExtras();const r=nutritionOCR.result;if(!r)return;\n  const amount=document.getElementById('ocrQuantity')?.value,unit=document.getElementById('ocrQuantityUnit')?.value||nutrition"
+      },
+      {
+        "line": 2512,
+        "pos": 8379133,
+        "context": " the supplied intelligence snapshot and raw client context together. Cross-check weight trajectory, nutrition adherence, training completion, conditioning, estimated strength, visual mass, definition, goal muscles and confidence before advising changes. Treat camera-derived mass distribution as a relative visual estimate, never literal tissue weight. Down-weight low-confidence or single-check-in visual changes and do not invent measurements or logged data. Keep answers practical and brief. If the user clearly asks to navigate, return action as one of today, train, workout, nutrition, checkin, progress, physique.'}),signal:controller.signal});\n    if(!res.ok)throw new Error('AI unavailable');const data=await res.json();const answer=String(data.answer||data.message||data.reply||'').trim();return answer?{answer,action:data.action||''}:null;\n  }catch{r"
+      },
+      {
+        "line": 2665,
+        "pos": 8752171,
+        "context": "ty)}</b></div></div><div class=\"physique-scores\">${scores}</div>${a.feedback?.nutrition?`<div class=\"physique-nutrition-context\"><b>Fuel context</b><br>${esc(a.feedback.nutrition)}</div>`:''}<div class=\"physique-review-foot\">${esc(a.feedback?.training||'')} · Camera-based visual estimate from ${a.framesAnalysed||0} stable frames. Adaptive segmentation rejects unreliable frames; similar distance, lighting and posing still improve week-to-week comparison.</div></div>`}\nfunction physiqueAnalysisStageHTML(){const s=physiqueAnalysisState;if(s.status==='idle')return `<div class=\"physique-ai\"><div class=\"physique-ai-head\"><b>Visual progress analysis</b><span>On-device silhouette comparison</span></div><p class=\"physique-ai-copy\">Hercules samples the video locally, estimates repeatable silhouette proportions across several frames, compares them with your p"
+      },
+      {
+        "line": 2946,
+        "pos": 8802586,
+        "context": "</button></div>`)}\n  else if(canonicalOnboardingStep===1){body=canonicalOnboardingShell('Upload the baseline.','Choose existing front, side and back videos from Photos or Files. Hercules stores them locally on this device and analyses them without forcing the camera to open.',`<div class=\"canon-video-grid\">${canonicalVideoCard('front','Front view')}${canonicalVideoCard('side','Side view')}${canonicalVideoCard('back','Back view')}</div><div class=\"onboard-foot\">Choose existing clips from Photos or Files. Use similar distance, lighting and relaxed posing where possible. Full body in frame.</div>`,`<div class=\"tour-actions\"><button class=\"btn primary\" onclick=\"${Object.values(o.videos).filter(Boolean).length===3?'canonicalNext()':'toast(\\'Add all three baseline videos\\')'}\">Continue</button></div>`)}\n  else if(canonicalOnboardingStep===2){body=canonic"
+      },
+      {
+        "line": 3714,
+        "pos": 8936337,
+        "context": "epeated comparable check-ins rather than one reading.</div>`:''}${a.feedback?.nutrition?`<div class=\"physique-nutrition-context\"><b>Fuel context</b><br>${esc(a.feedback.nutrition)}</div>`:''}<div class=\"physique-review-foot\">${esc(a.feedback?.training||'')} · Camera-based visual estimate from ${a.framesAnalysed||0} stable frames.</div></div>`};\n\n// Analyse baseline photos/videos added later and turn them into focused training guidance.\nasync function gfAnalyseImageBlob(blob){let url='';try{url=URL.createObjectURL(blob);const img=await gfImageFromSrc(url),scale=Math.min(1,260/Math.max(1,img.naturalWidth)),c=document.createElement('canvas');c.width=Math.max(140,Math.round(img.naturalWidth*scale));c.height=Math.max(210,Math.round(img.naturalHeight*scale));c.getContext('2d',{willReadFrequently:true}).drawImage(img,0,0,c.width,c.height);const metrics=lo"
+      },
+      {
+        "line": 3932,
+        "pos": 8979831,
+        "context": "ncTrainCalendarButton,0);\n\n\n// ============================================================================\n// v4.0.24 · GOAL-AWARE ANALYSIS + DEVELOPMENT MUSCLE MAP\n// Conditioning = reps/sets change, Strength = average estimated 1RM change,\n// Visual mass = camera-derived proportion index. This is not body composition.\n// ============================================================================\nconst GF_DEV_KEYS=['chest','shoulders','biceps','triceps','forearms','traps','lats','midBack','rearDelts','abs','quads','hamstrings','glutes','calves','adductors','lowerBack','erectors'];\nlet gfDevelopmentMode='conditioning',gfDevelopmentSelected='chest';\nfunction gfDevLabel(k){return ({chest:'Chest',shoulders:'Shoulders',biceps:'Biceps',triceps:'Triceps',forearms:'Forearms',traps:'Traps',lats:'Lats',midBack:'Mid-back',rearDelts:'Rear delts',abs:'Abs / "
+      },
+      {
+        "line": 3963,
+        "pos": 8984269,
+        "context": "stribution\"><div class=\"gf-mass-distribution-head\"><b>Visual mass distribution</b><span>${refWeight?`${round(refWeight,1)} kg = 100% reference`:'100% visual reference'}</span></div>${compact?'':`<div class=\"gf-mass-grid\">${rows}</div>`}<p class=\"gf-mass-note\">Camera-derived visual proportion index, normalised against the entered bodyweight. It is useful for comparing the same client over time, but it is not a measurement of actual muscle tissue weight.${d.complete?'':` Lower-body regions are N/A because visibility was insufficient.`}</p></div>`\n}\n\n// Save a distribution with every new visual analysis without pretending it is literal tissue mass.\nconst gfAnalyseProgressVideoV4024Base=analyseProgressVideo;\nanalyseProgressVideo=async function(){await gfAnalyseProgressVideoV4024Base.apply(this,arguments);if(pendingPhysiqueAnalysis){pendingPhysiqueAnaly"
+      },
+      {
+        "line": 4204,
+        "pos": 9041703,
+        "context": "}</b><br>${esc(x.text)}</div></div>`).join('')}</div>${lag.length?`<div class=\"gf25-priority-row\">${lag.map(x=>`<span>Goal focus · ${esc(x.label)}</span>`).join('')}</div>`:''}<div class=\"gf25-caution\">Hercules weights stronger, repeated signals more heavily. Camera-derived physique values remain estimates and are never treated as literal tissue mass measurements.</div></section>`\n}\nfunction gf25MuscleAnswer(key){const d=gf25AnalysisIntelligence(),m=d.muscles.rows.find(x=>x.key===key);if(!m)return null;const parts=[];if(Number.isFinite(m.conditioning))parts.push(`conditioning ${m.conditioning>=0?'+':''}${Math.round(m.conditioning)}%`);if(Number.isFinite(m.strength))parts.push(`strength ${m.strength>=0?'+':''}${Math.round(m.strength)}%`);if(Number.isFinite(m.mass))parts.push(`visual mass ${m.mass>=0?'+':''}${Math.round(m.mass)}%`);if(!parts.length)r"
+      },
+      {
+        "line": 4210,
+        "pos": 9044375,
+        "context": "s the strongest combined development signal. `:''}${lag?`${lag.label} is the main focus candidate. `:''}${d.recommendations[0]||''}`}\n  if(/(mass distribution|weight distribution|muscle distribution|where.*weight)/.test(q))return `The visual distribution is a camera-derived proportion estimate using your entered bodyweight as the 100% reference. I use it to compare the same client over time, not as a literal measurement of how many kilograms each muscle weighs. Current visual-analysis confidence is ${d.visual.a?d.visual.confidence.score+'%':'not established yet'}.`;\n  if(/(definition|looking softer|looking leaner|more defined)/.test(q)){if(!d.visual.a)return 'I need at least one analysed check-in before I can comment on definition.';if(!Number.isFinite(d.visual.definitionDelta))return `Your current definition signal is ${Number.isFinite(d.visual.de"
+      }
+    ],
+    "(?i)processFood": [],
+    "(?i)parseNutrition": [
+      {
+        "line": 1863,
+        "pos": 8284541,
+        "context": "ngredients|allergy/i;for(const raw of lines.slice(0,12)){const s=raw.replace(/[^A-Za-z0-9&'()\\- ]+/g,' ').replace(/\\s+/g,' ').trim();if(s.length>=4&&s.length<=52&&!banned.test(s)&&/[A-Za-z]{3}/.test(s)&&!/^\\d/.test(s))return s}return 'Labelled food'}\nfunction parseNutritionLabel(text,confidence=0){\n  const cleaned=String(text||'').replace(/[|]/g,' ').replace(/\\u00a0/g,' '),lines=cleaned.split(/\\r?\\n/).map(x=>x.replace(/\\s+/g,' ').trim()).filter(Boolean);\n  const servingHint=/per\\s*(serving|portion|pack)|serving\\s*contains|portion\\s*contains|each\\s*(serving|portion|pack)/i.test(cleaned);\n  const servingSizeMatch=cleaned.match(/(?:per\\s*(?:serving|portion)|(?:serving|portion)\\s*(?:size)?\\s*[:\\-]?)\\s*(\\d+(?:[.,]\\d+)?)\\s*(ml|g)\\b/i);\n  const servingSize=servingSizeMatch?nutritionNumber(servingSizeMatch[1]):null,servingUnit=servingSizeMatch?servingSizeM"
+      },
+      {
+        "line": 1889,
+        "pos": 8287820,
+        "context": "ocr-progress i');if(b)b.style.width=Math.round(clamp(nutritionOCR.progress,0,1)*100)+'%';const c=document.querySelector('.ocr-copy span');if(c)c.textContent=nutritionOCR.message}}});\n    const raw=out?.data?.text||'',confidence=out?.data?.confidence||0,result=parseNutritionLabel(raw,confidence);nutritionOCR.rawText=raw;\n    if(!result)throw new Error('I could not reliably identify calories, protein, carbs and fat. Retake the label closer and keep the panel square to the camera.');\n    nutritionOCR={status:'done',progress:1,result,error:'',rawText:raw,message:''};renderNutrition();toast('Nutrition values extracted');\n  }catch(err){nutritionOCR={status:'error',progress:0,result:null,error:String(err?.message||err||'Could not read the label'),rawText:nutritionOCR.rawText||'',message:''};renderNutrition()}\n  finally{input.value=''}\n}\nfunction saveExtra"
+      }
+    ],
+    "(?i)extractNutrition": [],
+    "(?i)logFood": [],
+    "(?i)foodEntry": [],
+    "(?i)addFood": [],
+    "(?i)function .*food": [
+      {
+        "line": 1764,
+        "pos": 8263364,
+        "context": "G??m.protein),c=Number(m.carbsG??m.carbs),f=Number(m.fatG??m.fat);if(cal)parts.push(`${Math.round(cal)} kcal`);if(p)parts.push(`${round(p,1)} g protein`);if(c)parts.push(`${round(c,1)} g carbs`);if(f)parts.push(`${round(f,1)} g fat`);return parts.join(' · ')}\nfunction dietFoodLine(food){if(typeof food==='string')return esc(food);if(!food||typeof food!=='object')return'';const name=food.item||food.name||food.food||'Food',amount=food.amount??food.quantity,unit=food.unit||'',note=food.note||'';return `${esc(name)}${amount!=null?` · ${esc(amount)}${unit?' '+esc(unit):''}`:''}${note?` <span>${esc(note)}</span>`:''}`}\nfunction nutritionPlanHTML(){\n  const d=dietPlanPayload();\n  if(!d)return `<div class=\"card glass diet-plan-card locked\"><div class=\"diet-lock\"><div class=\"diet-lock-icon\">◇</div><div><b>Diet plan not included</b><p>This client JSON contain"
+      },
+      {
+        "line": 1847,
+        "pos": 8281517,
+        "context": "Prefill.unit)u.value=nutritionFavouritePrefill.unit;updateOCRQuantityPreview();nutritionFavouritePrefill=null},0)\n}\nfunction resetNutritionOCR(){nutritionFavouritePrefill=null;nutritionOCR={status:'idle',progress:0,result:null,error:'',rawText:'',message:''}}\nfunction setNutritionEntryMode(mode){nutritionEntryMode=mode;pendingFoodPhoto='';resetNutritionOCR();renderNutrition()}\nfunction loadTesseract(){\n  if(window.Tesseract)return Promise.resolve(window.Tesseract);\n  if(window.__gfTesseractPromise)return window.__gfTesseractPromise;\n  window.__gfTesseractPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.async=true;s.onload=()=>window.Tesseract?resolve(window.Tesseract):reject(new Error('OCR library did not initialise'));s.onerror=()=>reject(new"
+      },
+      {
+        "line": 1855,
+        "pos": 8283002,
+        "context": "i=0;i<a.length;i+=4){const y=.299*a[i]+.587*a[i+1]+.114*a[i+2];const v=Math.max(0,Math.min(255,(y-128)*1.42+128));a[i]=a[i+1]=a[i+2]=v}ctx.putImageData(d,0,0);resolve(c.toDataURL('image/jpeg',.9))};img.onerror=reject;img.src=r.result};r.readAsDataURL(file)})}\nfunction compressFoodPhoto(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onerror=reject;r.onload=()=>{const img=new Image();img.onload=()=>{const max=520,scale=Math.min(1,max/Math.max(img.width,img.height)),w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale)),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);resolve(c.toDataURL('image/jpeg',.62))};img.onerror=reject;img.src=r.result};r.readAsDataURL(file)})}\nfunction nutritionNumber(s){if(s==null)return null;const n=parseFloat(String(s).rep"
+      },
+      {
+        "line": 1862,
+        "pos": 8284094,
+        "context": "(const line of lines){const low=line.toLowerCase();if(!keywords.some(k=>low.includes(k)))continue;const vals=[];let m;reUnit.lastIndex=0;while((m=reUnit.exec(line)))vals.push(nutritionNumber(m[1]));if(vals.length)return vals.filter(v=>v!=null)}\n  return [];\n}\nfunction inferNutritionName(lines){const banned=/nutrition|energy|kcal|kilojoule|fat|saturat|carbo|sugar|fibre|fiber|protein|salt|sodium|serving|portion|typical|reference intake|per 100|ingredients|allergy/i;for(const raw of lines.slice(0,12)){const s=raw.replace(/[^A-Za-z0-9&'()\\- ]+/g,' ').replace(/\\s+/g,' ').trim();if(s.length>=4&&s.length<=52&&!banned.test(s)&&/[A-Za-z]{3}/.test(s)&&!/^\\d/.test(s))return s}return 'Labelled food'}\nfunction parseNutritionLabel(text,confidence=0){\n  const cleaned=String(text||'').replace(/[|]/g,' ').replace(/\\u00a0/g,' '),lines=cleaned.split(/\\r?\\n/).map(x=>x"
+      },
+      {
+        "line": 1882,
+        "pos": 8286824,
+        "context": "Amount,basisUnit,servingSize:servingSize||null,servingUnit:servingUnit||'',confidence:Number(confidence)||0};\n  const core=[result.calories,result.protein,result.carbs,result.fat].filter(v=>v>0).length;\n  return core>=3&&result.calories>0?result:null;\n}\nasync function handleFoodNutritionPhoto(input){\n  const file=input.files?.[0];if(!file)return;\n  try{\n    pendingFoodPhoto=await compressFoodPhoto(file);nutritionOCR={status:'working',progress:.05,result:null,error:'',rawText:'',message:'Preparing image…'};renderNutrition();\n    const [Tesseract,ocrImage]=await Promise.all([loadTesseract(),prepareNutritionOCRImage(file)]);\n    nutritionOCR.message='Reading printed values…';nutritionOCR.progress=.12;renderNutrition();\n    const out=await Tesseract.recognize(ocrImage,'eng',{logger:m=>{if(m?.status){nutritionOCR.status='working';nutritionOCR.message=m."
+      },
+      {
+        "line": 1906,
+        "pos": 8290344,
+        "context": "Date().toISOString(),name,calories:cal,protein,carbs,fat,source:'manual',photo:''});write();renderNutrition();toast('Added to today')\n}\nfunction saveNutritionEntry(){return nutritionEntryMode==='photo'?saveExtractedNutritionEntry():saveManualNutritionEntry()}\nfunction deleteNutritionEntry(id){ensureProgressExtras();progress.nutritionLogs=progress.nutritionLogs.filter(x=>x.id!==id);write();renderNutrition();toast('Food entry removed')}\n\n\nfunction openSplash(){\n  if(!introReady)return;\n  const s=document.getElementById('splash');\n  s.classList.add('opening');\n  setTimeout(()=>{document.getElementById('onboarding').classList.add('open');renderAccessGate()},980);\n  setTimeout(()=>s.classList.add('fade'),1120);\n  setTimeout(()=>s.remove(),1460);\n}\n\nfunction onboardingCard(){return document.getElementById('tourCard')}\nfunction setOnboardCard(html){const "
+      },
+      {
+        "line": 2816,
+        "pos": 8774616,
+        "context": "onst k of ['calories','protein','carbs','fat'])by[x.date][k]+=Number(x[k])||0}const vals=Object.values(by),n=vals.length;if(!n)return null;const avg={days:n};for(const k of ['calories','protein','carbs','fat'])avg[k]=vals.reduce((s,v)=>s+v[k],0)/n;return avg}\nfunction macroContextForFeedback(){const a=recentMacroAverages(7);if(!a||a.days<2)return'Not enough recent food logging yet to judge whether calorie and macro intake is supporting the visual trend.';const n=plan?.nutrition||{},targets={calories:Number(n.calories)||0,protein:Number(n.proteinG)||0,carbs:Number(n.carbsG??n.carbohydrateG??n.carbs)||0,fat:Number(n.fatG??n.fatsG??n.fat)||0},bits=[`${a.days}-day logged average: ${Math.round(a.calories)} kcal`,`${Math.round(a.protein)} g protein`,`${Math.round(a.carbs)} g carbs`,`${Math.round(a.fat)} g fat`];const low=[];for(const [k,label] of [['prot"
+      },
+      {
+        "line": 3000,
+        "pos": 8820521,
+        "context": ");renderAll();showTab('progress');if(coachLine)setTimeout(()=>GFCoach.reply(coachLine+'. '+(latestPhysiqueAnalysis()?.analysis?.feedback?.summary||'')),350)}\n\n// Nutrition edit: photo entries only edit consumed amount; manual entries edit their logged values.\nfunction editNutritionEntry(id){ensureProgressExtras();const x=progress.nutritionLogs.find(v=>v.id===id);if(!x)return;if(x.source==='photo-ocr'&&x.labelNutrition){const amount=Number(prompt(`How much did you consume? (${x.quantityUnit||'servings'})`,x.quantity||1));if(!amount||amount<=0)return;const calc=nutritionAmountCalculation(x.labelNutrition,amount,x.quantityUnit||nutritionQuantityModes(x.labelNutrition)[0]?.value);if(!calc)return;x.quantity=calc.amount;x.quantityUnit=calc.unit;x.calories=calc.calories;x.protein=calc.protein;x.carbs=calc.carbs;x.fat=calc.fat}else{const name=prompt('Food "
+      },
+      {
+        "line": 4404,
+        "pos": 9082124,
+        "context": "v><h3 style=\"font-size:22px;margin:5px 0 3px\">${esc(d.title)}</h3><p class=\"muted\" style=\"margin:0\">${esc(d.intro)}</p><div class=\"gf26-help-steps\">${d.steps.map((s,i)=>`<div class=\"gf26-help-step\"><i>${i+1}</i><span>${esc(s)}</span></div>`).join('')}</div>`}\nfunction gf26OpenHelp(){const sheet=document.getElementById('sessionSheet');sheet.classList.remove('workout-sheet');sheet.innerHTML=`<div class=\"grabber\"></div><div class=\"eyebrow\">Hercules Help</div><h2 style=\"font-size:29px;margin:5px 0 2px\">How can I help?</h2><p class=\"muted\" style=\"margin-top:0\">Guided FAQ for operating Gain Focus.</p><div class=\"gf26-help-grid\"><button class=\"gf26-help-topic\" onclick=\"gf26HelpTopic('workout')\"><b>Workouts</b><span>Start, log sets, rest timer, finish.</span></button><button class=\"gf26-help-topic\" onclick=\"gf26HelpTopic('nutrition')\"><b>Nutrition</b><span"
+      },
+      {
+        "line": 6475,
+        "pos": 9441092,
+        "context": "mcdonald','double sausage','egg mcmuffin'],name:\"McDonald's Double Sausage & Egg McMuffin\",calories:552,protein:36,carbs:28,fat:33,basis:'per item',source:'McDonald’s UK calories + UK nutrition cross-check'}\n  ];\n  let gf50FoodResults=[],gf50FoodSource='';\n\n  function gf50FoodMatchesSeed(q,region){\n    const s=String(q||'').toLowerCase();\n    return GF50_SEED_FOODS.filter(x=>x.regions.includes(region)&&x.terms.filter(t=>s.includes(t)).length>=2);\n  }\n  async function gf50OpenFoodFacts(q,region){\n    const country=gf50RegionLabel(region);\n    const url=`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=8&tagtype_0=countries&tag_contains_0=contains&tag_0=${encodeURIComponent(country)}`;\n    const res=await fetch(url,{headers:{'Accept':'application/json'}});\n    if(!res."
+      },
+      {
+        "line": 6479,
+        "pos": 9441295,
+        "context": "ck'}\n  ];\n  let gf50FoodResults=[],gf50FoodSource='';\n\n  function gf50FoodMatchesSeed(q,region){\n    const s=String(q||'').toLowerCase();\n    return GF50_SEED_FOODS.filter(x=>x.regions.includes(region)&&x.terms.filter(t=>s.includes(t)).length>=2);\n  }\n  async function gf50OpenFoodFacts(q,region){\n    const country=gf50RegionLabel(region);\n    const url=`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=8&tagtype_0=countries&tag_contains_0=contains&tag_0=${encodeURIComponent(country)}`;\n    const res=await fetch(url,{headers:{'Accept':'application/json'}});\n    if(!res.ok)throw new Error('Online food database unavailable');\n    const data=await res.json();\n    return (data.products||[]).map((p,i)=>{\n      const n=p.nutriments||{},per100={\n        calories:Number(n['ene"
+      },
+      {
+        "line": 6497,
+        "pos": 9442606,
+        "context": ",calories:per100.calories*factor,protein:(per100.protein||0)*factor,carbs:(per100.carbs||0)*factor,fat:(per100.fat||0)*factor,basis:serving>0&&unit==='g'?`${serving} g serving`:'per 100 g',source:'Open Food Facts',url:p.url||''};\n    }).filter(Boolean);\n  }\n  function gf50RenderFoodResults(){\n    const area=document.getElementById('gf50FoodResults'),status=document.getElementById('gf50FoodSearchStatus');if(!area)return;\n    if(status)status.textContent=gf50FoodSource||'';\n    area.innerHTML=gf50FoodResults.length?gf50FoodResults.map((x,i)=>`<button class=\"gf50-food-result\" type=\"button\" onclick=\"gf50UseFoodResult(${i})\"><div><b>${esc(x.name)}</b><span>${Math.round(x.calories)} kcal · ${round(x.protein,1)}g protein · ${round(x.carbs,1)}g carbs · ${round(x.fat,1)}g fat · ${esc(x.basis||'')}</span></div><strong>Use</strong></button>`).join(''):'';\n  }"
+      },
+      {
+        "line": 6531,
+        "pos": 9445428,
+        "context": "tById('foodName')?.value||'').trim();if(!q)return;\n    const region=gf50RegionLabel(gf50InferRegion());\n    window.open(`https://www.google.com/search?q=${encodeURIComponent(`${q} ${region} nutrition calories protein carbs fat`)}`,'_blank','noopener');\n  };\n  function gf50FoodSearchHTML(){\n    const region=gf50InferRegion();\n    return `<div id=\"gf50FoodSearch\" class=\"gf50-food-search\"><div class=\"gf50-food-search-head\"><div><b>Search nutrition data</b><span>Looks up region-matched online food data, then fills the manual fields.</span></div><span class=\"gf50-region-pill\">${esc(gf50RegionLabel(region))}</span></div><div class=\"gf50-search-row\"><input id=\"gf50FoodQuery\" class=\"input\" placeholder=\"e.g. McDonald’s Double Sausage & Egg McMuffin\" onkeydown=\"if(event.key==='Enter'){event.preventDefault();gf50SearchFood()}\"><button id=\"gf50FoodSearchBtn\" c"
+      }
+    ],
+    "(?i)calculate.*macro": [
+      {
+        "line": 5329,
+        "pos": 9241351,
+        "context": ".weeklyGainKg})||n;if(!n.manualOverride)canonicalOnboarding.nutrition={...n,...rx};const preview=canonicalPlanPreview(),em=canonicalOnboarding.nutrition.energyModel||rx.energyModel;const body=canonicalOnboardingShell('Fuel it and create the user.','Gain Focus calculates BMR, estimates TDEE, then builds goal-specific calories and macros. These targets adapt as bodyweight changes.',`<div class=\"gf45-engine-card\"><div class=\"gf45-engine-head\"><div><div class=\"eyebrow\">Energy model</div><h3>${esc(em?.formula||'Mifflin-St Jeor')}</h3></div><span>${esc(GF45_ACTIVITY[gf45ActivityKey(p.activityLevel)].label)}</span></div><div class=\"gf45-energy-grid\"><div><span>BMR</span><b>${em?.bmr||'—'} kcal</b></div><div><span>TDEE</span><b>${em?.tdee||'—'} kcal</b></div><div><span>Goal delta</span><b>${(em?.goalAdjustmentKcal||0)>=0?'+':''}${em?.goalAdjustmentKcal||0}"
+      },
+      {
+        "line": 11965,
+        "pos": 10264504,
+        "context": "div class=\\\"field\\\"><label>Sex<\\/label><select id=\\\"sex\\\"><option value=\\\"male\\\">Male<\\/option><option value=\\\"female\\\">Female<\\/option><\\/select><\\/div>\\n            <\\/div>\\n            <div class=\\\"planActions\\\"><button id=\\\"recalcBtn\\\" class=\\\"primary\\\">RECALCULATE<\\/button><button id=\\\"logoutBtn\\\" class=\\\"secondary\\\">CHANGE DAY<\\/button><\\/div>\\n          <\\/div>\\n        <\\/section>\\n\\n        <section id=\\\"genericView\\\" class=\\\"hidden\\\">\\n          <div class=\\\"menuTitle\\\"><div><h1 id=\\\"genericTitle\\\">Coming Soon<\\/h1><p>More Work Fuel options will live here.<\\/p><\\/div><\\/div>\\n        <\\/section>\\n      <\\/main>\\n\\n      <footer class=\\\"cart\\\">\\n        <div class=\\\"cartLeft\\\">\\n          <div class=\\\"cartIcon\\\"><svg viewBox=\\\"0 0 24 24\\\"><path d=\\\"M5 7h14l-1 14H6L5 7Zm4 0V5a3 3 0 0 1 6 0v2\\\"/><\\/svg><span id=\\\"cartCount\\\" class=\\\"cartCoun"
+      }
+    ]
+  }
+}
