@@ -11392,6 +11392,7 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
     if(/lateral raise/.test(n))return["raise",/cable/.test(n)?"cable":"dumbbell","lateral"];
     if(/pulldown/.test(n))return[/straight.arm/.test(n)?"pullover":"pulldown","cable",/single|one.arm/.test(n)?"onearm":/neutral/.test(n)?"neutral":"wide"];
     if(/pull.?up|chin.?up/.test(n))return["pullup","bodyweight",/chin/.test(n)?"chin":"wide"];
+    if(/face pull/.test(n))return["row","cable","facepull"];
     if(/row/.test(n))return["row",/cable/.test(n)?"cable":/machine/.test(n)?"machine":"dumbbell",/one.arm/.test(n)?"onearm":/chest.supported/.test(n)?"supported":"standard"];
     if(/fly|flye/.test(n))return[/reverse|rear/.test(n)?"reversefly":"fly",/pec deck|machine/.test(n)?"machine":"cable","standard"];
     if(/leg press/.test(n))return["legpress","machine","seated"];
@@ -11400,6 +11401,7 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
     if(/dip/.test(n))return["dip",/weight/.test(n)?"weighted":"bodyweight","parallel"];
     if(/romanian|rdl|deadlift/.test(n))return["hinge",/dumbbell/.test(n)?"dumbbell":"barbell","rdl"];
     if(/hack squat/.test(n))return["squat","machine","hack"];
+    if(/\bsquat\b/.test(n))return["squat",/smith/.test(n)?"smith":/machine/.test(n)?"machine":"barbell","standard"];
     if(/leg press/.test(n))return["legpress","machine","seated"];
     if(/leg extension/.test(n))return["legextension","machine","seated"];
     if(/leg curl/.test(n))return["legcurl","machine",/seated/.test(n)?"seated":"lying"];
@@ -11424,7 +11426,10 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
   function gf74Pose(k,v){
  let p={head:[52,26],sL:[42,41],sR:[62,41],hL:[45,64],hR:[60,64],eL:[33,53],wL:[29,73],eR:[72,53],wR:[76,73],kL:[42,76],aL:[37,85],kR:[65,76],aR:[72,85]};
  const s=q=>Object.assign(p,q);
- if(k==="bench"||(k==="triceps"&&v==="lying")){
+ if(k==="bench"&&v==="seated"){s({head:[47,28],sL:[40,42],sR:[59,42],hL:[47,62],hR:[60,62],eL:[33,48],wL:[21,46],eR:[68,48],wR:[84,46],kL:[68,70],aL:[71,84],kR:[73,74],aR:[77,85]});}
+ if(k==="fly"&&v==="pecdeck"){s({head:[50,28],sL:[41,42],sR:[61,42],hL:[46,63],hR:[61,63],eL:[30,42],wL:[21,45],eR:[73,42],wR:[82,45],kL:[67,70],aL:[70,85],kR:[75,74],aR:[78,86]});}
+ if(k==="raise"&&v==="overhead"){s({eL:[32,26],wL:[34,13],eR:[72,26],wR:[70,13]});}
+ if(k==="bench"&&v==="seated"){}else if(k==="bench"||(k==="triceps"&&v==="lying")){
    s({head:[27,54],sL:[36,56],sR:[44,62],hL:[60,62],hR:[65,69],eL:[33,42],wL:[40,27],eR:[47,44],wR:[57,27],kL:[76,65],aL:[84,78],kR:[77,75],aR:[87,83]});
    if(/incline/.test(v))s({head:[33,34],sL:[39,45],sR:[50,48],hL:[62,65],hR:[67,71],eL:[34,33],wL:[40,17],eR:[56,33],wR:[62,17]});
  }else if(["pulldown","pullup"].includes(k)){s({head:[52,30],eL:[33,32],wL:[28,17],eR:[73,32],wR:[78,17]});if(v==="onearm")s({eR:[72,51],wR:[68,64]});}
@@ -11456,6 +11461,7 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
  if(kind==="bench"||(kind==="triceps"&&variant==="lying"))scene+=`<path d="M20 72H78M31 72V84M74 72V84" stroke="#6a88aa" stroke-width="5" stroke-linecap="round"/>`;
  if(kind==="legpress")scene+=`<path d="M18 68H55M82 19V53" stroke="#6685a3" stroke-width="5" fill="none"/>`;
  if(["legcurl","legextension"].includes(kind)||(kind==="calf"&&variant==="seated"))scene+=`<path d="M31 62H70M31 62V84" stroke="#6a88aa" stroke-width="5" fill="none"/>`;
+ if((kind==="bench"&&variant==="seated")||(kind==="fly"&&variant==="pecdeck"))scene+=`<path d="M34 63H72M34 48V63M34 63V85" stroke="#6a88aa" stroke-width="5" fill="none"/>`;
  if(kind==="dip")scene+=`<path d="M18 44H34V84M70 44H86V84" stroke="#83aed7" stroke-width="4" fill="none"/>`;
  if(kind==="pullup")scene+=`<path d="M20 16H82" stroke="#a4d9ff" stroke-width="5" stroke-linecap="round"/>`;
  const mid=[(p.sL[0]+p.sR[0])/2,(p.sL[1]+p.sR[1])/2];
