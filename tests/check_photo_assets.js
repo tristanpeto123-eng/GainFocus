@@ -11,7 +11,7 @@ assert.equal(rows.length,873);assert.equal(report.images_verified,873);assert.eq
 assert.deepEqual([...report.no_photo_entries].sort(),expectedMissing.sort());
 assert.equal(new Set(rows.map(x=>x[0].toLowerCase())).size,873);
 assert.equal(new Set(rows.map(x=>x[1])).size,873);
-assert.equal(html.split('src="./exercise-photo-thumbnails-v2.js?v=2"').length-1,1);
+assert.equal(html.split('src="./exercise-photo-thumbnails-v2.js?v=3"').length-1,1);
 assert.match(src,/const CATALOGUE = '\.\/exercise-photo-index-v2\.json'/);
 assert.match(src,/const REMOTE = '\.\/exercise-photos\/'/);
 assert.match(sw,/exercise-photo-index-v2\.json/);
