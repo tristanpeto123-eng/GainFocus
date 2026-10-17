@@ -12056,5 +12056,6 @@ function select(m){mode=m;host.hidden=m!=='planner';diary.hidden=m!=='diary';tab
 tabs.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(b.dataset.mode==='diary'){mode='diary';renderNutrition()}else select('planner')});select(mode);
 };
 })();
-</script></body>
+</script><script defer src="./exercise-photo-thumbnails.js"></script>
+</body>
 </html>
