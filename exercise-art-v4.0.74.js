@@ -20,7 +20,7 @@
     else if(/hip thrust|glute bridge/.test(n))k="hip-thrust";
     else if(/romanian|deadlift|\brdl\b|good morning|back extension|hip hinge/.test(n))k="hinge";
     else if(/face pull/.test(n))k="face-pull";
-    else if(/rear delt|reverse fly/.test(n))k="rear-fly";
+    else if(/rear delt|rear.delt|reverse fly|reverse pec deck|reverse flye/.test(n))k="rear-fly";
     else if(/lat pull|pulldown|pull.down|straight.arm pull/.test(n))k="pulldown";
     else if(/pull.up|chin.up|assisted pull/.test(n))k="pullup";
     else if(/seated cable row|cable row/.test(n))k="cable-row";
@@ -59,12 +59,14 @@
     var p=JSON.parse(JSON.stringify(standing));
     if(t==="curl"||t==="hammer-curl"||t==="preacher"){p.el=[[131,104],[193,104]];p.wr=[[146,87],[179,87]];}
     if(t==="lateral"||t==="rear-fly"){p.el=[[110,88],[216,88]];p.wr=[[82,82],[244,82]];}
+    if(t==="chest-fly"){p.el=[[126,85],[197,85]];p.wr=[[102,66],[219,66]];}
     if(t==="front-raise"){p.el=[[136,94],[191,94]];p.wr=[[119,72],[210,72]];}
     if(t==="shoulder-press"||t==="triceps-overhead"){p.el=[[132,69],[194,69]];p.wr=[[133,34],[194,34]];}
     if(t==="triceps"){p.el=[[139,108],[185,108]];p.wr=[[137,145],[187,145]];}
     if(t==="shrug"){p.s=[[143,69],[181,69]];}
     if(t==="pulldown"||t==="pullup"){p.h=[162,65];p.s=[[142,86],[183,86]];p.hip=[[151,135],[173,135]];p.el=[[126,65],[200,65]];p.wr=[[118,32],[205,32]];p.kn=[[172,155],[190,155]];p.ft=[[176,180],[207,180]];}
     if(t==="cable-row"||t==="row"||t==="face-pull"){p.h=[143,65];p.s=[[129,89],[162,89]];p.hip=[[143,137],[167,137]];p.el=[[169,103],[189,103]];p.wr=[[192,95],[210,95]];p.kn=[[183,160],[209,160]];p.ft=[[225,181],[249,181]];}
+    if(t==="rear-fly"){p.h=[186,79];p.s=[[170,94],[199,94]];p.hip=[[149,125],[167,125]];p.el=[[133,84],[232,84]];p.wr=[[114,78],[250,78]];}
     if(t==="squat"||t==="hack-squat"){p.h=[162,49];p.hip=[[148,123],[173,123]];p.kn=[[124,151],[193,151]];p.ft=[[125,183],[195,183]];p.el=[[136,89],[187,89]];p.wr=[[130,99],[192,99]];}
     if(t==="lunge"){p.hip=[[151,118],[172,118]];p.kn=[[186,141],[137,159]];p.ft=[[219,180],[106,181]];}
     if(t==="hinge"){p.h=[204,86];p.s=[[184,96],[205,102]];p.hip=[[150,124],[168,124]];p.el=[[191,121],[212,128]];p.wr=[[182,155],[203,154]];p.kn=[[142,156],[169,156]];p.ft=[[136,184],[179,184]];}
