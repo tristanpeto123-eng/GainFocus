@@ -2,9 +2,9 @@
    Preserves owner-approved photographic artwork. Never substitutes new imagery. */
 (function(){
   'use strict';
-  const VERSION='gf-photo-gate-v1.2';
+  const VERSION='gf-photo-gate-v1.3';
   const INDEX='./exercise-photo-index-v2.json';
-  const CACHE='gain-focus-photo-thumbs-v2-local-4';
+  const CACHE='gain-focus-photo-thumbs-v2-local-5';
   const CONCURRENCY=8;
   const STALL_MS=3000; // restart only after 3 seconds with no image progress
   const MAX_RESTARTS=3;
@@ -22,6 +22,12 @@
   let phraseTimer=null;
   let entryPromise=null;
   let currentGate=null;
+  let offlineMode=false;
+  let externalAbort=null;
+  let resolveOfflineChoice=null;
+  let pingController=null;
+  let pingAttempt=0;
+  const PING_MS=3000;
   const containerLocks=new WeakMap();
   const style=document.createElement('style');
   style.id='gf-photo-readiness-css';
@@ -36,11 +42,20 @@
     '.gf-photo-progress{width:100%;height:7px;background:#22384e;border-radius:12px;overflow:hidden}',
     '.gf-photo-progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,#6d9aff,#8de5ff);transition:width .2s}',
     '.gf-photo-btn{border:1px solid #6bbce6;background:#14344f;color:#effaff;padding:11px 20px;min-height:44px;border-radius:12px;font-weight:700;cursor:pointer}',
+    '.gf-offline-choice[hidden]{display:none!important}',
+    '.gf-offline-choice{display:flex;flex-direction:column;gap:11px;align-items:stretch;text-align:center;width:100%;border-top:1px solid #345470;padding-top:15px;margin-top:3px}',
+    '.gf-offline-choice p{margin:0;color:#d3e8f7;font-size:13px;line-height:1.5}',
+    '.gf-offline-controls{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}',
+    '.gf-offline-controls .gf-photo-btn{flex:1;min-width:125px}',
+    '.gf-offline-notice{position:fixed;z-index:990;left:10px;right:10px;top:calc(env(safe-area-inset-top,0px) + 9px);border:1px solid #5c8aad;background:#112c44;color:#f0f9ff;border-radius:13px;padding:10px 13px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px #0008;font:600 12px/1.4 system-ui,sans-serif}',
+    '.gf-offline-notice span{flex:1}',
+    '.gf-offline-notice button{border:1px solid #84cef1;border-radius:9px;color:#f1fbff;background:#1a4663;padding:9px;min-height:38px;font-weight:700}',
     '.gf-photo-surface{position:relative!important}',
-    '.gf-photo-surface>.gf-photo-screen-loader{position:absolute;z-index:80;inset:0;min-height:240px;display:flex;align-items:center;justify-content:center;background:rgba(5,15,29,.95);border-radius:inherit}',
-    '.gf-photo-screen-loader .gf-photo-small-inner{display:flex;align-items:center;flex-direction:column;gap:12px;text-align:center;padding:22px;color:#dfefff;font:700 13px/1.4 system-ui,sans-serif}',
+    '.gf-photo-surface>.gf-photo-screen-loader{position:absolute;z-index:80;inset:0;min-height:0;display:flex;align-items:center;justify-content:center;background:transparent;pointer-events:none}',
+    '.gf-photo-screen-loader .gf-photo-small-inner{display:flex;align-items:center;flex-direction:column;gap:10px;text-align:center;padding:0;color:#dfefff;font:700 13px/1.4 system-ui,sans-serif}',
     '.gf-photo-screen-loader .gf-photo-spinner{width:29px;height:29px}',
-    '.gf-photo-screen-loader button{margin-top:6px}',
+    '.gf-photo-screen-loader button{pointer-events:auto;margin-top:6px}',
+    '.gf-photo-screen-loader [hidden]{display:none!important}',
     '@media(prefers-reduced-motion:reduce){.gf-photo-spinner{animation-duration:2s}.gf-photo-progress>span{transition:none}}'
   ].join('\n');
   (document.head||document.documentElement).appendChild(style);
@@ -67,13 +82,130 @@
     heading.textContent=PHRASES[0];
     info.textContent=TIPS[0];
     count.textContent='0% ready';bar.appendChild(fill);action.type='button';action.textContent='Retry loading';action.hidden=true;
-    card.append(spinner(),heading,info,count,bar,action);main.appendChild(card);document.body.appendChild(main);
-    currentGate={main,heading,info,count,fill,action};
+    const choice=el('div','gf-offline-choice');
+    choice.id='gfOfflineChoice';
+    choice.hidden=true;
+    const warning=el('p');
+    warning.id='gfOfflineWarning';
+    warning.textContent='Your connection is slow or unavailable. You can continue offline, but some photos and other media may not load.';
+    const controls=el('div','gf-offline-controls');
+    const offlineButton=el('button','gf-photo-btn');
+    offlineButton.id='gfContinueOffline';
+    offlineButton.type='button';
+    offlineButton.textContent='Continue offline';
+    const retryPing=el('button','gf-photo-btn');
+    retryPing.id='gfRetryConnection';
+    retryPing.type='button';
+    retryPing.textContent='Retry connection';
+    controls.append(offlineButton,retryPing);choice.append(warning,controls);
+    card.append(spinner(),heading,info,count,bar,choice,action);
+    main.appendChild(card);document.body.appendChild(main);
+    currentGate={main,heading,info,count,fill,action,choice,warning,offlineButton,retryPing};
+    offlineButton.onclick=continueOffline;
+    retryPing.onclick=()=>checkConnection();
     const boot=document.getElementById('gfPhotoBoot');
     if(boot)boot.remove(); // only after the runtime gate is already visible
     startPhrases(currentGate);
     return currentGate;
   }
+  function showOfflineChoice(message){
+    if(offlineMode)return;
+    const g=currentGate;
+    if(!g){if(preloaded)showRuntimeOfflineChoice(message);return;}
+    g.warning.textContent=message||
+      'Your connection is slow or unavailable. You can continue offline, but some photos and other media may not load.';
+    g.choice.hidden=false;
+  }
+  function dismissOfflineChoice(){
+    if(currentGate)currentGate.choice.hidden=true;
+    document.getElementById('gfRuntimeOfflinePrompt')?.remove();
+  }
+  function showRuntimeOfflineChoice(message){
+    if(offlineMode||!preloaded)return;
+    let box=document.getElementById('gfRuntimeOfflinePrompt');
+    if(!box){
+      box=el('aside','gf-offline-notice');
+      box.id='gfRuntimeOfflinePrompt';
+      box.setAttribute('role','alert');
+      const copy=el('span');
+      copy.id='gfRuntimeConnectionMessage';
+      const continueButton=el('button');
+      continueButton.type='button';
+      continueButton.textContent='Continue offline';
+      continueButton.onclick=continueOffline;
+      const retry=el('button');
+      retry.type='button';
+      retry.textContent='Retry';
+      retry.onclick=checkConnection;
+      box.append(copy,continueButton,retry);
+      document.body.appendChild(box);
+    }
+    box.querySelector('#gfRuntimeConnectionMessage').textContent=message||
+      'Connection is slow or unavailable. Continue offline? Some photos and other media may not load.';
+  }
+  function showOfflineNotice(){
+    if(document.getElementById('gfOfflineNotice'))return;
+    const notice=el('aside','gf-offline-notice');
+    notice.id='gfOfflineNotice';
+    notice.setAttribute('role','status');
+    const copy=el('span');
+    copy.textContent='Offline mode · Some photos and other media may not load.';
+    const retry=el('button');
+    retry.type='button';
+    retry.textContent='Try online';
+    retry.onclick=()=>location.reload();
+    notice.append(copy,retry);
+    document.body.appendChild(notice);
+  }
+  function continueOffline(){
+    if(offlineMode)return;
+    offlineMode=true;
+    document.getElementById('gfRuntimeOfflinePrompt')?.remove();
+    if(pingController)pingController.abort();
+    stopPhrases();
+    if(currentGate?.main?.isConnected)currentGate.main.remove();
+    currentGate=null;
+    showOfflineNotice();
+    if(resolveOfflineChoice){const finish=resolveOfflineChoice;resolveOfflineChoice=null;finish(true);}
+    if(externalAbort)externalAbort.abort();
+  }
+  async function checkConnection(){
+    if(offlineMode)return false;
+    if(navigator.onLine===false){
+      showOfflineChoice('No internet connection detected. Continue offline? Some photos and other media may not load.');
+      return false;
+    }
+    const id=++pingAttempt;
+    if(pingController)pingController.abort();
+    const controller=new AbortController();
+    pingController=controller;
+    const handle=setTimeout(()=>controller.abort(),PING_MS);
+    try{
+      const url=new URL('./manifest.webmanifest',document.baseURI);
+      url.searchParams.set('gf_probe',String(Date.now())+'-'+id);
+      const response=await fetch(url.href,{cache:'no-store',credentials:'same-origin',signal:controller.signal});
+      if(!response.ok)throw new Error('Health check failed');
+      if(!offlineMode&&id===pingAttempt)dismissOfflineChoice();
+      return true;
+    }catch(error){
+      if(!offlineMode&&id===pingAttempt)
+        showOfflineChoice('The connection check failed or took longer than 3 seconds. Continue offline? Some photos and other media may not load.');
+      return false;
+    }finally{
+      clearTimeout(handle);
+      if(pingController===controller)pingController=null;
+    }
+  }
+  window.addEventListener('offline',()=>{
+    if(offlineMode){showOfflineNotice();return;}
+    showOfflineChoice('Internet connection lost. Continue offline? Some photos and other media may not load.');
+  });
+  window.addEventListener('online',()=>{if(!offlineMode)checkConnection();});
+  // Low-frequency health check while the app is being used. Do not ping
+  // invisibly in the background, and never switch modes without permission.
+  setInterval(()=>{
+    if(!offlineMode&&preloaded&&document.visibilityState==='visible')checkConnection();
+  },30000);
   function abortable(promise,signal){
     if(signal.aborted)return Promise.reject(new Error('Load reinitialised'));
     return new Promise((resolve,reject)=>{
@@ -110,10 +242,11 @@
       catch(error){if(!signal.aborted)console.warn('GainFocus photo cache storage unavailable',error);}
     }
   }
-  async function preloadAll(onProgress){
+  async function preloadAll(onProgress,outerSignal){
     if(!window.GFExerciseThumbsV2)throw new Error('Exercise photo library did not load');
-    await window.GFExerciseThumbsV2.ready;
-    const response=await fetch(INDEX,{credentials:'same-origin',cache:'force-cache'});
+    await abortable(window.GFExerciseThumbsV2.ready,outerSignal);
+    if(outerSignal.aborted)throw new Error('Offline mode selected');
+    const response=await fetch(INDEX,{credentials:'same-origin',cache:'force-cache',signal:outerSignal});
     if(!response.ok)throw new Error('Exercise index unavailable');
     const rows=await response.json();
     if(!Array.isArray(rows)||rows.length!==873)throw new Error('Incomplete photo index: expected 873');
@@ -121,9 +254,13 @@
     try{if('caches' in window)cache=await caches.open(CACHE);}
     catch(error){console.warn('GainFocus cache unavailable',error);}
     for(let attempt=0;attempt<=MAX_RESTARTS;attempt++){
+      if(outerSignal.aborted)throw new Error('Offline mode selected');
       const pending=rows.filter(item=>!verifiedPaths.has(item[1]));
       if(!pending.length)break;
       const controller=new AbortController();
+      const cancel=()=>controller.abort();
+      outerSignal.addEventListener('abort',cancel,{once:true});
+      if(outerSignal.aborted)controller.abort();
       let next=0,active=true,lastProgress=Date.now();
       const failed=[];
       const interval=setInterval(()=>{
@@ -148,7 +285,12 @@
         }
       };
       try{await Promise.all(Array.from({length:CONCURRENCY},worker));}
-      finally{active=false;clearInterval(interval);controller.abort();}
+      finally{
+        active=false;clearInterval(interval);
+        outerSignal.removeEventListener('abort',cancel);
+        controller.abort();
+      }
+      if(outerSignal.aborted)throw new Error('Offline mode selected');
       if(verifiedPaths.size===rows.length)break;
       if(attempt<MAX_RESTARTS){
         onProgress(verifiedPaths.size,rows.length,failed.length,attempt+1);
@@ -161,42 +303,60 @@
     return {loaded:verifiedPaths.size,total:rows.length,cacheEnabled:!!cache};
   }
   function beginPreload(){
-    if(preloaded)return Promise.resolve(true);
+    if(preloaded||offlineMode)return Promise.resolve(true);
     if(entryPromise)return entryPromise;
     const g=showGate();
     g.action.hidden=true;
     g.main.setAttribute('aria-busy','true');
     if(phraseTimer===null)startPhrases(g);
-    entryPromise=(async()=>{
+    const controller=new AbortController();
+    externalAbort=controller;
+    const offlineChosen=new Promise(resolve=>{resolveOfflineChoice=resolve;});
+    // This check runs independently of the photo requests, so cached photos
+    // cannot mask a genuinely failed or >3 s network health check.
+    checkConnection();
+    const onlineLoading=(async()=>{
       try{
         const result=await preloadAll((done,total,failed,retries)=>{
-          if(!currentGate||currentGate!==g)return;
+          if(!currentGate||currentGate!==g||offlineMode)return;
           const percent=Math.round(done/total*100);
           g.count.textContent=percent+'% ready'+(retries?' · reconnecting':'');
           g.fill.style.width=(done/total*100).toFixed(2)+'%';
-        });
+          if(retries>0){
+            showOfflineChoice('Photos are loading slowly. Continue offline? Some photos and other media may not load.');
+          }
+        },controller.signal);
+        if(offlineMode)return true;
         if(result.loaded!==result.total)throw new Error('Not all photos have loaded');
         preloaded=true;
+        if(pingController)pingController.abort();
         stopPhrases();
         if(g.main.isConnected)g.main.remove();
         if(currentGate===g)currentGate=null;
+        // Continue checking live connectivity even after cached media loaded.
+        if(navigator.onLine===false)showRuntimeOfflineChoice(
+          'No internet connection detected. Continue offline? Some photos and other media may not load.');
+        else checkConnection();
         return true;
       }catch(error){
+        if(offlineMode)return true;
         console.warn('GainFocus photo gate',error);
         stopPhrases();
         g.heading.textContent='Loading interrupted';
         g.info.textContent=error.message||'Unable to finish loading. Please retry.';
         g.action.hidden=false;
         g.main.setAttribute('aria-busy','false');
+        showOfflineChoice('Loading could not finish. Continue offline? Some photos and other media may not load.');
         entryPromise=null;
         return false;
       }
     })();
-    g.action.onclick=()=>{beginPreload();};
+    entryPromise=Promise.race([onlineLoading,offlineChosen]);
+    g.action.onclick=()=>{entryPromise=null;beginPreload();};
     return entryPromise;
   }
   function enterWithImages(original,args,context){
-    if(preloaded)return original.apply(context,args);
+    if(preloaded||offlineMode)return original.apply(context,args);
     return beginPreload().then(ready=>ready?original.apply(context,args):null);
   }
   function waitForImage(img){
@@ -238,25 +398,58 @@
   }
   function markContainerPending(root,label){
     if(!root)return;
-    let entry=containerLocks.get(root);
-    if(entry?.overlay?.isConnected)entry.overlay.remove();
-    const overlay=el('div','gf-photo-screen-loader'),inner=el('div','gf-photo-small-inner'),heading=el('div'),btn=el('button','gf-photo-btn');
-    heading.textContent=label||'Loading workout photos';
-    btn.type='button';btn.textContent='Retry photos';btn.hidden=true;
-    inner.append(spinner(),heading,btn);overlay.appendChild(inner);root.classList.add('gf-photo-surface');root.appendChild(overlay);
-    const state={overlay,heading,btn};containerLocks.set(root,state);
+    const old=containerLocks.get(root);
+    if(old?.overlay?.isConnected)old.overlay.remove();
+    const imgs=[...root.querySelectorAll('img[data-gf-photo="v2"],img.exercise-stock')];
+    if(!imgs.length)return;
+    // The approved exercise tiles now own their own spinners. Do not cover the
+    // workout list with an opaque card, duplicate spinner, or loading text.
+    const useTileSpinners=imgs.every(img=>!!img.closest('.gf-photo-exercise'));
+    const overlay=useTileSpinners?null:el('div','gf-photo-screen-loader');
+    let heading=null,btn=null;
+    if(overlay){
+      const inner=el('div','gf-photo-small-inner');
+      heading=el('div');
+      heading.hidden=true;
+      btn=el('button','gf-photo-btn');
+      btn.type='button';btn.textContent='Retry photo';btn.hidden=true;
+      inner.append(spinner(),heading,btn);
+      overlay.appendChild(inner);
+      root.classList.add('gf-photo-surface');
+      root.appendChild(overlay);
+    }
+    const state={overlay,heading,btn};
+    containerLocks.set(root,state);
     const check=async()=>{
-      btn.hidden=true;heading.textContent=label||'Loading workout photos';
+      if(btn)btn.hidden=true;
+      if(heading)heading.hidden=true;
       try{
-        const imgs=[...root.querySelectorAll('img[data-gf-photo="v2"],img.exercise-stock')];
-        await Promise.all(imgs.map(i=>waitForImage(i)));
-        if(containerLocks.get(root)!==state)return;
-        overlay.remove();
+        await Promise.all(imgs.map(img=>waitForImage(img)));
+        if(containerLocks.get(root)===state)overlay?.remove();
       }catch(error){
         if(containerLocks.get(root)!==state)return;
-        heading.textContent='Some workout photos are not ready';
-        btn.hidden=false;btn.onclick=()=>check();
         console.warn('GainFocus workout image wait',error);
+        for(const img of imgs){
+          const tile=img.closest('.gf-photo-loading');
+          if(tile&&!img.naturalWidth){
+            tile.classList.remove('gf-photo-loading');
+            tile.classList.add('gf-photo-failed');
+            tile.setAttribute('aria-label','Exercise photo unavailable');
+          }
+        }
+        if(btn){
+          heading.textContent='A photo could not load';
+          heading.hidden=false;btn.hidden=false;
+          btn.onclick=()=>{
+            for(const img of imgs){
+              if(!img.naturalWidth){
+                const original=img.getAttribute('src');
+                if(original)img.src=original;
+              }
+            }
+            check();
+          };
+        }
       }
     };
     check();
@@ -284,7 +477,8 @@
   }
   window.GainFocusPhotoReadiness={
     version:VERSION,preloadAll,
-    status:()=>({active:!!currentGate,loading:!!entryPromise,ready:preloaded,verified:verifiedPaths.size}),
+    status:()=>({active:!!currentGate,loading:!!entryPromise,ready:preloaded,verified:verifiedPaths.size,offline:offlineMode}),
+    checkConnection,continueOffline,
     checkWorkout:markContainerPending
   };
   // Gate immediately, before the original splash, login or main app becomes visible.

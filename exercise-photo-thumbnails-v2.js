@@ -152,6 +152,13 @@
   styles.textContent=`
     .gf-photo-exercise{display:block!important;position:relative;overflow:hidden;width:100%;height:100%;min-height:inherit;border-radius:inherit;background:linear-gradient(145deg,#173453,#081322 78%);isolation:isolate}
     .gf-photo-exercise img{display:block;width:100%;height:100%;min-height:inherit;object-fit:cover;object-position:center;filter:contrast(1.05) saturate(.96)}
+    .gf-photo-exercise.gf-photo-loading::before{content:'';position:absolute;z-index:3;width:26px;height:26px;box-sizing:border-box;left:calc(50% - 13px);top:calc(50% - 13px);border:3px solid rgba(121,198,245,.27);border-top-color:#9eeaff;border-radius:50%;animation:gf-photo-tile-spin .8s linear infinite;pointer-events:none}
+    .gf-photo-exercise.gf-photo-loading img{opacity:0}
+    .gf-photo-exercise.gf-photo-ready img{opacity:1}
+    .gf-photo-exercise.gf-photo-failed::before{content:'Photo unavailable';position:absolute;z-index:3;left:5px;right:5px;top:50%;transform:translateY(-50%);text-align:center;color:#bdd7ed;font:600 11px/1.3 system-ui,sans-serif}
+    .gf-photo-exercise.gf-photo-failed img{opacity:0}
+    @keyframes gf-photo-tile-spin{to{transform:rotate(360deg)}}
+    @media(prefers-reduced-motion:reduce){.gf-photo-exercise.gf-photo-loading::before{animation-duration:2s}}
     .gf-photo-exercise::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 70%,rgba(4,12,24,.32))}
     .gf-photo-placeholder{display:flex;align-items:center;justify-content:center;text-align:center;flex-direction:column;gap:6px;padding:8px;color:#d6eaff;font:700 10px/1.25 system-ui,-apple-system,sans-serif;letter-spacing:.02em}
     .gf-photo-placeholder b{font-size:clamp(12px,3vw,15px);color:#75baff;font-weight:850;letter-spacing:.07em}
@@ -187,21 +194,36 @@
     const fallback=info.path&&info.local?` data-gf-photo-local="${safe(info.local)}"`:'';
     const sourcePath=info.path?` data-gf-source-path="${safe(info.path)}"`:'';
     lastRendered++;
-    return `<span class="gf-photo-exercise${large?' large':''}" data-gf-exercise-name="${safe(name)}" data-gf-photo-v2="yes"><img class="exercise-stock gf-real-ex-image" data-gf-photo="v2"${fallback}${sourcePath} src="${safe(primary)}" alt="${safe(name)} exercise demonstration" loading="lazy" decoding="async"><span class="gf-photo-label">${safe(name)}</span></span>`;
+    return `<span class="gf-photo-exercise gf-photo-loading${large?' large':''}" data-gf-exercise-name="${safe(name)}" data-gf-photo-v2="yes"><img class="exercise-stock gf-real-ex-image" data-gf-photo="v2"${fallback}${sourcePath} src="${safe(primary)}" alt="${safe(name)} exercise demonstration" loading="lazy" decoding="async"><span class="gf-photo-label">${safe(name)}</span></span>`;
   }
 
+  function photoDecoded(img){
+    if(!(img instanceof HTMLImageElement)||img.dataset.gfPhoto!=='v2')return;
+    if(!img.complete||!img.naturalWidth)return;
+    const source=img.currentSrc||img.src;
+    const mark=()=>{
+      if(!img.isConnected||(img.currentSrc||img.src)!==source)return;
+      const tile=img.closest('[data-gf-photo-v2]');
+      if(tile){tile.classList.remove('gf-photo-loading');tile.classList.add('gf-photo-ready');}
+    };
+    if(typeof img.decode==='function')img.decode().then(mark,()=>{});
+    else mark();
+  }
+  document.addEventListener('load',ev=>photoDecoded(ev.target),true);
   document.addEventListener('error',function(ev){
     const img=ev.target;
     if(!(img instanceof HTMLImageElement)||img.dataset.gfPhoto!=='v2')return;
     const path=img.dataset.gfSourcePath;
     // Retry the exact approved image from pinned upstream on a missed local asset.
     if(path&&validPhotoPath(path)&&!img.dataset.gfRemoteTried){
+      img.closest('[data-gf-photo-v2]')?.classList.add('gf-photo-loading');
       img.dataset.gfRemoteTried='yes';
       img.src=remoteBackupURL(path);
       return;
     }
     const local=img.dataset.gfPhotoLocal;
     if(local&&!img.dataset.gfLocalTried){
+      img.closest('[data-gf-photo-v2]')?.classList.add('gf-photo-loading');
       img.dataset.gfLocalTried='yes';
       img.src=LOCAL+local+'.webp';
       return;
@@ -234,6 +256,7 @@
     });
   }
   function repairExisting(){
+    document.querySelectorAll('[data-gf-photo-v2] img[data-gf-photo="v2"]').forEach(photoDecoded);
     document.querySelectorAll(targets).forEach(el=>{
       if(el.querySelector('[data-gf-photo="v2"],.gf-photo-placeholder'))return;
       if(!el.querySelector('svg'))return;

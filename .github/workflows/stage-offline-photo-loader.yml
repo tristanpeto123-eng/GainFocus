@@ -1,0 +1,39 @@
+name: Stage offline recovery and photo-only spinners
+on:
+  push:
+    branches: [feature/offline-recovery-photo-spinners-20261017]
+    paths: [install_offline_photo_loader.py]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - name: Safely update two script URLs
+        run: python3 install_offline_photo_loader.py
+      - name: Validate exact new script references and syntax
+        run: |
+          node --check exercise-photo-thumbnails-v2.js
+          node --check exercise-photo-readiness.js
+          node --check service-worker.js
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('index.html').read_text(encoding='utf-8')
+          for tag in ['exercise-photo-thumbnails-v2.js?v=3','exercise-photo-readiness.js?v=3']:
+            assert html.count('src="./'+tag+'"')==1,tag
+          assert html.index('exercise-photo-thumbnails-v2.js?v=3')<html.index('exercise-photo-readiness.js?v=3')
+          assert 'gf_probe' in Path('service-worker.js').read_text()
+          print('PASS: same approved photo sources and correctly ordered updated loaders')
+          PY
+      - name: Commit app shell to review branch only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "feat: load photo-only spinners and offline connectivity gate"
+          git pull --rebase origin feature/offline-recovery-photo-spinners-20261017
+          git push origin HEAD:feature/offline-recovery-photo-spinners-20261017

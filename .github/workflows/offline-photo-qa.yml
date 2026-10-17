@@ -1,0 +1,57 @@
+name: GainFocus offline and photo-spinner acceptance
+on:
+  push:
+    branches: [feature/offline-recovery-photo-spinners-20261017]
+    paths:
+      - .github/workflows/offline-photo-qa.yml
+      - tests/test_offline_photo_loading.py
+      - tests/check_photo_assets.js
+      - exercise-photo-readiness.js
+      - exercise-photo-thumbnails-v2.js
+      - service-worker.js
+      - index.html
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate photo assets, syntax, and offline shell
+        run: |
+          node --check exercise-photo-readiness.js
+          node --check exercise-photo-thumbnails-v2.js
+          node --check service-worker.js
+          node tests/check_photo_assets.js
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text(encoding='utf-8')
+          ready=Path('exercise-photo-readiness.js').read_text()
+          tiles=Path('exercise-photo-thumbnails-v2.js').read_text()
+          sw=Path('service-worker.js').read_text()
+          assert s.count('src="./exercise-photo-readiness.js?v=3"')==1
+          assert s.count('src="./exercise-photo-thumbnails-v2.js?v=3"')==1
+          assert ready.count('const PING_MS=3000;')==1
+          assert 'gf_probe' in sw
+          assert "'./exercise-photo-thumbnails-v2.js?v=3'" in sw
+          assert "'./exercise-photo-readiness.js?v=3'" in sw
+          assert "gain-focus-photo-thumbs-v2-local-5" in ready and "gain-focus-photo-thumbs-v2-local-5" in sw
+          assert ".gf-photo-exercise.gf-photo-loading::before" in tiles
+          assert "background:rgba(5,15,29,.95)" not in ready
+          print("PASS: photo source unchanged; real network probe bypasses SW cache; photo-only spinner")
+          PY
+      - name: Install headless mobile Chromium
+        run: |
+          python3 -m pip install --quiet --break-system-packages playwright
+          python3 -m playwright install --with-deps chromium
+      - name: Test slow ping, failed ping, offline bypass and media
+        run: python3 tests/test_offline_photo_loading.py
+      - name: Preserve mobile QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gainfocus-offline-photo-spinner-qa
+          path: qa-screenshots/*.png
+          if-no-files-found: warn
