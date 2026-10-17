@@ -1,0 +1,45 @@
+name: GainFocus photo gate acceptance
+on:
+  push:
+    branches: [feature/full-photo-preload-and-workout-spinner-20261017]
+    paths:
+      - exercise-photo-readiness.js
+      - service-worker.js
+      - index.html
+      - tests/test_photo_entry_gate.py
+      - .github/workflows/photo-entry-gate-qa.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax and hard requirement checks
+        run: |
+          node --check exercise-photo-readiness.js
+          node --check exercise-photo-thumbnails-v2.js
+          node tests/check_photo_assets.js
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text()
+          assert s.count('src="./exercise-photo-readiness.js?v=1"')==1
+          assert s.index('src="./exercise-photo-thumbnails-v2.js?v=2"')<s.index('src="./exercise-photo-readiness.js?v=1"')
+          assert 'gain-focus-photo-thumbs-v2-local-2' in Path('service-worker.js').read_text()
+          print('PASS: exact single photographic library + entry loader; cache updated')
+          PY
+      - name: Prepare mobile Chromium
+        run: |
+          python3 -m pip install --break-system-packages --quiet playwright
+          python3 -m playwright install --with-deps chromium
+      - name: End-to-end all 873 images, pre-entry wheel and workout wheel
+        run: python3 tests/test_photo_entry_gate.py
+      - name: Preserve mobile screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gainfocus-photo-gate-qa
+          path: qa-screenshots/*.png
+          if-no-files-found: warn

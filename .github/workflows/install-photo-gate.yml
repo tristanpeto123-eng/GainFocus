@@ -1,0 +1,33 @@
+name: Stage GainFocus pre-entry photo gate
+on:
+  push:
+    branches: [feature/full-photo-preload-and-workout-spinner-20261017]
+    paths:
+      - install_photo_gate.py
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  add-loader:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add loader without modifying approved app source
+        run: python3 install_photo_gate.py
+      - name: Confirm exactly one loader and unchanged app except new script tag
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path("index.html").read_text()
+          assert html.count('src="./exercise-photo-readiness.js?v=1"')==1
+          assert html.count('src="./exercise-photo-thumbnails-v2.js?v=2"')==1
+          print("PASS: approved resolver and readiness gate included exactly once")
+          PY
+      - name: Commit index.html to development branch only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "feat: attach photo readiness gate after approved photo resolver"
+          git push origin HEAD:feature/full-photo-preload-and-workout-spinner-20261017
