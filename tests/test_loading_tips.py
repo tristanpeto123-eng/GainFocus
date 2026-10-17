@@ -24,6 +24,18 @@ with sync_playwright() as playwright:
     page=browser.new_page(viewport={"width":390,"height":844},is_mobile=True,has_touch=True)
     errors=[]
     page.on("pageerror",lambda e: errors.append(str(e)))
+    # In production a fast cache may finish in <4.35 sec. Delay the index
+    # request ONLY in this test so we can observe two full tip transitions.
+    page.add_init_script("""() => {
+      const nativeFetch=window.fetch.bind(window);
+      window.fetch=(input,init)=>{
+        const path=typeof input==='string'?input:(input?.url||String(input));
+        if(path.includes('exercise-photo-index-v2.json')){
+          return new Promise(resolve=>setTimeout(()=>resolve(nativeFetch(input,init)),7500));
+        }
+        return nativeFetch(input,init);
+      };
+    }""".replace('() => {','(() => {',1).replace('};\n    }','};\n    })();',1))
     page.goto(url,wait_until="domcontentloaded",timeout=60000)
     page.wait_for_selector("#gfPhotoGate",timeout=20000)
     assert page.evaluate("GainFocusPhotoReadiness.version")=="gf-photo-gate-v1.2"
