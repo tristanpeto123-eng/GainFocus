@@ -77,6 +77,13 @@ with sync_playwright() as p:
     while(e&&out.length<12){const st=getComputedStyle(e),r=e.getBoundingClientRect();out.push({id:e.id,tag:e.tagName,cls:e.className?.toString().slice(0,100),hidden:e.hidden,display:st.display,visibility:st.visibility,opacity:st.opacity,w:r.width,h:r.height});e=e.parentElement;}return out;
   }"""),flush=True)
   page.screenshot(path=str(ART/'nutrition-before-manual-debug.png'),animations='disabled')
+  # The live app wraps 'Log food' inside a closed GF50 details accordion.
+  # Open it as a real user would before operating the input.
+  def show_log_food():
+    details=page.locator('#nutrition details.gf50-widget:has(.log-mode)')
+    if details.count() and not details.first.evaluate('(x)=>x.open'):
+      details.first.locator('summary').click(timeout=5000)
+  show_log_food()
   page.locator('#foodName').fill('Manual yoghurt',timeout=6000)
   for id,v in [('foodCalories','150'),('foodProtein','11'),('foodCarbs','15'),('foodFat','5')]:
     page.locator('#'+id).fill(v)
@@ -104,6 +111,7 @@ with sync_playwright() as p:
   page.locator('#gfBarcodeNumber').fill('3017620422003')
   page.locator('#gfBarcodeLookup').click()
   page.wait_for_function("()=>nutritionOCR.status==='done' && nutritionOCR.result?.barcode==='3017620422003'",timeout=12000)
+  show_log_food()
   assert page.locator('#ocrQuantity').input_value()=='','Barcode accepted without a fresh portion'
   page.evaluate("saveExtractedNutritionEntry()")
   assert page.evaluate("progress.nutritionLogs.length")==2,'Barcode accepted with missing portion'
@@ -127,6 +135,7 @@ with sync_playwright() as p:
   }""")
   assert page.evaluate("nutritionOCR.status")=='done','Enhanced OCR did not complete'
   assert page.evaluate("nutritionOCR.result.ocrMethod")=='adaptive contrast'
+  show_log_food()
   assert page.locator('#gfMacroReview input').count()==4,'Editable OCR field review missing'
   assert page.locator('#ocrQuantity').input_value()=='','OCR should require a fresh portion'
   page.locator('#ocrQuantity').fill('180')
