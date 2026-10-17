@@ -22,3 +22,5 @@ for pat in patterns:
  res['matches'][pat]=out
 Path('nutrition_source_inspection.json').write_text(json.dumps(res,indent=2,ensure_ascii=False))
 print('Inspection complete:',len(s),'chars',len(lines),'lines')
+
+# Inspection refresh trigger
