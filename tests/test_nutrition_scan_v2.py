@@ -147,6 +147,21 @@ with sync_playwright() as p:
   assert page.evaluate("progress.nutritionLogs.length")==4
   assert page.evaluate("progress.nutritionLogs.at(-1).quantity")==180
   page.screenshot(path=str(ART/'nutrition-ocr-portion-verified.png'),animations='disabled')
+  # Every Work Fuel meal requires fresh quantity input before its diary write.
+  page.evaluate("""() => {
+    window.__workFuelQAResult='pending';
+    GFWorkFuelConfirmPortions([{name:'QA Lunch'},{name:'QA Dinner'}])
+      .then(x=>window.__workFuelQAResult=x);
+  }""")
+  assert page.locator('#gfWorkFuelPortionDialog input').count()==2
+  page.locator('#gfWorkFuelPortionDialog button').last.click()
+  assert page.evaluate("window.__workFuelQAResult")=='pending','Work Fuel bypassed empty portions'
+  inputs=page.locator('#gfWorkFuelPortionDialog input')
+  inputs.nth(0).fill('1.5');inputs.nth(1).fill('1')
+  page.locator('#gfWorkFuelPortionDialog button').last.click()
+  page.wait_for_function("()=>Array.isArray(window.__workFuelQAResult)",timeout=5000)
+  assert page.evaluate("window.__workFuelQAResult")==[1.5,1]
+  assert page.evaluate("progress.nutritionLogs.length")==4,'Work Fuel modal test must not log automatically'
   # Force a decoded-image promise to hang. Within ~3 seconds the workout
   # image loader must reinitialise the same image, never spin indefinitely.
   page.evaluate("""() => {
