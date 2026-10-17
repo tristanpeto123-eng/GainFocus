@@ -1,0 +1,52 @@
+name: GainFocus photo-load and nutrition scan quality
+on:
+  push:
+    branches: [feature/nutrition-ocr-barcode-portion-20261017]
+    paths:
+      - .github/workflows/nutrition-scan-quality.yml
+      - tests/test_nutrition_scan_v2.py
+      - nutrition-ocr-enhanced.js
+      - nutrition-portions.js
+      - nutrition-barcode.js
+      - exercise-photo-readiness.js
+      - index.html
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax and asset consistency
+        run: |
+          node --check nutrition-ocr-enhanced.js
+          node --check nutrition-portions.js
+          node --check nutrition-barcode.js
+          node --check workfuel-portions.js
+          node --check exercise-photo-readiness.js
+          node tests/check_photo_assets.js
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('index.html').read_text()
+          for f in ['nutrition-portions.js?v=1','nutrition-ocr-enhanced.js?v=2','nutrition-barcode.js?v=1']:
+            assert html.count('src="./'+f+'"')==1,f
+          assert html.count('id="gfPhotoBoot"')==1
+          assert html.count('src="./workfuel-portions.js?v=1"')==1
+          assert html.count('GFWorkFuelConfirmPortions?.(rows)')==1
+          print("PASS: all enhancements present in actual HTML")
+          PY
+      - name: Install browser runtime
+        run: |
+          python3 -m pip install --quiet --break-system-packages playwright
+          python3 -m playwright install --with-deps chromium
+      - name: Test live app in local mobile Chromium
+        run: python3 tests/test_nutrition_scan_v2.py
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gainfocus-ocr-barcode-portion-and-firstpaint
+          path: qa-screenshots/*.png
+          if-no-files-found: warn

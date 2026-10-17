@@ -1,12 +1,17 @@
-/* GainFocus pre-entry photo readiness + workout spinners v1.
+/* GainFocus pre-entry photo readiness + workout spinners v1.1.
    Preserves owner-approved photographic artwork. Never substitutes new imagery. */
 (function(){
   'use strict';
-  const VERSION='gf-photo-gate-v1';
+  const VERSION='gf-photo-gate-v1.1';
   const INDEX='./exercise-photo-index-v2.json';
-  const CACHE='gain-focus-photo-thumbs-v2-local-2';
+  const CACHE='gain-focus-photo-thumbs-v2-local-4';
   const CONCURRENCY=8;
-  const TIMEOUT_MS=25000;
+  const STALL_MS=3000; // restart only after 3 seconds with no image progress
+  const MAX_RESTARTS=3;
+  const PHRASES=['Loading content','Warming up','Getting ready','Preparing your workouts','Almost there'];
+  const verifiedPaths=new Set();
+  let preloaded=false;
+  let phraseTimer=null;
   let entryPromise=null;
   let currentGate=null;
   const containerLocks=new WeakMap();
@@ -34,36 +39,61 @@
   const pause=ms=>new Promise(r=>setTimeout(r,ms));
   function el(tag,cls){const node=document.createElement(tag);if(cls)node.className=cls;return node;}
   function spinner(){const d=el('span','gf-photo-spinner');d.setAttribute('role','status');d.setAttribute('aria-label','Loading photographs');return d;}
+  function stopPhrases(){if(phraseTimer!==null){clearInterval(phraseTimer);phraseTimer=null;}}
   function showGate(){
     if(currentGate)return currentGate;
     const main=el('section','gf-photo-gate');
     main.id='gfPhotoGate';main.setAttribute('role','status');main.setAttribute('aria-live','polite');
     const card=el('div','gf-photo-gate-card'),heading=el('h2'),info=el('p'),count=el('div','gf-photo-count'),bar=el('div','gf-photo-progress'),fill=el('span'),action=el('button','gf-photo-btn');
-    heading.textContent='Preparing your training photos';
+    heading.textContent=PHRASES[0];
     info.textContent='Loading and checking all 873 exercise photographs before opening GainFocus.';
     count.textContent='0 / 873 ready';bar.appendChild(fill);action.type='button';action.textContent='Retry loading';action.hidden=true;
     card.append(spinner(),heading,info,count,bar,action);main.appendChild(card);document.body.appendChild(main);
-    currentGate={main,info,count,fill,action};
+    currentGate={main,heading,info,count,fill,action};
+    const boot=document.getElementById('gfPhotoBoot');
+    if(boot)boot.remove(); // only after the runtime gate is already visible
+    let phrase=0;
+    stopPhrases();
+    phraseTimer=setInterval(()=>{
+      if(!currentGate || currentGate.main!==main){stopPhrases();return;}
+      heading.textContent=PHRASES[(++phrase)%PHRASES.length];
+    },1450);
     return currentGate;
   }
-  async function decodeImage(bytes){
-    const url=URL.createObjectURL(bytes);
-    const img=new Image();img.decoding='async';img.src=url;
-    try{await img.decode();if(img.naturalWidth<5||img.naturalHeight<5)throw new Error('Image dimensions unavailable');}
-    finally{img.removeAttribute('src');URL.revokeObjectURL(url);}
+  function abortable(promise,signal){
+    if(signal.aborted)return Promise.reject(new Error('Load reinitialised'));
+    return new Promise((resolve,reject)=>{
+      const abort=()=>reject(new Error('Load reinitialised'));
+      signal.addEventListener('abort',abort,{once:true});
+      Promise.resolve(promise).then(resolve,reject).finally(()=>signal.removeEventListener('abort',abort));
+    });
   }
-  async function downloadAndDecode(path,cache){
+  async function decodeImage(bytes,signal){
+    if(signal.aborted)throw new Error('Load reinitialised');
+    const url=URL.createObjectURL(bytes),img=new Image();
+    img.decoding='async';
+    const stop=()=>{img.removeAttribute('src');URL.revokeObjectURL(url);};
+    try{
+      img.src=url;
+      await abortable(img.decode(),signal);
+      if(signal.aborted||img.naturalWidth<5||img.naturalHeight<5)throw new Error('Image dimensions unavailable');
+    }finally{stop();}
+  }
+  async function downloadAndDecode(path,cache,signal){
     const rel=path.split('/').map(encodeURIComponent).join('/');
     const url=new URL('./exercise-photos/'+rel,document.baseURI).href;
-    let response=cache?await cache.match(url):null;
-    if(!response)response=await fetch(url,{credentials:'same-origin',cache:'force-cache'});
+    const cached=cache?await abortable(cache.match(url),signal):null;
+    const response=cached||await fetch(url,{credentials:'same-origin',cache:'force-cache',signal});
+    if(signal.aborted)throw new Error('Load reinitialised');
     if(!response||!response.ok)throw new Error('Image request failed: '+path);
-    const bytes=await response.blob();
-    if(!bytes.type.startsWith('image/') && !/\.(jpe?g|png|webp)$/i.test(path))throw new Error('Unexpected image type: '+path);
-    await decodeImage(bytes);
-    if(cache && !(await cache.match(url))){
-      try{await cache.put(url,new Response(bytes,{headers:{'Content-Type':bytes.type||'image/jpeg'}}));}
-      catch(error){console.warn('GainFocus photo cache storage unavailable',error);}
+    const bytes=await abortable(response.blob(),signal);
+    if(signal.aborted)throw new Error('Load reinitialised');
+    if(!bytes.type.startsWith('image/')&&!/\.(jpe?g|png|webp)$/i.test(path))throw new Error('Unexpected image type: '+path);
+    await decodeImage(bytes,signal);
+    if(cache&&!cached&&!signal.aborted){
+      // Cache storage may be quota-limited: decoding is the readiness requirement.
+      try{await abortable(cache.put(url,new Response(bytes,{headers:{'Content-Type':bytes.type||'image/jpeg'}})),signal);}
+      catch(error){if(!signal.aborted)console.warn('GainFocus photo cache storage unavailable',error);}
     }
   }
   async function preloadAll(onProgress){
@@ -74,62 +104,121 @@
     const rows=await response.json();
     if(!Array.isArray(rows)||rows.length!==873)throw new Error('Incomplete photo index: expected 873');
     let cache=null;
-    try{if('caches' in window)cache=await caches.open(CACHE);}catch(error){console.warn('GainFocus cache unavailable',error);}
-    let next=0,done=0;
-    const failed=[];
-    const worker=async()=>{
-      while(next<rows.length){
-        const current=rows[next++], name=current[0], path=current[1];
-        try{
-          if(!/^[a-zA-Z0-9_()\-]+\/\d+\.(?:jpg|png|webp)$/i.test(path))throw new Error('Invalid photo path');
-          await Promise.race([downloadAndDecode(path,cache),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Photo timed out')),TIMEOUT_MS))]);
-        }catch(error){failed.push({name,path,error:String(error)});}
-        done++;onProgress(done,rows.length,failed.length);
+    try{if('caches' in window)cache=await caches.open(CACHE);}
+    catch(error){console.warn('GainFocus cache unavailable',error);}
+    for(let attempt=0;attempt<=MAX_RESTARTS;attempt++){
+      const pending=rows.filter(item=>!verifiedPaths.has(item[1]));
+      if(!pending.length)break;
+      const controller=new AbortController();
+      let next=0,active=true,lastProgress=Date.now();
+      const failed=[];
+      const interval=setInterval(()=>{
+        if(active&&verifiedPaths.size<rows.length&&Date.now()-lastProgress>=STALL_MS){
+          controller.abort(); // cancels network/decode waits for all in-flight images
+        }
+      },100);
+      const worker=async()=>{
+        while(next<pending.length&&!controller.signal.aborted){
+          const [name,path]=pending[next++];
+          try{
+            if(!/^[a-zA-Z0-9_()\x2d]+\/\d+\.(?:jpg|png|webp)$/i.test(path))throw new Error('Invalid photo path');
+            await downloadAndDecode(path,cache,controller.signal);
+            if(controller.signal.aborted)break;
+            verifiedPaths.add(path);
+            lastProgress=Date.now();
+            onProgress(verifiedPaths.size,rows.length,0,attempt);
+          }catch(error){
+            if(controller.signal.aborted)break;
+            failed.push({name,path,error:String(error)});
+          }
+        }
+      };
+      try{await Promise.all(Array.from({length:CONCURRENCY},worker));}
+      finally{active=false;clearInterval(interval);controller.abort();}
+      if(verifiedPaths.size===rows.length)break;
+      if(attempt<MAX_RESTARTS){
+        onProgress(verifiedPaths.size,rows.length,failed.length,attempt+1);
+        // Reinitialise ONLY unfinished images; already decoded photos remain ready.
+        await pause(150);
+      }else{
+        throw new Error('Loading stalled or '+(rows.length-verifiedPaths.size)+' photos unavailable after '+(MAX_RESTARTS+1)+' attempts. Retry loading.');
       }
-    };
-    await Promise.all(Array.from({length:CONCURRENCY},worker));
-    if(failed.length)throw Object.assign(new Error(failed.length+' exercise photos could not load; check your connection and retry.'),{failed});
-    return {loaded:done,total:rows.length,cacheEnabled:!!cache};
+    }
+    return {loaded:verifiedPaths.size,total:rows.length,cacheEnabled:!!cache};
   }
-  function enterWithImages(original,args,context){
+  function beginPreload(){
+    if(preloaded)return Promise.resolve(true);
     if(entryPromise)return entryPromise;
     const g=showGate();
-    const load=async()=>{
-      g.action.hidden=true;g.main.setAttribute('aria-busy','true');
-      g.info.textContent='Loading and checking all exercise photographs before opening GainFocus.';
+    g.action.hidden=true;
+    g.main.setAttribute('aria-busy','true');
+    g.info.textContent='Checking your exercise photographs before GainFocus opens.';
+    entryPromise=(async()=>{
       try{
-        const result=await preloadAll((done,total,failed)=>{
-          g.count.textContent=done+' / '+total+' checked'+(failed?' · '+failed+' failed':'');
+        const result=await preloadAll((done,total,failed,retries)=>{
+          if(!currentGate||currentGate!==g)return;
+          g.count.textContent=done+' / '+total+' ready';
           g.fill.style.width=(done/total*100).toFixed(2)+'%';
+          if(retries)g.info.textContent='Connection paused — restarting unfinished photos ('+retries+'/'+MAX_RESTARTS+')';
+          else g.info.textContent='Checking your exercise photographs before GainFocus opens.';
         });
-        g.info.textContent=result.loaded+' photographs ready.';
-        g.main.remove();currentGate=null;
-        return original.apply(context,args);
+        if(result.loaded!==result.total)throw new Error('Not all photos have loaded');
+        preloaded=true;
+        stopPhrases();
+        if(g.main.isConnected)g.main.remove();
+        if(currentGate===g)currentGate=null;
+        return true;
       }catch(error){
-        console.warn('GainFocus photo entry gate',error);
-        g.info.textContent=error.message||'Could not load photographs.';
-        g.action.hidden=false;g.main.setAttribute('aria-busy','false');
+        console.warn('GainFocus photo gate',error);
+        g.info.textContent=error.message||'Unable to load photographs';
+        g.action.hidden=false;
+        g.main.setAttribute('aria-busy','false');
         entryPromise=null;
-        return null;
+        return false;
       }
-    };
-    g.action.onclick=()=>{entryPromise=load();};
-    return entryPromise=load();
+    })();
+    g.action.onclick=()=>{beginPreload();};
+    return entryPromise;
   }
-  function waitForImage(img,timeout=TIMEOUT_MS){
+  function enterWithImages(original,args,context){
+    if(preloaded)return original.apply(context,args);
+    return beginPreload().then(ready=>ready?original.apply(context,args):null);
+  }
+  function waitForImage(img){
     if(!img.isConnected)return Promise.resolve();
     img.loading='eager';
     return new Promise((resolve,reject)=>{
-      let ended=false;
-      const finish=(err)=>{if(ended)return;ended=true;clearTimeout(timer);img.removeEventListener('load',changed);img.removeEventListener('error',changed);if(err)reject(err);else resolve();};
-      const changed=()=>{if(img.complete&&img.naturalWidth>0){img.decode().then(()=>finish(),()=>{});} };
-      const timer=setTimeout(()=>finish(new Error('Workout photo loading timed out')),timeout);
-      img.addEventListener('load',changed);
-      img.addEventListener('error',changed);
-      changed();
-      // Catch already loaded/failed fallback replacements without getting stuck.
-      const poll=async()=>{for(let t=0;t<timeout/180&&!ended;t++){changed();await pause(180);}};
-      poll();
+      let complete=false,retries=0,last=Date.now(),decoding=false;
+      const finish=(error)=>{
+        if(complete)return;
+        complete=true;clearInterval(interval);
+        if(error)reject(error);else resolve();
+      };
+      const interval=setInterval(()=>{
+        if(complete)return;
+        if(!img.isConnected){finish();return;}
+        // A decoded image is the actual success condition; an unresolved decode
+        // promise counts as a stalled image, even when its network transfer finished.
+        if(Date.now()-last>=STALL_MS){
+          if(retries>=MAX_RESTARTS){finish(new Error('Exercise image stalled after automatic retries'));return;}
+          retries++;last=Date.now();decoding=false;
+          const src=img.getAttribute('src');
+          if(src){
+            // Reinitialise the same verified photo. Keep owner-approved image identity.
+            try{
+              const u=new URL(src,document.baseURI);
+              if(u.origin===location.origin){
+                u.searchParams.set('gfRetry',String(retries));
+                img.src=u.href;
+              }else img.src=src; // remote approved fallback only
+            }catch(_error){img.src=src;}
+          }
+        }
+        if(img.complete&&img.naturalWidth>0&&!decoding){
+          decoding=true;
+          img.decode().then(()=>finish(),()=>{decoding=false;});
+        }
+      },150);
     });
   }
   function markContainerPending(root,label){
@@ -178,5 +267,12 @@
       return r;
     });
   }
-  window.GainFocusPhotoReadiness={version:VERSION,preloadAll,status:()=>({active:!!currentGate,loading:!!entryPromise}),checkWorkout:markContainerPending};
+  window.GainFocusPhotoReadiness={
+    version:VERSION,preloadAll,
+    status:()=>({active:!!currentGate,loading:!!entryPromise,ready:preloaded,verified:verifiedPaths.size}),
+    checkWorkout:markContainerPending
+  };
+  // Gate immediately, before the original splash, login or main app becomes visible.
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>beginPreload(),{once:true});
+  else beginPreload();
 })();

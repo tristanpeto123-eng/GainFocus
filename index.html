@@ -1,6 +1,16 @@
 <!doctype html>
 <html lang="en">
 <head>
+<style id="gfPhotoBootCSS">
+#gfPhotoBoot{position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 20%,#183451,#070d1c 74%);color:#eefbff;font-family:system-ui,-apple-system,sans-serif;padding:25px}
+#gfPhotoBoot>div{width:min(100%,430px);box-sizing:border-box;display:flex;align-items:center;flex-direction:column;gap:19px;text-align:center;padding:35px 25px;border:1px solid #31516a;border-radius:24px;background:#0b2036}
+#gfPhotoBoot .gfPhotoSpin{width:38px;height:38px;border-radius:50%;border:3px solid #36506d;border-top-color:#8de5ff;animation:gfBootSpin .85s linear infinite}
+#gfPhotoBoot strong{font-size:23px;font-weight:800}
+#gfPhotoBoot p{font-size:13px;color:#a9c4d9;margin:0}
+@keyframes gfBootSpin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){#gfPhotoBoot .gfPhotoSpin{animation-duration:2s}}
+</style>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#050814">
@@ -1402,6 +1412,8 @@ Profile is supplied by the active app profile; no extra authentication. Meal pre
 -->
 </head>
 <body>
+<div id="gfPhotoBoot" role="status" aria-live="polite"><div><span class="gfPhotoSpin" aria-hidden="true"></span><strong>Loading content</strong><p>Preparing GainFocus</p></div></div>
+
 <div class="ambient"></div><div class="ambient-blur"></div>
 
 <section id="splash">
@@ -12027,7 +12039,7 @@ $("recalcBtn").onclick=()=>{["weight","targetWeight","weeklyGain","previousAvgWe
 $("logoutBtn").onclick=()=>{show("dayScreen")};
 load();Object.assign(state,bridge.profile());state.loggedIn=true;
 $("chooseDay").onclick=()=>show("dayScreen");
-$("logMeals").onclick=()=>{const rows=Object.keys(state.checkout).map(id=>{const m=meals.find(x=>x.id===id),e=entry(id),x=macros(m,e.portion,e.removed);return {mealId:id,name:m.name,calories:x.k,protein:x.p,carbs:x.c,fat:x.f}});if(state.gel)rows.push({mealId:'gel',name:'Carb gel',calories:100,protein:0,carbs:25,fat:0});$("logStatus").textContent=bridge.log(rows);};
+$("logMeals").onclick=async()=>{const rows=Object.keys(state.checkout).map(id=>{const m=meals.find(x=>x.id===id),e=entry(id),x=macros(m,e.portion,e.removed);return {mealId:id,name:m.name,calories:x.k,protein:x.p,carbs:x.c,fat:x.f}});if(state.gel)rows.push({mealId:'gel',name:'Carb gel',calories:100,protein:0,carbs:25,fat:0});$("logStatus").textContent=await bridge.log(rows);};
 $("recalcBtn").onclick=()=>{const fields=["weight","targetWeight","weeklyGain","previousAvgWeight","currentAvgWeight","height","age","proteinTarget"];const values=Object.fromEntries(fields.map(id=>[id,Number($(id).value)]));if(fields.some(id=>!Number.isFinite(values[id])||values[id]<=0)||values.weeklyGain>2){bridge.notify('Enter positive values; weekly gain must be 2 kg or less.');return;}Object.assign(state,values);state.sex=$("sex").value;bridge.update(state);save();renderAll();};
 ['weight','currentAvgWeight'].forEach(id=>{$(id).readOnly=true;$(id).title='Updated from Gain Focus check-ins'});
 root.querySelectorAll('label').forEach(l=>{const input=l.parentElement.querySelector('input,select');if(input)l.htmlFor=input.id});
@@ -12048,7 +12060,26 @@ notify:m=>toast(m),
 targets:()=>({calories:Number(plan?.nutrition?.calories)||0}),
 profile:()=>({name:clientNameValue(),weight:Number(latestWeight())||74,currentAvgWeight:Number(latestWeight())||74,height:Number(plan?.client?.heightCm)||180,age:Number(plan?.client?.age)||27,sex:plan?.client?.sex||'male',targetWeight:Number(plan?.goal?.targetWeightKg)||86,weeklyGain:Number(plan?.goal?.weeklyGainKg)||.3,proteinTarget:Number(plan?.nutrition?.proteinG)||160}),
 update:s=>{plan.client.heightCm=s.height;plan.client.age=s.age;plan.client.sex=s.sex;plan.goal.targetWeightKg=s.targetWeight;plan.goal.weeklyGainKg=s.weeklyGain;plan.nutrition.proteinG=s.proteinTarget;write();toast('Profile and meal plan updated')},
-log:rows=>{if(!rows.length)return 'Add a meal first.';ensureProgressExtras();const date=todayISO();for(const r of rows){const id='workfuel-'+date+'-'+r.mealId;const entry={...r,id,date,createdAt:new Date().toISOString(),source:'work-fuel'};const i=progress.nutritionLogs.findIndex(x=>x.id===id);if(i<0)progress.nutritionLogs.push(entry);else progress.nutritionLogs[i]=entry}write();toast('Meals saved to today’s food diary');return 'Saved to today’s diary. Logging again updates these entries.'}
+log:async rows=>{
+if(!rows.length)return 'Add a meal first.';
+const servings=await window.GFWorkFuelConfirmPortions?.(rows);
+if(!servings||servings.length!==rows.length)return 'No meals were logged — portion confirmation was cancelled.';
+ensureProgressExtras();
+const date=todayISO();
+for(let idx=0;idx<rows.length;idx++){
+const r=rows[idx],amount=Number(servings[idx]);
+if(!Number.isFinite(amount)||amount<=0)return 'Enter the portion consumed for every meal.';
+const id='workfuel-'+date+'-'+r.mealId;
+const entry={...r,id,date,createdAt:new Date().toISOString(),source:'work-fuel',
+ quantity:amount,quantityUnit:'servings',
+ calories:(Number(r.calories)||0)*amount,protein:(Number(r.protein)||0)*amount,
+ carbs:(Number(r.carbs)||0)*amount,fat:(Number(r.fat)||0)*amount};
+const i=progress.nutritionLogs.findIndex(x=>x.id===id);
+if(i<0)progress.nutritionLogs.push(entry);else progress.nutritionLogs[i]=entry;
+}
+write();toast('Consumed meal portions saved to today’s food diary');
+return 'Saved confirmed portions to today’s diary.';
+}
 };
 renderNutrition=function(){if(!plan||!progress)return;original();const section=document.getElementById('nutrition');const diary=document.createElement('div');diary.id='gf-food-diary';while(section.firstChild)diary.append(section.firstChild);section.append(diary);const tabs=document.createElement('div');tabs.className='gf-food-tabs';tabs.innerHTML='<button type="button" data-mode="planner">Meal planner</button><button type="button" data-mode="diary">Food diary</button>';section.prepend(tabs);
 const key=plan.client.id;if(!host||owner!==key){owner=key;host=document.createElement('div');host.id='gf-workfuel';const root=host.attachShadow({mode:'open'});root.innerHTML=WORKFUEL_HTML;fuel=initWorkFuel(root,bridge)}else{fuel.refresh()}section.append(host);
@@ -12058,5 +12089,9 @@ tabs.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(b.dataset.mode==='d
 })();
 </script><script src="./exercise-photo-thumbnails-v2.js?v=2" defer></script>
 <script src="./exercise-photo-readiness.js?v=1" defer></script>
+<script src="./nutrition-portions.js?v=1" defer></script>
+<script src="./nutrition-ocr-enhanced.js?v=2" defer></script>
+<script src="./nutrition-barcode.js?v=1" defer></script>
+<script src="./workfuel-portions.js?v=1" defer></script>
 </body>
 </html>
