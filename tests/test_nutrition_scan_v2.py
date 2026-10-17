@@ -48,7 +48,16 @@ with sync_playwright() as p:
   assert page.locator('#nutrition').is_visible(),"Nutrition screen not visible"
   assert page.locator('#gfBarcodeButton').count()==1,"Barcode button absent from nutrition photo mode"
   page.evaluate("setNutritionEntryMode('manual')")
-  page.locator('#foodName').fill('Manual yoghurt')
+  page.locator('#nutrition .gf-food-tabs button[data-mode="diary"]').click()
+  page.wait_for_timeout(150)
+  print('DIARY_STATE',page.evaluate("""() => {
+    const input=document.getElementById('foodName'),diary=document.getElementById('gf-food-diary');
+    return {nutritionVisible:!!document.getElementById('nutrition')?.getBoundingClientRect().height,
+      diaryHidden:diary?.hidden,diaryRect:diary?.getBoundingClientRect().height,
+      inputDisplay:input?getComputedStyle(input).display:'missing',
+      tabState:[...document.querySelectorAll('.gf-food-tabs button')].map(b=>({mode:b.dataset.mode,active:b.classList.contains('active')}))};
+  }"""),flush=True)
+  page.locator('#foodName').fill('Manual yoghurt',timeout=6000)
   for id,v in [('foodCalories','150'),('foodProtein','11'),('foodCarbs','15'),('foodFat','5')]:
     page.locator('#'+id).fill(v)
   page.evaluate("saveManualNutritionEntry()")
