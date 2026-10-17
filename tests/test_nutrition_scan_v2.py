@@ -40,9 +40,12 @@ with sync_playwright() as p:
     progress=newProgress();ensureProgressExtras();
     document.getElementById('splash')?.remove();
     document.getElementById('onboarding')?.remove();
-    enterApp();renderNutrition();
+    enterApp();showTab('nutrition');renderNutrition();
   }""")
   page.wait_for_timeout(400)
+  page.evaluate("document.querySelector('.gf-food-tabs button[data-mode=diary]')?.click()")
+  page.wait_for_timeout(180)
+  assert page.locator('#nutrition').is_visible(),"Nutrition screen not visible"
   assert page.locator('#gfBarcodeButton').count()==1,"Barcode button absent from nutrition photo mode"
   page.evaluate("setNutritionEntryMode('manual')")
   page.locator('#foodName').fill('Manual yoghurt')
