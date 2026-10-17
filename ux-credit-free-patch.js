@@ -132,3 +132,15 @@
 
   installStyles();installCoachButton();wrap();setTimeout(afterRender,0);
 })();
+
+// Gain Focus · exercise artwork loader v4.0.74
+(function(){
+  if(window.GainFocusExerciseArt)return;
+  if(document.getElementById('gf-exercise-art-v4-0-74'))return;
+  var s=document.createElement('script');
+  s.id='gf-exercise-art-v4-0-74';
+  s.src='./exercise-art-v4.0.74.js?v=1';
+  s.async=false;
+  s.onerror=function(){console.warn('Gain Focus exercise illustrations did not load; base workout UI remains available.');};
+  document.head.appendChild(s);
+})();
