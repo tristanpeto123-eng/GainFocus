@@ -2,13 +2,21 @@
    Preserves owner-approved photographic artwork. Never substitutes new imagery. */
 (function(){
   'use strict';
-  const VERSION='gf-photo-gate-v1.1';
+  const VERSION='gf-photo-gate-v1.2';
   const INDEX='./exercise-photo-index-v2.json';
   const CACHE='gain-focus-photo-thumbs-v2-local-4';
   const CONCURRENCY=8;
   const STALL_MS=3000; // restart only after 3 seconds with no image progress
   const MAX_RESTARTS=3;
   const PHRASES=['Loading content','Warming up','Getting ready','Preparing your workouts','Almost there'];
+  const TIPS=[
+    'Tip: Log your meals in Food Diary to track daily nutrition.',
+    'Tip: Scan a food barcode to find nutrition information faster.',
+    'Tip: Confirm the amount you actually ate before saving a meal.',
+    'Tip: Open Training to see your planned exercises.',
+    'Tip: Track changes over time in your training records.',
+    'Tip: Tap an exercise to see its demonstration photo.'
+  ];
   const verifiedPaths=new Set();
   let preloaded=false;
   let phraseTimer=null;
@@ -40,24 +48,30 @@
   function el(tag,cls){const node=document.createElement(tag);if(cls)node.className=cls;return node;}
   function spinner(){const d=el('span','gf-photo-spinner');d.setAttribute('role','status');d.setAttribute('aria-label','Loading photographs');return d;}
   function stopPhrases(){if(phraseTimer!==null){clearInterval(phraseTimer);phraseTimer=null;}}
+  function startPhrases(g){
+    stopPhrases();
+    let headingIndex=0,tipIndex=0;
+    g.heading.textContent=PHRASES[0];
+    g.info.textContent=TIPS[0];
+    phraseTimer=setInterval(()=>{
+      if(currentGate!==g||!g.main.isConnected){stopPhrases();return;}
+      g.heading.textContent=PHRASES[(++headingIndex)%PHRASES.length];
+      if(headingIndex%3===0)g.info.textContent=TIPS[(++tipIndex)%TIPS.length];
+    },1450);
+  }
   function showGate(){
     if(currentGate)return currentGate;
     const main=el('section','gf-photo-gate');
     main.id='gfPhotoGate';main.setAttribute('role','status');main.setAttribute('aria-live','polite');
     const card=el('div','gf-photo-gate-card'),heading=el('h2'),info=el('p'),count=el('div','gf-photo-count'),bar=el('div','gf-photo-progress'),fill=el('span'),action=el('button','gf-photo-btn');
     heading.textContent=PHRASES[0];
-    info.textContent='Loading and checking all 873 exercise photographs before opening GainFocus.';
-    count.textContent='0 / 873 ready';bar.appendChild(fill);action.type='button';action.textContent='Retry loading';action.hidden=true;
+    info.textContent=TIPS[0];
+    count.textContent='0% ready';bar.appendChild(fill);action.type='button';action.textContent='Retry loading';action.hidden=true;
     card.append(spinner(),heading,info,count,bar,action);main.appendChild(card);document.body.appendChild(main);
     currentGate={main,heading,info,count,fill,action};
     const boot=document.getElementById('gfPhotoBoot');
     if(boot)boot.remove(); // only after the runtime gate is already visible
-    let phrase=0;
-    stopPhrases();
-    phraseTimer=setInterval(()=>{
-      if(!currentGate || currentGate.main!==main){stopPhrases();return;}
-      heading.textContent=PHRASES[(++phrase)%PHRASES.length];
-    },1450);
+    startPhrases(currentGate);
     return currentGate;
   }
   function abortable(promise,signal){
@@ -152,15 +166,14 @@
     const g=showGate();
     g.action.hidden=true;
     g.main.setAttribute('aria-busy','true');
-    g.info.textContent='Checking your exercise photographs before GainFocus opens.';
+    if(phraseTimer===null)startPhrases(g);
     entryPromise=(async()=>{
       try{
         const result=await preloadAll((done,total,failed,retries)=>{
           if(!currentGate||currentGate!==g)return;
-          g.count.textContent=done+' / '+total+' ready';
+          const percent=Math.round(done/total*100);
+          g.count.textContent=percent+'% ready'+(retries?' · reconnecting':'');
           g.fill.style.width=(done/total*100).toFixed(2)+'%';
-          if(retries)g.info.textContent='Connection paused — restarting unfinished photos ('+retries+'/'+MAX_RESTARTS+')';
-          else g.info.textContent='Checking your exercise photographs before GainFocus opens.';
         });
         if(result.loaded!==result.total)throw new Error('Not all photos have loaded');
         preloaded=true;
@@ -170,7 +183,9 @@
         return true;
       }catch(error){
         console.warn('GainFocus photo gate',error);
-        g.info.textContent=error.message||'Unable to load photographs';
+        stopPhrases();
+        g.heading.textContent='Loading interrupted';
+        g.info.textContent=error.message||'Unable to finish loading. Please retry.';
         g.action.hidden=false;
         g.main.setAttribute('aria-busy','false');
         entryPromise=null;
