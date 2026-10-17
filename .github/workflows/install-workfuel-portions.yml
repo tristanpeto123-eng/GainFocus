@@ -1,0 +1,34 @@
+name: Install Work Fuel mandatory portions
+on:
+  push:
+    branches: [feature/nutrition-ocr-barcode-portion-20261017]
+    paths: [install_workfuel_portions.py]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  workfuel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Guard all meal-plan diary entries
+        run: python3 install_workfuel_portions.py
+      - name: Verify exact original scope
+        run: |
+          node --check workfuel-portions.js
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text()
+          assert s.count('GFWorkFuelConfirmPortions?.(rows)')==1
+          assert s.count('src="./workfuel-portions.js?v=1"')==1
+          print('PASS: Work Fuel now requires individual consumed amounts')
+          PY
+      - name: Commit to development only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "fix: gate Work Fuel diary saves on explicit portions"
+          git push origin HEAD:feature/nutrition-ocr-barcode-portion-20261017
