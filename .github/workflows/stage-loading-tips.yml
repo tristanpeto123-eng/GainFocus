@@ -1,0 +1,38 @@
+name: Stage loading tips in GainFocus first-paint HTML
+on:
+  push:
+    branches: [fix/loading-screen-rotating-app-tips-20261017]
+    paths:
+      - install_loading_tips.py
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the tiny scoped HTML copy change
+        run: python3 install_loading_tips.py
+      - name: Confirm approved photo resolver unchanged
+        run: |
+          node --check exercise-photo-readiness.js
+          node --check service-worker.js
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('index.html').read_text()
+          assert html.count('src="./exercise-photo-readiness.js?v=2"')==1
+          assert html.count('src="./exercise-photo-thumbnails-v2.js?v=2"')==1
+          assert html.count('<strong>Loading content</strong><p>Tip: Log your meals in Food Diary to track daily nutrition.</p>')==1
+          assert 'Checking your exercise photographs before GainFocus opens.' not in Path('exercise-photo-readiness.js').read_text()
+          print("PASS: loading starts with a tip and approved exercise photo scripts retained")
+          PY
+      - name: Commit only index.html to development branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "ui: load new tips script and show first helpful tip immediately"
+          git push origin HEAD:fix/loading-screen-rotating-app-tips-20261017
