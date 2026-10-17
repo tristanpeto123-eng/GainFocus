@@ -37,6 +37,15 @@ with sync_playwright() as p:
     page.screenshot(path=str(ART/"preentry-photo-wheel.png"),animations="disabled")
     page.wait_for_function("()=>document.getElementById('gfPhotoGate')===null && document.getElementById('app').classList.contains('open')",timeout=240000)
     assert page.evaluate("()=>window.GainFocusPhotoReadiness.status().active") is False
+    # Dismiss GainFocus's unrelated first-run Hercules briefing before screenshot QA.
+    def dismiss_briefing():
+        for _ in range(4):
+            button=page.get_by_text("Got it",exact=True)
+            if button.count() and button.first.is_visible():
+                button.first.click(timeout=4000)
+                page.wait_for_timeout(200)
+            else: break
+    dismiss_briefing()
     page.evaluate("showTab('train')")
     page.wait_for_timeout(900)
     page.screenshot(path=str(ART/"training-after-loading.png"),animations="disabled")
@@ -48,6 +57,17 @@ with sync_playwright() as p:
     })""")
     assert len(images["photos"])==5 and all(x["ready"] for x in images["photos"]),images
     assert images["overlay"]==0,images
+    dismiss_briefing()
+    photo=page.locator('#sessionSheet img[data-gf-photo="v2"]').first
+    photo.scroll_into_view_if_needed(timeout=8000)
+    box=photo.bounding_box()
+    assert box and box["height"]>20 and box["width"]>20,box
+    # The image must be visible and not covered by another modal.
+    on_top=page.evaluate("""p => {
+       const top=document.elementFromPoint(p.x,p.y);
+       return !!top && !!top.closest('#sessionSheet');
+    }""",{"x":box["x"]+box["width"]/2,"y":box["y"]+box["height"]/2})
+    assert on_top,"Workout image is obscured by an overlay; screenshot rejected"
     page.screenshot(path=str(ART/"push-after-loading.png"),animations="disabled")
     page.evaluate("""() => {
       const el=document.createElement('div');
