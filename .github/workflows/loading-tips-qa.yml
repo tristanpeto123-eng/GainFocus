@@ -1,0 +1,52 @@
+name: GainFocus loading tips mobile acceptance
+on:
+  push:
+    branches: [fix/loading-screen-rotating-app-tips-20261017]
+    paths:
+      - tests/test_loading_tips.py
+      - exercise-photo-readiness.js
+      - service-worker.js
+      - index.html
+      - .github/workflows/loading-tips-qa.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Approved assets, syntax, and updated offline shell
+        run: |
+          node --check exercise-photo-readiness.js
+          node --check service-worker.js
+          node tests/check_photo_assets.js
+          python3 - <<'PY'
+          from pathlib import Path
+          h=Path("index.html").read_text()
+          js=Path("exercise-photo-readiness.js").read_text()
+          sw=Path("service-worker.js").read_text()
+          assert h.count('src="./exercise-photo-readiness.js?v=2"')==1
+          assert h.count('id="gfPhotoBoot"')==1
+          assert h.count('src="./exercise-photo-thumbnails-v2.js?v=2"')==1
+          assert h.count('<strong>Loading content</strong><p>Tip: Log your meals in Food Diary to track daily nutrition.</p>')==1
+          assert "'./exercise-photo-readiness.js?v=2'" in sw
+          assert "gain-focus-photo-thumbs-v2-local-5" in sw
+          assert "Checking your exercise photographs before GainFocus opens." not in js
+          assert "Loading and checking all 873 exercise photographs" not in js
+          print("PASS: no photo-check copy; new first-paint tip; updated PWA cache; approved images unchanged")
+          PY
+      - name: Install mobile browser runtime
+        run: |
+          python3 -m pip install --quiet --break-system-packages playwright
+          python3 -m playwright install --with-deps chromium
+      - name: Verify rotating actual screen tips and photo loading
+        run: python3 tests/test_loading_tips.py
+      - name: Upload QA screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gainfocus-loading-tips-mobile
+          path: qa-screenshots/loading-tips-mobile.png
+          if-no-files-found: warn
