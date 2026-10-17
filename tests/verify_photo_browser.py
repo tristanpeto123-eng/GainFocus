@@ -63,9 +63,20 @@ with sync_playwright() as p:
       enterApp();showTab('train');
     }""")
     page.wait_for_timeout(600)
+    # The real app opens a first-run analysis briefing over the training view.
+    # A covered screenshot is not accepted as visual evidence.
+    def dismiss_briefing():
+        for _ in range(4):
+            button=page.get_by_text("Got it",exact=True)
+            if button.count() and button.first.is_visible():
+                button.first.click(timeout=3000)
+                page.wait_for_timeout(250)
+            else: break
+    dismiss_briefing()
     page.screenshot(path=str(ART/"mobile-training-v2-1.png"),animations="disabled")
     page.evaluate("openSession('push')")
     page.wait_for_timeout(900)
+    dismiss_briefing()
     screen=page.evaluate("""() => ({
       photos:[...document.querySelectorAll('#sessionSheet img[data-gf-photo="v2"]')].map(i=>({alt:i.alt,complete:i.complete,w:i.naturalWidth,src:i.getAttribute('src')})),
       placeholders:document.querySelectorAll('#sessionSheet .gf-photo-placeholder').length
@@ -73,6 +84,15 @@ with sync_playwright() as p:
     assert len(screen["photos"])>=5,screen
     assert screen["placeholders"]==0,screen
     assert all(i["complete"] and i["w"]>0 and i["src"].startswith("./exercise-photos/") for i in screen["photos"]),screen
+    photo=page.locator('#sessionSheet img[data-gf-photo="v2"]').first
+    photo.scroll_into_view_if_needed(timeout=8000)
+    pos=photo.bounding_box()
+    assert pos and pos["width"]>15 and pos["height"]>15,pos
+    in_front=page.evaluate("""p => {
+      const el=document.elementFromPoint(p.x,p.y);
+      return !!(el&&el.closest('#sessionSheet'));
+    }""",{"x":pos["x"]+pos["width"]/2,"y":pos["y"]+pos["height"]/2})
+    assert in_front,"Modal or overlay obstructs visible workout photography"
     page.screenshot(path=str(ART/"mobile-push-v2-1.png"),animations="disabled")
     print(json.dumps({"chromium_decoded":probe["decoded"],"failed":probe["failed"],"catalogue":status,"starter":check["audit"]["covered"],"push_screen":screen,"page_errors":problems[:8]}),flush=True)
     browser.close()
