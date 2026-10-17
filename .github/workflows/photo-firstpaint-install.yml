@@ -1,0 +1,34 @@
+name: Install pre-paint loading screen
+on:
+  push:
+    branches: [fix/loading-stall-recovery-and-first-paint-20261017]
+    paths: [install_photo_firstpaint.py]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inject prepaint boot loader before main UI
+        run: python3 install_photo_firstpaint.py
+      - name: Check code and injected HTML
+        run: |
+          node --check exercise-photo-readiness.js
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path("index.html").read_text()
+          assert s.count('id="gfPhotoBootCSS"')==1
+          assert s.count('id="gfPhotoBoot"')==1
+          assert s.count('src="./exercise-photo-readiness.js?v=1"')==1
+          print("PASS: first-paint boot, runtime spinner, approved photo source present")
+          PY
+      - name: Save HTML change only to feature branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "feat: first-paint photo loading before GainFocus app"
+          git push origin HEAD:fix/loading-stall-recovery-and-first-paint-20261017
