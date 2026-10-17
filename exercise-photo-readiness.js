@@ -51,10 +51,11 @@
     '.gf-offline-notice span{flex:1}',
     '.gf-offline-notice button{border:1px solid #84cef1;border-radius:9px;color:#f1fbff;background:#1a4663;padding:9px;min-height:38px;font-weight:700}',
     '.gf-photo-surface{position:relative!important}',
-    '.gf-photo-surface>.gf-photo-screen-loader{position:absolute;z-index:80;inset:0;min-height:240px;display:flex;align-items:center;justify-content:center;background:rgba(5,15,29,.95);border-radius:inherit}',
-    '.gf-photo-screen-loader .gf-photo-small-inner{display:flex;align-items:center;flex-direction:column;gap:12px;text-align:center;padding:22px;color:#dfefff;font:700 13px/1.4 system-ui,sans-serif}',
+    '.gf-photo-surface>.gf-photo-screen-loader{position:absolute;z-index:80;inset:0;min-height:0;display:flex;align-items:center;justify-content:center;background:transparent;pointer-events:none}',
+    '.gf-photo-screen-loader .gf-photo-small-inner{display:flex;align-items:center;flex-direction:column;gap:10px;text-align:center;padding:0;color:#dfefff;font:700 13px/1.4 system-ui,sans-serif}',
     '.gf-photo-screen-loader .gf-photo-spinner{width:29px;height:29px}',
-    '.gf-photo-screen-loader button{margin-top:6px}',
+    '.gf-photo-screen-loader button{pointer-events:auto;margin-top:6px}',
+    '.gf-photo-screen-loader [hidden]{display:none!important}',
     '@media(prefers-reduced-motion:reduce){.gf-photo-spinner{animation-duration:2s}.gf-photo-progress>span{transition:none}}'
   ].join('\n');
   (document.head||document.documentElement).appendChild(style);
@@ -362,25 +363,58 @@
   }
   function markContainerPending(root,label){
     if(!root)return;
-    let entry=containerLocks.get(root);
-    if(entry?.overlay?.isConnected)entry.overlay.remove();
-    const overlay=el('div','gf-photo-screen-loader'),inner=el('div','gf-photo-small-inner'),heading=el('div'),btn=el('button','gf-photo-btn');
-    heading.textContent=label||'Loading workout photos';
-    btn.type='button';btn.textContent='Retry photos';btn.hidden=true;
-    inner.append(spinner(),heading,btn);overlay.appendChild(inner);root.classList.add('gf-photo-surface');root.appendChild(overlay);
-    const state={overlay,heading,btn};containerLocks.set(root,state);
+    const old=containerLocks.get(root);
+    if(old?.overlay?.isConnected)old.overlay.remove();
+    const imgs=[...root.querySelectorAll('img[data-gf-photo="v2"],img.exercise-stock')];
+    if(!imgs.length)return;
+    // The approved exercise tiles now own their own spinners. Do not cover the
+    // workout list with an opaque card, duplicate spinner, or loading text.
+    const useTileSpinners=imgs.every(img=>!!img.closest('.gf-photo-exercise'));
+    const overlay=useTileSpinners?null:el('div','gf-photo-screen-loader');
+    let heading=null,btn=null;
+    if(overlay){
+      const inner=el('div','gf-photo-small-inner');
+      heading=el('div');
+      heading.hidden=true;
+      btn=el('button','gf-photo-btn');
+      btn.type='button';btn.textContent='Retry photo';btn.hidden=true;
+      inner.append(spinner(),heading,btn);
+      overlay.appendChild(inner);
+      root.classList.add('gf-photo-surface');
+      root.appendChild(overlay);
+    }
+    const state={overlay,heading,btn};
+    containerLocks.set(root,state);
     const check=async()=>{
-      btn.hidden=true;heading.textContent=label||'Loading workout photos';
+      if(btn)btn.hidden=true;
+      if(heading)heading.hidden=true;
       try{
-        const imgs=[...root.querySelectorAll('img[data-gf-photo="v2"],img.exercise-stock')];
-        await Promise.all(imgs.map(i=>waitForImage(i)));
-        if(containerLocks.get(root)!==state)return;
-        overlay.remove();
+        await Promise.all(imgs.map(img=>waitForImage(img)));
+        if(containerLocks.get(root)===state)overlay?.remove();
       }catch(error){
         if(containerLocks.get(root)!==state)return;
-        heading.textContent='Some workout photos are not ready';
-        btn.hidden=false;btn.onclick=()=>check();
         console.warn('GainFocus workout image wait',error);
+        for(const img of imgs){
+          const tile=img.closest('.gf-photo-loading');
+          if(tile&&!img.naturalWidth){
+            tile.classList.remove('gf-photo-loading');
+            tile.classList.add('gf-photo-failed');
+            tile.setAttribute('aria-label','Exercise photo unavailable');
+          }
+        }
+        if(btn){
+          heading.textContent='A photo could not load';
+          heading.hidden=false;btn.hidden=false;
+          btn.onclick=()=>{
+            for(const img of imgs){
+              if(!img.naturalWidth){
+                const original=img.getAttribute('src');
+                if(original)img.src=original;
+              }
+            }
+            check();
+          };
+        }
       }
     };
     check();
