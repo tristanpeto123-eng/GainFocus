@@ -11331,6 +11331,17 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
 </script>
 
 
+<style id="gf74-photo-thumb-style">
+.gf74-photo-thumb{display:block;position:relative;width:100%;height:100%;min-height:66px;margin:0;overflow:hidden;border-radius:inherit;color:#f0f6ff;background:#0c172b;isolation:isolate}
+.gf74-photo-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 45%;filter:contrast(1.07) saturate(.92)}
+.gf74-photo-thumb:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,8,17,.4),transparent 33%,rgba(3,8,17,.9));pointer-events:none}
+.gf74-photo-thumb .gf74-photo-tag{position:absolute;z-index:1;top:6px;left:6px;max-width:calc(100% - 12px);background:rgba(3,12,27,.82);padding:3px 6px;border:1px solid rgba(139,193,249,.55);border-radius:5px;color:#bddfff;text-transform:uppercase;font:700 9px/1.15 system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gf74-photo-thumb figcaption{position:absolute;z-index:1;bottom:7px;left:7px;right:7px;text-shadow:0 2px 5px #000;font:700 clamp(10px,1.2vw,14px)/1.13 system-ui,sans-serif;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gf74-photo-thumb.gf74-large{min-height:190px}
+.gf74-photo-thumb.gf74-large figcaption{font-size:clamp(19px,3vw,26px);bottom:12px}
+.gf74-photo-thumb.gf74-large .gf74-photo-tag{font-size:11px;top:10px;left:10px}
+</style>
+
 <style id="gf70-exercise-thumbnails">
 .gf70-exact-thumb{width:100%;height:100%;display:block;background:#07101f}
 .gf70-exact-thumb text{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -11472,13 +11483,20 @@ window.GAIN_FOCUS_BUILD='4.0.53-impact-report-hotfix';
   }
   function thumb(e,large=false){
     const [kind,type,variant]=spec(e),name=String(e?.name||"Exercise");
-    return `<svg class="gf70-exact-thumb ${large?'large':''}" viewBox="0 0 100 100" role="img" aria-label="${esc(name)} thumbnail">
-      <defs><radialGradient id="g70" cx="50%" cy="43%" r="66%"><stop offset="0" stop-color="#183764"/><stop offset="1" stop-color="#07101f"/></radialGradient></defs>
-      <rect width="100" height="100" rx="12" fill="url(#g70)"/>
-      ${figure(kind,type,variant)}
-      <rect x="4" y="86" width="92" height="10" rx="5" fill="rgba(4,10,22,.78)"/>
-      <text x="50" y="93.2" text-anchor="middle" fill="#d8eaff" font-size="5.2" font-weight="700">${esc(name.length>27?name.slice(0,26)+'…':name)}</text>
-    </svg>`;
+    const bank=EXERCISE_STOCK;
+    const key=kind==="bench"?(variant.includes("incline")?"incline":"bench")
+      :["row"].includes(kind)?"row"
+      :["pulldown","pullover","pullup","crunch"].includes(kind)?"pulldown"
+      :["triceps"].includes(kind)?"triceps"
+      :["hinge","legcurl"].includes(kind)?"hinge"
+      :["squat","legpress","legextension","lunge","calf"].includes(kind)?"squat"
+      :["curl","raise","reversefly"].includes(kind)?"lateral"
+      :["fly","dip"].includes(kind)?"bench":"shoulder";
+    const src=bank[key]||bank.shoulder;
+    const label=(type+" · "+kind).replace(/[^a-z0-9 .·-]/gi,"");
+    return '<figure class="gf74-photo-thumb'+(large?' gf74-large':'')+'" role="img" aria-label="'+esc(name)+' thumbnail">'
+      +'<img src="'+src+'" alt="" aria-hidden="true" loading="lazy" decoding="async">'
+      +'<span class="gf74-photo-tag">'+esc(label)+'</span><figcaption>'+esc(name)+'</figcaption></figure>';
   }
   window.gf70ExerciseThumbnailSpec=spec;
   window.gf70ExerciseThumbnail=thumb;
