@@ -120,6 +120,21 @@ with sync_playwright() as p:
   assert page.evaluate("progress.nutritionLogs.length")==4
   assert page.evaluate("progress.nutritionLogs.at(-1).quantity")==180
   page.screenshot(path=str(ART/'nutrition-ocr-portion-verified.png'),animations='disabled')
+  # Force a decoded-image promise to hang. Within ~3 seconds the workout
+  # image loader must reinitialise the same image, never spin indefinitely.
+  page.evaluate("""() => {
+    const root=document.createElement('div');root.id='gfThreeSecTester';
+    root.style.cssText='width:250px;height:200px;position:absolute;top:0;left:0';
+    const image=document.createElement('img');image.dataset.gfPhoto='v2';
+    image.src='./exercise-photos/Dumbbell_Bench_Press/0.jpg';
+    let calls=0;
+    image.decode=()=>{calls++;return calls===1?new Promise(()=>{}):Promise.resolve();};
+    root.append(image);document.body.append(root);
+    window.GainFocusPhotoReadiness.checkWorkout(root,'Testing 3-second stall recovery');
+  }""")
+  assert page.locator('#gfThreeSecTester .gf-photo-spinner').count()==1
+  page.wait_for_selector('#gfThreeSecTester .gf-photo-screen-loader',state='detached',timeout=13000)
+  assert 'gfRetry=1' in page.evaluate("document.querySelector('#gfThreeSecTester img').src"),'3-second retry did not reinitialise image'
   assert not errors,'Uncaught JavaScript errors: '+str(errors[:5])
   print(json.dumps({"photo_gate":"873 ready, rotating messages","portion":"manual/photo/barcode/favourite required",
     "barcode":"camera dialog + mocked verified product lookup","enhanced_ocr":"canvas preprocessing + mocked OCR parser",
