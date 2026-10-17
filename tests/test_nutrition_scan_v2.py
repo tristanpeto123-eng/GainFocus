@@ -72,6 +72,11 @@ with sync_playwright() as p:
       inputDisplay:input?getComputedStyle(input).display:'missing',
       tabState:[...document.querySelectorAll('.gf-food-tabs button')].map(b=>({mode:b.dataset.mode,active:b.classList.contains('active')}))};
   }"""),flush=True)
+  print('FIELD_ANCESTORS',page.evaluate("""() => {
+    const out=[];let e=document.getElementById('foodName');
+    while(e&&out.length<12){const st=getComputedStyle(e),r=e.getBoundingClientRect();out.push({id:e.id,tag:e.tagName,cls:e.className?.toString().slice(0,100),hidden:e.hidden,display:st.display,visibility:st.visibility,opacity:st.opacity,w:r.width,h:r.height});e=e.parentElement;}return out;
+  }"""),flush=True)
+  page.screenshot(path=str(ART/'nutrition-before-manual-debug.png'),animations='disabled')
   page.locator('#foodName').fill('Manual yoghurt',timeout=6000)
   for id,v in [('foodCalories','150'),('foodProtein','11'),('foodCarbs','15'),('foodFat','5')]:
     page.locator('#'+id).fill(v)
