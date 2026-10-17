@@ -5,7 +5,7 @@ import re
 f=Path(__file__).resolve().parent/"index.html"
 s=f.read_text(encoding="utf-8")
 patches=[
-  ('$("logBtn").onclick=()=>{','$("logBtn").onclick=async()=>{'),
+  ('$("logMeals").onclick=()=>{','$("logMeals").onclick=async()=>{'),
   ('$("logStatus").textContent=bridge.log(rows);','$("logStatus").textContent=await bridge.log(rows);'),
   ("log:rows=>{if(!rows.length)return 'Add a meal first.';ensureProgressExtras();const date=todayISO();for(const r of rows){const id='workfuel-'+date+'-'+r.mealId;const entry={...r,id,date,createdAt:new Date().toISOString(),source:'work-fuel'};const i=progress.nutritionLogs.findIndex(x=>x.id===id);if(i<0)progress.nutritionLogs.push(entry);else progress.nutritionLogs[i]=entry}write();toast('Meals saved to today’s food diary');return 'Saved to today’s diary. Logging again updates these entries.'}",
    """log:async rows=>{
