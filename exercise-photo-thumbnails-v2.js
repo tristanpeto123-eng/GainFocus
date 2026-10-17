@@ -155,6 +155,8 @@
     .gf-photo-exercise.gf-photo-loading::before{content:'';position:absolute;z-index:3;width:26px;height:26px;box-sizing:border-box;left:calc(50% - 13px);top:calc(50% - 13px);border:3px solid rgba(121,198,245,.27);border-top-color:#9eeaff;border-radius:50%;animation:gf-photo-tile-spin .8s linear infinite;pointer-events:none}
     .gf-photo-exercise.gf-photo-loading img{opacity:0}
     .gf-photo-exercise.gf-photo-ready img{opacity:1}
+    .gf-photo-exercise.gf-photo-failed::before{content:'Photo unavailable';position:absolute;z-index:3;left:5px;right:5px;top:50%;transform:translateY(-50%);text-align:center;color:#bdd7ed;font:600 11px/1.3 system-ui,sans-serif}
+    .gf-photo-exercise.gf-photo-failed img{opacity:0}
     @keyframes gf-photo-tile-spin{to{transform:rotate(360deg)}}
     @media(prefers-reduced-motion:reduce){.gf-photo-exercise.gf-photo-loading::before{animation-duration:2s}}
     .gf-photo-exercise::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 70%,rgba(4,12,24,.32))}
