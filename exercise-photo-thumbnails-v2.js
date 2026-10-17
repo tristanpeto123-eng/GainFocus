@@ -1,5 +1,5 @@
-/* Gain Focus Photo Thumbnails v2 — Review build; not deployed.
- * Photo source: yuhonas/free-exercise-db (Unlicense).
+/* Gain Focus Photo Thumbnails v2.1 — Local verified photo mirror.
+ * Photo source: yuhonas/free-exercise-db @ f00c92c7dcf1216a928a52c3706c7ce8e2f71ed5 (Unlicense).
  * Coverage: 873 photographed entries of 876 in upstream catalogue,
  * plus validated built-in aliases and nine already embedded local photos.
  */
@@ -7,10 +7,11 @@
   'use strict';
   if (window.__gfPhotoThumbsV2) return;
   window.__gfPhotoThumbsV2 = true;
-  const REMOTE = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/';
-  const CATALOGUE = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json';
+  const REMOTE = './exercise-photos/';
+  const REMOTE_BACKUP = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/f00c92c7dcf1216a928a52c3706c7ce8e2f71ed5/exercises/';
+  const CATALOGUE = './exercise-photo-index-v2.json';
   const LOCAL = './exercise-thumbnails/';
-  const CATALOGUE_CACHE = 'gf-photo-catalogue-2026-10-v2';
+  const CATALOGUE_CACHE = 'gf-photo-catalogue-2026-10-local-v2-1';
   const CSS_ID = 'gf-exercise-photo-styles-v2';
   const EXACT={
     'incline dumbbell press':'Incline_Dumbbell_Press/0.jpg',
@@ -141,6 +142,7 @@
   const safe=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const validPhotoPath=s=>typeof s==='string'&&/^[A-Za-z0-9_()\-]+\/\d+\.(jpg|jpeg|png|webp)$/.test(s)&&!s.includes('..');
   const photoURL=path=>REMOTE+path.split('/').map(encodeURIComponent).join('/');
+  const remoteBackupURL=path=>REMOTE_BACKUP+path.split('/').map(encodeURIComponent).join('/');
   const EXPLICIT=new Map(Object.entries(EXACT).map(([name,path])=>[normalize(name),path]).filter(([,p])=>validPhotoPath(p)));
   const OFFLINE_EXACT=new Map(Object.entries(OFFLINE).map(([name,key])=>[normalize(name),key]));
   let CATALOGUE_EXACT=new Map(), catalogStatus='loading', catalogueCount=0, imageMisses=new Set();
@@ -183,19 +185,31 @@
     if(!info.path&&!info.local&&!info.custom)return placeholder(name,info.source==='pending');
     const primary=info.custom|| (info.path?photoURL(info.path):LOCAL+info.local+'.webp');
     const fallback=info.path&&info.local?` data-gf-photo-local="${safe(info.local)}"`:'';
+    const sourcePath=info.path?` data-gf-source-path="${safe(info.path)}"`:'';
     lastRendered++;
-    return `<span class="gf-photo-exercise${large?' large':''}" data-gf-exercise-name="${safe(name)}" data-gf-photo-v2="yes"><img class="exercise-stock gf-real-ex-image" data-gf-photo="v2"${fallback} src="${safe(primary)}" alt="${safe(name)} exercise demonstration" loading="lazy" decoding="async"><span class="gf-photo-label">${safe(name)}</span></span>`;
+    return `<span class="gf-photo-exercise${large?' large':''}" data-gf-exercise-name="${safe(name)}" data-gf-photo-v2="yes"><img class="exercise-stock gf-real-ex-image" data-gf-photo="v2"${fallback}${sourcePath} src="${safe(primary)}" alt="${safe(name)} exercise demonstration" loading="lazy" decoding="async"><span class="gf-photo-label">${safe(name)}</span></span>`;
   }
 
   document.addEventListener('error',function(ev){
     const img=ev.target;
     if(!(img instanceof HTMLImageElement)||img.dataset.gfPhoto!=='v2')return;
+    const path=img.dataset.gfSourcePath;
+    // Retry the exact approved image from pinned upstream on a missed local asset.
+    if(path&&validPhotoPath(path)&&!img.dataset.gfRemoteTried){
+      img.dataset.gfRemoteTried='yes';
+      img.src=remoteBackupURL(path);
+      return;
+    }
     const local=img.dataset.gfPhotoLocal;
-    if(local&&!img.dataset.gfLocalTried){img.dataset.gfLocalTried='yes';img.src=LOCAL+local+'.webp';return;}
+    if(local&&!img.dataset.gfLocalTried){
+      img.dataset.gfLocalTried='yes';
+      img.src=LOCAL+local+'.webp';
+      return;
+    }
     const tile=img.closest('[data-gf-photo-v2]');
     if(!tile)return;
     const name=tile.dataset.gfExerciseName||'';
-    if(!img.dataset.gfLocalTried && img.src.startsWith(REMOTE))imageMisses.add(normalize(name));
+    imageMisses.add(normalize(name));
     tile.outerHTML=placeholder(name,false);
   },true);
 
