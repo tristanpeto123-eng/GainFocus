@@ -24,6 +24,7 @@ jobs:
           node --check nutrition-ocr-enhanced.js
           node --check nutrition-portions.js
           node --check nutrition-barcode.js
+          node --check workfuel-portions.js
           node --check exercise-photo-readiness.js
           node tests/check_photo_assets.js
           python3 - <<'PY'
@@ -32,6 +33,8 @@ jobs:
           for f in ['nutrition-portions.js?v=1','nutrition-ocr-enhanced.js?v=2','nutrition-barcode.js?v=1']:
             assert html.count('src="./'+f+'"')==1,f
           assert html.count('id="gfPhotoBoot"')==1
+          assert html.count('src="./workfuel-portions.js?v=1"')==1
+          assert html.count('GFWorkFuelConfirmPortions?.(rows)')==1
           print("PASS: all enhancements present in actual HTML")
           PY
       - name: Install browser runtime
