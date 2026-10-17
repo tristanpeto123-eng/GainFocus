@@ -42,3 +42,5 @@ if tag not in s:
 assert s.count(tag)==1
 f.write_text(s,encoding="utf-8")
 print('PASS: original planner diary action now waits for individual consumed servings; original script preserved otherwise')
+
+# Execute the scoped Work Fuel portion gate installer.
