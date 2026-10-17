@@ -16,6 +16,13 @@ with sync_playwright() as p:
   browser=p.chromium.launch(headless=True,args=["--no-sandbox"])
   context=browser.new_context(viewport={"width":390,"height":844},is_mobile=True,has_touch=True)
   page=context.new_page();errors=[]
+  def show_log_food():
+    page.evaluate("""() => {
+      const field=document.getElementById('ocrQuantity')||document.getElementById('foodName');
+      const section=field?.closest('details.gf50-widget');
+      if(section)section.open=true;
+    }""")
+
   page.on('pageerror',lambda err:errors.append(str(err)))
   page.route('https://world.openfoodfacts.org/**',lambda route:route.fulfill(status=200,content_type='application/json',body=json.dumps(sample)))
   page.goto(base+"/index.html",wait_until="domcontentloaded",timeout=90000)
