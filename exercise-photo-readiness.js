@@ -109,14 +109,39 @@
     return currentGate;
   }
   function showOfflineChoice(message){
+    if(offlineMode)return;
     const g=currentGate;
-    if(!g||offlineMode||preloaded)return;
+    if(!g){if(preloaded)showRuntimeOfflineChoice(message);return;}
     g.warning.textContent=message||
       'Your connection is slow or unavailable. You can continue offline, but some photos and other media may not load.';
     g.choice.hidden=false;
   }
   function dismissOfflineChoice(){
     if(currentGate)currentGate.choice.hidden=true;
+    document.getElementById('gfRuntimeOfflinePrompt')?.remove();
+  }
+  function showRuntimeOfflineChoice(message){
+    if(offlineMode||!preloaded)return;
+    let box=document.getElementById('gfRuntimeOfflinePrompt');
+    if(!box){
+      box=el('aside','gf-offline-notice');
+      box.id='gfRuntimeOfflinePrompt';
+      box.setAttribute('role','alert');
+      const copy=el('span');
+      copy.id='gfRuntimeConnectionMessage';
+      const continueButton=el('button');
+      continueButton.type='button';
+      continueButton.textContent='Continue offline';
+      continueButton.onclick=continueOffline;
+      const retry=el('button');
+      retry.type='button';
+      retry.textContent='Retry';
+      retry.onclick=checkConnection;
+      box.append(copy,continueButton,retry);
+      document.body.appendChild(box);
+    }
+    box.querySelector('#gfRuntimeConnectionMessage').textContent=message||
+      'Connection is slow or unavailable. Continue offline? Some photos and other media may not load.';
   }
   function showOfflineNotice(){
     if(document.getElementById('gfOfflineNotice'))return;
@@ -133,8 +158,9 @@
     document.body.appendChild(notice);
   }
   function continueOffline(){
-    if(offlineMode||preloaded)return;
+    if(offlineMode)return;
     offlineMode=true;
+    document.getElementById('gfRuntimeOfflinePrompt')?.remove();
     if(pingController)pingController.abort();
     stopPhrases();
     if(currentGate?.main?.isConnected)currentGate.main.remove();
@@ -144,7 +170,7 @@
     if(externalAbort)externalAbort.abort();
   }
   async function checkConnection(){
-    if(offlineMode||preloaded)return false;
+    if(offlineMode)return false;
     if(navigator.onLine===false){
       showOfflineChoice('No internet connection detected. Continue offline? Some photos and other media may not load.');
       return false;
@@ -174,7 +200,12 @@
     if(offlineMode){showOfflineNotice();return;}
     showOfflineChoice('Internet connection lost. Continue offline? Some photos and other media may not load.');
   });
-  window.addEventListener('online',()=>{if(!offlineMode&&!preloaded)checkConnection();});
+  window.addEventListener('online',()=>{if(!offlineMode)checkConnection();});
+  // Low-frequency health check while the app is being used. Do not ping
+  // invisibly in the background, and never switch modes without permission.
+  setInterval(()=>{
+    if(!offlineMode&&preloaded&&document.visibilityState==='visible')checkConnection();
+  },30000);
   function abortable(promise,signal){
     if(signal.aborted)return Promise.reject(new Error('Load reinitialised'));
     return new Promise((resolve,reject)=>{
@@ -302,6 +333,10 @@
         stopPhrases();
         if(g.main.isConnected)g.main.remove();
         if(currentGate===g)currentGate=null;
+        // Continue checking live connectivity even after cached media loaded.
+        if(navigator.onLine===false)showRuntimeOfflineChoice(
+          'No internet connection detected. Continue offline? Some photos and other media may not load.');
+        else checkConnection();
         return true;
       }catch(error){
         if(offlineMode)return true;
