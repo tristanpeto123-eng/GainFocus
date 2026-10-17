@@ -1,0 +1,37 @@
+name: Install GainFocus nutrition scanner modules
+on:
+  push:
+    branches: [feature/nutrition-ocr-barcode-portion-20261017]
+    paths:
+      - install_nutrition_enhancements.py
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add nutrition modules
+        run: python3 install_nutrition_enhancements.py
+      - name: Confirm three modules only
+        run: |
+          node --check nutrition-portions.js
+          node --check nutrition-ocr-enhanced.js
+          node --check nutrition-barcode.js
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('index.html').read_text()
+          for s in ['nutrition-portions.js?v=1','nutrition-ocr-enhanced.js?v=2','nutrition-barcode.js?v=1']:
+            assert html.count('src="./'+s+'"')==1
+          print('PASS: all modules loaded exactly once')
+          PY
+      - name: Commit narrowly scoped HTML edit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "feat: activate OCR preprocessing, barcode, and required portions"
+          git push origin HEAD:feature/nutrition-ocr-barcode-portion-20261017
