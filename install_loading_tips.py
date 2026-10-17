@@ -17,3 +17,4 @@ assert s.count(new_script)==1 and s.count(new_boot)==1
 assert s.count('<script src="./exercise-photo-thumbnails-v2.js?v=2" defer></script>')==1
 f.write_text(s,encoding="utf-8")
 print("PASS: exact two text replacements, no layout or artwork changed")
+# Trigger staging against latest feature-branch commit after cache update.
