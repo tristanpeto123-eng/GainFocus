@@ -29,3 +29,5 @@ assert 'src="./exercise-photo-readiness.js?v=1"' in updated
 assert 'src="./exercise-photo-thumbnails-v2.js?v=2"' in updated
 f.write_text(updated,encoding="utf-8")
 print("PASS: first-paint loading screen precedes original app; modifications restricted to two inserts")
+
+# Install/verification run requested 2026-10-17 for first-paint loader.
