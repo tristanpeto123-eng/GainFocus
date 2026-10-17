@@ -4,7 +4,7 @@
   'use strict';
   const VERSION='gf-photo-gate-v1.3';
   const INDEX='./exercise-photo-index-v2.json';
-  const CACHE='gain-focus-photo-thumbs-v2-local-6';
+  const CACHE='gain-focus-photo-thumbs-v2-local-5';
   const CONCURRENCY=8;
   const STALL_MS=3000; // restart only after 3 seconds with no image progress
   const MAX_RESTARTS=3;
