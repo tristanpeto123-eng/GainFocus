@@ -4,7 +4,7 @@
   'use strict';
   const VERSION='gf-photo-gate-v1.1';
   const INDEX='./exercise-photo-index-v2.json';
-  const CACHE='gain-focus-photo-thumbs-v2-local-3';
+  const CACHE='gain-focus-photo-thumbs-v2-local-4';
   const CONCURRENCY=8;
   const STALL_MS=3000; // restart only after 3 seconds with no image progress
   const MAX_RESTARTS=3;
@@ -197,13 +197,8 @@
       const interval=setInterval(()=>{
         if(complete)return;
         if(!img.isConnected){finish();return;}
-        if(img.complete&&img.naturalWidth>0){
-          if(!decoding){
-            decoding=true;
-            img.decode().then(()=>finish(),()=>{decoding=false;});
-          }
-          return;
-        }
+        // A decoded image is the actual success condition; an unresolved decode
+        // promise counts as a stalled image, even when its network transfer finished.
         if(Date.now()-last>=STALL_MS){
           if(retries>=MAX_RESTARTS){finish(new Error('Exercise image stalled after automatic retries'));return;}
           retries++;last=Date.now();decoding=false;
@@ -218,6 +213,10 @@
               }else img.src=src; // remote approved fallback only
             }catch(_error){img.src=src;}
           }
+        }
+        if(img.complete&&img.naturalWidth>0&&!decoding){
+          decoding=true;
+          img.decode().then(()=>finish(),()=>{decoding=false;});
         }
       },150);
     });
