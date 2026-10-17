@@ -21,3 +21,5 @@ for tag in tags:
 assert result.index(approved)<result.index(tags[0])<result.index(tags[1])<result.index(tags[2])
 file.write_text(result,encoding="utf-8")
 print("PASS: added only enhanced nutrition JS loaders; original approved source unchanged")
+
+# Execute staging and validation for GainFocus nutrition enhancements.
