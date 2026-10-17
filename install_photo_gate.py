@@ -18,3 +18,4 @@ else:
     assert revised.replace(tag+"\n","")==html,"Unexpected change outside readiness tag"
     html_path.write_text(revised,encoding="utf-8")
     print("Photo readiness loader added once; no unrelated HTML changes")
+# Workflow trigger: ensure the approved-photo gate is staged on this branch.
