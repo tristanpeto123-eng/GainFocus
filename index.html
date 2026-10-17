@@ -1,6 +1,16 @@
 <!doctype html>
 <html lang="en">
 <head>
+<style id="gfPhotoBootCSS">
+#gfPhotoBoot{position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 20%,#183451,#070d1c 74%);color:#eefbff;font-family:system-ui,-apple-system,sans-serif;padding:25px}
+#gfPhotoBoot>div{width:min(100%,430px);box-sizing:border-box;display:flex;align-items:center;flex-direction:column;gap:19px;text-align:center;padding:35px 25px;border:1px solid #31516a;border-radius:24px;background:#0b2036}
+#gfPhotoBoot .gfPhotoSpin{width:38px;height:38px;border-radius:50%;border:3px solid #36506d;border-top-color:#8de5ff;animation:gfBootSpin .85s linear infinite}
+#gfPhotoBoot strong{font-size:23px;font-weight:800}
+#gfPhotoBoot p{font-size:13px;color:#a9c4d9;margin:0}
+@keyframes gfBootSpin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){#gfPhotoBoot .gfPhotoSpin{animation-duration:2s}}
+</style>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#050814">
@@ -1402,6 +1412,8 @@ Profile is supplied by the active app profile; no extra authentication. Meal pre
 -->
 </head>
 <body>
+<div id="gfPhotoBoot" role="status" aria-live="polite"><div><span class="gfPhotoSpin" aria-hidden="true"></span><strong>Loading content</strong><p>Preparing GainFocus</p></div></div>
+
 <div class="ambient"></div><div class="ambient-blur"></div>
 
 <section id="splash">
