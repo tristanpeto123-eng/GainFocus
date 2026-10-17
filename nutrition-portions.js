@@ -12,6 +12,14 @@ function renderExtras(){
   const parent=document.getElementById('nutrition');if(!parent)return;
   if(nutritionEntryMode==='photo'){
     const target=parent.querySelector('#foodNutritionPhoto');
+    if(target&&!parent.querySelector('#gfOCRCaptureTip')){
+      const tip=document.createElement('div');
+      tip.id='gfOCRCaptureTip';
+      tip.setAttribute('role','note');
+      tip.style.cssText='margin:9px 0;padding:12px;border-radius:12px;border:1px solid #486982;background:rgba(34,80,110,.25);font-size:12px;line-height:1.5;color:#e7f4ff';
+      tip.textContent='For clearer nutrition scans: avoid curved objects and glare. Flatten the label if possible, photograph it straight-on in even light, and keep every number in focus. The reader also enhances contrast and tests corrected views, but you must verify the results.';
+      target.insertAdjacentElement('beforebegin',tip);
+    }
     if(target&&!parent.querySelector('#gfBarcodeButton')){
       const button=document.createElement('button');
       button.id='gfBarcodeButton';button.className='btn secondary';button.type='button';
