@@ -53,7 +53,7 @@
     return typeof plan!=='undefined'&&plan?.training?.sessions?.some(function(s){return String(s.id)===String(w.sessionId);});
   }
   function resetCurrent(id){
-    var active=typeof canonicalWorkout!=='undefined'&&canonicalWorkout&&canonicalWorkout.workoutId;
+    var active=typeof canonicalWorkout==='undefined'?null:(canonicalWorkout&&canonicalWorkout.workoutId);
     if(active!=null&&String(active)!==String(id))return;
     if(typeof skipCanonicalRest==='function')skipCanonicalRest();
     if(typeof canonicalWorkout!=='undefined')canonicalWorkout=null;
