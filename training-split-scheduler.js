@@ -43,11 +43,11 @@ function build(q){
   return true;
 }
 function controls(mode,lock,handler){
-  return '<div class="gf74-control"><label for="gf74Split">Training split</label><select id="gf74Split" onchange="'+handler+'(this.value)">'+
+  return '<div class="gf74-control"><label for="gf74Split">Training split</label><select id="gf74Split" onchange="'+handler+'(this.value,true)">'+
   '<option value="adaptive" '+(mode==='adaptive'?'selected':'')+'>Adaptive / mixed</option>'+
   '<option value="ppl" '+(mode==='ppl'?'selected':'')+'>Push / Pull / Legs</option></select>'+
   '<label class="gf74-check"><input id="gf74Lock" type="checkbox" '+(lock?'checked':'')+' '+(mode==='ppl'?'':'disabled')+
-  ' onchange="'+handler+'(document.getElementById(\'gf74Split\').value)"> Lock muscle groups during edits</label>'+
+  ' onchange="'+handler+'(document.getElementById(\'gf74Split\').value,false)"> Lock muscle groups during edits</label>'+
   '<small>Move complete workouts to another day without mixing the muscle groups.</small></div>';
 }
 const style=document.createElement('style');style.id='gf74-style';style.textContent=[
@@ -85,11 +85,11 @@ if(typeof renderOnboard==='function')window.renderCanonicalOnboarding=function()
  }
  return r;
 };
-window.gf74OnboardMode=function(mode){
+window.gf74OnboardMode=function(mode,fromSelect){
  if(!canonicalOnboarding?.profile)return;
  canonicalOnboarding.profile.splitMode=mode;
- canonicalOnboarding.profile.splitLocked=mode==='ppl'&&document.getElementById('gf74Lock')?.checked!==false;
- const l=document.getElementById('gf74Lock');if(l)l.disabled=mode!=='ppl';
+ const l=document.getElementById('gf74Lock');if(l){l.disabled=mode!=='ppl';if(fromSelect&&mode==='ppl')l.checked=true}
+ canonicalOnboarding.profile.splitLocked=mode==='ppl'&&l?.checked===true;
 };
 const saveOnboard=window.canonicalSaveProfile;
 if(typeof saveOnboard==='function')window.canonicalSaveProfile=function(){
@@ -115,9 +115,9 @@ if(typeof editProfile==='function')window.openProfileEditor=function(){
  if(anchor&&!document.getElementById('gf74Split'))anchor.closest('div')?.insertAdjacentHTML('afterend',controls(p.mode,p.lock,'gf74AccountMode'));
  return r;
 };
-window.gf74AccountMode=function(mode){
+window.gf74AccountMode=function(mode,fromSelect){
  const l=document.getElementById('gf74Lock');if(!l)return;
- l.disabled=mode!=='ppl';if(mode==='ppl')l.checked=true;
+ l.disabled=mode!=='ppl';if(mode==='ppl'&&fromSelect)l.checked=true;
 };
 const saveProfile=window.saveProfileEdits;
 if(typeof saveProfile==='function')window.saveProfileEdits=function(){
