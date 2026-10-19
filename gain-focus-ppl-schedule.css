@@ -1,0 +1,28 @@
+/* Gain Focus v4.0.74 — separated workout splits and movable week */
+.gf74-panel{padding:15px 12px;margin:12px 0;border:1px solid rgba(111,183,255,.16);border-radius:18px;background:linear-gradient(155deg,rgba(27,53,83,.38),rgba(8,18,36,.88))}
+.gf74-head h3{font-size:16px;line-height:1.2;margin:3px 0 4px;color:#eff8ff}
+.gf74-head p{font-size:11px;color:#aebfd2;line-height:1.5;margin:0 0 11px}
+.gf74-week{display:grid;grid-template-columns:repeat(7,minmax(98px,1fr));gap:7px;overflow-x:auto;padding:2px 1px 8px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+.gf74-day{min-height:114px;min-width:0;padding:10px 7px;border-radius:12px;border:1px solid rgba(153,185,215,.12);background:rgba(7,16,31,.55);scroll-snap-align:start;transition:border-color .16s,background .16s}
+.gf74-day.filled{border-color:rgba(83,196,178,.24);background:rgba(29,77,80,.18)}
+.gf74-day.gf74-target{border-color:#79edce;background:rgba(67,194,166,.24)}
+.gf74-dow{display:block;margin-bottom:9px;text-transform:uppercase;font-weight:800;letter-spacing:.08em;font-size:10px;color:#b5c9e2}
+.gf74-rest{font-size:11px;color:#7e8ea5}
+.gf74-session{display:flex;align-items:flex-start;flex-direction:column;gap:7px}
+.gf74-session strong{color:#e2fff3;font-size:12px;line-height:1.2;min-height:26px;overflow-wrap:anywhere}
+.gf74-handle{border:1px solid rgba(112,224,197,.25);background:rgba(85,211,181,.09);color:#d8fff2;border-radius:8px;font-size:18px;min-width:38px;min-height:38px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.gf74-handle.gf74-dragging{background:rgba(103,239,208,.28);cursor:grabbing}
+.gf74-handle:focus-visible,.gf74-select:focus-visible{outline:2px solid #7ceecf;outline-offset:2px}
+.gf74-select,.gf74-unassigned{width:100%;min-width:0;min-height:32px;border-radius:8px;background:#0b1b2c;color:#e8f5ff;border:1px solid rgba(145,192,215,.22);font:inherit;font-size:11px;padding:5px}
+.gf74-warning{display:grid;gap:10px;margin-top:8px;border-radius:12px;padding:11px;background:rgba(243,169,70,.07);border:1px solid rgba(243,169,70,.24);color:#f6deb7;font-size:12px;line-height:1.55}
+.gf74-plan-note{padding:11px;border-radius:13px;background:rgba(72,167,143,.075);border:1px solid rgba(84,213,179,.2);margin:9px 0;color:#c6eee1;font-size:11px;line-height:1.5}
+.gf74-plan-note p{margin:4px 0 0}
+.gf74-plan-note .gf74-error{color:#ffd0b2}
+.gf74-planner-week{margin:6px 0 16px}
+.gf74-planner-week .gf74-day{min-height:104px}
+.gf74-settings{display:grid;gap:7px;padding:10px 0}
+.gf74-settings label{font-size:12px;font-weight:700}
+.gf74-settings small{font-size:11px;color:#b4c5d7}
+.gf74-unassigned{margin:7px}
+@media (max-width:600px){.gf74-week{margin-right:-8px}.gf74-panel{padding:12px 10px}.gf74-head h3{font-size:15px}}
+@media (prefers-reduced-motion:reduce){.gf74-day{transition:none}}
