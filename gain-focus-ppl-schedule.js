@@ -55,7 +55,7 @@
     }
     return {ok:true,sessions:newSessions,errors:[]};
   }
-  const sameSplit=ss=>Array.isArray(ss)&&ss.length>=3&&ss.every(s=>{
+  const sameSplit=ss=>Array.isArray(ss)&&ss.length>=3&&['push','pull','legs'].every(k=>ss.some(s=>role(s)===k))&&ss.every(s=>{
     const k=role(s);
     return k && (s.exercises||[]).length>0 && (s.exercises||[]).every(e=>group(e)===k);
   });
@@ -135,7 +135,12 @@
   w.gf74MoveSession=function(sessionId,day,context){
     const p=getPlan(),q=w.gf59PlannerState,isDraft=context==='planner';
     const src=isDraft?q?.draft:p?.training?.sessions;
-    const result=assign(src,sessionId,day);
+    const fallback=daysFor(src,isDraft?q?.primary:(getProgress()?.settings?.trainingWeekdays||p?.training?.primaryWeekdays));
+    const scheduled=(src||[]).map((s,i)=>{
+      const d=Number(s.weekdayIndex);
+      return Number.isInteger(d)&&d>=0&&d<=6?s:{...s,weekdayIndex:fallback[i],dayLabel:DAYS[fallback[i]]};
+    });
+    const result=assign(scheduled,sessionId,day);
     if(!result.ok){toast(result.error);return;}
     if(isDraft){
       q.draft=result.sessions;q.primary=sorted(result.sessions.map(s=>s.weekdayIndex));
@@ -155,7 +160,12 @@
     }
   };
   function weekHTML(sessions,context){
-    const ss=Array.isArray(sessions)?sessions:[],byDay=new Map();
+    const raw=Array.isArray(sessions)?sessions:[],byDay=new Map();
+    const defaultDays=daysFor(raw,context==='planner'?w.gf59PlannerState?.primary:(getProgress()?.settings?.trainingWeekdays||getPlan()?.training?.primaryWeekdays));
+    const ss=raw.map((s,i)=>{
+      const d=Number(s.weekdayIndex);
+      return Number.isInteger(d)&&d>=0&&d<=6?s:{...s,weekdayIndex:defaultDays[i],dayLabel:DAYS[defaultDays[i]]};
+    });
     for(const s of ss)if(Number.isInteger(Number(s.weekdayIndex)))byDay.set(Number(s.weekdayIndex),s);
     return '<div class="gf74-head"><div><div class="eyebrow">Weekly workout schedule</div><h3>Move your workout days</h3><p>Drag the grip onto another day, or use the day selector. Occupied days swap workouts.</p></div></div>'+
       '<div class="gf74-week" role="group" aria-label="Rearrange workouts by weekday">'+ORDER.map(day=>{
@@ -193,7 +203,8 @@
       // Preserve an explicitly dragged/sorted PPL week, not a forced Push-first order.
       q.gf74Errors=[];q.primary=assigned;q.available=sorted([...q.available,...assigned]);return;
     }
-    const d=daysFor(q.draft,q.primary);
+    const primary=sorted(q.primary||[]);
+    const d=primary.length>=q.workoutCount?primary.slice(0,q.workoutCount):daysFor(q.draft,primary).slice(0,q.workoutCount);
     const result=rebuild(q.draft,q.workoutCount,d);
     q.gf74Errors=result.errors;
     if(result.ok){
@@ -265,6 +276,11 @@
     const r=baseApply.apply(this,arguments);
     if(ppl()&&getPlan()?.training){getPlan().training.splitPreference='ppl';syncSchedule(getPlan());syncTemplates(getPlan());write();}
     return r;
+  };
+  const baseWorkoutCount=w.gf59SetWorkoutCount;
+  if(typeof baseWorkoutCount==='function')w.gf59SetWorkoutCount=function(value){
+    if(ppl()&&Number(value)<3){toast('Choose at least three workout days for PPL.');return;}
+    return baseWorkoutCount.apply(this,arguments);
   };
   const baseStrategy=w.gf59SetStrategy;
   if(typeof baseStrategy==='function')w.gf59SetStrategy=function(value){
