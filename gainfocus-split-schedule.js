@@ -43,7 +43,7 @@
       const g=item.group||PPL[pool.indexOf(item)%3],targets=dest.filter(s=>s.splitGroup===g);
       if(!targets.length)continue;
       const orig=targets.find(s=>s.id===item.fromSession);
-      const target=orig||targets[countByGroup[g]++%targets.length];
+      const target=targets.length===1?(orig||targets[0]):targets[countByGroup[g]++%targets.length];
       target.exercises.push(item.exercise)
     }
     return dest;
@@ -71,6 +71,7 @@
     if(ss.length!==q.workoutCount||ss.some(s=>!s.exercises?.length)){
       toast('Each split day needs at least one exercise. Review the plan first.');return false
     }
+    if(ss.some(s=>(s.exercises||[]).some(e=>!classify(e,null)))){toast('Assign a muscle focus to any unclassified exercises');return false}
     if(ss.some(s=>(s.exercises||[]).some(e=>classify(e,role(s))!==role(s)))){
       toast('Some exercises belong to a different muscle group');return false
     }
