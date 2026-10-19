@@ -12,9 +12,11 @@
   function classify(e,from){
     const n=String(e?.name||'').toLowerCase(),f=String(e?.focus||'').toLowerCase();
     const rx=(r,v)=>r.test(v);
+    if(rx(/\b(rear.?delt|face.?pull|pull.?apart|reverse.?fly|rows?)\b/,n))return'pull';
     if(rx(/\b(quads?|hamstrings?|glutes?|calves?|legs?|hip|adductors?|abductors?)\b/,f))return'legs';
     if(rx(/\b(back|lats?|biceps?|traps?|rear delts?)\b/,f))return'pull';
     if(rx(/\b(chest|pecs?|triceps?|front delts?|side delts?|shoulders?)\b/,f))return'push';
+    if(rx(/\b(core|abs?|plank|crunch|mobility|warm.?up|stretch)\b/,n+' '+f))return'neutral';
     if(rx(/\b(squat|lunge|leg |calf |hamstring|quad |hip thrust|glute|deadlift|rdl|romanian|step.?up)\b/,n))return'legs';
     if(rx(/\b(row|pulldown|pull.?up|chin.?up|lat |curl|face.?pull|rear.?delt|reverse fly|shrug)\b/,n))return'pull';
     if(rx(/\b(press|bench|chest|push.?up|dip|fly|lateral raise|front raise|tricep|shoulder)\b/,n))return'push';
@@ -40,7 +42,7 @@
     }
     const countByGroup={push:0,pull:0,legs:0};
     for(const item of pool){
-      const g=item.group||PPL[pool.indexOf(item)%3],targets=dest.filter(s=>s.splitGroup===g);
+      const g=PPL.includes(item.group)?item.group:(role(original.find(s=>s.id===item.fromSession))||PPL[pool.indexOf(item)%3]),targets=dest.filter(s=>s.splitGroup===g);
       if(!targets.length)continue;
       const orig=targets.find(s=>s.id===item.fromSession);
       const target=targets.length===1?(orig||targets[0]):targets[countByGroup[g]++%targets.length];
@@ -57,7 +59,7 @@
     const existing=(q.draft||[]).filter(s=>!s._overflow);
     const rolesReady=existing.length===primary.length&&existing.every((s,i)=>PPL.includes(s.splitGroup)&&s.splitGroup===PPL[i%3]);
     if(rolesReady){
-      const wrong=existing.some(s=>(s.exercises||[]).some(e=>classify(e,role(s))!==role(s)));
+      const wrong=existing.some(s=>(s.exercises||[]).some(e=>!['neutral',role(s)].includes(classify(e,role(s)))));
       if(!wrong){q.draft=existing;return}
     }
     q.draft=reshape(q.draft||[],primary);
@@ -72,7 +74,7 @@
       toast('Each split day needs at least one exercise. Review the plan first.');return false
     }
     if(ss.some(s=>(s.exercises||[]).some(e=>!classify(e,null)))){toast('Assign a muscle focus to any unclassified exercises');return false}
-    if(ss.some(s=>(s.exercises||[]).some(e=>classify(e,role(s))!==role(s)))){
+    if(ss.some(s=>(s.exercises||[]).some(e=>!['neutral',role(s)].includes(classify(e,role(s))))){
       toast('Some exercises belong to a different muscle group');return false
     }
     return true
@@ -227,7 +229,7 @@
     const q=window.gf59PlannerState;
     if(q?.gf74Split==='ppl'){
       const from=q.draft?.[si],to=q.draft?.[di],e=from?.exercises?.[ei];
-      if(e&&to&&classify(e,role(from))!==role(to)){toast('Move exercises only within their Push, Pull or Legs group');return}
+      if(e&&to&&!['neutral',role(to)].includes(classify(e,role(from)))){toast('Move exercises only within their Push, Pull or Legs group');return}
     }
     oldCommitMove?.(si,ei,di)
   };
