@@ -1,0 +1,42 @@
+name: Integrate GF v4.0.74 split scheduler
+on:
+  push:
+    branches:
+      - feature/locked-ppl-drag-schedule
+    paths:
+      - training-split-scheduler.js
+      - scripts/apply-training-split-v4_0_74.py
+      - .github/workflows/integrate-gf74-split.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Check scheduler JavaScript syntax
+        run: node --check training-split-scheduler.js
+      - name: Safely insert module into large HTML
+        run: python3 scripts/apply-training-split-v4_0_74.py
+      - name: Validate integration
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('index.html').read_text('utf-8')
+          assert html.count('training-split-scheduler.js?v=4.0.74') == 1
+          assert '<script id="gf59-primary-flex-planner">' in html
+          print('Integration static checks PASS')
+          PY
+          git diff --check
+      - name: Commit integrated entrypoint to review branch
+        run: |
+          if ! git diff --quiet -- index.html; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add index.html
+            git commit -m "build: link v4.0.74 split scheduler into Gain Focus"
+            git push
+          fi
