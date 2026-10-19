@@ -92,7 +92,15 @@
     if(!Array.isArray(plan.training.sessions))plan.training.sessions=[];
     var weekdays=Array.isArray(s.trainingWeekdays)&&s.trainingWeekdays.length?s.trainingWeekdays:
       (plan.onboarding&&Array.isArray(plan.onboarding.selectedWeekdays)?plan.onboarding.selectedWeekdays:[]);
-    s.trainingSessionAssignments=reconcile(plan.training.sessions,s.trainingSessionAssignments,weekdays);
+    var existing=s.trainingSessionAssignments||{};
+    if(!Object.keys(existing).length){
+      existing={};plan.training.sessions.forEach(function(session,i){
+        var d=Number(session.weekdayIndex);
+        if(!Number.isInteger(d)||d<0||d>6)d=Number((plan.training.selectedWeekdays||[])[i]);
+        if(Number.isInteger(d)&&d>=0&&d<=6&&existing[d]===undefined)existing[d]=session.id;
+      });
+    }
+    s.trainingSessionAssignments=reconcile(plan.training.sessions,existing,weekdays);
     s.trainingWeekdays=Object.keys(s.trainingSessionAssignments).map(Number).sort(function(a,b){return a-b;});
     return s;
   }
@@ -135,6 +143,9 @@
     var next=move(s.trainingSessionAssignments,id,day);
     s.trainingSessionAssignments=next;
     s.trainingWeekdays=Object.keys(next).map(Number).sort(function(a,b){return a-b;});
+    plan.training.sessions.forEach(function(session){var day=Object.keys(next).find(function(d){return String(next[d])===String(session.id);});if(day!==undefined)session.weekdayIndex=Number(day);});
+    plan.training.selectedWeekdays=plan.training.sessions.map(function(session){return Number(session.weekdayIndex);}).filter(Number.isInteger);
+    plan.training.primaryWeekdays=s.trainingWeekdays.slice();s.primaryWeekdays=s.trainingWeekdays.slice();
     write();redraw();notify('Workout day updated');
   }
   function installStyles(){
@@ -171,13 +182,16 @@
   }
   function decorateSettings(){
     var sheet=document.getElementById('settingsSheet');
-    if(!sheet||document.getElementById('gfAccountSplit'))return;
+    if(!sheet||!available()||typeof gfSocialTab!=='undefined'&&gfSocialTab!=='settings'||document.getElementById('gfAccountSplit'))return;
     var grp=document.createElement('div');grp.className='settings-group';
     var problems=currentMode()==='ppl'?validateSessions(plan.training.sessions):[];
     grp.innerHTML='<div class="eyebrow">Training structure</div>'+fieldHTML('gfAccountSplit',currentMode())+
       '<button id="gfRebuildPPL" class="btn secondary" style="width:100%" type="button">Preview / rebuild strict PPL workouts</button>'+
       (problems.length?'<p class="small">Current programme has '+problems.length+' split conflicts. Rebuild to enforce strict PPL; workout history will remain.</p>':'');
-    var before=sheet.querySelector('.settings-group');if(before)sheet.insertBefore(grp,before);else sheet.appendChild(grp);
+    var before=sheet.querySelector('#gf58SettingsAvailability')||sheet.querySelector('.settings-group')||sheet.querySelector('.gf-social-hub');
+    if(before&&before.classList.contains('gf-social-hub'))before.appendChild(grp);
+    else if(before)before.insertAdjacentElement('afterend',grp);
+    else sheet.appendChild(grp);
     grp.querySelector('#gfAccountSplit').addEventListener('change',function(){setMode(this.value);});
     grp.querySelector('#gfRebuildPPL').addEventListener('click',rebuild);
   }
@@ -261,6 +275,87 @@
     }
     if(typeof openSettings==='function'){
       var baseSettings=openSettings;openSettings=function(){var r=baseSettings.apply(this,arguments);decorateSettings();return r;};
+    }
+    if(typeof gfRenderSocialHub==='function'){
+      var baseSocialHub=gfRenderSocialHub;
+      gfRenderSocialHub=function(){var r=baseSocialHub.apply(this,arguments);decorateSettings();return r;};
+    }
+
+    // The 4.0.59 builder balances time by moving exercises across days.
+    // In strict PPL mode, do not allow cross-group moves or mixed regeneration.
+    function draftState(){return root.gf59PlannerState||null;}
+    function strictDraft(){
+      var q=draftState();if(!q||currentMode()!=='ppl')return true;
+      if(validateSessions(q.baseline||[]).length){notify('Rebuild the existing mixed programme as PPL before editing');return false;}
+      if(q.strategy==='spread')q.strategy='flex';
+      q.overflowDay=null;
+      var source=q.baseline||[];
+      var days=Array.isArray(q.primary)?q.primary.slice():[];
+      if(days.length<source.length){notify('Choose at least one primary workout day per PPL session');return false;}
+      q.workoutCount=source.length;
+      q.draft=source.map(function(original,i){
+        var copy=JSON.parse(JSON.stringify(original));
+        copy.weekdayIndex=Number(days[i]);copy.scheduleOrder=i;
+        return copy;
+      });
+      return true;
+    }
+    if(typeof root.gf59GoEdit==='function'){
+      var baseGoEdit=root.gf59GoEdit;
+      root.gf59GoEdit=function(){
+        if(currentMode()!=='ppl')return baseGoEdit.apply(this,arguments);
+        var q=draftState();
+        if(!q||validateSessions(q.baseline||[]).length){notify('Rebuild the existing mixed programme as PPL before editing');return;}
+        if(q.strategy==='spread')q.strategy='flex';
+        var result=baseGoEdit.apply(this,arguments);
+        if(strictDraft()&&typeof root.gf59RenderPlanner==='function')root.gf59RenderPlanner();
+        return result;
+      };
+    }
+    if(typeof root.gf59CommitMove==='function'){
+      var baseCommitMove=root.gf59CommitMove;
+      root.gf59CommitMove=function(from,exercise,to){
+        if(currentMode()==='ppl'){
+          var q=draftState(),a=q?.draft?.[from]?.exercises?.[exercise],destination=q?.draft?.[to];
+          var target=typeForSession(destination),group=exerciseGroup(a);
+          if(!target||group!=='unknown'&&group!=='core'&&group!==target){notify('PPL lock: this exercise belongs on a different muscle day');return;}
+        }
+        return baseCommitMove.apply(this,arguments);
+      };
+    }
+    if(typeof root.gf59GoImpact==='function'){
+      var baseImpact=root.gf59GoImpact;
+      root.gf59GoImpact=function(){
+        if(currentMode()==='ppl'){
+          var problems=validateSessions(draftState()?.draft||[]);
+          if(problems.length){notify('PPL lock: '+problems[0]);return;}
+        }
+        return baseImpact.apply(this,arguments);
+      };
+    }
+    if(typeof root.gf59Apply==='function'){
+      var baseApply=root.gf59Apply;
+      root.gf59Apply=function(){
+        if(currentMode()==='ppl'){
+          var problems=validateSessions(draftState()?.draft||[]);
+          if(problems.length){notify('PPL lock: '+problems[0]);return;}
+        }
+        return baseApply.apply(this,arguments);
+      };
+    }
+    if(typeof root.gf59RenderPlanner==='function'){
+      var basePlannerRender=root.gf59RenderPlanner;
+      root.gf59RenderPlanner=function(){
+        var r=basePlannerRender.apply(this,arguments);
+        var q=draftState(),sheet=document.getElementById('sessionSheet');
+        if(q&&sheet&&currentMode()==='ppl'&&!sheet.querySelector('#gfSplitPlannerNote')){
+          var note=document.createElement('div');note.id='gfSplitPlannerNote';note.className='gf51-editor-note';
+          note.textContent='Strict PPL: Push, Pull and Legs are kept separate. Cross-group exercise moves and mixed plans will be blocked.';
+          var head=sheet.querySelector('.gf51-flow')||sheet.querySelector('.eyebrow');
+          if(head)head.insertAdjacentElement('afterbegin',note);
+        }
+        return r;
+      };
     }
     var baseWrite=write;
     write=function(){
