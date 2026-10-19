@@ -485,3 +485,14 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>beginPreload(),{once:true});
   else beginPreload();
 })();
+
+// Load the independent split/day scheduler after the v4.0.73 app scripts.
+// This file is referenced by the active bundled index.html.
+(function(){
+  if(document.getElementById('gfSplitSchedulerLoader'))return;
+  var script=document.createElement('script');
+  script.id='gfSplitSchedulerLoader';
+  script.src='./gain-focus-split-scheduler.js?v=1';
+  script.async=true;
+  document.head.appendChild(script);
+})();
