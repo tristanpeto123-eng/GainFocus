@@ -60,7 +60,8 @@
     const rolesReady=existing.length===primary.length&&existing.every((s,i)=>PPL.includes(s.splitGroup)&&s.splitGroup===PPL[i%3]);
     if(rolesReady){
       const wrong=existing.some(s=>(s.exercises||[]).some(e=>!['neutral',role(s)].includes(classify(e,role(s)))));
-      if(!wrong){q.draft=existing;return}
+      const hasOverflow=(q.draft||[]).some(s=>s._overflow&&(s.exercises||[]).length);
+      if(!wrong&&!hasOverflow){q.draft=existing;return}
     }
     q.draft=reshape(q.draft||[],primary);
     q.overflowDay=null;
