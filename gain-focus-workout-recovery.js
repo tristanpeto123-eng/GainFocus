@@ -125,15 +125,14 @@
   }
   function drawEscape(arr){
     var btn=document.getElementById('gfWorkoutRecoveryEscape');
-    if(!arr.length){btn?.remove();return;}
+    var m=document.getElementById('sessionModal');
+    if(!arr.length||!m?.classList.contains('open')){btn?.remove();return;}
     if(!btn){
       btn=document.createElement('button');btn.id='gfWorkoutRecoveryEscape';btn.type='button';
       btn.className='gf-wr-float';btn.textContent='Exit stuck workout';
       btn.setAttribute('data-gf-wr-action','discard-current');
       document.body.appendChild(btn);
     }
-    var m=document.getElementById('sessionModal');
-    btn.hidden=!(m?.classList.contains('open'));
   }
   function renderRecovery(){
     var arr=unfinished();
