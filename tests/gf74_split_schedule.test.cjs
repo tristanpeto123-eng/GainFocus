@@ -54,6 +54,11 @@ assert.equal(q.strategy,'flex');
 assert.equal(q.draft.length,3);
 assert.ok(validate(q));
 assert.ok(q.draft.every(s=>s.exercises.every(e=>['neutral',s.splitGroup].includes(classify(e,s.splitGroup)))));
+const qOverflow={gf74Split:'ppl',strategy:'flex',available:[1,3,5,6],primary:[1,3,5],workoutCount:3,
+  draft:[...structuredClone(three),{id:'overflow',name:'Overflow',_overflow:true,exercises:[{name:'Dumbbell Fly',focus:'Chest',sets:3}]}]};
+window.gf59PlannerState=qOverflow;
+window.gf59RenderPlanner();
+assert.equal(qOverflow.draft.reduce((n,s)=>n+s.exercises.length,0),9,'Overflow exercises must not be discarded');
 plan.training.sessions=structuredClone(base);
 window.gf74MoveSession('upper-a',3,'live');
 assert.equal(plan.training.sessions[0].weekdayIndex,3);
