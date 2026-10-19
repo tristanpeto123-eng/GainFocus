@@ -90,23 +90,32 @@
   function syncSchedule(p){
     if(!p?.training)return;
     const ss=p.training.sessions||[],days=sorted(ss.map(s=>s.weekdayIndex));
+    const overflow=!ppl()?ss.find(s=>/^overflow(?:-|\\b)/i.test(String(s.id||s.name||''))):null;
+    const primary=overflow?days.filter(d=>d!==Number(overflow.weekdayIndex)):days;
     p.training.sessionsPerWeek=ss.length;
     p.training.selectedWeekdays=days;
-    p.training.primaryWeekdays=days;
-    p.training.normalSessionsPerWeek=ss.length;
+    p.training.primaryWeekdays=primary;
+    p.training.normalSessionsPerWeek=primary.length;
+    if(overflow)p.training.overflowWeekday=Number(overflow.weekdayIndex);
+    else if(ppl())p.training.overflowWeekday=null;
     p.training.availableWeekdays=sorted([...(p.training.availableWeekdays||[]),...days]);
     const pr=getProgress();
-    if(pr){pr.settings||(pr.settings={});pr.settings.trainingWeekdays=days;pr.settings.primaryWeekdays=days;
+    if(pr){pr.settings||(pr.settings={});pr.settings.trainingWeekdays=days;pr.settings.primaryWeekdays=primary;
+      if(overflow)pr.settings.overflowWeekday=Number(overflow.weekdayIndex);
+      else if(ppl())pr.settings.overflowWeekday=null;
       pr.settings.availableWeekdays=sorted([...(pr.settings.availableWeekdays||[]),...days]);}
   }
   function syncTemplates(p){
     const live=p?.training?.sessions||[];
-    const match=s=>live.find(a=>a.id===s.id)||live.find(a=>role(a)===role(s));
     for(const obj of [p?.training?.startingPlan,p?.training?.targetPlan]){
       if(!Array.isArray(obj?.sessions))continue;
       const transformed=rebuild(obj.sessions,live.length,daysFor(live));
-      if(transformed.ok)obj.sessions=transformed.sessions.map(s=>{
-        const original=match(s);
+      if(!transformed.ok)continue;
+      const used=new Set();
+      obj.sessions=transformed.sessions.map(s=>{
+        const original=live.find(a=>a.id===s.id&&!used.has(a.id))
+          ||live.find(a=>role(a)===role(s)&&!used.has(a.id));
+        if(original)used.add(original.id);
         return original?{...s,id:original.id,weekdayIndex:original.weekdayIndex,dayLabel:original.dayLabel,scheduleOrder:original.scheduleOrder}:s;
       });
     }
