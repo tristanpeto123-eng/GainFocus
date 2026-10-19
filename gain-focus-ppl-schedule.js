@@ -81,10 +81,11 @@
   };
   const ppl=()=>preference()==='ppl';
   const daysFor=(ss,preferred)=>{
+    const n=(ss||[]).length,a=sorted(preferred||[]);
+    if(a.length>=n)return a.slice(0,n);
     const explicit=sorted((ss||[]).map(s=>Number(s.weekdayIndex)).filter(Number.isInteger));
-    if(explicit.length===(ss||[]).length)return explicit;
-    const a=sorted(preferred||[]);
-    return a.length>=(ss||[]).length?a:sorted([1,3,5,2,4,6,0]).slice(0,(ss||[]).length);
+    if(explicit.length===n)return explicit;
+    return sorted([1,3,5,2,4,6,0]).slice(0,n);
   };
   function syncSchedule(p){
     if(!p?.training)return;
@@ -187,6 +188,11 @@
     if(!q||!ppl())return;
     q.strategy='flex';q.overflowDay=null;
     if(!Array.isArray(q.draft)||q.draft.length<3){q.gf74Errors=['Select at least 3 workouts.'];return;}
+    const assigned=sorted(q.draft.map(s=>s.weekdayIndex));
+    if(q.draft.length===q.workoutCount&&assigned.length===q.draft.length&&sameSplit(q.draft)){
+      // Preserve an explicitly dragged/sorted PPL week, not a forced Push-first order.
+      q.gf74Errors=[];q.primary=assigned;q.available=sorted([...q.available,...assigned]);return;
+    }
     const d=daysFor(q.draft,q.primary);
     const result=rebuild(q.draft,q.workoutCount,d);
     q.gf74Errors=result.errors;
