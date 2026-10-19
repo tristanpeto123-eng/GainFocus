@@ -101,6 +101,10 @@
     const q=window.gf59PlannerState;
     const sessions=context==='edit'?q?.draft:plan?.training?.sessions;
     if(!Array.isArray(sessions))return;
+    if(context!=='edit'){
+      const current=assigned(sessions,plan?.training?.primaryWeekdays||plan?.training?.selectedWeekdays);
+      sessions.forEach((s,i)=>{if(numDay(s.weekdayIndex)===null){s.weekdayIndex=current[i];s.dayLabel=DAYS[current[i]]}})
+    }
     const a=sessions.find(x=>String(x.id)===String(id));
     if(!a){toast('Workout not found');return}
     const prior=numDay(a.weekdayIndex);
