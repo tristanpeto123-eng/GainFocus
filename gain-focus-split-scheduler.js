@@ -268,6 +268,7 @@
       var baseProfileSave=saveProfileEdits;
       saveProfileEdits=function(){
         var v=document.getElementById('gfProfileSplit')?.value,was=currentMode();
+        if(v==='ppl'&&Number(plan?.training?.sessionsPerWeek||plan?.training?.sessions?.length||0)<3){notify('PPL needs at least 3 workouts each week');return;}
         var r=baseProfileSave.apply(this,arguments);
         if(v&&v!==was&&plan&&plan.training){plan.training.splitMode=v;progress.settings.trainingSplitMode=v;write();}
         return r;
