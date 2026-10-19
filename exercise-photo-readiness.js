@@ -496,3 +496,13 @@
   script.async=true;
   document.head.appendChild(script);
 })();
+
+// Independent emergency workout recovery. Do not depend on the PPL sidecar successfully starting.
+(function(){
+  if(document.getElementById('gfWorkoutRecoveryLoader'))return;
+  var script=document.createElement('script');
+  script.id='gfWorkoutRecoveryLoader';
+  script.src='./gain-focus-workout-recovery.js?v=1';
+  script.async=true;
+  document.head.appendChild(script);
+})();
