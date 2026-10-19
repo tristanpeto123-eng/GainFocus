@@ -1,0 +1,41 @@
+name: Gain Focus PPL feature integration
+on:
+  push:
+    branches:
+      - feature/ppl-split-draggable-week-v4-0-74
+    paths:
+      - 'apply_gain_focus_ppl_patch.py'
+      - 'gain-focus-ppl-schedule.js'
+      - 'gain-focus-ppl-schedule.css'
+      - 'gain-focus-ppl-schedule.test.js'
+      - '.github/workflows/integrate-ppl-feature-branch.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  integrate-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Verify split/swap logic
+        run: node gain-focus-ppl-schedule.test.js
+      - name: Wire up the large HTML entrypoint safely
+        run: python3 apply_gain_focus_ppl_patch.py
+      - name: Check patch and verify references
+        run: |
+          git diff --check
+          grep -Fq 'gain-focus-ppl-schedule.js?v=4.0.74' index.html
+          grep -Fq 'gain-focus-ppl-schedule.css?v=4.0.74' index.html
+      - name: Commit integration on feature branch only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if ! git diff --cached --quiet; then
+            git commit -m "build: link PPL controls into Gain Focus HTML"
+            git push origin HEAD:feature/ppl-split-draggable-week-v4-0-74
+          fi
