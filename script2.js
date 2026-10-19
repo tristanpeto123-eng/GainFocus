@@ -12,10 +12,4 @@
   ux.src='./ux-credit-free-patch.js?v=1';
   ux.defer=true;
   document.head.appendChild(ux);
-
-  // Persistent muscle-group splits and touch-friendly weekly workout ordering.
-  var split=document.createElement('script');
-  split.src='./gain-focus-split-scheduler.js?v=1';
-  split.defer=true;
-  document.head.appendChild(split);
 })();
