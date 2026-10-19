@@ -5,7 +5,7 @@
   const copy=x=>{try{return structuredClone(x)}catch{return JSON.parse(JSON.stringify(x))}};
   const label=g=>({push:'Push',pull:'Pull',legs:'Legs'})[g]||'Workout';
   const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const numDay=x=>Number.isInteger(Number(x))&&Number(x)>=0&&Number(x)<=6?Number(x):null;
+  const numDay=x=>x===null||x===undefined||x===''?null:Number.isInteger(Number(x))&&Number(x)>=0&&Number(x)<=6?Number(x):null;
   const uniq=a=>[...new Set((a||[]).map(numDay).filter(x=>x!==null))].sort((a,b)=>((a+6)%7)-((b+6)%7));
   const splitMode=()=>plan?.training?.muscleSplit==='ppl'||plan?.client?.trainingSplit==='ppl'?'ppl':'flexible';
   const role=s=>PPL.includes(s?.splitGroup)?s.splitGroup:PPL.includes(s?.gf74Group)?s.gf74Group:/\bpush\b/i.test(s?.name||'')?'push':/\bpull\b/i.test(s?.name||'')?'pull':/\blegs?\b|\blower\b/i.test(s?.name||'')?'legs':null;
