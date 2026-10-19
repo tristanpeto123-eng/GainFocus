@@ -74,7 +74,7 @@
       toast('Each split day needs at least one exercise. Review the plan first.');return false
     }
     if(ss.some(s=>(s.exercises||[]).some(e=>!classify(e,null)))){toast('Assign a muscle focus to any unclassified exercises');return false}
-    if(ss.some(s=>(s.exercises||[]).some(e=>!['neutral',role(s)].includes(classify(e,role(s))))){
+    if(ss.some(s=>(s.exercises||[]).some(e=>{const g=classify(e,role(s));return g!=='neutral'&&g!==role(s)}))){
       toast('Some exercises belong to a different muscle group');return false
     }
     return true
