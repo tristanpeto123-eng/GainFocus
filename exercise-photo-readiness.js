@@ -492,7 +492,7 @@
   if(document.getElementById('gfSplitSchedulerLoader'))return;
   var script=document.createElement('script');
   script.id='gfSplitSchedulerLoader';
-  script.src='./gain-focus-split-scheduler.js?v=1';
+  script.src='./gain-focus-split-scheduler.js?v=2';
   script.async=true;
   document.head.appendChild(script);
 })();
