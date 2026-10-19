@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict');
 const scheduler = require('../gain-focus-split-scheduler.js');
 const base = [
-  { id: 'push', name: 'Push', subtitle: 'Chest & triceps', exercises: [{ name: 'Bench Press', focus: 'Chest' }, { name: 'Cable Triceps Pushdown', focus: 'Triceps' }] },
+  { id: 'push', name: 'Push', subtitle: 'Chest & triceps', exercises: [{ name: 'Bench Press', focus: 'Chest' }, { name: 'Flat Dumbbell Press', focus: 'Chest' }, { name: 'Cable Triceps Pushdown', focus: 'Triceps' }] },
   { id: 'pull', name: 'Pull', subtitle: 'Back & biceps', exercises: [{ name: 'Lat Pulldown', focus: 'Lats' }, { name: 'Seated Cable Row', focus: 'Mid-back' }] },
   { id: 'legs', name: 'Legs', subtitle: 'Leg day', exercises: [{ name: 'Leg Press', focus: 'Quads' }, { name: 'Romanian Deadlift', focus: 'Hamstrings' }] }
 ];
@@ -10,6 +10,10 @@ assert.equal(scheduler.exerciseGroup({ name: 'Leg Press', focus: 'Quads' }), 'le
 assert.equal(scheduler.exerciseGroup({ name: 'Chest Supported Row', focus: 'Back' }), 'pull');
 assert.equal(scheduler.exerciseGroup({ name: 'Seated Shoulder Press', focus: 'Delts' }), 'push');
 assert.equal(scheduler.exerciseGroup({ name: 'Plank', focus: 'Core' }), 'core');
+// Regression: 'lat' in Flat Dumbbell Press must not be classified as back/lats.
+assert.equal(scheduler.exerciseGroup({ name: 'Flat Dumbbell Press', focus: 'Chest' }), 'push');
+assert.equal(scheduler.exerciseGroup({ name: 'Lat Pulldown', focus: 'Lat width' }), 'pull');
+assert.equal(scheduler.exerciseGroup({ name: 'Chest Supported Row', focus: 'Upper back' }), 'pull');
 assert.deepEqual(scheduler.validateSessions(base), []);
 const invalid = JSON.parse(JSON.stringify(base));
 invalid[0].exercises.push({ name: 'Lat Pulldown', focus: 'Lats' });

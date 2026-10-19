@@ -2,11 +2,11 @@
    Preserves owner-approved photographic artwork. Never substitutes new imagery. */
 (function(){
   'use strict';
-  const VERSION='gf-photo-gate-v1.3';
+  const VERSION='gf-photo-gate-v1.4';
   const INDEX='./exercise-photo-index-v2.json';
   const CACHE='gain-focus-photo-thumbs-v2-local-5';
   const CONCURRENCY=8;
-  const STALL_MS=3000; // restart only after 3 seconds with no image progress
+  const STALL_MS=12000; // allow slower mobile connections 12 seconds of no photo progress before retry
   const MAX_RESTARTS=3;
   const PHRASES=['Loading content','Warming up','Getting ready','Preparing your workouts','Almost there'];
   const TIPS=[
@@ -27,7 +27,7 @@
   let resolveOfflineChoice=null;
   let pingController=null;
   let pingAttempt=0;
-  const PING_MS=3000;
+  const PING_MS=12000; // allow up to 12 seconds for a genuine no-cache network connection check
   const containerLocks=new WeakMap();
   const style=document.createElement('style');
   style.id='gf-photo-readiness-css';
@@ -189,7 +189,7 @@
       return true;
     }catch(error){
       if(!offlineMode&&id===pingAttempt)
-        showOfflineChoice('The connection check failed or took longer than 3 seconds. Continue offline? Some photos and other media may not load.');
+        showOfflineChoice('The connection check failed or took longer than 12 seconds. Continue offline? Some photos and other media may not load.');
       return false;
     }finally{
       clearTimeout(handle);
@@ -313,7 +313,7 @@
     externalAbort=controller;
     const offlineChosen=new Promise(resolve=>{resolveOfflineChoice=resolve;});
     // This check runs independently of the photo requests, so cached photos
-    // cannot mask a genuinely failed or >3 s network health check.
+    // cannot mask a genuinely failed or >12 s network health check.
     checkConnection();
     const onlineLoading=(async()=>{
       try{
@@ -492,7 +492,7 @@
   if(document.getElementById('gfSplitSchedulerLoader'))return;
   var script=document.createElement('script');
   script.id='gfSplitSchedulerLoader';
-  script.src='./gain-focus-split-scheduler.js?v=1';
+  script.src='./gain-focus-split-scheduler.js?v=2';
   script.async=true;
   document.head.appendChild(script);
 })();

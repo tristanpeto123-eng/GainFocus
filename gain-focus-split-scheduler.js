@@ -18,7 +18,7 @@
     // Whole-body/core movements may be programmed as accessories in any split.
     if (/plank|ab wheel|crunch|sit.up|dead bug|pallof|core|abdominals/.test(combined))return 'core';
     if (/leg press|squat|lunge|deadlift|hamstring|quads|quadriceps|glutes|calf|calves|leg curl|leg extension|hip thrust|hip abduc|adductor/.test(combined))return 'legs';
-    if (/face pull|rear delt|biceps|lat\b|pulldown|pull.up|chin.up|rowing|\brow\b|upper back|mid.back|trapezius|shrug|reverse fly/.test(combined))return 'pull';
+    if (/face pull|rear delt|biceps|\blat\b|pulldown|pull.up|chin.up|rowing|\brow\b|upper back|mid.back|trapezius|shrug|reverse fly/.test(combined))return 'pull';
     if (/chest|pectoral|triceps|pushdown|skullcrusher|bench press|overhead press|shoulder press|lateral raise|side delt|front delt|dumbbell press|push.up|incline press|flat press/.test(combined))return 'push';
     // Unclassified exercises do not trigger potentially destructive false positives.
     return 'unknown';
@@ -201,7 +201,7 @@
     if(n<3||n>6){notify('PPL rebuild supports 3 to 6 weekly sessions');return;}
     var originals=typeof starterSessions==='function'?starterSessions(3):[];
     var proposed=makePPLSessions(n,originals),messages=validateSessions(proposed);
-    if(messages.length){notify('Could not validate the PPL template');return;}
+    if(messages.length){notify('Could not validate the PPL template: '+messages[0]);return;}
     var summary=proposed.map(function(s){return s.name+': '+s.exercises.length+' exercises';}).join('\n');
     if(!root.confirm('Replace the current '+n+' training sessions with strict PPL days?\n\n'+summary+'\n\nYour existing workout logs are kept. The current exercise programme will be replaced.'))return;
     plan.training.sessions=proposed;plan.training.sessionsPerWeek=n;plan.training.splitMode='ppl';
