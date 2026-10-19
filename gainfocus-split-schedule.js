@@ -325,5 +325,5 @@
       return result
     }
   }
-  window.gf74TestHelpers={classify,reshape,assigned,validate};
+  window.gf74TestHelpers={classify,reshape,assigned,validate,scheduleHTML,normalizeDraft};
 })();
