@@ -340,7 +340,13 @@
           var problems=validateSessions(draftState()?.draft||[]);
           if(problems.length){notify('PPL lock: '+problems[0]);return;}
         }
-        return baseApply.apply(this,arguments);
+        var result=baseApply.apply(this,arguments);
+        if(currentMode()==='ppl'&&available()){
+          progress.settings.trainingSessionAssignments={};
+          ensure();write();
+          if(typeof renderAll==='function')renderAll();
+        }
+        return result;
       };
     }
     if(typeof root.gf59RenderPlanner==='function'){
