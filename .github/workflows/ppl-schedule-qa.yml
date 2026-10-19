@@ -1,0 +1,27 @@
+name: PPL split and workout schedule QA
+on:
+  pull_request:
+    paths:
+      - 'gainfocus-split-schedule.js'
+      - 'workfuel-portions.js'
+      - 'service-worker.js'
+      - 'tests/gf74_split_schedule.test.cjs'
+      - '.github/workflows/ppl-schedule-qa.yml'
+  push:
+    branches:
+      - 'feat/ppl-split-drag-weekly-schedule'
+jobs:
+  split-schedule-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check JavaScript syntax
+        run: |
+          node --check gainfocus-split-schedule.js
+          node --check workfuel-portions.js
+          node --check service-worker.js
+      - name: Run PPL scheduling regression tests
+        run: node tests/gf74_split_schedule.test.cjs

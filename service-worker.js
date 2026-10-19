@@ -1,7 +1,8 @@
-const CACHE_NAME='gain-focus-photo-thumbs-v2-local-5';
-const SHELL=['./','./index.html','./manifest.webmanifest','./apple-touch-icon.png','./icon-192.png','./icon-512.png','./icon-maskable-512.png','./ux-credit-free-patch.js','./exercise-photo-thumbnails-v2.js?v=3','./exercise-photo-index-v2.json','./exercise-photo-readiness.js?v=3','./nutrition-portions.js','./nutrition-ocr-enhanced.js','./nutrition-barcode.js','./workfuel-portions.js','./exercise-thumbnails/bench.webp','./exercise-thumbnails/incline.webp','./exercise-thumbnails/shoulder.webp','./exercise-thumbnails/lateral.webp','./exercise-thumbnails/pulldown.webp','./exercise-thumbnails/row.webp','./exercise-thumbnails/triceps.webp','./exercise-thumbnails/squat.webp','./exercise-thumbnails/hinge.webp'];
+const CACHE_NAME='gain-focus-pwa-shell-v4-0-74';
+const PHOTO_CACHE='gain-focus-photo-thumbs-v2-local-5';
+const SHELL=['./','./index.html','./manifest.webmanifest','./apple-touch-icon.png','./icon-192.png','./icon-512.png','./icon-maskable-512.png','./ux-credit-free-patch.js','./exercise-photo-thumbnails-v2.js?v=3','./exercise-photo-index-v2.json','./exercise-photo-readiness.js?v=3','./nutrition-portions.js','./nutrition-ocr-enhanced.js','./nutrition-barcode.js','./workfuel-portions.js','./workfuel-portions.js?v=1','./gainfocus-split-schedule.js?v=4.0.74','./exercise-thumbnails/bench.webp','./exercise-thumbnails/incline.webp','./exercise-thumbnails/shoulder.webp','./exercise-thumbnails/lateral.webp','./exercise-thumbnails/pulldown.webp','./exercise-thumbnails/row.webp','./exercise-thumbnails/triceps.webp','./exercise-thumbnails/squat.webp','./exercise-thumbnails/hinge.webp'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())));
-self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE_NAME).map(x=>caches.delete(x)))).then(()=>self.clients.claim())));
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE_NAME&&x!==PHOTO_CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{
   if(e.request.method!=='GET')return;
   if(e.request.mode==='navigate'){
@@ -20,7 +21,7 @@ self.addEventListener('fetch',e=>{
     e.respondWith(caches.match(e.request).then(hit=>hit||fetch(e.request).then(response=>{
       if(response.ok){
         const copy=response.clone();
-        e.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.put(e.request,copy)).catch(()=>{}));
+        e.waitUntil(caches.open(PHOTO_CACHE).then(cache=>cache.put(e.request,copy)).catch(()=>{}));
       }
       return response;
     })));

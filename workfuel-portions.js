@@ -39,3 +39,24 @@ window.GFWorkFuelConfirmPortions=async function(rows){
   });
 };
 })();
+
+/* v4.0.74: Load the split-and-schedule module from the existing app entrypoint.
+   The monolithic index.html should include this directly on its next bundle rebuild. */
+(function(){
+  if(window.__gf74ScheduleBootstrap)return;
+  window.__gf74ScheduleBootstrap=true;
+  const script=document.createElement('script');
+  script.src='./gainfocus-split-schedule.js?v=4.0.74';
+  script.async=false;
+  script.dataset.gainfocusSchedule='v4.0.74';
+  script.onload=function(){
+    if(typeof window.gf74MoveSession==='function'&&document.getElementById('train')?.classList.contains('active')){
+      try{renderTrain()}catch(err){console.warn('Schedule refresh failed',err)}
+    }
+  };
+  script.onerror=function(){
+    window.__gf74ScheduleBootstrap=false;
+    console.warn('GainFocus split scheduling module did not load');
+  };
+  document.head.appendChild(script);
+})();
