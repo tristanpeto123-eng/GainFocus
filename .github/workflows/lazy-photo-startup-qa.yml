@@ -1,0 +1,52 @@
+name: GainFocus lazy photo startup QA
+on:
+  pull_request:
+    paths:
+      - exercise-photo-readiness.js
+      - exercise-photo-thumbnails-v2.js
+      - service-worker.js
+      - tests/test_lazy_photo_startup.py
+      - .github/workflows/lazy-photo-startup-qa.yml
+  push:
+    branches: [perf/lazy-exercise-photos-20261021]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax, approved assets and nonblocking startup contract
+        run: |
+          node --check exercise-photo-readiness.js
+          node --check exercise-photo-thumbnails-v2.js
+          node --check service-worker.js
+          node tests/check_photo_assets.js
+          python3 -m py_compile tests/test_lazy_photo_startup.py
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('index.html').read_text(encoding='utf-8')
+          loader=Path('exercise-photo-readiness.js').read_text(encoding='utf-8')
+          thumb=Path('exercise-photo-thumbnails-v2.js').read_text(encoding='utf-8')
+          sw=Path('service-worker.js').read_text(encoding='utf-8')
+          assert html.count('src="./exercise-photo-readiness.js?v=3"')==1
+          assert 'const VERSION=\'gf-photo-lazy-v1.5\'' in loader
+          assert "mode:'lazy'" in loader
+          assert "downloadOfflinePhotos(onProgress)" in loader
+          assert "DOMContentLoaded',()=>beginPreload()" not in loader
+          assert "wrap('enterApp'" not in loader
+          assert "if(useTileSpinners)return;" in loader
+          assert 'loading="lazy" decoding="async"' in thumb
+          assert "'./index.html'" in sw and "const SHELL=['./'," not in sw
+          assert 'gain-focus-photo-thumbs-v2-local-6' in sw
+          assert 'gain-focus-photo-thumbs-v2-local-6' in loader
+          print('PASS: no automatic 873-image startup gate, preserved lazy tiles and offline shell')
+          PY
+      - name: Install mobile Chromium
+        run: |
+          python3 -m pip install --quiet --break-system-packages playwright
+          python3 -m playwright install --with-deps chromium
+      - name: Test fast entry, viewed-only photos and offline fallback
+        run: python3 tests/test_lazy_photo_startup.py
