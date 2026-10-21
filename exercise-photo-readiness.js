@@ -1,10 +1,10 @@
-/* GainFocus pre-entry photo readiness + workout spinners v1.1.
-   Preserves owner-approved photographic artwork. Never substitutes new imagery. */
+/* GainFocus non-blocking photo readiness + workout tile spinners.
+   Photos remain lazy and locally cached when viewed; bulk caching is opt-in. */
 (function(){
   'use strict';
-  const VERSION='gf-photo-gate-v1.4';
+  const VERSION='gf-photo-lazy-v1.5';
   const INDEX='./exercise-photo-index-v2.json';
-  const CACHE='gain-focus-photo-thumbs-v2-local-5';
+  const CACHE='gain-focus-photo-thumbs-v2-local-6';
   const CONCURRENCY=8;
   const STALL_MS=12000; // allow slower mobile connections 12 seconds of no photo progress before retry
   const MAX_RESTARTS=3;
@@ -19,6 +19,8 @@
   ];
   const verifiedPaths=new Set();
   let preloaded=false;
+  // App entry is immediately available; preloaded tracks *optional* full-library download.
+  const appReady=true;
   let phraseTimer=null;
   let entryPromise=null;
   let currentGate=null;
@@ -111,7 +113,7 @@
   function showOfflineChoice(message){
     if(offlineMode)return;
     const g=currentGate;
-    if(!g){if(preloaded)showRuntimeOfflineChoice(message);return;}
+    if(!g){if(appReady)showRuntimeOfflineChoice(message);return;}
     g.warning.textContent=message||
       'Your connection is slow or unavailable. You can continue offline, but some photos and other media may not load.';
     g.choice.hidden=false;
@@ -121,7 +123,7 @@
     document.getElementById('gfRuntimeOfflinePrompt')?.remove();
   }
   function showRuntimeOfflineChoice(message){
-    if(offlineMode||!preloaded)return;
+    if(offlineMode||!appReady)return;
     let box=document.getElementById('gfRuntimeOfflinePrompt');
     if(!box){
       box=el('aside','gf-offline-notice');
@@ -204,7 +206,7 @@
   // Low-frequency health check while the app is being used. Do not ping
   // invisibly in the background, and never switch modes without permission.
   setInterval(()=>{
-    if(!offlineMode&&preloaded&&document.visibilityState==='visible')checkConnection();
+    if(!offlineMode&&appReady&&document.visibilityState==='visible')checkConnection();
   },30000);
   function abortable(promise,signal){
     if(signal.aborted)return Promise.reject(new Error('Load reinitialised'));
@@ -405,7 +407,10 @@
     // The approved exercise tiles now own their own spinners. Do not cover the
     // workout list with an opaque card, duplicate spinner, or loading text.
     const useTileSpinners=imgs.every(img=>!!img.closest('.gf-photo-exercise'));
-    const overlay=useTileSpinners?null:el('div','gf-photo-screen-loader');
+    // Exercise tiles manage their own load/decode spinners. Never force every
+    // offscreen lazy image to eager simply because its screen was opened.
+    if(useTileSpinners)return;
+    const overlay=el('div','gf-photo-screen-loader');
     let heading=null,btn=null;
     if(overlay){
       const inner=el('div','gf-photo-small-inner');
@@ -462,7 +467,7 @@
     window[name]=wrapped;
     return true;
   }
-  wrap('enterApp',function(original,args){return enterWithImages(original,args,this);});
+  // Do not wrap enterApp: no exercise-photo network request may block login/entry.
   wrap('showTab',function(original,args){
     const r=original.apply(this,args);
     if(args[0]==='train')markContainerPending(document.getElementById('train'),'Loading workout previews');
@@ -475,15 +480,35 @@
       return r;
     });
   }
+  // Only an explicit user action should download/cache the full photo library.
+  // Returns a cancellable operation to wire into a future offline-download UI.
+  function downloadOfflinePhotos(onProgress){
+    const controller=new AbortController();
+    const promise=preloadAll((done,total,failed,retries)=>{
+      if(typeof onProgress==='function')onProgress({done,total,failed,retries});
+    },controller.signal).then(result=>{
+      if(result.loaded===result.total)preloaded=true;
+      return result;
+    });
+    return {promise,cancel:()=>controller.abort()};
+  }
   window.GainFocusPhotoReadiness={
-    version:VERSION,preloadAll,
-    status:()=>({active:!!currentGate,loading:!!entryPromise,ready:preloaded,verified:verifiedPaths.size,offline:offlineMode}),
+    version:VERSION,preloadAll,downloadOfflinePhotos,
+    status:()=>({active:false,loading:false,ready:appReady,
+      allPhotosReady:preloaded,verified:verifiedPaths.size,
+      mode:'lazy',offline:offlineMode}),
     checkConnection,continueOffline,
     checkWorkout:markContainerPending
   };
-  // Gate immediately, before the original splash, login or main app becomes visible.
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>beginPreload(),{once:true});
-  else beginPreload();
+  // The legacy first-paint overlay is included in index.html. Remove it
+  // without displaying a replacement gate or starting the bulk image downloader.
+  function releaseFirstPaint(){
+    document.getElementById('gfPhotoBoot')?.remove();
+    if(navigator.onLine===false)showRuntimeOfflineChoice(
+      'No internet connection detected. Cached exercises remain available offline.');
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',releaseFirstPaint,{once:true});
+  else releaseFirstPaint();
 })();
 
 // Load the independent split/day scheduler after the v4.0.73 app scripts.
