@@ -314,3 +314,50 @@
     }
   };
 })();
+
+
+/* Gain Focus Cassidy home-training compatibility repair (2026-10-29).
+ * External module so existing v4.0.73+ bundled app is preserved.
+ * Accepts only explicit safe inline exercise images; never guesses an exercise photo.
+ * Blank client weight renders a pending state, never a fictitious measurement.
+ */
+(function(){
+  'use strict';
+  if (window.__gfCassidyHomeRepair20261029) return;
+  window.__gfCassidyHomeRepair20261029 = true;
+
+  const previousVisual=window.exerciseVisual;
+  if (typeof previousVisual === 'function') {
+    window.exerciseVisual=function(e,large){
+      const src=typeof e?.imageSrc==='string'?e.imageSrc.trim():'';
+      if(src.length<=200000 && /^data:image\/(?:webp|png|jpeg|svg\+xml);base64,[a-zA-Z0-9+/=]+$/.test(src)){
+        const safeName=String(e?.name||'Exercise').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        return '<span class="gf-photo-exercise gf-photo-custom'+(large?' large':'')+'"><img class="exercise-stock gf-real-ex-image'+(large?' large':'')+'" src="'+src+'" alt="'+safeName+' demonstration" loading="lazy" decoding="async"></span>';
+      }
+      return previousVisual.apply(this,arguments);
+    };
+  }
+
+  const originalRenderProgress=window.renderProgress;
+  if(typeof originalRenderProgress==='function'){
+    window.renderProgress=function(){
+      const hasClient=typeof plan!=='undefined' && plan && plan.client;
+      if(!hasClient)return originalRenderProgress.apply(this,arguments);
+      const w=typeof latestWeight==='function'?Number(latestWeight()):NaN;
+      if(!Number.isFinite(w)||w<=0){
+        const host=document.getElementById('progress');
+        if(host)host.innerHTML='<div class="card glass hero" role="status"><div class="eyebrow">Analysis</div><h2>Measurements pending</h2><p class="muted">Add your height and weight in your profile to unlock your weight trend and body-composition analysis. Your workouts and nutrition plan are ready to use.</p></div>';
+        return;
+      }
+      return originalRenderProgress.apply(this,arguments);
+    };
+    const recoverErrorPanel=()=>{
+      const host=document.getElementById('progress');
+      if(host && /Couldn.t load this section/.test(host.textContent||'') && typeof renderModuleSafe==='function'){
+        renderModuleSafe('progress','Progress',window.renderProgress);
+      }
+    };
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',recoverErrorPanel,{once:true});
+    else recoverErrorPanel();
+  }
+})();
